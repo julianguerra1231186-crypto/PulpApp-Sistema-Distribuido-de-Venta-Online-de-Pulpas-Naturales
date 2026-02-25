@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 450" fill="none">
+  <defs>
+    <linearGradient id="mainG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="100%" style="stop-color:#dc2626"/>
+    </linearGradient>
+    <linearGradient id="releaseG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <linearGradient id="qaG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="developG" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Fondo -->
+  <rect width="400" height="450" fill="#f8fafc" rx="16"/>
+  
+  <!-- Líneas de conexión -->
+  <g stroke="#cbd5e1" stroke-width="3" fill="none" stroke-linecap="round">
+    <!-- main a release -->
+    <path d="M200 85 L200 125"/>
+    <circle cx="200" cy="85" r="4" fill="#cbd5e1"/>
+    
+    <!-- release a qa -->
+    <path d="M200 185 L200 225"/>
+    <circle cx="200" cy="185" r="4" fill="#cbd5e1"/>
+    
+    <!-- qa a develop -->
+    <path d="M200 285 L200 325"/>
+    <circle cx="200" cy="285" r="4" fill="#cbd5e1"/>
+  </g>
+  
+  <!-- MAIN -->
+  <g filter="url(#cardShadow)">
+    <rect x="75" y="30" width="250" height="55" rx="12" fill="url(#mainG)"/>
+    <g fill="white">
+      <circle cx="110" cy="57" r="16" fill="rgba(255,255,255,0.2)"/>
+      <text x="110" y="62" font-family="Inter, sans-serif" font-size="14" font-weight="700" text-anchor="middle">M</text>
+      <text x="200" y="52" font-family="monospace" font-size="16" font-weight="600" text-anchor="middle">main</text>
+      <text x="200" y="70" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" opacity="0.8">Producción</text>
+    </g>
+  </g>
+  
+  <!-- RELEASE -->
+  <g filter="url(#cardShadow)">
+    <rect x="75" y="130" width="250" height="55" rx="12" fill="url(#releaseG)"/>
+    <g fill="white">
+      <circle cx="110" cy="157" r="16" fill="rgba(255,255,255,0.2)"/>
+      <text x="110" y="162" font-family="Inter, sans-serif" font-size="14" font-weight="700" text-anchor="middle">R</text>
+      <text x="200" y="152" font-family="monospace" font-size="16" font-weight="600" text-anchor="middle">release.X</text>
+      <text x="200" y="170" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" opacity="0.8">Acumulador de Cortes</text>
+    </g>
+  </g>
+  
+  <!-- QA -->
+  <g filter="url(#cardShadow)">
+    <rect x="75" y="230" width="250" height="55" rx="12" fill="url(#qaG)"/>
+    <g fill="white">
+      <circle cx="110" cy="257" r="16" fill="rgba(255,255,255,0.2)"/>
+      <text x="110" y="262" font-family="Inter, sans-serif" font-size="14" font-weight="700" text-anchor="middle">Q</text>
+      <text x="200" y="252" font-family="monospace" font-size="16" font-weight="600" text-anchor="middle">qa</text>
+      <text x="200" y="270" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" opacity="0.8">Pruebas / Testing</text>
+    </g>
+  </g>
+  
+  <!-- DEVELOP -->
+  <g filter="url(#cardShadow)">
+    <rect x="75" y="330" width="250" height="55" rx="12" fill="url(#developG)"/>
+    <g fill="white">
+      <circle cx="110" cy="357" r="16" fill="rgba(255,255,255,0.2)"/>
+      <text x="110" y="362" font-family="Inter, sans-serif" font-size="14" font-weight="700" text-anchor="middle">D</text>
+      <text x="200" y="352" font-family="monospace" font-size="16" font-weight="600" text-anchor="middle">develop</text>
+      <text x="200" y="370" font-family="Inter, sans-serif" font-size="11" text-anchor="middle" opacity="0.8">Desarrollo / Integración</text>
+    </g>
+  </g>
+  
+  <!-- Flecha indicadora -->
+  <g transform="translate(340, 230)">
+    <path d="M0 50 L0 -50" stroke="#6366f1" stroke-width="2" stroke-dasharray="4,4"/>
+    <polygon points="0,-55 -6,-45 6,-45" fill="#6366f1"/>
+    <text x="10" y="0" font-family="Inter, sans-serif" font-size="10" fill="#6366f1" font-weight="600">MR</text>
+  </g>
+  
+  <!-- Indicador de jerarquía -->
+  <g font-family="Inter, sans-serif" font-size="10" fill="#94a3b8">
+    <text x="35" y="62">Nivel 0</text>
+    <text x="35" y="162">Nivel 1</text>
+    <text x="35" y="262">Nivel 2</text>
+    <text x="35" y="362">Nivel 3</text>
+  </g>
+  
+  <!-- Etiqueta -->
+  <g>
+    <rect x="125" y="405" width="150" height="30" rx="15" fill="#f1f5f9" stroke="#e2e8f0"/>
+    <text x="200" y="425" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Jerarquía de Ramas</text>
+  </g>
+</svg>

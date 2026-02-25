@@ -1,0 +1,340 @@
+/**
+ * Responsive CSS - Media queries para adaptación
+ */
+
+/* ========================================
+   TABLET (768px - 1023px)
+   ======================================== */
+
+@media (max-width: 1023px) {
+    .hero__container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero__content {
+        order: 2;
+    }
+
+    .hero__visual {
+        order: 1;
+    }
+
+    .hero__description {
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero__actions {
+        justify-content: center;
+    }
+
+    .hero__diagram {
+        max-width: 80%;
+    }
+
+    .branch-structure {
+        grid-template-columns: 1fr;
+    }
+
+    .branch-diagram {
+        order: 1;
+    }
+
+    .branch-cards {
+        order: 2;
+    }
+
+    .steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .env-panel__layout {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-8);
+    }
+
+    .env-tabs__content {
+        padding: var(--spacing-6);
+    }
+
+    .commands {
+        grid-template-columns: 1fr;
+    }
+
+    .cta {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ========================================
+   MOBILE LARGE (640px - 767px)
+   ======================================== */
+
+@media (max-width: 767px) {
+    :root {
+        --container-padding: var(--spacing-4);
+    }
+
+    .section {
+        padding: var(--spacing-12) 0;
+    }
+
+    .section__title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .hero {
+        min-height: auto;
+        padding: var(--spacing-24) 0 var(--spacing-12);
+    }
+
+    .hero__title {
+        font-size: var(--font-size-3xl);
+    }
+
+    .hero__description {
+        font-size: var(--font-size-base);
+    }
+
+    .hero__scroll {
+        display: none;
+    }
+
+    /* Navigation mobile */
+    .nav__menu {
+        position: fixed;
+        top: var(--header-height);
+        left: 0;
+        right: 0;
+        bottom: 0;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: var(--spacing-8);
+        background: var(--color-white);
+        gap: var(--spacing-6);
+        transform: translateX(100%);
+        transition: transform var(--transition-base);
+    }
+
+    .nav__menu.active {
+        transform: translateX(0);
+    }
+
+    .nav__toggle {
+        display: flex;
+    }
+
+    .nav__toggle.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .nav__toggle.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .nav__toggle.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .nav__link {
+        font-size: var(--font-size-lg);
+    }
+
+    .steps {
+        grid-template-columns: 1fr;
+    }
+
+    .env-tabs__btn {
+        padding: var(--spacing-3) var(--spacing-4);
+        font-size: var(--font-size-xs);
+    }
+
+    .env-pipeline {
+        gap: var(--spacing-1);
+    }
+
+    .env-pipeline__step {
+        padding: var(--spacing-2) var(--spacing-3);
+        font-size: var(--font-size-xs);
+    }
+
+    .rules {
+        grid-template-columns: 1fr;
+    }
+
+    .command {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-2);
+    }
+
+    .command__desc {
+        order: 3;
+    }
+
+    .command__copy {
+        position: absolute;
+        right: var(--spacing-3);
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .cta__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .footer__content {
+        flex-direction: column;
+        gap: var(--spacing-6);
+        text-align: center;
+    }
+
+    .footer__links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* ========================================
+   MOBILE SMALL (< 480px)
+   ======================================== */
+
+@media (max-width: 479px) {
+    .hero__title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .hero__actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero__actions .btn {
+        width: 100%;
+    }
+
+    .branch-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .branch-card__icon {
+        margin: 0 auto;
+    }
+
+    .step {
+        padding: var(--spacing-4);
+    }
+
+    .step__number {
+        font-size: var(--font-size-2xl);
+    }
+
+    .rule {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .rule__icon {
+        margin: 0 auto;
+    }
+
+    .cta__actions .btn {
+        width: 100%;
+    }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    .header,
+    .hero__scroll,
+    .nav__toggle,
+    .command__copy,
+    .cta__actions,
+    .footer__links {
+        display: none !important;
+    }
+
+    .section {
+        padding: var(--spacing-8) 0;
+        page-break-inside: avoid;
+    }
+
+    .section--dark {
+        background: var(--color-gray-100);
+        color: var(--color-gray-900);
+    }
+
+    .section--dark .section__label,
+    .section--dark .section__description,
+    .section--dark .step__desc,
+    .section--dark .rule__desc {
+        color: var(--color-gray-700);
+    }
+
+    .section--cta {
+        display: none;
+    }
+
+    .hero {
+        min-height: auto;
+        padding: var(--spacing-12) 0;
+    }
+
+    body {
+        font-size: 12pt;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .btn {
+        border: 1px solid var(--color-gray-300);
+    }
+}
+
+/* ========================================
+   REDUCED MOTION
+   ======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* ========================================
+   HIGH CONTRAST
+   ======================================== */
+
+@media (prefers-contrast: high) {
+    :root {
+        --color-primary: #0000ff;
+        --color-gray-600: #000000;
+    }
+
+    .btn--primary {
+        border: 2px solid var(--color-black);
+    }
+
+    .card,
+    .branch-card,
+    .env-card,
+    .command-group {
+        border: 2px solid var(--color-black);
+    }
+}

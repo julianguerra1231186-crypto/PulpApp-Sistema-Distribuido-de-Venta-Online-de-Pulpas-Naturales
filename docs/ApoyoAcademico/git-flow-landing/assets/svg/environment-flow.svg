@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 180" fill="none">
+  <defs>
+    <linearGradient id="devGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6"/>
+      <stop offset="100%" style="stop-color:#2563eb"/>
+    </linearGradient>
+    <linearGradient id="qaGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
+    </linearGradient>
+    <linearGradient id="relGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <linearGradient id="mainGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444"/>
+      <stop offset="100%" style="stop-color:#dc2626"/>
+    </linearGradient>
+    <filter id="envShadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Fondo -->
+  <rect width="800" height="180" fill="#f8fafc" rx="12"/>
+  
+  <!-- Línea de flujo principal -->
+  <path d="M120 90 L680 90" stroke="#e2e8f0" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- DEVELOP -->
+  <g transform="translate(80, 90)" filter="url(#envShadow)">
+    <rect x="-60" y="-35" width="120" height="70" rx="12" fill="url(#devGrad)"/>
+    <text y="-5" font-family="monospace" font-size="14" font-weight="600" fill="white" text-anchor="middle">develop</text>
+    <text y="15" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle">Pasos 1-6</text>
+  </g>
+  
+  <!-- Flecha dev -> qa -->
+  <g transform="translate(180, 90)">
+    <path d="M0 0 L80 0" stroke="#3b82f6" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="85,-6 85,6 95,0" fill="#3b82f6"/>
+    <text y="-15" x="45" font-family="Inter, sans-serif" font-size="9" fill="#64748b" text-anchor="middle">MR</text>
+  </g>
+  
+  <!-- QA -->
+  <g transform="translate(320, 90)" filter="url(#envShadow)">
+    <rect x="-60" y="-35" width="120" height="70" rx="12" fill="url(#qaGrad2)"/>
+    <text y="-5" font-family="monospace" font-size="14" font-weight="600" fill="white" text-anchor="middle">qa</text>
+    <text y="15" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle">Pasos 1-6</text>
+  </g>
+  
+  <!-- Flecha qa -> release -->
+  <g transform="translate(420, 90)">
+    <path d="M0 0 L80 0" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="85,-6 85,6 95,0" fill="#10b981"/>
+    <text y="-15" x="45" font-family="Inter, sans-serif" font-size="9" fill="#64748b" text-anchor="middle">MR</text>
+  </g>
+  
+  <!-- RELEASE -->
+  <g transform="translate(560, 90)" filter="url(#envShadow)">
+    <rect x="-60" y="-35" width="120" height="70" rx="12" fill="url(#relGrad)"/>
+    <text y="-5" font-family="monospace" font-size="14" font-weight="600" fill="white" text-anchor="middle">release.X</text>
+    <text y="15" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle">Acumular HU</text>
+  </g>
+  
+  <!-- Flecha release -> main -->
+  <g transform="translate(660, 90)">
+    <path d="M0 0 L60 0" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+    <polygon points="65,-6 65,6 75,0" fill="#f59e0b"/>
+    <text y="-15" x="35" font-family="Inter, sans-serif" font-size="9" fill="#64748b" text-anchor="middle">MR/corte</text>
+  </g>
+  
+  <!-- MAIN -->
+  <g transform="translate(760, 90)" filter="url(#envShadow)">
+    <rect x="-40" y="-35" width="80" height="70" rx="12" fill="url(#mainGrad2)"/>
+    <text y="-5" font-family="monospace" font-size="14" font-weight="600" fill="white" text-anchor="middle">main</text>
+    <text y="15" font-family="Inter, sans-serif" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle">Prod</text>
+  </g>
+  
+  <!-- HU indicadores -->
+  <g transform="translate(80, 145)">
+    <rect x="-30" y="-12" width="60" height="24" rx="12" fill="#8b5cf6" opacity="0.8"/>
+    <text y="5" font-family="Inter, sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="500">HU-XX</text>
+  </g>
+  
+  <g transform="translate(320, 145)">
+    <rect x="-30" y="-12" width="60" height="24" rx="12" fill="#8b5cf6" opacity="0.8"/>
+    <text y="5" font-family="Inter, sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="500">HU-XX</text>
+  </g>
+  
+  <g transform="translate(560, 145)">
+    <rect x="-30" y="-12" width="60" height="24" rx="12" fill="#8b5cf6" opacity="0.8"/>
+    <text y="5" font-family="Inter, sans-serif" font-size="9" fill="white" text-anchor="middle" font-weight="500">HU-XX</text>
+  </g>
+  
+  <!-- Líneas punteadas de HU -->
+  <g stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.5">
+    <line x1="80" y1="130" x2="80" y2="55"/>
+    <line x1="320" y1="130" x2="320" y2="55"/>
+    <line x1="560" y1="130" x2="560" y2="55"/>
+  </g>
+</svg>

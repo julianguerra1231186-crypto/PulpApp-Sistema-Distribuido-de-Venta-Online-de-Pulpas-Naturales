@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Guía completa del flujo de trabajo Git con Historias de Usuario (HU) - GitFlow para equipos de desarrollo">
+    <meta name="keywords" content="Git, GitFlow, Historias de Usuario, HU, Desarrollo, DevOps">
+    <title>GitFlow HU | Flujo de Trabajo con Historias de Usuario</title>
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <nav class="nav container">
+            <a href="#" class="nav__logo">
+                <img src="assets/svg/logo.svg" alt="GitFlow HU Logo" class="nav__logo-img">
+                <span>GitFlow HU</span>
+            </a>
+            <ul class="nav__menu" id="nav-menu">
+                <li class="nav__item"><a href="#estructura" class="nav__link">Estructura</a></li>
+                <li class="nav__item"><a href="#flujo" class="nav__link">Flujo</a></li>
+                <li class="nav__item"><a href="#ambientes" class="nav__link">Ambientes</a></li>
+                <li class="nav__item"><a href="#reglas" class="nav__link">Reglas</a></li>
+                <li class="nav__item"><a href="#comandos" class="nav__link">Comandos</a></li>
+            </ul>
+            <button class="nav__toggle" id="nav-toggle" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero__background">
+                <div class="hero__particles" id="particles"></div>
+            </div>
+            <div class="container hero__container">
+                <div class="hero__content">
+                    <span class="hero__badge">Guía Práctica</span>
+                    <h1 class="hero__title">
+                        Flujo de Trabajo Git con
+                        <span class="hero__title--highlight">Historias de Usuario</span>
+                    </h1>
+                    <p class="hero__description">
+                        Domina el flujo de ramas profesional para gestionar features, 
+                        releases y deployments de manera ordenada y eficiente.
+                    </p>
+                    <div class="hero__actions">
+                        <a href="#flujo" class="btn btn--primary">
+                            <span>Ver Flujo Completo</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                        <a href="#comandos" class="btn btn--secondary">Comandos Git</a>
+                    </div>
+                </div>
+                <div class="hero__visual">
+                    <img src="assets/svg/hero-branch.svg" alt="Diagrama de ramas Git" class="hero__diagram">
+                </div>
+            </div>
+            <div class="hero__scroll">
+                <a href="#estructura" class="scroll-indicator">
+                    <span>Explorar</span>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- Estructura de Ramas -->
+        <section class="section" id="estructura">
+            <div class="container">
+                <header class="section__header">
+                    <span class="section__label">Arquitectura</span>
+                    <h2 class="section__title">Estructura de Ramas</h2>
+                    <p class="section__description">
+                        Jerarquía clara de ramas donde cada nivel tiene un propósito específico
+                    </p>
+                </header>
+
+                <div class="branch-structure">
+                    <div class="branch-diagram">
+                        <img src="assets/svg/branch-structure.svg" alt="Estructura jerárquica de ramas">
+                    </div>
+                    
+                    <div class="branch-cards">
+                        <article class="branch-card branch-card--main">
+                            <div class="branch-card__icon">
+                                <img src="assets/svg/icon-main.svg" alt="">
+                            </div>
+                            <div class="branch-card__content">
+                                <h3 class="branch-card__title">main</h3>
+                                <p class="branch-card__role">Producción</p>
+                                <p class="branch-card__desc">Código estable en producción. Solo recibe MR desde release.</p>
+                            </div>
+                        </article>
+
+                        <article class="branch-card branch-card--release">
+                            <div class="branch-card__icon">
+                                <img src="assets/svg/icon-release.svg" alt="">
+                            </div>
+                            <div class="branch-card__content">
+                                <h3 class="branch-card__title">release.X</h3>
+                                <p class="branch-card__role">Acumulador de Cortes</p>
+                                <p class="branch-card__desc">Agrupa las HU de cada corte/versión antes de ir a main.</p>
+                            </div>
+                        </article>
+
+                        <article class="branch-card branch-card--qa">
+                            <div class="branch-card__icon">
+                                <img src="assets/svg/icon-qa.svg" alt="">
+                            </div>
+                            <div class="branch-card__content">
+                                <h3 class="branch-card__title">qa</h3>
+                                <p class="branch-card__role">Pruebas</p>
+                                <p class="branch-card__desc">Ambiente de testing donde QA valida las funcionalidades.</p>
+                            </div>
+                        </article>
+
+                        <article class="branch-card branch-card--develop">
+                            <div class="branch-card__icon">
+                                <img src="assets/svg/icon-develop.svg" alt="">
+                            </div>
+                            <div class="branch-card__content">
+                                <h3 class="branch-card__title">develop</h3>
+                                <p class="branch-card__role">Desarrollo</p>
+                                <p class="branch-card__desc">Integración de features. Base para crear ramas de HU.</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flujo de Trabajo -->
+        <section class="section section--dark" id="flujo">
+            <div class="container">
+                <header class="section__header">
+                    <span class="section__label">Proceso</span>
+                    <h2 class="section__title">Flujo de Trabajo</h2>
+                    <p class="section__description">
+                        6 pasos para crear y mergear una Historia de Usuario correctamente
+                    </p>
+                </header>
+
+                <div class="workflow">
+                    <div class="workflow__diagram">
+                        <img src="assets/svg/workflow-flow.svg" alt="Diagrama de flujo de trabajo">
+                    </div>
+
+                    <div class="steps">
+                        <article class="step" data-step="1">
+                            <div class="step__number">01</div>
+                            <div class="step__content">
+                                <h3 class="step__title">Posicionarse en rama padre</h3>
+                                <p class="step__desc">Ubícate en la rama desde donde nacerá tu feature.</p>
+                                <div class="step__code">
+                                    <code>git switch {ambiente}</code>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="step" data-step="2">
+                            <div class="step__number">02</div>
+                            <div class="step__content">
+                                <h3 class="step__title">Crear rama de la HU</h3>
+                                <p class="step__desc">Crea y cambia a una nueva rama basada en el padre.</p>
+                                <div class="step__code">
+                                    <code>git switch -c HU-01-{ambiente}</code>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="step" data-step="3">
+                            <div class="step__number">03</div>
+                            <div class="step__content">
+                                <h3 class="step__title">Desarrollar la HU</h3>
+                                <p class="step__desc">Realiza commits respetando Conventional Commits.</p>
+                                <div class="step__code">
+                                    <code>git commit -m "feat(auth): add login validation"</code>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="step" data-step="4">
+                            <div class="step__number">04</div>
+                            <div class="step__content">
+                                <h3 class="step__title">Sincronizar con padre</h3>
+                                <p class="step__desc">Trae cambios recientes del padre antes del MR.</p>
+                                <div class="step__code">
+                                    <code>git pull origin {ambiente}</code>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="step" data-step="5">
+                            <div class="step__number">05</div>
+                            <div class="step__content">
+                                <h3 class="step__title">Publicar cambios</h3>
+                                <p class="step__desc">Sube tu rama al repositorio remoto.</p>
+                                <div class="step__code">
+                                    <code>git push origin HU-01-{ambiente}</code>
+                                </div>
+                            </div>
+                        </article>
+
+                        <article class="step" data-step="6">
+                            <div class="step__number">06</div>
+                            <div class="step__content">
+                                <h3 class="step__title">Crear Merge Request</h3>
+                                <p class="step__desc">Crea MR hacia la rama padre. Nunca push directo.</p>
+                                <div class="step__badge">
+                                    <span>GitLab/GitHub → New MR</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ambientes -->
+        <section class="section" id="ambientes">
+            <div class="container">
+                <header class="section__header">
+                    <span class="section__label">Entornos</span>
+                    <h2 class="section__title">Ambientes del Flujo</h2>
+                    <p class="section__description">
+                        Cada ambiente tiene un propósito, unas reglas y un paso a paso propio.
+                        Selecciona el entorno para explorar su importancia y flujo detallado.
+                    </p>
+                </header>
+
+                <!-- Flujo visual de progresión -->
+                <div class="env-pipeline">
+                    <div class="env-pipeline__step env-pipeline__step--develop">
+                        <span class="env-pipeline__label">develop</span>
+                    </div>
+                    <div class="env-pipeline__arrow">→</div>
+                    <div class="env-pipeline__step env-pipeline__step--qa">
+                        <span class="env-pipeline__label">qa</span>
+                    </div>
+                    <div class="env-pipeline__arrow">→</div>
+                    <div class="env-pipeline__step env-pipeline__step--release">
+                        <span class="env-pipeline__label">release.X</span>
+                    </div>
+                    <div class="env-pipeline__arrow">→</div>
+                    <div class="env-pipeline__step env-pipeline__step--main">
+                        <span class="env-pipeline__label">main</span>
+                    </div>
+                </div>
+
+                <!-- Tabs de ambientes -->
+                <div class="env-tabs">
+                    <!-- Tab buttons -->
+                    <div class="env-tabs__nav" role="tablist">
+                        <button class="env-tabs__btn env-tabs__btn--develop active"
+                                role="tab" aria-selected="true"
+                                aria-controls="tab-develop" data-tab="develop">
+                            <span class="env-tabs__btn-icon">D</span>
+                            <span>develop</span>
+                        </button>
+                        <button class="env-tabs__btn env-tabs__btn--qa"
+                                role="tab" aria-selected="false"
+                                aria-controls="tab-qa" data-tab="qa">
+                            <span class="env-tabs__btn-icon">Q</span>
+                            <span>qa</span>
+                        </button>
+                        <button class="env-tabs__btn env-tabs__btn--release"
+                                role="tab" aria-selected="false"
+                                aria-controls="tab-release" data-tab="release">
+                            <span class="env-tabs__btn-icon">R</span>
+                            <span>release.X</span>
+                        </button>
+                        <button class="env-tabs__btn env-tabs__btn--main"
+                                role="tab" aria-selected="false"
+                                aria-controls="tab-main" data-tab="main">
+                            <span class="env-tabs__btn-icon">M</span>
+                            <span>main</span>
+                        </button>
+                    </div>
+
+                    <!-- Tab panels -->
+                    <div class="env-tabs__content">
+
+                        <!-- DEVELOP -->
+                        <div class="env-panel active" id="tab-develop" role="tabpanel">
+                            <div class="env-panel__layout">
+                                <div class="env-panel__info">
+                                    <div class="env-panel__badge env-panel__badge--develop">Ambiente de Desarrollo</div>
+                                    <h3 class="env-panel__title">develop</h3>
+                                    <p class="env-panel__why">
+                                        <strong>¿Por qué existe?</strong> Es el punto de integración continua del equipo.
+                                        Aquí todos los desarrolladores fusionan sus Historias de Usuario mientras trabajan
+                                        activamente. Permite detectar conflictos de integración de forma temprana,
+                                        antes de que el código avance a entornos más estables.
+                                    </p>
+                                    <div class="env-panel__rules">
+                                        <h4 class="env-panel__rules-title">Reglas clave</h4>
+                                        <ul class="env-panel__rule-list">
+                                            <li>
+                                                <span class="rule-dot rule-dot--develop"></span>
+                                                Nunca se hace commit directo — solo via Merge Request
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--develop"></span>
+                                                Es la rama padre de todas las HU de desarrollo
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--develop"></span>
+                                                El código aquí puede estar incompleto o en prueba
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--develop"></span>
+                                                Siempre se actualiza antes de crear una nueva HU
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="env-panel__steps">
+                                    <h4 class="env-panel__steps-title">Paso a paso en <code>develop</code></h4>
+                                    <ol class="env-steps">
+                                        <li class="env-step">
+                                            <span class="env-step__num">1</span>
+                                            <div class="env-step__body">
+                                                <strong>Posicionarse en develop</strong>
+                                                <code class="env-step__code">git switch develop</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">2</span>
+                                            <div class="env-step__body">
+                                                <strong>Actualizar desde remoto</strong>
+                                                <code class="env-step__code">git pull origin develop</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">3</span>
+                                            <div class="env-step__body">
+                                                <strong>Crear rama de la HU</strong>
+                                                <code class="env-step__code">git switch -c HU-01-develop</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">4</span>
+                                            <div class="env-step__body">
+                                                <strong>Desarrollar con commits convencionales</strong>
+                                                <code class="env-step__code">git commit -m "feat(scope): description"</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">5</span>
+                                            <div class="env-step__body">
+                                                <strong>Sincronizar y publicar</strong>
+                                                <code class="env-step__code">git pull origin develop && git push origin HU-01-develop</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">6</span>
+                                            <div class="env-step__body">
+                                                <strong>Abrir Merge Request → develop</strong>
+                                                <span class="env-step__badge">GitLab / GitHub → New MR</span>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QA -->
+                        <div class="env-panel" id="tab-qa" role="tabpanel">
+                            <div class="env-panel__layout">
+                                <div class="env-panel__info">
+                                    <div class="env-panel__badge env-panel__badge--qa">Ambiente de Pruebas</div>
+                                    <h3 class="env-panel__title">qa</h3>
+                                    <p class="env-panel__why">
+                                        <strong>¿Por qué existe?</strong> QA (Quality Assurance) es el filtro de calidad
+                                        antes de producción. Aquí el equipo de pruebas o el propio desarrollador valida
+                                        que las funcionalidades cumplan los criterios de aceptación definidos en cada HU.
+                                        Un bug encontrado aquí cuesta mucho menos que uno en producción.
+                                    </p>
+                                    <div class="env-panel__rules">
+                                        <h4 class="env-panel__rules-title">Reglas clave</h4>
+                                        <ul class="env-panel__rule-list">
+                                            <li>
+                                                <span class="rule-dot rule-dot--qa"></span>
+                                                Solo entra código que ya fue aprobado en develop
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--qa"></span>
+                                                Cada HU genera su propia rama: HU-XX-qa
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--qa"></span>
+                                                Si falla la validación, se regresa a develop para corregir
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--qa"></span>
+                                                Nunca se hace push directo — siempre vía MR
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="env-panel__steps">
+                                    <h4 class="env-panel__steps-title">Paso a paso en <code>qa</code></h4>
+                                    <ol class="env-steps">
+                                        <li class="env-step">
+                                            <span class="env-step__num">1</span>
+                                            <div class="env-step__body">
+                                                <strong>Posicionarse en qa</strong>
+                                                <code class="env-step__code">git switch qa</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">2</span>
+                                            <div class="env-step__body">
+                                                <strong>Actualizar desde remoto</strong>
+                                                <code class="env-step__code">git pull origin qa</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">3</span>
+                                            <div class="env-step__body">
+                                                <strong>Crear rama de la HU para qa</strong>
+                                                <code class="env-step__code">git switch -c HU-01-qa</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">4</span>
+                                            <div class="env-step__body">
+                                                <strong>Aplicar ajustes/correcciones de QA</strong>
+                                                <code class="env-step__code">git commit -m "fix(scope): resolve qa finding"</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">5</span>
+                                            <div class="env-step__body">
+                                                <strong>Sincronizar y publicar</strong>
+                                                <code class="env-step__code">git pull origin qa && git push origin HU-01-qa</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">6</span>
+                                            <div class="env-step__body">
+                                                <strong>Abrir Merge Request → qa</strong>
+                                                <span class="env-step__badge">GitLab / GitHub → New MR</span>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RELEASE -->
+                        <div class="env-panel" id="tab-release" role="tabpanel">
+                            <div class="env-panel__layout">
+                                <div class="env-panel__info">
+                                    <div class="env-panel__badge env-panel__badge--release">Acumulador de Versiones</div>
+                                    <h3 class="env-panel__title">release.X</h3>
+                                    <p class="env-panel__why">
+                                        <strong>¿Por qué existe?</strong> Release actúa como el "empaque final" de un
+                                        corte académico o sprint. Agrupa todas las HU que pasaron QA en una versión
+                                        coherente y lista para producción. Permite etiquetar versiones (release.1, release.2)
+                                        y mantener un historial claro de qué se entregó en cada corte.
+                                    </p>
+                                    <div class="env-panel__rules">
+                                        <h4 class="env-panel__rules-title">Reglas clave</h4>
+                                        <ul class="env-panel__rule-list">
+                                            <li>
+                                                <span class="rule-dot rule-dot--release"></span>
+                                                Solo entra código validado en qa
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--release"></span>
+                                                Se versiona por corte: release.1, release.2, release.3...
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--release"></span>
+                                                Acumula todas las HU del corte antes de ir a main
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--release"></span>
+                                                Solo admite hotfixes menores; no features nuevas
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="env-panel__steps">
+                                    <h4 class="env-panel__steps-title">Paso a paso en <code>release.X</code></h4>
+                                    <ol class="env-steps">
+                                        <li class="env-step">
+                                            <span class="env-step__num">1</span>
+                                            <div class="env-step__body">
+                                                <strong>Posicionarse en release.X</strong>
+                                                <code class="env-step__code">git switch release.1</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">2</span>
+                                            <div class="env-step__body">
+                                                <strong>Actualizar desde remoto</strong>
+                                                <code class="env-step__code">git pull origin release.1</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">3</span>
+                                            <div class="env-step__body">
+                                                <strong>Crear rama de la HU para release</strong>
+                                                <code class="env-step__code">git switch -c HU-01-release</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">4</span>
+                                            <div class="env-step__body">
+                                                <strong>Commits de estabilización / release notes</strong>
+                                                <code class="env-step__code">git commit -m "chore(release): prepare v1.0 changelog"</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">5</span>
+                                            <div class="env-step__body">
+                                                <strong>Publicar la rama</strong>
+                                                <code class="env-step__code">git push origin HU-01-release</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">6</span>
+                                            <div class="env-step__body">
+                                                <strong>MR → release.X (acumula el corte)</strong>
+                                                <span class="env-step__badge">Todos los MR del corte → release.X</span>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MAIN -->
+                        <div class="env-panel" id="tab-main" role="tabpanel">
+                            <div class="env-panel__layout">
+                                <div class="env-panel__info">
+                                    <div class="env-panel__badge env-panel__badge--main">Producción</div>
+                                    <h3 class="env-panel__title">main</h3>
+                                    <p class="env-panel__why">
+                                        <strong>¿Por qué existe?</strong> Main es la rama sagrada: representa el
+                                        código que está (o estará) en producción real. Todo lo que llega aquí ha
+                                        superado develop, QA y release. Un error en main afecta a todos los usuarios;
+                                        por eso esta rama es la más protegida y solo recibe MR desde release.
+                                    </p>
+                                    <div class="env-panel__rules">
+                                        <h4 class="env-panel__rules-title">Reglas clave</h4>
+                                        <ul class="env-panel__rule-list">
+                                            <li>
+                                                <span class="rule-dot rule-dot--main"></span>
+                                                <strong>Jamás</strong> se hace push o commit directo
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--main"></span>
+                                                Solo recibe MR provenientes de release.X
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--main"></span>
+                                                Cada MR a main representa un corte/versión completa
+                                            </li>
+                                            <li>
+                                                <span class="rule-dot rule-dot--main"></span>
+                                                Se etiqueta con un tag: <code>git tag v1.0</code>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="env-panel__steps">
+                                    <h4 class="env-panel__steps-title">Paso a paso para llegar a <code>main</code></h4>
+                                    <ol class="env-steps">
+                                        <li class="env-step">
+                                            <span class="env-step__num">1</span>
+                                            <div class="env-step__body">
+                                                <strong>Verificar que release.X está completo y probado</strong>
+                                                <code class="env-step__code">git log release.1 --oneline</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">2</span>
+                                            <div class="env-step__body">
+                                                <strong>Abrir MR: release.X → main</strong>
+                                                <span class="env-step__badge">Un solo MR por todo el corte</span>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">3</span>
+                                            <div class="env-step__body">
+                                                <strong>Revisión de código obligatoria (Code Review)</strong>
+                                                <span class="env-step__badge">Aprobación del líder técnico</span>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">4</span>
+                                            <div class="env-step__body">
+                                                <strong>Merge a main aprobado</strong>
+                                                <code class="env-step__code">Merge commit: release.1 → main</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">5</span>
+                                            <div class="env-step__body">
+                                                <strong>Etiquetar la versión</strong>
+                                                <code class="env-step__code">git tag v1.0 && git push origin v1.0</code>
+                                            </div>
+                                        </li>
+                                        <li class="env-step">
+                                            <span class="env-step__num">6</span>
+                                            <div class="env-step__body">
+                                                <strong>Despliegue a producción</strong>
+                                                <span class="env-step__badge env-step__badge--success">Deploy listo</span>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /env-tabs__content -->
+                </div><!-- /env-tabs -->
+            </div>
+        </section>
+
+        <!-- Reglas -->
+        <section class="section section--dark" id="reglas">
+            <div class="container">
+                <header class="section__header">
+                    <span class="section__label">Importante</span>
+                    <h2 class="section__title">Reglas de Oro</h2>
+                    <p class="section__description">
+                        5 reglas fundamentales que todo el equipo debe seguir
+                    </p>
+                </header>
+
+                <div class="rules">
+                    <article class="rule">
+                        <div class="rule__icon rule__icon--danger">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="rule__content">
+                            <h3 class="rule__title">Nunca commits directos</h3>
+                            <p class="rule__desc">No alterar directamente develop, qa, release ni main. Siempre usar MR.</p>
+                        </div>
+                    </article>
+
+                    <article class="rule">
+                        <div class="rule__icon rule__icon--warning">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                        </div>
+                        <div class="rule__content">
+                            <h3 class="rule__title">Siempre git pull antes de MR</h3>
+                            <p class="rule__desc">Obtener los cambios de la rama padre antes de crear el Merge Request.</p>
+                        </div>
+                    </article>
+
+                    <article class="rule">
+                        <div class="rule__icon rule__icon--info">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14,2 14,8 20,8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="rule__content">
+                            <h3 class="rule__title">Conventional Commits</h3>
+                            <p class="rule__desc">Usar formato: feat(), fix(), docs(), refactor(), test(), chore()</p>
+                        </div>
+                    </article>
+
+                    <article class="rule">
+                        <div class="rule__icon rule__icon--success">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 3v12"/>
+                                <circle cx="18" cy="6" r="3"/>
+                                <circle cx="6" cy="18" r="3"/>
+                                <path d="M18 9a9 9 0 01-9 9"/>
+                            </svg>
+                        </div>
+                        <div class="rule__content">
+                            <h3 class="rule__title">HU nacen del padre</h3>
+                            <p class="rule__desc">Las ramas de HU siempre se crean desde su rama padre correspondiente.</p>
+                        </div>
+                    </article>
+
+                    <article class="rule">
+                        <div class="rule__icon rule__icon--special">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/>
+                                <polyline points="3.27,6.96 12,12.01 20.73,6.96"/>
+                                <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                        <div class="rule__content">
+                            <h3 class="rule__title">Release acumula cortes</h3>
+                            <p class="rule__desc">Únicamente la rama release se llena de los cambios del corte antes de ir a main.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Comandos -->
+        <section class="section" id="comandos">
+            <div class="container">
+                <header class="section__header">
+                    <span class="section__label">Referencia</span>
+                    <h2 class="section__title">Comandos Git</h2>
+                    <p class="section__description">
+                        Comandos esenciales para el flujo de trabajo
+                    </p>
+                </header>
+
+                <div class="commands">
+                    <div class="command-group">
+                        <h3 class="command-group__title">Navegación de Ramas</h3>
+                        <div class="command-list">
+                            <div class="command">
+                                <code class="command__code">git switch develop</code>
+                                <span class="command__desc">Cambiar a rama develop</span>
+                                <button class="command__copy" data-copy="git switch develop" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="command">
+                                <code class="command__code">git switch -c HU-01-develop</code>
+                                <span class="command__desc">Crear y cambiar a nueva rama</span>
+                                <button class="command__copy" data-copy="git switch -c HU-01-develop" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h3 class="command-group__title">Conventional Commits</h3>
+                        <div class="command-list">
+                            <div class="command">
+                                <code class="command__code">git commit -m "feat(auth): add JWT validation"</code>
+                                <span class="command__desc">Nueva funcionalidad</span>
+                                <button class="command__copy" data-copy='git commit -m "feat(auth): add JWT validation"' aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="command">
+                                <code class="command__code">git commit -m "fix(api): resolve null pointer"</code>
+                                <span class="command__desc">Corrección de bug</span>
+                                <button class="command__copy" data-copy='git commit -m "fix(api): resolve null pointer"' aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="command">
+                                <code class="command__code">git commit -m "docs(readme): update installation"</code>
+                                <span class="command__desc">Documentación</span>
+                                <button class="command__copy" data-copy='git commit -m "docs(readme): update installation"' aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h3 class="command-group__title">Sincronización</h3>
+                        <div class="command-list">
+                            <div class="command">
+                                <code class="command__code">git pull origin develop</code>
+                                <span class="command__desc">Traer cambios del padre</span>
+                                <button class="command__copy" data-copy="git pull origin develop" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="command">
+                                <code class="command__code">git push origin HU-01-develop</code>
+                                <span class="command__desc">Subir rama al remoto</span>
+                                <button class="command__copy" data-copy="git push origin HU-01-develop" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="command-group">
+                        <h3 class="command-group__title">Utilidades</h3>
+                        <div class="command-list">
+                            <div class="command">
+                                <code class="command__code">git branch -a</code>
+                                <span class="command__desc">Ver todas las ramas</span>
+                                <button class="command__copy" data-copy="git branch -a" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="command">
+                                <code class="command__code">git log --oneline -10</code>
+                                <span class="command__desc">Ver últimos 10 commits</span>
+                                <button class="command__copy" data-copy="git log --oneline -10" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="command">
+                                <code class="command__code">git status</code>
+                                <span class="command__desc">Estado actual del repositorio</span>
+                                <button class="command__copy" data-copy="git status" aria-label="Copiar comando">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="section section--cta">
+            <div class="container">
+                <div class="cta">
+                    <div class="cta__content">
+                        <h2 class="cta__title">¿Listo para implementar este flujo?</h2>
+                        <p class="cta__desc">Descarga la guía en PDF o compártela con tu equipo</p>
+                    </div>
+                    <div class="cta__actions">
+                        <button class="btn btn--primary" id="btn-print">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="7,10 12,15 17,10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            <span>Imprimir / PDF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__brand">
+                    <img src="assets/svg/logo.svg" alt="GitFlow HU" class="footer__logo">
+                    <p class="footer__tagline">Flujo de trabajo profesional con Git</p>
+                </div>
+                <div class="footer__links">
+                    <a href="#estructura">Estructura</a>
+                    <a href="#flujo">Flujo</a>
+                    <a href="#reglas">Reglas</a>
+                    <a href="#comandos">Comandos</a>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2024 GitFlow HU Guide. Guía de referencia para equipos de desarrollo.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast notification -->
+    <div class="toast" id="toast">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20,6 9,17 4,12"/>
+        </svg>
+        <span>Comando copiado</span>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/environments.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
