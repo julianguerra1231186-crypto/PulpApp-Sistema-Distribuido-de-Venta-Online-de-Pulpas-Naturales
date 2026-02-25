@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistemas Distribuidos - Roadmap Gamificado del Semestre | CORHUILA">
+    <meta name="keywords" content="sistemas distribuidos, microservicios, java, angular, mongodb, postgresql, docker">
+    <meta name="author" content="CORHUILA - Ingeniería de Sistemas">
+    <title>Sistemas Distribuidos - Roadmap del Semestre | CORHUILA</title>
+    
+    <!-- Fuentes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <div class="container header__inner">
+            <div class="header__brand">
+                <div class="header__logo">SD</div>
+                <div class="header__text">
+                    <h1>Sistemas Distribuidos</h1>
+                    <span>Ingeniería de Sistemas • 2026-1</span>
+                </div>
+            </div>
+            <nav class="header__nav">
+                <ul>
+                    <li><a href="#inicio" class="active">Inicio</a></li>
+                    <li><a href="#metodologia">Metodología</a></li>
+                    <li><a href="#roadmap">Roadmap</a></li>
+                    <li><a href="#evaluacion">Evaluación</a></li>
+                    <li><a href="#badges">Logros</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ===== HERO ===== -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <div class="hero__content">
+                <div class="hero__badge">
+                    <span class="hero__badge-dot"></span>
+                    <span>Semestre 2026-1 • 16 Semanas</span>
+                </div>
+                <h2>Construye tu Sistema de Microservicios</h2>
+                <p class="hero__subtitle">
+                    Un viaje de 16 semanas donde transformarás una idea en un sistema distribuido 
+                    completo con Java, Angular, MongoDB, PostgreSQL y despliegue en la nube.
+                </p>
+                <div class="hero__stats">
+                    <div class="hero__stat">
+                        <span class="hero__stat-value" id="statWeeks">0</span>
+                        <span class="hero__stat-label">Semanas Completadas</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-value" id="statBadges">0</span>
+                        <span class="hero__stat-label">Badges Desbloqueados</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-value" id="statProgress">0%</span>
+                        <span class="hero__stat-label">Progreso Total</span>
+                    </div>
+                    <div class="hero__stat">
+                        <span class="hero__stat-value">3</span>
+                        <span class="hero__stat-label">Entregas de Producto</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PROGRESS CARD ===== -->
+    <div class="container">
+        <div class="progress-card">
+            <div class="progress-card__header">
+                <span class="progress-card__title">📊 Progreso del Semestre</span>
+                <span class="progress-card__value" id="progressValue">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-bar__fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-card__info">
+                <span id="progressText">0 de 16 semanas completadas</span>
+                <button id="btnReset" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem;">
+                    🔄 Reiniciar progreso
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== TECH STACK ===== -->
+    <section id="tech" class="tech-stack">
+        <div class="container">
+            <div class="section-header">
+                <h2>🛠️ Stack Tecnológico Requerido</h2>
+                <p>Tecnologías obligatorias para el proyecto final del semestre</p>
+            </div>
+            <div class="tech-grid">
+                <div class="tech-card tech-card--required">
+                    <div class="tech-card__icon tech-card__icon--java">☕</div>
+                    <h4 class="tech-card__name">Java + Spring Boot</h4>
+                    <p class="tech-card__desc">Al menos 1 microservicio</p>
+                    <span class="tech-card__badge">Obligatorio</span>
+                </div>
+                <div class="tech-card tech-card--required">
+                    <div class="tech-card__icon tech-card__icon--angular">🅰️</div>
+                    <h4 class="tech-card__name">Angular</h4>
+                    <p class="tech-card__desc">Microfrontend</p>
+                    <span class="tech-card__badge">Obligatorio</span>
+                </div>
+                <div class="tech-card tech-card--required">
+                    <div class="tech-card__icon tech-card__icon--postgres">🐘</div>
+                    <h4 class="tech-card__name">PostgreSQL</h4>
+                    <p class="tech-card__desc">Al menos 1 microservicio</p>
+                    <span class="tech-card__badge">Obligatorio</span>
+                </div>
+                <div class="tech-card tech-card--required">
+                    <div class="tech-card__icon tech-card__icon--mongo">🍃</div>
+                    <h4 class="tech-card__name">MongoDB</h4>
+                    <p class="tech-card__desc">Al menos 1 microservicio</p>
+                    <span class="tech-card__badge">Obligatorio</span>
+                </div>
+                <div class="tech-card tech-card--required">
+                    <div class="tech-card__icon tech-card__icon--docker">🐳</div>
+                    <h4 class="tech-card__name">Docker</h4>
+                    <p class="tech-card__desc">Contenedorización completa</p>
+                    <span class="tech-card__badge">Obligatorio</span>
+                </div>
+                <div class="tech-card tech-card--required">
+                    <div class="tech-card__icon tech-card__icon--github">🔀</div>
+                    <h4 class="tech-card__name">GitHub</h4>
+                    <p class="tech-card__desc">develop → qa → main</p>
+                    <span class="tech-card__badge">Obligatorio</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== METODOLOGÍA ===== -->
+    <section id="metodologia" class="metodologia">
+        <div class="container">
+            <div class="section-header">
+                <h2>📋 Metodología de Trabajo</h2>
+                <p>Dos sesiones semanales con objetivos específicos</p>
+            </div>
+            <div class="metodo-grid">
+                <div class="metodo-card metodo-card--weekly">
+                    <div class="metodo-card__header">
+                        <div class="metodo-card__icon">📊</div>
+                        <div>
+                            <h3 class="metodo-card__title">Weekly (Clase 1)</h3>
+                            <span class="metodo-card__subtitle">Primera clase de la semana</span>
+                        </div>
+                    </div>
+                    <div class="metodo-card__content">
+                        <p>Sesión de seguimiento donde cada equipo demuestra los avances del proyecto. <strong>Esta sesión es calificable semanalmente.</strong></p>
+                        <ul class="metodo-card__list">
+                            <li>Demostración de código funcional</li>
+                            <li>Revisión de commits y PRs</li>
+                            <li>Identificación de bloqueos</li>
+                            <li>Feedback inmediato del docente</li>
+                            <li>Ajuste de prioridades si es necesario</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="metodo-card metodo-card--planning">
+                    <div class="metodo-card__header">
+                        <div class="metodo-card__icon">📚</div>
+                        <div>
+                            <h3 class="metodo-card__title">Planning (Clase 2)</h3>
+                            <span class="metodo-card__subtitle">Segunda clase de la semana</span>
+                        </div>
+                    </div>
+                    <div class="metodo-card__content">
+                        <p>Sesión teórico-práctica donde se revisan temas técnicos y componentes que permiten avanzar en el proyecto.</p>
+                        <ul class="metodo-card__list">
+                            <li>Conceptos de sistemas distribuidos</li>
+                            <li>Patrones de arquitectura</li>
+                            <li>Demos de tecnologías específicas</li>
+                            <li>Workshops prácticos</li>
+                            <li>Planificación para la siguiente semana</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== GIT FLOW ===== -->
+    <section id="gitflow" class="git-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>🔀 Flujo de Trabajo con Git</h2>
+                <p>Ambientes obligatorios para el proyecto</p>
+            </div>
+            <div class="git-flow">
+                <div class="git-branch git-branch--develop">
+                    <div class="git-branch__icon">🔧</div>
+                    <div class="git-branch__info">
+                        <h4>develop</h4>
+                        <span>Desarrollo activo</span>
+                    </div>
+                </div>
+                <span class="git-arrow">→</span>
+                <div class="git-branch git-branch--qa">
+                    <div class="git-branch__icon">🧪</div>
+                    <div class="git-branch__info">
+                        <h4>qa</h4>
+                        <span>Testing & QA</span>
+                    </div>
+                </div>
+                <span class="git-arrow">→</span>
+                <div class="git-branch git-branch--main">
+                    <div class="git-branch__icon">🚀</div>
+                    <div class="git-branch__info">
+                        <h4>main</h4>
+                        <span>Producción</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ROADMAP ===== -->
+    <section id="roadmap" class="roadmap">
+        <div class="container">
+            <div class="section-header">
+                <h2>🗺️ Roadmap del Semestre</h2>
+                <p>Haz clic en cada semana para marcarla como completada</p>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="roadmap__filters">
+                <button class="filter-btn active" data-filter="all">📋 Todas</button>
+                <button class="filter-btn" data-filter="entrega">⭐ Entregas</button>
+                <button class="filter-btn" data-filter="pending">⏳ Pendientes</button>
+                <button class="filter-btn" data-filter="completed">✅ Completadas</button>
+            </div>
+            
+            <!-- Container dinámico para cortes y semanas -->
+            <div id="roadmapContainer"></div>
+        </div>
+    </section>
+
+    <!-- ===== EVALUACIÓN ===== -->
+    <section id="evaluacion" class="evaluacion">
+        <div class="container">
+            <div class="section-header">
+                <h2>📊 Sistema de Evaluación</h2>
+                <p>Sin parciales tradicionales - Evaluación continua basada en entregas</p>
+            </div>
+            <div class="eval-grid">
+                <div class="eval-card eval-card--weekly">
+                    <div class="eval-card__icon">📊</div>
+                    <div class="eval-card__percent">40%</div>
+                    <h4 class="eval-card__title">Weeklys Semanales</h4>
+                    <p class="eval-card__desc">
+                        Avances demostrados cada semana.<br>
+                        Evaluación continua del progreso.
+                    </p>
+                </div>
+                <div class="eval-card eval-card--entrega">
+                    <div class="eval-card__icon">⭐</div>
+                    <div class="eval-card__percent">45%</div>
+                    <h4 class="eval-card__title">Entregas de Producto</h4>
+                    <p class="eval-card__desc">
+                        Semana 5: MVP (15%)<br>
+                        Semana 10: Multi-servicios (15%)<br>
+                        Semana 15: Sistema completo (15%)
+                    </p>
+                </div>
+                <div class="eval-card eval-card--final">
+                    <div class="eval-card__icon">🎓</div>
+                    <div class="eval-card__percent">15%</div>
+                    <h4 class="eval-card__title">Demo Final</h4>
+                    <p class="eval-card__desc">
+                        Presentación ejecutiva del sistema.<br>
+                        Documentación y arquitectura.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== BADGES ===== -->
+    <section id="badges" class="badges">
+        <div class="container">
+            <div class="section-header">
+                <h2>🏆 Sistema de Logros</h2>
+                <p>Desbloquea badges a medida que avanzas en el curso</p>
+            </div>
+            <div class="badges-grid" id="badgesContainer">
+                <!-- Renderizado dinámico por JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__logo">CORHUILA</div>
+                <div class="footer__links">
+                    <a href="#">Ingeniería de Sistemas</a>
+                    <a href="#">Campus Virtual</a>
+                    <a href="#">Contacto</a>
+                </div>
+                <p class="footer__copy">
+                    © 2026 Corporación Universitaria del Huila - CORHUILA<br>
+                    Sistemas Distribuidos - Semestre 2026-1
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== BOTÓN SCROLL TOP ===== -->
+    <button class="scroll-top" id="scrollTopBtn" aria-label="Volver arriba">↑</button>
+
+    <!-- ===== MODAL RESET ===== -->
+    <div class="modal" id="resetModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <div class="modal__icon">🔄</div>
+                <h3 class="modal__title">¿Reiniciar progreso?</h3>
+                <p class="modal__desc">Esta acción eliminará todo tu progreso guardado. No se puede deshacer.</p>
+            </div>
+            <div class="modal__actions">
+                <button class="modal__btn modal__btn--cancel" id="modalCancel">Cancelar</button>
+                <button class="modal__btn modal__btn--confirm" id="modalConfirm">Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL BADGE ===== -->
+    <div class="modal" id="badgeModal">
+        <div class="modal__content">
+            <div class="modal__header">
+                <div class="modal__icon" id="badgeModalIcon">🏆</div>
+                <h3 class="modal__title" id="badgeModalTitle">¡Badge Desbloqueado!</h3>
+                <p class="modal__desc" id="badgeModalDesc">Has desbloqueado un nuevo logro.</p>
+            </div>
+            <div class="modal__actions">
+                <button class="modal__btn modal__btn--confirm" id="badgeModalClose">¡Genial!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script src="js/app.js"></script>
+</body>
+</html>
