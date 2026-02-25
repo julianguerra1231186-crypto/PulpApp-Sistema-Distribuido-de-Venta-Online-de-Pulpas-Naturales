@@ -1,13 +1,13 @@
 # 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
 Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
 <hr>
-##👥 Integrantes
+## 👥 Integrantes
 
 - Julian Guerra
 - Edwin Menendez
 
 <hr>
-##📌 Arquitectura Del Backend
+## 📌 Arquitectura Del Backend
 
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
@@ -19,7 +19,7 @@ El sistema está dividido en microservicios independientes que se comunican medi
 
 <hr>
 
-##Descripción de los Microservicios 
+## Descripción de los Microservicios 
 
 
 1.  ms-users:
@@ -39,6 +39,63 @@ Registrarse e iniciar sesión Aplicación web que funciona como interfaz de usua
 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Diagrama%20de%20microservicios.png)
 <hr>
+
+## Como Haremos Nuestro Backend:
+
+* **Lenguaje:** Java 17
+* **Framework Backend:** Spring Boot 3.x
+* **Herramienta de Construcción:** Maven
+* **IDE:** IntelliJ IDEA
+* **Frontend:** Angular
+
+1.  Backend:
+Se implementarán microservicios orientados a la creación de APIs REST, permitiendo la comunicación entre los diferentes componentes del sistema de manera independiente.
+
+2.  Base de Datos:
+Se utilizará MySQL como sistema de gestión de base de datos relacional para almacenar la información de usuarios, productos y pedidos.
+
+3.  Frontend:
+Se desarrollará una aplicación web como interfaz de usuario, la cual consumirá los servicios REST del backend.
+
+4.  Control de Versiones:
+Se empleará Git como sistema de control de versiones distribuido, siguiendo una estrategia de ramas estructurada (develop, qa, release y main) para garantizar un desarrollo organizado.
+
+5.  Contenedores:
+Se implementará Docker para la contenedorización de los microservicios, facilitando su despliegue y escalabilidad.
+
+<hr>
+
+## Dependencias que utlizaremos
+
+🔹 Spring Boot Starter Web
+Permite la creación de APIs REST para la comunicación entre los microservicios del sistema.
+
+🔹 Spring Boot Starter Data JPA
+Facilita la persistencia de datos y la interacción con la base de datos MySQL mediante el uso de entidades y repositorios.
+
+🔹 MySQL Connector
+Permite la conexión entre los microservicios y la base de datos relacional MySQL.
+
+🔹 Spring Boot Starter Security
+Se utilizará para implementar mecanismos de seguridad y control de acceso a los endpoints del sistema.
+
+🔹 JWT (JSON Web Token)
+Se empleará para la autenticación y autorización de usuarios dentro del entorno distribuido.
+
+🔹 Spring Boot Starter Validation
+Permitirá validar los datos enviados por los usuarios (correo electrónico, campos obligatorios, formatos, etc.).
+
+🔹 Lombok
+Reducirá código repetitivo, facilitando la escritura y mantenimiento del proyecto.
+
+🔹 Docker
+Se utilizará para la contenedorización de los microservicios, permitiendo su despliegue independiente y escalabilidad.
+
+🔹 Git
+Sistema de control de versiones distribuido que permitirá la gestión colaborativa del código bajo una estrategia estructurada de ramas.
+
+
+
 
 
 
