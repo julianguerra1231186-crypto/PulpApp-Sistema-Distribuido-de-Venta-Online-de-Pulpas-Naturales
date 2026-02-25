@@ -19,7 +19,7 @@ Plataforma escalable de gestión distribuida para la comercialización inteligen
 
 El sistema estará basado en una arquitectura de microservicios con base de datos MySQL.
 <hr>
-##📌 Arquitectura
-https://github.com/julianguerra1231186-crypto/ms-users
+##📌 Arquitectura Del Backend
 
-* 📦 `[1. ms-users: ](https://github.com/julianguerra1231186-crypto/ms-users)`
+* ms-users Ir : https://github.com/julianguerra1231186-crypto/ms-users
+
