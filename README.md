@@ -23,7 +23,7 @@ El sistema estará basado en una arquitectura de microservicios con base de dato
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
 - 📦 [ms-users](https://github.com/julianguerra1231186-crypto/ms-users)
-- 🔐 [pulpapp-ms-auth](https://github.com/tuusuario/pulpapp-ms-auth)
+- 🛒 [ms-products](https://github.com/julianguerra1231186-crypto/ms-products)
 - 🛒 [pulpapp-ms-products](https://github.com/tuusuario/pulpapp-ms-products)
 - 📦 [pulpapp-ms-orders](https://github.com/tuusuario/pulpapp-ms-orders)
 - 🖥️ [pulpapp-front](https://github.com/tuusuario/pulpapp-front)
