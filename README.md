@@ -22,7 +22,7 @@ El sistema estará basado en una arquitectura de microservicios con base de dato
 ##📌 Arquitectura Del Backend
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
-- 📦 [pulpapp-ms-users](https://github.com/julianguerra1231186/pulpapp-ms-users)
+- 📦 [ms-users](https://github.com/julianguerra1231186/pulpapp-ms-users)
 - 🔐 [pulpapp-ms-auth](https://github.com/tuusuario/pulpapp-ms-auth)
 - 🛒 [pulpapp-ms-products](https://github.com/tuusuario/pulpapp-ms-products)
 - 📦 [pulpapp-ms-orders](https://github.com/tuusuario/pulpapp-ms-orders)
