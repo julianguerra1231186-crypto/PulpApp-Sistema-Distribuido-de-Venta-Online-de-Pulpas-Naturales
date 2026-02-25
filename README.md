@@ -1,11 +1,11 @@
 # 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
 Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
 <hr>
-👥 Integrantes
+##👥 Integrantes
 - Julian Guerra
 - Edwin Menendez
 <hr>
-1️⃣ Descripción General:
+##1️⃣ Descripción General:
 1.  Registrarse e iniciar sesión
 2.  Consultar catálogo de productos
 3.  Agregar productos al carrito
