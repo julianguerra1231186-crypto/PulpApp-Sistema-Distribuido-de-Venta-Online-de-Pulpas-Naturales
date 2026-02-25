@@ -20,6 +20,7 @@ Plataforma escalable de gestión distribuida para la comercialización inteligen
 El sistema estará basado en una arquitectura de microservicios con base de datos MySQL.
 <hr>
 ##📌 Arquitectura Del Backend
+
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
 - 📦 [ms-users](https://github.com/julianguerra1231186-crypto/ms-users)
@@ -27,5 +28,8 @@ El sistema está dividido en microservicios independientes que se comunican medi
 - 📦 [ms-orders](https://github.com/julianguerra1231186-crypto/ms-orders)
 - 📦 [ms-notifications](https://github.com/julianguerra1231186-crypto/ms-notifications)
 - 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
+
+<hr>
+
 
 
