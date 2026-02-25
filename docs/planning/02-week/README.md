@@ -39,3 +39,30 @@ Mesa De Trabajo
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/02-week/Moscowlisto.png)
 
 <hr>
+
+# Que realizamos:
+- Realicé el proceso completo de Design Thinking, aplicando las cinco fases al proyecto de la tienda online de pulpas.
+- Definí el alcance del proyecto utilizando la técnica MoSCoW, priorizando las funcionalidades esenciales del sistema.
+- Estructura GitHub
+- Girhub Para Documentos
+- Establecí las funcionalidades Must Have, Should Have, Could Have y Won’t Have.
+- Definí el modelo inicial del flujo del sistema (registro, catálogo, carrito y generación de pedido vía WhatsApp).
+# ¿Qué quedó pendiente?
+- Integración de los módulos de seguridad.
+- Ajustes en la estructuración de algunos módulos funcionales.
+- Revisión general de coherencia entre los requerimientos y el diseño del sistema.
+# ¿Qué voy a hacer ahora?
+- Implementar los módulos de seguridad (validación de acceso, control de sesiones).
+- Desarrollar el módulo de gestión de inventario.
+- Implementar la gestión del carrito de compras con generación de factura.
+- Desarrollar el módulo de gestión de ubicaciones de distribución para organizar los domicilios.
+
+
+
+
+
+
+  
+
+
+
