@@ -5,6 +5,7 @@ Plataforma escalable de gestión distribuida para la comercialización inteligen
 
 - Julian Guerra
 - Edwin Menendez
+- -Grupo 5 
 
 <hr>
 ## 📌 Arquitectura Del Backend
