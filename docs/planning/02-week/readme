@@ -20,5 +20,5 @@ Implementar el esqueleto inicial de los microservicios del sistema de venta onli
 
 | Nombre                          | Rol                                  | Responsabilidad                                                                                                                                          |
 | ------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Julián Andrés Guerra García** | Scrum Master <br> Frontend Developer | Gestión del sprint <br> Seguimiento del proyecto y control de versiones (GitFlow) <br> Desarrollo del Frontend (Tienda Online)                           |
-| **Edwin Menéndez**              | Backend Developer <br> DevOps        | Desarrollo de microservicios (ms-users, ms-products, ms-orders, ms-notifications) <br> Configuración de MySQL <br> Implementación de Docker y despliegue |
+| **Julián Andrés Guerra García** | Backend Developer <br> DevOps  | Gestión del sprint <br> Desarrollo de microservicios (ms-users, ms-products, ms-orders, ms-notifications) <br> Configuración de MySQL <br> Implementación de Docker y despliegue |                       |
+| **Edwin Menéndez**              | Scrum Master <br> Frontend Developer     | Seguimiento del proyecto y control de versiones (GitFlow) <br> Desarrollo del Frontend (Tienda Online) |
