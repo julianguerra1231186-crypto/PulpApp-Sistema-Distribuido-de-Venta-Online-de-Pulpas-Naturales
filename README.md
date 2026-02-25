@@ -24,9 +24,8 @@ El sistema está dividido en microservicios independientes que se comunican medi
 
 - 📦 [ms-users](https://github.com/julianguerra1231186-crypto/ms-users)
 - 🛒 [ms-products](https://github.com/julianguerra1231186-crypto/ms-products)
-- 🛒 [pulpapp-ms-products](https://github.com/tuusuario/pulpapp-ms-products)
-- 📦 [pulpapp-ms-orders](https://github.com/tuusuario/pulpapp-ms-orders)
-- 🖥️ [pulpapp-front](https://github.com/tuusuario/pulpapp-front)
+- 📦 [ms-orders](https://github.com/julianguerra1231186-crypto/ms-orders)
+- 📦 [ms-notifications](https://github.com/julianguerra1231186-crypto/ms-notifications)
+- 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
 
-* ms-users Ir : https://github.com/julianguerra1231186-crypto/ms-users
 
