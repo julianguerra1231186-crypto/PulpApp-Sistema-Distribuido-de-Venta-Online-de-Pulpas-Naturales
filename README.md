@@ -17,6 +17,8 @@ El sistema está dividido en microservicios independientes que se comunican medi
 - 📦 [ms-notifications](https://github.com/julianguerra1231186-crypto/ms-notifications)
 - 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
 
+Cada microservicio implementará internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, la capa de acceso a datos y la gestión de solicitudes HTTP. Esta estructura mejora la mantenibilidad y escalabilidad del sistema distribuido.
+
 <hr>
 
 ## Descripción de los Microservicios 
