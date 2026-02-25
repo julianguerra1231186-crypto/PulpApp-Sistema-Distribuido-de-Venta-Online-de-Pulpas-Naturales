@@ -49,6 +49,8 @@ Microservicio responsable de la notificación y gestión interna de los pedidos.
 5. Registrarse e iniciar sesión
 Aplicación web que funciona como interfaz de usuario. Permite a los clientes registrarse, iniciar sesión, consultar el catálogo de productos y realizar pedidos, comunicándose con los microservicios a través de API REST.
 
+<hr>
+
 
 
 
