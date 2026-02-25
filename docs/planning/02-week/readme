@@ -14,3 +14,11 @@ Implementar el esqueleto inicial de los microservicios del sistema de venta onli
 - 3 [ms-orders](https://github.com/julianguerra1231186-crypto/ms-orders) -
 - 4 [ms-notifications](https://github.com/julianguerra1231186-crypto/ms-notifications)-
 - 5 [front](https://github.com/julianguerra1231186-crypto/Frontend)-
+
+<hr>
+###Asignacion de roles
+
+| Nombre                          | Rol                                  | Responsabilidad                                                                                                                                          |
+| ------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Julián Andrés Guerra García** | Scrum Master <br> Frontend Developer | Gestión del sprint <br> Seguimiento del proyecto y control de versiones (GitFlow) <br> Desarrollo del Frontend (Tienda Online)                           |
+| **Edwin Menéndez**              | Backend Developer <br> DevOps        | Desarrollo de microservicios (ms-users, ms-products, ms-orders, ms-notifications) <br> Configuración de MySQL <br> Implementación de Docker y despliegue |
