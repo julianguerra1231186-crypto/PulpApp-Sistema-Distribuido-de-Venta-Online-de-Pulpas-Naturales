@@ -51,6 +51,7 @@ Mesa De Trabajo
 - Integración de los módulos de seguridad.
 - Ajustes en la estructuración de algunos módulos funcionales.
 - Revisión general de coherencia entre los requerimientos y el diseño del sistema.
+- Organizar la mesa de trabajo
 # ¿Qué voy a hacer ahora?
 - Implementar los módulos de seguridad (validación de acceso, control de sesiones).
 - Desarrollar el módulo de gestión de inventario.
