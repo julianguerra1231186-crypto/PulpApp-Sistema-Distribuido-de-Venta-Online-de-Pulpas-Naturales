@@ -28,14 +28,14 @@ Mesa De Trabajo
 - [MondayDev](https://corhuila517226.monday.com/boards/18401580258/views/239155765)
 <hr>
 
-### Diesño Things
+### Diseño Things
 
-
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/02-week/dise%C3%B1othings.png)
 
 <hr>
 
 
 ### Diesño Moscow
-
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/02-week/Moscowlisto.png)
 
 <hr>
