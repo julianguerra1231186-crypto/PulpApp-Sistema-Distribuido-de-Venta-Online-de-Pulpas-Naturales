@@ -7,9 +7,10 @@ Implementar el esqueleto inicial de los microservicios del sistema de venta onli
 
 - Repositorio Principal: [Principal](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales)
 
-1.Ir: https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales
 -Repositorios Secundarios:
-1.Ir:
-2.Ir:
-3.Ir:
-4.Ir:
+
+- 1 [ms-users](https://github.com/julianguerra1231186-crypto/ms-users) -
+- 2 [ms-products](https://github.com/julianguerra1231186-crypto/ms-products) -
+- 3 [ms-orders](https://github.com/julianguerra1231186-crypto/ms-orders) -
+- 4 [ms-notifications](https://github.com/julianguerra1231186-crypto/ms-notifications)-
+- 5 [front](https://github.com/julianguerra1231186-crypto/Frontend)-
