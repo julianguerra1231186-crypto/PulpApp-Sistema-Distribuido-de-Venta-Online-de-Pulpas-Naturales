@@ -63,6 +63,8 @@ Se empleará Git como sistema de control de versiones distribuido, siguiendo una
 5.  Contenedores:
 Se implementará Docker para la contenedorización de los microservicios, facilitando su despliegue y escalabilidad.
 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/diagrama%20de%20tecnologias.png)
+
 <hr>
 
 ## Dependencias que utlizaremos
@@ -94,7 +96,7 @@ Se utilizará para la contenedorización de los microservicios, permitiendo su d
 🔹 Git
 Sistema de control de versiones distribuido que permitirá la gestión colaborativa del código bajo una estrategia estructurada de ramas.
 
-
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Diagramade%20dependencias.png)
 
 
 
