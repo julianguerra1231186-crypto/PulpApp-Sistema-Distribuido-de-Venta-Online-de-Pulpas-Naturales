@@ -19,3 +19,6 @@ Plataforma escalable de gestión distribuida para la comercialización inteligen
 
 El sistema estará basado en una arquitectura de microservicios con base de datos MySQL.
 <hr>
+##📌 Arquitectura
+
+* 📦 `1. ms-users: `
