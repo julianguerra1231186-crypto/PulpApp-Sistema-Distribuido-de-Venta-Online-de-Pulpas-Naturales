@@ -1,6 +1,7 @@
 # PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales
 Aplicación web para la venta online de pulpas naturales desarrollada bajo una arquitectura de microservicios.
 El sistema permite a los usuarios registrarse, autenticarse, consultar el catálogo de productos, agregar productos al carrito de compras y realizar pedidos ingresando su dirección de entrega. Al finalizar la compra, la información del pedido es enviada a un asesor, quien se encarga de gestionarlo y coordinar su entrega. El pago se realiza contra entrega, garantizando un proceso sencillo, accesible y adaptado a las necesidades del cliente.
+---
 
 1️⃣  Descripción General
 PulpApp es un sistema distribuido orientado a la venta online de pulpas naturales, que permite a los clientes:
