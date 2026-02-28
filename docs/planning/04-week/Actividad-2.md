@@ -4,3 +4,10 @@
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(101).png)
 ## Verificamos que estemos en la rama Actividad-2 para empezar a desarrollar la actvidad 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(102).png)
+Iniciamos creando la arquitectura MVC
+
+COnfiguramos la BaseDeDatos Mysql por medio de lo aprendido en .yml siguiendo las practicas del profesor 
+
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(106).png)
+
+
