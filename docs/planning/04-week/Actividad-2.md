@@ -21,4 +21,6 @@
 # 4: DELETE (Eliminamos el usuario que cremao "DELETE") 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(112).png)
 
+# 1: Finalizamos Con 1 Commit.
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(114).png)
 
