@@ -11,3 +11,7 @@
 - [MondayDev](https://corhuila517226.monday.com/boards/18401580258/views/239155765)
 
 <hr>
+
+# Durante la semana 4 se completaron las actividades pendientes de la semana anterior y se inició formalmente la ejecución del Sprint 1 basandonos en la trayectorio en moddle y asegurandonos que todo valla de acuerdo alo acordado en clase 
+
+## Iniciamos con la creacion del Spring Initializr 
