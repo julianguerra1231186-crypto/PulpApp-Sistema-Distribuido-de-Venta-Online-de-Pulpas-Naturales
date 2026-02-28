@@ -19,4 +19,13 @@
 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%202026-02-27%20234518.png)
 
-### Empezamos Iniciamos la activdad dejada en clase presentamos varios errores en los packes de IUservice y UserControlles por falta de direccionamiento y unso packes los cuales estaban sin accion , los solucionamos y ejecutamos nuestra nuestro sofware ServiceOneApplication y nos funciono perfectamente el tema de la bse de datos con yml la verdad fue algo nuevo para nostros ya que estamos acomstrunbrados al application.properties 
+### Empezamos Iniciamos la activdad dejada en clase presentamos varios errores en los packes de IUservice y UserControlles por falta de direccionamiento y unso packes los cuales estaban sin accion , los solucionamos y ejecutamos nuestra nuestro sofware ServiceOneApplication y nos funciono perfectamente el tema de la bse de datos con yml la verdad fue algo nuevo para nostros ya que estamos acostrumbrados  al application.properties , adjutnamos fotos de que funciono y corrio 
+
+
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(99).png)
+
+
+
+
+
+
