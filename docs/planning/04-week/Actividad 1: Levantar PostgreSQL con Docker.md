@@ -1,20 +1,15 @@
-# Evidenciamos la vinculacion en docker segun la actividad 2 de moodle 
+# Levantar PostgreSQL con Docker
 
 ### Creamos el archivo docker-compose.yml 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(115).png)
 
-
-### se nos presento un error al desplegar el contenedor ya que eestabamso nombrando otro base de datos que no era 
-
-
-### corregimos el error y ejecutamos el servidor de pg4dmin 
-
-### procedemos a crear el servidor de docker 
-
-
-### ✅ pgAdmin conectado
-### ✅ Base pulpapp_users creada
-### PostgreSQL Windows → usa 5432 nos arrojo un conflicto con los puertos y toco dejarlo con puertos independientes 
-### PostgreSQL Docker → ahora usa 5433 ✅
-### Ya no hay conflicto
-### ✅ Docker funcionando correctamente
-### podemos ver las tablas creadas despues de un largo tiempo intentadolo por fin pudimos 
+### Emepamos a subir datos al contenedor de base de datos para el microservicio ms-users utilizando Docker Compose. 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(117).png)
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(118).png)
+### Se nos presento  un error ya que no nos presenta las tablas qeu se crean en hibernate en el servidor de pg4admin
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%202026-02-28%20161711.png)
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(129).png)
+### Durante la configuración del entorno con Docker surgió un problema con el puerto 5432. En un inicio, el microservicio estaba apuntando a la base de datos con la URL jdbc:postgresql://localhost:5432/pulpapp_users. El detalle fue que en la computadora ya había una instalación local de PostgreSQL funcionando en ese mismo puerto, lo que provocó un conflicto.Por esta razón, la aplicación Spring Boot no se estaba conectando al contenedor de Docker, sino a la base de datos instalada en el sistema operativo. Esto explicaba por qué Hibernate creaba la tabla sin inconvenientes y esta aparecía en el pgAdmin local. Sin embargo, al revisar directamente el contenedor con el comando docker exec -it pulpapp_users_db psql -U postgres -d pulpapp_users y ejecutar \dt, no se mostraba ninguna tabla. Eso dejaba claro que el contenedor realmente no estaba siendo utilizado.La confirmación llegó al cerrar Docker Desktop y notar que el microservicio seguía iniciando sin errores. Con eso quedó evidente que la conexión era hacia el PostgreSQL local.Para resolver el conflicto sin necesidad de desactivar la base de datos local, se modificó el archivo docker-compose.yml para exponer el contenedor en el puerto 5433 (5433:5432). Después, se actualizó el application.yml del microservicio para que se conectara a localhost:5433.Finalmente, se eliminaron y recrearon los contenedores con docker compose down -v y docker compose up -d. Con esta configuración, el PostgreSQL local continúa utilizando el puerto 5432 y el contenedor Docker trabaja en el 5433, asegurando que el microservicio se conecte correctamente a la base de datos del contenedor.
+### Al verificar nuevamente, la tabla ya aparecía dentro de Docker, cumpliendo así con lo solicitado en la actividad.
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%202026-02-28%20164452.png)
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(138).png)
