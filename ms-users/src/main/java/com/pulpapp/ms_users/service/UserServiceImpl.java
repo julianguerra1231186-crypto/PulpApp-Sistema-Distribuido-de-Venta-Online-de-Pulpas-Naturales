@@ -1,46 +1,69 @@
 package com.pulpapp.ms_users.service;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.util.List;
-
+import com.pulpapp.ms_users.dto.UserRequestDTO;
+import com.pulpapp.ms_users.dto.UserResponseDTO;
 import com.pulpapp.ms_users.entity.User;
 import com.pulpapp.ms_users.repository.UserRepository;
-import com.pulpapp.ms_users.exception.ResourceNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements com.pulpapp.ms_users.service.IUserService {
+public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     @Override
-    public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException());
+    public UserResponseDTO findById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return mapToResponse(user);
     }
 
     @Override
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserResponseDTO save(UserRequestDTO dto) {
+
+        User user = new User();
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+
+        return mapToResponse(userRepository.save(user));
     }
 
     @Override
-    public User update(Long id, User user) {
-        User existing = findById(id);
-        existing.setName(user.getName());
-        existing.setEmail(user.getEmail());
-        existing.setPassword(user.getPassword());
-        return userRepository.save(existing);
+    public UserResponseDTO update(Long id, UserRequestDTO dto) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(dto.getPassword());
+
+        return mapToResponse(userRepository.save(user));
     }
 
     @Override
     public void delete(Long id) {
         userRepository.deleteById(id);
+    }
+
+    private UserResponseDTO mapToResponse(User user) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(user.getId());
+        dto.setName(user.getName());
+        dto.setEmail(user.getEmail());
+        return dto;
     }
 }

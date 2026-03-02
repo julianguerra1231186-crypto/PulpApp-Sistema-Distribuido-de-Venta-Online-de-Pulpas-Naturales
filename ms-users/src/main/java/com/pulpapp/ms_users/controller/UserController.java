@@ -2,10 +2,12 @@ package com.pulpapp.ms_users.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;   // 👈 IMPORTANTE
 
 import java.util.List;
 
-import com.pulpapp.ms_users.entity.User;
+import com.pulpapp.ms_users.dto.UserRequestDTO;
+import com.pulpapp.ms_users.dto.UserResponseDTO;
 import com.pulpapp.ms_users.service.IUserService;
 
 @RestController
@@ -17,26 +19,27 @@ public class UserController {
 
     // GET ALL
     @GetMapping
-    public List<User> getAll() {
+    public List<UserResponseDTO> getAll() {
         return userService.findAll();
     }
 
     // GET BY ID
     @GetMapping("/{id}")
-    public User getById(@PathVariable Long id) {
+    public UserResponseDTO getById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
     // POST
     @PostMapping
-    public User create(@RequestBody User user) {
-        return userService.save(user);
+    public UserResponseDTO create(@Valid @RequestBody UserRequestDTO dto) {  // Validacion
+        return userService.save(dto);
     }
 
     // PUT
     @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @RequestBody User user) {
-        return userService.update(id, user);
+    public UserResponseDTO update(@PathVariable Long id,
+                                  @Valid @RequestBody UserRequestDTO dto) {  // Validacion
+        return userService.update(id, dto);
     }
 
     // DELETE
