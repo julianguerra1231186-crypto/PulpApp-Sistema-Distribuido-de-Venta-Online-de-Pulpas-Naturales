@@ -41,7 +41,12 @@
 ## Estamos usando anotaciones de validación de  en los DTOs para asegurarnos de que la información que llega sea correcta. Además, tenemos un GlobalExceptionHandler con @RestControllerAdvice que se encarga de atrapar la excepción MethodArgumentNotValidException y devolver un 400 con mensajes personalizados cuando algo no cumple con las validaciones.
 
 
-
+# Actividad 4: Commit, PR y Merge(1) Commit con convención: feat(service-one): add PostgreSQL persistence. (2) Push a feature branch y crear PR hacia develop. (3) Review cruzado con otro equipo. (4) Merge aprobado — verificar que develop funciona con la BD.
+## Yo lo hare de la sigueinte manera no quiero utilizar mi develop entonces creare una rama que se llama develop-actvididad y haremos merge con ella y pobraremos las funcionalidades sin tocar mi carperta develop 
+### Iniciamos creando un commit 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(161).png)
+### creamos la rama Develop-Actividad desde la rama Actvidad-2 y la subimos Verificamos que estamos en la rama develop-actividad 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(163).png)
 
 
 
