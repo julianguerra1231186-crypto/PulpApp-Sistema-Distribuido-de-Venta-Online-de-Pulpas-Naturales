@@ -27,4 +27,32 @@
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(151).png)
 ## Organizamos nuestro Postman  
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(153).png)
+# Actividad 3: Manejo de Errores y Validación
+## (1) Agregar el GlobalExceptionHandler. (2) Implementar @NotBlank, @Email, @Size en los DTOs de request. (3) Probar que al enviar datos inválidos se retorna un error 400 con mensaje claro.
+### Iniciamos añadiendo las validaciones
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(154).png)
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(156).png)
+# realziamos las pluebas en postman
+### Creamos un usuario que no cumple con las validaciones que establecimos, por eso lo rechaza
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(157).png)
+### Pedido Sin ID 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(159).png)
+
+## Estamos usando anotaciones de validación de  en los DTOs para asegurarnos de que la información que llega sea correcta. Además, tenemos un GlobalExceptionHandler con @RestControllerAdvice que se encarga de atrapar la excepción MethodArgumentNotValidException y devolver un 400 con mensajes personalizados cuando algo no cumple con las validaciones.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
