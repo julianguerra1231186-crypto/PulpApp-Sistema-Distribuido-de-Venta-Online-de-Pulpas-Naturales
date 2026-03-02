@@ -47,6 +47,24 @@
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(161).png)
 ### creamos la rama Develop-Actividad desde la rama Actvidad-2 y la subimos Verificamos que estamos en la rama develop-actividad 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(163).png)
+### realizamos el merge 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(161).png)
+### desplegamos y verificamos que todo funcione bien 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(175).png)
+### pluebas con Postman 
+## Crear Usuario
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(171).png)
+## Probamos Validaciones 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(172).png)
+## Crear Pedidos 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(173).png)
+## Consultar Pedidos 
+![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Captura%20de%20pantalla%20(174).png)
+
+### Para esta actividad trabajé sobre la rama feature actividad-2, donde implementé la persistencia con PostgreSQL en Docker, la relación entre entidades User y Pedido, el uso de DTOs, validaciones con Jakarta Validation y el manejo global de excepciones.
+### Posteriormente realicé un Pull Request hacia la rama develop-actividad, donde se hizo el merge y verifiqué que la aplicación funcionara correctamente después de la integración.
+### Decidí no hacer el merge directamente hacia develop para mantener esa rama principal intacta y evitar afectar posibles integraciones del equipo. Sin embargo, en cualquier momento puedo realizar el merge hacia develop si el docente o el equipo lo requieren, ya que la rama está completamente estable y validada.
+
 
 
 
