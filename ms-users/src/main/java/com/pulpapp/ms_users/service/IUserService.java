@@ -1,17 +1,19 @@
 package com.pulpapp.ms_users.service;
 
+import com.pulpapp.ms_users.dto.UserRequestDTO;
+import com.pulpapp.ms_users.dto.UserResponseDTO;
+
 import java.util.List;
-import com.pulpapp.ms_users.entity.User;
 
 public interface IUserService {
 
-    List<User> findAll();
+    List<UserResponseDTO> findAll();
 
-    User findById(Long id);
+    UserResponseDTO findById(Long id);
 
-    User save(User user);
+    UserResponseDTO save(UserRequestDTO dto);
 
-    User update(Long id, User user);
+    UserResponseDTO update(Long id, UserRequestDTO dto);
 
     void delete(Long id);
 }

@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: pulpapp_users_db
+    environment:
+      POSTGRES_DB: pulpapp_users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5433:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"

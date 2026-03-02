@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/pulpapp_users
+    url: jdbc:postgresql://localhost:5433/pulpapp_users
     username: postgres
-    password: 123
+    password: 1234
 
   jpa:
     hibernate:
