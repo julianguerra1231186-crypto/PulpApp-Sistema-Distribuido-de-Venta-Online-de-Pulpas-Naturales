@@ -1,22 +1,213 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <title>PulpApp - Pulpas Naturales</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PulpApp</title>
+
     <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<h1>PulpApp</h1>
-<h2>Catálogo de Pulpas</h2>
+<!-- SPLASH -->
 
-<div id="productos"></div>
+<div id="splash">
+    <img src="img/sinfondologo-removebg-preview.png" class="logo-splash" alt="Logo PulpApp">
+</div>
 
-<h2>Carrito</h2>
-<ul id="carrito"></ul>
 
-<button onclick="enviarPedido()">Enviar pedido por WhatsApp</button>
+<!-- APP PRINCIPAL -->
+
+<div id="app" class="hidden">
+
+    <!-- NAVBAR -->
+
+    <header class="navbar">
+
+        <h1>Catálogo</h1>
+
+        <a href="landing.html" class="btn-volver">
+            ← Volver al inicio
+        </a>
+
+    </header>
+
+
+    <!-- CARRITO FLOTANTE -->
+
+    <div class="carrito-flotante" onclick="abrirCarrito()">
+        🛒
+        <span id="contador">0</span>
+    </div>
+
+
+    <!-- BUSCADOR -->
+
+    <div class="busqueda-container">
+
+        <input
+                type="text"
+                id="buscador"
+                placeholder="🔎 Buscar pulpas..."
+                onkeyup="buscarProducto()">
+
+    </div>
+
+
+    <!-- CATALOGO -->
+
+    <section class="catalogo">
+
+        <div class="producto">
+
+            <img src="img/fresa.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Fresa">
+
+            <h3>🍓 Pulpa de Fresa</h3>
+
+            <p class="precio">$6000</p>
+
+            <button onclick="agregarCarrito('Pulpa de Fresa',6000)">
+                Agregar
+            </button>
+
+        </div>
+
+
+        <div class="producto">
+
+            <img src="img/mora.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Mora">
+
+            <h3>🍒 Pulpa de Mora</h3>
+
+            <p class="precio">$6500</p>
+
+            <button onclick="agregarCarrito('Pulpa de Mora',6500)">
+                Agregar
+            </button>
+
+        </div>
+
+
+        <div class="producto">
+
+            <img src="img/maracuya.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Maracuya">
+
+            <h3>🍊 Pulpa de Maracuyá</h3>
+
+            <p class="precio">$7000</p>
+
+            <button onclick="agregarCarrito('Pulpa de Maracuyá',7000)">
+                Agregar
+            </button>
+
+        </div>
+
+
+        <div class="producto">
+
+            <img src="img/lulo.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Lulo">
+
+            <h3>🍋 Pulpa de Lulo</h3>
+
+            <p class="precio">$6500</p>
+
+            <button onclick="agregarCarrito('Pulpa de Lulo',6500)">
+                Agregar
+            </button>
+
+        </div>
+
+
+        <div class="producto">
+
+            <img src="img/coco.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Coco">
+
+            <h3>🥥 Pulpa de Coco</h3>
+
+            <p class="precio">$7500</p>
+
+            <button onclick="agregarCarrito('Pulpa de Coco',7500)">
+                Agregar
+            </button>
+
+        </div>
+
+
+        <div class="producto">
+
+            <img src="img/durazno.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Durazno">
+
+            <h3>🍑 Pulpa de Durazno</h3>
+
+            <p class="precio">$6500</p>
+
+            <button onclick="agregarCarrito('Pulpa de Durazno',6500)">
+                Agregar
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- PANEL DEL CARRITO -->
+
+    <div id="panelCarrito" class="panel-carrito hidden">
+
+        <button class="cerrar-carrito" onclick="cerrarCarrito()">✖</button>
+
+        <h2>Tu carrito</h2>
+
+        <ul id="listaCarrito"></ul>
+
+        <h3>Total: $<span id="total">0</span></h3>
+
+
+        <p class="mensaje-direccion">
+
+            Para poder realizar la entrega de tu pedido correctamente, por favor déjanos tu dirección completa.
+            Esto nos permitirá ubicar tu residencia fácilmente y coordinar la entrega de manera rápida y segura.
+
+        </p>
+
+
+        <input
+                type="text"
+                id="direccion"
+                class="direccion"
+                placeholder="Ej: Calle 10 #15-25 Barrio Centro">
+
+
+        <button class="btn-comprar" onclick="enviarPedido()">
+            Confirmar pedido por WhatsApp
+        </button>
+
+    </div>
+
+
+
+    <!-- MODAL IMAGEN GRANDE -->
+
+    <div id="modalImagen" class="modal hidden" onclick="cerrarImagen()">
+
+        <img id="imagenGrande" alt="Vista del producto">
+
+    </div>
+
+</div>
+
+
+
+<!-- NOTIFICACION -->
+
+<div id="notificacion"></div>
+
 
 <script src="app.js"></script>
 
