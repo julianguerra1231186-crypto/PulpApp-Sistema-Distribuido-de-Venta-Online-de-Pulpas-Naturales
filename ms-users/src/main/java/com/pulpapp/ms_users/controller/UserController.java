@@ -12,7 +12,7 @@ import com.pulpapp.ms_users.service.IUserService;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")   // 👈 PERMITE PETICIONES DESDE EL FRONTEND
+@CrossOrigin(origins = "*")   // PERMITE PETICIONES DESDE EL FRONTEND
 @RequiredArgsConstructor
 public class UserController {
 

@@ -8,6 +8,9 @@ import lombok.Data;
 @Data
 public class UserRequestDTO {
 
+    @NotBlank(message = "La cédula es obligatoria")
+    private String cedula;
+
     @NotBlank(message = "El nombre no puede estar vacío")
     private String name;
 
@@ -18,4 +21,7 @@ public class UserRequestDTO {
     @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 6, message = "La contraseña debe tener mínimo 6 caracteres")
     private String password;
+
+    @NotBlank(message = "La dirección es obligatoria")
+    private String direccion;
 }

@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://pulpapp_users_db:5432/pulpapp_users
+    url: jdbc:postgresql://pulpapp_users_db:5433/pulpapp_users
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
