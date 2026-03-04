@@ -13,9 +13,7 @@ Plataforma escalable de gestión distribuida para la comercialización inteligen
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
 - 📦 [ms-users](https://github.com/julianguerra1231186-crypto/ms-users)
-- 🛒 [ms-products](https://github.com/julianguerra1231186-crypto/ms-products)
-- 📦 [ms-orders](https://github.com/julianguerra1231186-crypto/ms-orders)
-- 📦 [ms-notifications](https://github.com/julianguerra1231186-crypto/ms-notifications)
+- 🛒 [ms-Api](https://github.com/julianguerra1231186-crypto/ms-products)
 - 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
 
 Cada microservicio implementará internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, la capa de acceso a datos y la gestión de solicitudes HTTP. Esta estructura mejora la mantenibilidad y escalabilidad del sistema distribuido.
