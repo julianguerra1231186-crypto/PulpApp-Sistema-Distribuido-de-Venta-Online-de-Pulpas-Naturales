@@ -1,7 +1,7 @@
 # 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
 Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
 
-#mesa de trabajo : https://corhuila517226.monday.com/boards/18401580258/views/239155765
+#mesa de trabajo : https://corhuila517226.monday.com/boards/18401580258
 <hr>
 ## 👥 Integrantes
 
