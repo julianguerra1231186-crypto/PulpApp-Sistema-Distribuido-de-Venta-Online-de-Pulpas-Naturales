@@ -1,0 +1,28 @@
+body{
+    font-family: Arial;
+    margin:40px;
+    background:#f5f5f5;
+}
+
+h1{
+    color:#2c7a7b;
+}
+
+#productos div{
+    background:white;
+    border:1px solid #ddd;
+    padding:10px;
+    margin:10px;
+}
+
+button{
+    background:#2c7a7b;
+    color:white;
+    border:none;
+    padding:8px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#225e60;
+}

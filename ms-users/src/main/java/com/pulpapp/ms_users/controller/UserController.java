@@ -2,7 +2,7 @@ package com.pulpapp.ms_users.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;   // 👈 IMPORTANTE
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -12,6 +12,7 @@ import com.pulpapp.ms_users.service.IUserService;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "*")   // 👈 PERMITE PETICIONES DESDE EL FRONTEND
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,14 +32,14 @@ public class UserController {
 
     // POST
     @PostMapping
-    public UserResponseDTO create(@Valid @RequestBody UserRequestDTO dto) {  // Validacion
+    public UserResponseDTO create(@Valid @RequestBody UserRequestDTO dto) {
         return userService.save(dto);
     }
 
     // PUT
     @PutMapping("/{id}")
     public UserResponseDTO update(@PathVariable Long id,
-                                  @Valid @RequestBody UserRequestDTO dto) {  // Validacion
+                                  @Valid @RequestBody UserRequestDTO dto) {
         return userService.update(id, dto);
     }
 
