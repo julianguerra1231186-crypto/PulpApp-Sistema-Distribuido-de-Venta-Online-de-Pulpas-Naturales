@@ -17,15 +17,11 @@
 <!-- SPLASH -->
 
 <div id="splash">
-    <img src="img/sinfondologo-removebg-preview.png" class="logo-splash" alt="Logo PulpApp">
+    <img src="img/sinfondologo-removebg-preview.png" class="logo-splash">
 </div>
 
 
-<!-- APP PRINCIPAL -->
-
 <div id="app" class="hidden">
-
-    <!-- NAVBAR -->
 
     <header class="navbar">
 
@@ -38,15 +34,11 @@
     </header>
 
 
-    <!-- CARRITO FLOTANTE -->
-
     <div class="carrito-flotante" onclick="abrirCarrito()">
         🛒
         <span id="contador">0</span>
     </div>
 
-
-    <!-- BUSCADOR -->
 
     <div class="busqueda-container">
 
@@ -59,13 +51,11 @@
     </div>
 
 
-    <!-- CATALOGO -->
-
     <section class="catalogo">
 
         <div class="producto">
 
-            <img src="img/fresa.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Fresa">
+            <img src="img/fresa.png" class="producto-img" onclick="verImagen(this.src)">
 
             <h3>🍓 Pulpa de Fresa</h3>
 
@@ -80,7 +70,7 @@
 
         <div class="producto">
 
-            <img src="img/mora.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Mora">
+            <img src="img/mora.png" class="producto-img" onclick="verImagen(this.src)">
 
             <h3>🍒 Pulpa de Mora</h3>
 
@@ -95,7 +85,7 @@
 
         <div class="producto">
 
-            <img src="img/maracuya.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Maracuya">
+            <img src="img/maracuya.png" class="producto-img" onclick="verImagen(this.src)">
 
             <h3>🍊 Pulpa de Maracuyá</h3>
 
@@ -110,7 +100,7 @@
 
         <div class="producto">
 
-            <img src="img/lulo.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Lulo">
+            <img src="img/lulo.png" class="producto-img" onclick="verImagen(this.src)">
 
             <h3>🍋 Pulpa de Lulo</h3>
 
@@ -125,7 +115,7 @@
 
         <div class="producto">
 
-            <img src="img/coco.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Coco">
+            <img src="img/coco.png" class="producto-img" onclick="verImagen(this.src)">
 
             <h3>🥥 Pulpa de Coco</h3>
 
@@ -140,7 +130,7 @@
 
         <div class="producto">
 
-            <img src="img/durazno.png" class="producto-img" onclick="verImagen(this.src)" alt="Pulpa de Durazno">
+            <img src="img/durazno.png" class="producto-img" onclick="verImagen(this.src)">
 
             <h3>🍑 Pulpa de Durazno</h3>
 
@@ -156,7 +146,7 @@
 
 
 
-    <!-- PANEL DEL CARRITO -->
+    <!-- PANEL CARRITO -->
 
     <div id="panelCarrito" class="panel-carrito hidden">
 
@@ -169,19 +159,35 @@
         <h3>Total: $<span id="total">0</span></h3>
 
 
-        <p class="mensaje-direccion">
+        <!-- DATOS CLIENTE -->
 
-            Para poder realizar la entrega de tu pedido correctamente, por favor déjanos tu dirección completa.
-            Esto nos permitirá ubicar tu residencia fácilmente y coordinar la entrega de manera rápida y segura.
+        <h3>Datos del cliente</h3>
 
-        </p>
+        <label>Cédula</label>
+        <input type="text" id="cedula">
 
+        <button onclick="buscarUsuario()">Consultar</button>
 
-        <input
-                type="text"
-                id="direccion"
-                class="direccion"
-                placeholder="Ej: Calle 10 #15-25 Barrio Centro">
+        <label>Nombre completo</label>
+        <input type="text" id="nombre">
+
+        <label>Correo</label>
+        <input type="email" id="correo">
+
+        <label>Dirección</label>
+        <input type="text" id="direccion">
+
+        <div style="margin-top:10px">
+
+            <button onclick="crearUsuario()" class="btn-guardar">
+                Agregar usuario
+            </button>
+
+            <button onclick="modificarUsuario()" class="btn-editar">
+                Modificar usuario
+            </button>
+
+        </div>
 
 
         <button class="btn-comprar" onclick="enviarPedido()">
@@ -192,22 +198,16 @@
 
 
 
-    <!-- MODAL IMAGEN GRANDE -->
-
     <div id="modalImagen" class="modal hidden" onclick="cerrarImagen()">
 
-        <img id="imagenGrande" alt="Vista del producto">
+        <img id="imagenGrande">
 
     </div>
 
 </div>
 
 
-
-<!-- NOTIFICACION -->
-
 <div id="notificacion"></div>
-
 
 <script src="app.js"></script>
 

@@ -17,16 +17,17 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<UserResponseDTO> findAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+
+        return userRepository.findAll().stream().map(this::mapToResponse).toList();
+
     }
 
     @Override
     public UserResponseDTO findById(Long id) {
+
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
         return mapToResponse(user);
     }
 
@@ -34,11 +35,16 @@ public class UserServiceImpl implements IUserService {
     public UserResponseDTO save(UserRequestDTO dto) {
 
         User user = new User();
+
+        user.setCedula(dto.getCedula());
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setDireccion(dto.getDireccion());
 
-        return mapToResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+
+        return mapToResponse(savedUser);
     }
 
     @Override
@@ -47,23 +53,34 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        user.setCedula(dto.getCedula());
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
         user.setPassword(dto.getPassword());
+        user.setDireccion(dto.getDireccion());
 
-        return mapToResponse(userRepository.save(user));
+        User updatedUser = userRepository.save(user);
+
+        return mapToResponse(updatedUser);
     }
 
     @Override
     public void delete(Long id) {
+
         userRepository.deleteById(id);
+
     }
 
     private UserResponseDTO mapToResponse(User user) {
+
         UserResponseDTO dto = new UserResponseDTO();
+
         dto.setId(user.getId());
+        dto.setCedula(user.getCedula());
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
+        dto.setDireccion(user.getDireccion());
+
         return dto;
     }
 }

@@ -264,5 +264,92 @@ window.addEventListener("load", () => {
         actualizarCarrito();
 
     }, 2500);
+    /* ===========================
+USUARIOS - API SPRING BOOT
+=========================== */
+
+    function buscarUsuario(){
+
+        const cedula = document.getElementById("cedula").value;
+
+        fetch(`http://localhost:8081/users/${cedula}`)
+            .then(res => res.json())
+            .then(data => {
+
+                document.getElementById("nombre").value = data.name;
+                document.getElementById("correo").value = data.email;
+                document.getElementById("direccion").value = data.address;
+
+            })
+            .catch(() => {
+
+                alert("Usuario no encontrado. Puede registrarlo.");
+
+            });
+
+    }
+
+
+
+    function crearUsuario(){
+
+        const usuario = {
+
+            id: document.getElementById("cedula").value,
+            name: document.getElementById("nombre").value,
+            email: document.getElementById("correo").value,
+            address: document.getElementById("direccion").value
+
+        };
+
+        fetch("http://localhost:8081/users",{
+
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(usuario)
+
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                alert("Usuario registrado correctamente");
+
+            });
+
+    }
+
+
+
+    function modificarUsuario(){
+
+        const id = document.getElementById("cedula").value;
+
+        const usuario = {
+
+            name: document.getElementById("nombre").value,
+            email: document.getElementById("correo").value,
+            address: document.getElementById("direccion").value
+
+        };
+
+        fetch(`http://localhost:8081/users/${id}`,{
+
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body: JSON.stringify(usuario)
+
+        })
+            .then(res => res.json())
+            .then(data => {
+
+                alert("Usuario actualizado");
+
+            });
+
+    }
 
 });
