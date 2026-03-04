@@ -1,32 +1,45 @@
+
 services:
 
   postgres:
     image: postgres:15
     container_name: pulpapp_users_db
+    restart: always
     environment:
       POSTGRES_DB: pulpapp_users
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
     ports:
       - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
+    restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin123
     ports:
       - "5050:80"
+    depends_on:
+      - postgres
 
   ms-users:
-    build: .
+    build:
+      context: ./ms-users
+      dockerfile: Dockerfile
     container_name: ms_users_service
+    restart: always
     ports:
       - "8081:8081"
     depends_on:
       - postgres
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_users
+      SPRING_DATASOURCE_URL: jdbc:postgresql://pulpapp_users_db:5432/pulpapp_users
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
+
+volumes:
+  postgres_data:
