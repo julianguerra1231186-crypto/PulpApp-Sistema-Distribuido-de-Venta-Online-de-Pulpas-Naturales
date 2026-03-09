@@ -15,7 +15,6 @@ import com.pulpapp.ms_users.service.IUserService;
 @CrossOrigin(origins = "*")   // PERMITE PETICIONES DESDE EL FRONTEND
 @RequiredArgsConstructor
 public class UserController {
-
     private final IUserService userService;
 
     // GET ALL
@@ -36,7 +35,7 @@ public class UserController {
         return userService.save(dto);
     }
 
-    // PUT
+    // PUT- Para Modificar
     @PutMapping("/{id}")
     public UserResponseDTO update(@PathVariable Long id,
                                   @Valid @RequestBody UserRequestDTO dto) {
