@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+
+  pulpapp_users_db:
+    image: postgres:15
+    container_name: pulpapp_users_db
+    environment:
+      POSTGRES_DB: pulpapp_users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5433:5432"
+
+  ms_users_service:
+    build: .
+    container_name: ms_users_service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - pulpapp_users_db
