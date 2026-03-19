@@ -2,8 +2,6 @@ package com.pulpapp.ms_users.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -18,6 +16,9 @@ public class User {
     private String cedula;
 
     @Column(nullable = false)
+    private String telefono;
+
+    @Column(nullable = false)
     private String name;
 
     @Column(nullable = false, unique = true)
@@ -29,10 +30,4 @@ public class User {
     @Column(nullable = false)
     private String direccion;
 
-    @OneToMany(mappedBy = "user",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private List<Pedido> pedidos = new ArrayList<>();
-
-    public User() {}
 }

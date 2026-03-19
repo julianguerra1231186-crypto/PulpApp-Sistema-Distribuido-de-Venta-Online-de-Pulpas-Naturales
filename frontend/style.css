@@ -1,154 +1,153 @@
+/* ================================
+RESET BASICO
+================================ */
+
+*{
+    box-sizing:border-box;
+}
+
 body{
     margin:0;
-    font-family:Arial;
-    background:#f5f5f5;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:#f4f6f8;
+    color:#333;
 }
-/* SPLASH */
+
+/* ================================
+SPLASH
+================================ */
 
 #splash{
-
     position:fixed;
     top:0;
     left:0;
-
     width:100%;
     height:100vh;
-
     background:white;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     z-index:5000;
-
-    transition:opacity 0.5s;
-
 }
 
 .logo-splash{
-
     width:220px;
-
     animation:logoEntrada 2.5s ease-in-out;
-
 }
 
 @keyframes logoEntrada{
-
-    0%{
-        opacity:0;
-        transform:scale(0.6);
-    }
-
-    50%{
-        opacity:1;
-        transform:scale(1.1);
-    }
-
-    100%{
-        transform:scale(1);
-    }
-
+    0%{opacity:0;transform:scale(0.6);}
+    50%{opacity:1;transform:scale(1.1);}
+    100%{transform:scale(1);}
 }
 
-/* NAVBAR */
+/* ================================
+NAVBAR
+================================ */
 
 .navbar{
     text-align:center;
-    padding:20px;
+    padding:25px;
     background:white;
-    box-shadow:0 2px 5px rgba(0,0,0,0.1);
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
-/* BOTON VOLVER */
+
+.navbar h1{
+    margin:0;
+    font-size:28px;
+}
+
+/* ================================
+BOTON VOLVER
+================================ */
 
 .btn-volver{
-
     display:inline-block;
-
     margin-top:10px;
-
     background:#0c8f4f;
     color:white;
-
-    padding:8px 18px;
-
-    border-radius:20px;
-
+    padding:9px 20px;
+    border-radius:25px;
     text-decoration:none;
-
     font-size:14px;
-
-    transition:0.3s;
-
+    transition:0.25s;
 }
 
 .btn-volver:hover{
-
     background:#08723f;
-
     transform:translateY(-2px);
-
 }
-/* CARRITO FLOTANTE */
+
+/* ================================
+CARRITO FLOTANTE
+================================ */
 
 .carrito-flotante{
     position:fixed;
     top:20px;
     left:20px;
-
     background:#0c8f4f;
     color:white;
-
-    width:55px;
-    height:55px;
-
+    width:60px;
+    height:60px;
     display:flex;
     align-items:center;
     justify-content:center;
-
     border-radius:50%;
-    font-size:24px;
-
+    font-size:26px;
     cursor:pointer;
     z-index:1000;
-    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    transition:0.25s;
+}
+
+.carrito-flotante:hover{
+    transform:scale(1.1);
 }
 
 .carrito-flotante span{
     position:absolute;
     top:-5px;
     right:-5px;
-
     background:red;
     color:white;
-
     font-size:12px;
     padding:4px 7px;
     border-radius:50%;
 }
 
-/* BUSCADOR */
+/* ================================
+BUSCADOR
+================================ */
 
 .busqueda-container{
     display:flex;
     justify-content:center;
-    margin:20px;
+    margin:30px;
 }
 
 #buscador{
-    width:320px;
-    padding:12px;
-    border-radius:25px;
+    width:380px;
+    padding:12px 18px;
+    border-radius:30px;
     border:1px solid #ddd;
     font-size:15px;
+    outline:none;
+    transition:0.2s;
+    box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
-/* CATALOGO */
+#buscador:focus{
+    border-color:#0c8f4f;
+}
+
+/* ================================
+CATALOGO
+================================ */
 
 .catalogo{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
     gap:30px;
     padding:40px;
     max-width:1200px;
@@ -157,20 +156,22 @@ body{
 
 .producto{
     background:white;
-    padding:20px;
-    border-radius:10px;
+    padding:25px;
+    border-radius:14px;
     text-align:center;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
-    transition:0.3s;
+    box-shadow:0 6px 18px rgba(0,0,0,0.08);
+    transition:0.25s;
 }
 
 .producto:hover{
-    transform:translateY(-6px);
+    transform:translateY(-8px);
+    box-shadow:0 12px 25px rgba(0,0,0,0.12);
 }
 
 .producto-img{
     width:120px;
     cursor:pointer;
+    margin-bottom:10px;
 }
 
 .precio{
@@ -179,47 +180,71 @@ body{
     margin:10px 0;
 }
 
-/* PANEL CARRITO */
+/* BOTON AGREGAR */
+
+.producto button{
+    background:#0c8f4f;
+    color:white;
+    border:none;
+    padding:9px 20px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:0.25s;
+}
+
+.producto button:hover{
+    background:#08723f;
+}
+
+/* ================================
+PANEL CARRITO
+================================ */
 
 .panel-carrito{
     position:fixed;
     left:0;
     top:0;
-
-    width:320px;
+    width:350px;
     height:100%;
-
     background:white;
-    padding:20px;
-
-    box-shadow:2px 0 15px rgba(0,0,0,0.2);
-
+    padding:25px;
+    box-shadow:4px 0 25px rgba(0,0,0,0.25);
     overflow-y:auto;
     z-index:2000;
 }
 
 .panel-carrito h2{
-    margin-top:10px;
+    margin-top:0;
 }
+
+.panel-carrito h3{
+    margin-top:20px;
+}
+
+/* ================================
+PRODUCTOS DEL CARRITO
+================================ */
 
 .panel-carrito ul{
     list-style:none;
     padding:0;
-    margin:10px 0;
+    margin:15px 0;
 }
 
 .panel-carrito li{
     display:flex;
     justify-content:space-between;
     align-items:center;
-
-    padding:10px 0;
-    border-bottom:1px solid #eee;
-
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:10px;
+    background:#f7f7f7;
     font-size:14px;
 }
 
-/* CONTROLES CANTIDAD */
+/* ================================
+CONTROLES CANTIDAD
+================================ */
 
 .cantidad{
     display:flex;
@@ -228,93 +253,138 @@ body{
 }
 
 .cantidad button{
-    width:25px;
-    height:25px;
-
+    width:26px;
+    height:26px;
     border:none;
-    border-radius:4px;
-
+    border-radius:6px;
     background:#0c8f4f;
     color:white;
     cursor:pointer;
+    font-weight:bold;
+    transition:0.2s;
+}
+
+.cantidad button:hover{
+    opacity:0.9;
 }
 
 .eliminar{
-    background:red !important;
+    background:#e53935 !important;
 }
 
-/* DIRECCION */
+/* ================================
+FORMULARIO CLIENTE
+================================ */
 
-.mensaje-direccion{
+.panel-carrito label{
     font-size:13px;
-    margin-top:15px;
-    color:#444;
-}
-
-.direccion{
-    width:100%;
-    padding:10px;
     margin-top:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
+    display:block;
+    font-weight:600;
 }
 
-/* BOTON WHATSAPP */
+.panel-carrito input{
+    width:100%;
+    padding:11px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    margin-top:5px;
+    margin-bottom:10px;
+    font-size:14px;
+    outline:none;
+    transition:0.2s;
+}
+
+.panel-carrito input:focus{
+    border-color:#0c8f4f;
+}
+
+/* BOTONES USUARIO */
+
+.btn-guardar{
+    background:#0c8f4f;
+    color:white;
+    border:none;
+    padding:9px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn-editar{
+    background:#1e73be;
+    color:white;
+    border:none;
+    padding:9px 14px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn-guardar:hover{
+    background:#08723f;
+}
+
+.btn-editar:hover{
+    background:#145a9c;
+}
+
+/* ================================
+BOTON WHATSAPP
+================================ */
 
 .btn-comprar{
     width:100%;
     margin-top:15px;
-
     background:#25D366;
     color:white;
-
-    padding:12px;
-
+    padding:14px;
     border:none;
-    border-radius:6px;
-
+    border-radius:10px;
     cursor:pointer;
-    font-size:15px;
+    font-size:16px;
+    font-weight:bold;
+    transition:0.25s;
 }
 
-/* MODAL IMAGEN */
+.btn-comprar:hover{
+    background:#20b954;
+}
+
+/* ================================
+MODAL IMAGEN
+================================ */
 
 .modal{
     position:fixed;
     top:0;
     left:0;
-
     width:100%;
     height:100%;
-
     background:rgba(0,0,0,0.8);
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     z-index:3000;
 }
 
 .modal img{
     max-width:420px;
-    border-radius:10px;
+    border-radius:12px;
 }
 
-/* NOTIFICACION */
+/* ================================
+NOTIFICACION
+================================ */
 
 #notificacion{
     position:fixed;
     bottom:20px;
     right:20px;
-
     background:#0c8f4f;
     color:white;
-
-    padding:10px 20px;
-    border-radius:6px;
-
+    padding:12px 22px;
+    border-radius:8px;
     opacity:0;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
     transition:0.4s;
 }
 
@@ -322,20 +392,40 @@ body{
     opacity:1;
 }
 
-/* BOTON CERRAR */
+/* ================================
+BOTON CERRAR
+================================ */
 
 .cerrar-carrito{
     position:absolute;
     right:15px;
     top:10px;
-
     border:none;
     background:none;
-
     font-size:22px;
     cursor:pointer;
 }
 
+/* ================================
+UTILIDADES
+================================ */
+
 .hidden{
     display:none;
+}
+
+/* ================================
+RESPONSIVE
+================================ */
+
+@media (max-width:768px){
+
+    .catalogo{
+        grid-template-columns:1fr;
+    }
+
+    .panel-carrito{
+        width:100%;
+    }
+
 }
