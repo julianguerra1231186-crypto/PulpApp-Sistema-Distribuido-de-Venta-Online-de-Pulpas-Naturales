@@ -19,6 +19,15 @@ El sistema está dividido en microservicios independientes que se comunican medi
 - 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
 ### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo : https://corhuila517226.monday.com/boards/18401580258
 Cada microservicio implementará internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, la capa de acceso a datos y la gestión de solicitudes HTTP. Esta estructura mejora la mantenibilidad y escalabilidad del sistema distribuido.
+<hr>
+##  ADR
+
+🖥️ [ADR](https://github.com/julianguerra1231186-crypto/ADR/blob/main/1-ADR.md) 
+
+### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo Yira :  
+
+https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9
+
 
 <hr>
 
