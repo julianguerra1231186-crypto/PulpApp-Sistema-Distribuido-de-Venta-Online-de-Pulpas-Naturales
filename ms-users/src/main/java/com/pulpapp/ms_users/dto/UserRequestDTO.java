@@ -11,6 +11,9 @@ public class UserRequestDTO {
     @NotBlank(message = "La cédula es obligatoria")
     private String cedula;
 
+    @NotBlank(message = "El teléfono es obligatorio")
+    private String telefono;
+
     @NotBlank(message = "El nombre no puede estar vacío")
     private String name;
 

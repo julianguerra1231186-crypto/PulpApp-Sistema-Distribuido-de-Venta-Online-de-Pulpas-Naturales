@@ -1,9 +1,8 @@
 package com.pulpapp.ms_users.service;
 
+import java.util.List;
 import com.pulpapp.ms_users.dto.UserRequestDTO;
 import com.pulpapp.ms_users.dto.UserResponseDTO;
-
-import java.util.List;
 
 public interface IUserService {
 
@@ -16,4 +15,9 @@ public interface IUserService {
     UserResponseDTO update(Long id, UserRequestDTO dto);
 
     void delete(Long id);
+
+    UserResponseDTO findByCedula(String cedula);
+
+    // VALIDAR CEDULA + TELEFONO
+    UserResponseDTO validarUsuario(String cedula, String telefono);
 }

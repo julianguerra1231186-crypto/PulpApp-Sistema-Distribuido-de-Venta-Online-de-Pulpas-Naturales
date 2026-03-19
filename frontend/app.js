@@ -1,355 +1,294 @@
 let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-/* ELEMENTOS */
-
 const contador = document.getElementById("contador");
 const lista = document.getElementById("listaCarrito");
 const totalHTML = document.getElementById("total");
-
-/* GUARDAR CARRITO */
 
 function guardarCarrito(){
     localStorage.setItem("carrito", JSON.stringify(carrito));
 }
 
-/* ACTUALIZAR CARRITO */
-
 function actualizarCarrito(){
 
     if(!lista) return;
 
-    lista.innerHTML = "";
+    lista.innerHTML="";
 
-    let total = 0;
-    let cantidadTotal = 0;
+    let total=0;
+    let cantidadTotal=0;
 
-    carrito.forEach((item, index) => {
+    carrito.forEach((item,index)=>{
 
-        let li = document.createElement("li");
+        const li=document.createElement("li");
 
-        li.innerHTML = `
-        <span>${item.nombre} - $${item.precio}</span>
+        li.innerHTML=`
+<span>${item.nombre} - $${item.precio}</span>
 
-        <div class="cantidad">
-
-            <button onclick="restarCantidad(${index})">−</button>
-
-            <span>${item.cantidad}</span>
-
-            <button onclick="sumarCantidad(${index})">+</button>
-
-            <button onclick="eliminarProducto(${index})" class="eliminar">✖</button>
-
-        </div>
-        `;
+<div class="cantidad">
+<button onclick="restarCantidad(${index})">−</button>
+<span>${item.cantidad}</span>
+<button onclick="sumarCantidad(${index})">+</button>
+<button onclick="eliminarProducto(${index})">✖</button>
+</div>
+`;
 
         lista.appendChild(li);
 
-        total += item.precio * item.cantidad;
-        cantidadTotal += item.cantidad;
+        total+=item.precio*item.cantidad;
+        cantidadTotal+=item.cantidad;
 
     });
 
-    if(contador) contador.textContent = cantidadTotal;
-    if(totalHTML) totalHTML.textContent = total;
+    contador.textContent=cantidadTotal;
+    totalHTML.textContent=total;
 
     guardarCarrito();
+
 }
 
-/* AGREGAR PRODUCTO */
+function agregarCarrito(nombre,precio){
 
-function agregarCarrito(nombre, precio){
-
-    let producto = carrito.find(p => p.nombre === nombre);
+    let producto=carrito.find(p=>p.nombre===nombre);
 
     if(producto){
         producto.cantidad++;
     }else{
         carrito.push({
-            nombre: nombre,
-            precio: precio,
-            cantidad: 1
+            nombre:nombre,
+            precio:precio,
+            cantidad:1
         });
     }
 
-    animarCarrito();
-    mostrarNotificacion(nombre);
-
     actualizarCarrito();
 }
-
-/* SUMAR CANTIDAD */
 
 function sumarCantidad(index){
     carrito[index].cantidad++;
     actualizarCarrito();
 }
 
-/* RESTAR CANTIDAD */
-
 function restarCantidad(index){
 
-    if(carrito[index].cantidad > 1){
+    if(carrito[index].cantidad>1){
         carrito[index].cantidad--;
     }else{
-        carrito.splice(index, 1);
+        carrito.splice(index,1);
     }
 
     actualizarCarrito();
-}
 
-/* ELIMINAR PRODUCTO */
+}
 
 function eliminarProducto(index){
-    carrito.splice(index, 1);
+    carrito.splice(index,1);
     actualizarCarrito();
 }
 
-/* ABRIR CARRITO */
-
 function abrirCarrito(){
-
-    const panel = document.getElementById("panelCarrito");
-
-    if(panel){
-        panel.classList.remove("hidden");
-    }
+    document.getElementById("panelCarrito").classList.remove("hidden");
 }
-
-/* CERRAR CARRITO */
 
 function cerrarCarrito(){
-
-    const panel = document.getElementById("panelCarrito");
-
-    if(panel){
-        panel.classList.add("hidden");
-    }
+    document.getElementById("panelCarrito").classList.add("hidden");
 }
-
-/* ENVIAR PEDIDO WHATSAPP */
 
 function enviarPedido(){
 
-    if(carrito.length === 0){
+    if(carrito.length===0){
         alert("Tu carrito está vacío");
         return;
     }
 
-    let direccionInput = document.getElementById("direccion");
+    const direccion=document.getElementById("direccion").value;
 
-    if(!direccionInput) return;
-
-    let direccion = direccionInput.value.trim();
-
-    if(direccion === ""){
-        alert("Por favor ingresa tu dirección");
+    if(!direccion){
+        alert("Ingrese su dirección");
         return;
     }
 
-    let mensaje = "🛒 Pedido PulpApp:%0A%0A";
+    let mensaje="🛒 Pedido PulpApp:%0A%0A";
+    let total=0;
 
-    let total = 0;
+    carrito.forEach(p=>{
 
-    carrito.forEach(p => {
+        mensaje+=`• ${p.nombre} x${p.cantidad} - $${p.precio}%0A`;
 
-        mensaje += `• ${p.nombre} x${p.cantidad} - $${p.precio}%0A`;
-
-        total += p.precio * p.cantidad;
+        total+=p.precio*p.cantidad;
 
     });
 
-    mensaje += `%0A💰 Total: $${total}%0A`;
-    mensaje += `📍 Dirección: ${direccion}`;
+    mensaje+=`%0A💰 Total: $${total}`;
+    mensaje+=`%0A📍 Dirección: ${direccion}`;
 
-    const telefono = "573103313705";
+    const telefono="573103313705";
 
     window.open(`https://wa.me/${telefono}?text=${mensaje}`);
-}
 
-/* BUSCADOR */
+}
 
 function buscarProducto(){
 
-    let input = document.getElementById("buscador");
+    const texto=document.getElementById("buscador").value.toLowerCase();
 
-    if(!input) return;
+    document.querySelectorAll(".producto").forEach(producto=>{
 
-    let texto = input.value.toLowerCase();
+        const nombre=producto.querySelector("h3").textContent.toLowerCase();
 
-    let productos = document.querySelectorAll(".producto");
-
-    productos.forEach(producto => {
-
-        let nombre = producto.querySelector("h3").textContent.toLowerCase();
-
-        producto.style.display = nombre.includes(texto) ? "block" : "none";
+        producto.style.display=nombre.includes(texto)?"block":"none";
 
     });
-}
 
-/* MODAL IMAGEN */
+}
 
 function verImagen(src){
 
-    const modal = document.getElementById("modalImagen");
-    const img = document.getElementById("imagenGrande");
+    document.getElementById("imagenGrande").src=src;
+    document.getElementById("modalImagen").classList.remove("hidden");
 
-    if(modal && img){
-
-        img.src = src;
-        modal.classList.remove("hidden");
-
-    }
 }
 
 function cerrarImagen(){
+    document.getElementById("modalImagen").classList.add("hidden");
+}
 
-    const modal = document.getElementById("modalImagen");
+/* =========================
+USUARIOS API
+========================= */
 
-    if(modal){
-        modal.classList.add("hidden");
+let usuarioActual=null;
+
+function buscarUsuario(){
+
+    const cedula=document.getElementById("cedula").value.trim();
+    const telefono=document.getElementById("telefono").value.trim();
+
+    if(!cedula || !telefono){
+        alert("Ingrese cédula y teléfono");
+        return;
     }
+
+    fetch(`http://localhost:8081/users/validar/${cedula}/${telefono}`)
+
+        .then(res=>{
+
+            if(!res.ok){
+                throw new Error("Usuario no encontrado");
+            }
+
+            return res.json();
+
+        })
+
+        .then(data=>{
+
+            usuarioActual=data;
+
+            document.getElementById("nombre").value=data.name;
+            document.getElementById("correo").value=data.email;
+            document.getElementById("direccion").value=data.direccion;
+
+        })
+
+        .catch(()=>{
+
+            usuarioActual=null;
+            alert("Cédula o teléfono incorrectos");
+
+        });
+
 }
 
-/* ANIMACION CARRITO */
+function crearUsuario(){
 
-function animarCarrito(){
+    const cedula=document.getElementById("cedula").value.trim();
+    const telefono=document.getElementById("telefono").value.trim();
+    const nombre=document.getElementById("nombre").value.trim();
+    const correo=document.getElementById("correo").value.trim();
+    const direccion=document.getElementById("direccion").value.trim();
 
-    const carritoIcon = document.querySelector(".carrito-flotante");
+    if(!cedula||!telefono||!nombre||!correo||!direccion){
+        alert("Complete todos los campos");
+        return;
+    }
 
-    if(!carritoIcon) return;
+    const usuario={
+        cedula:cedula,
+        telefono:telefono,
+        name:nombre,
+        email:correo,
+        password:"123456",
+        direccion:direccion
+    };
 
-    carritoIcon.classList.add("animar");
+    fetch("http://localhost:8081/users",{
 
-    setTimeout(() => {
-        carritoIcon.classList.remove("animar");
-    }, 400);
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify(usuario)
+
+    })
+
+        .then(res=>res.json())
+
+        .then(data=>{
+            usuarioActual=data;
+            alert("Usuario registrado correctamente");
+        })
+
+        .catch(()=>{
+            alert("Error al registrar usuario");
+        });
+
 }
 
-/* NOTIFICACION */
+function modificarUsuario(){
 
-function mostrarNotificacion(producto){
+    if(!usuarioActual){
+        alert("Primero consulte un usuario");
+        return;
+    }
 
-    const notificacion = document.getElementById("notificacion");
+    const usuario={
 
-    if(!notificacion) return;
+        cedula:document.getElementById("cedula").value,
+        telefono:document.getElementById("telefono").value,
+        name:document.getElementById("nombre").value,
+        email:document.getElementById("correo").value,
+        password:"123456",
+        direccion:document.getElementById("direccion").value
 
-    notificacion.textContent = producto + " agregado al carrito";
+    };
 
-    notificacion.classList.add("mostrar");
+    fetch(`http://localhost:8081/users/${usuarioActual.id}`,{
 
-    setTimeout(() => {
-        notificacion.classList.remove("mostrar");
-    }, 2000);
+        method:"PUT",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify(usuario)
+
+    })
+
+        .then(res=>res.json())
+
+        .then(()=>{
+            alert("Usuario actualizado");
+        });
+
 }
 
-/* CARGA INICIAL */
+window.addEventListener("load",()=>{
 
-window.addEventListener("load", () => {
+    setTimeout(()=>{
 
-    setTimeout(() => {
-
-        const splash = document.getElementById("splash");
-        const app = document.getElementById("app");
-
-        if(splash){
-            splash.style.display = "none";
-        }
-
-        if(app){
-            app.classList.remove("hidden");
-        }
+        document.getElementById("splash").style.display="none";
+        document.getElementById("app").classList.remove("hidden");
 
         actualizarCarrito();
 
-    }, 2500);
-    /* ===========================
-USUARIOS - API SPRING BOOT
-=========================== */
-
-    function buscarUsuario(){
-
-        const cedula = document.getElementById("cedula").value;
-
-        fetch(`http://localhost:8081/users/${cedula}`)
-            .then(res => res.json())
-            .then(data => {
-
-                document.getElementById("nombre").value = data.name;
-                document.getElementById("correo").value = data.email;
-                document.getElementById("direccion").value = data.address;
-
-            })
-            .catch(() => {
-
-                alert("Usuario no encontrado. Puede registrarlo.");
-
-            });
-
-    }
-
-
-
-    function crearUsuario(){
-
-        const usuario = {
-
-            id: document.getElementById("cedula").value,
-            name: document.getElementById("nombre").value,
-            email: document.getElementById("correo").value,
-            address: document.getElementById("direccion").value
-
-        };
-
-        fetch("http://localhost:8081/users",{
-
-            method:"POST",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify(usuario)
-
-        })
-            .then(res => res.json())
-            .then(data => {
-
-                alert("Usuario registrado correctamente");
-
-            });
-
-    }
-
-
-
-    function modificarUsuario(){
-
-        const id = document.getElementById("cedula").value;
-
-        const usuario = {
-
-            name: document.getElementById("nombre").value,
-            email: document.getElementById("correo").value,
-            address: document.getElementById("direccion").value
-
-        };
-
-        fetch(`http://localhost:8081/users/${id}`,{
-
-            method:"PUT",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body: JSON.stringify(usuario)
-
-        })
-            .then(res => res.json())
-            .then(data => {
-
-                alert("Usuario actualizado");
-
-            });
-
-    }
+    },2000);
 
 });

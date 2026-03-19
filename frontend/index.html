@@ -14,12 +14,9 @@
 
 <body>
 
-<!-- SPLASH -->
-
 <div id="splash">
     <img src="img/sinfondologo-removebg-preview.png" class="logo-splash">
 </div>
-
 
 <div id="app" class="hidden">
 
@@ -33,12 +30,10 @@
 
     </header>
 
-
     <div class="carrito-flotante" onclick="abrirCarrito()">
         🛒
         <span id="contador">0</span>
     </div>
-
 
     <div class="busqueda-container">
 
@@ -49,7 +44,6 @@
                 onkeyup="buscarProducto()">
 
     </div>
-
 
     <section class="catalogo">
 
@@ -67,7 +61,6 @@
 
         </div>
 
-
         <div class="producto">
 
             <img src="img/mora.png" class="producto-img" onclick="verImagen(this.src)">
@@ -81,7 +74,6 @@
             </button>
 
         </div>
-
 
         <div class="producto">
 
@@ -97,7 +89,6 @@
 
         </div>
 
-
         <div class="producto">
 
             <img src="img/lulo.png" class="producto-img" onclick="verImagen(this.src)">
@@ -112,7 +103,6 @@
 
         </div>
 
-
         <div class="producto">
 
             <img src="img/coco.png" class="producto-img" onclick="verImagen(this.src)">
@@ -126,7 +116,6 @@
             </button>
 
         </div>
-
 
         <div class="producto">
 
@@ -145,9 +134,6 @@
     </section>
 
 
-
-    <!-- PANEL CARRITO -->
-
     <div id="panelCarrito" class="panel-carrito hidden">
 
         <button class="cerrar-carrito" onclick="cerrarCarrito()">✖</button>
@@ -158,13 +144,13 @@
 
         <h3>Total: $<span id="total">0</span></h3>
 
-
-        <!-- DATOS CLIENTE -->
-
         <h3>Datos del cliente</h3>
 
         <label>Cédula</label>
         <input type="text" id="cedula">
+
+        <label>Teléfono</label>
+        <input type="text" id="telefono">
 
         <button onclick="buscarUsuario()">Consultar</button>
 
@@ -189,23 +175,17 @@
 
         </div>
 
-
         <button class="btn-comprar" onclick="enviarPedido()">
             Confirmar pedido por WhatsApp
         </button>
 
     </div>
 
-
-
     <div id="modalImagen" class="modal hidden" onclick="cerrarImagen()">
-
         <img id="imagenGrande">
-
     </div>
 
 </div>
-
 
 <div id="notificacion"></div>
 
