@@ -9,19 +9,43 @@ import com.pulpapp.ms_users.mapper.UserMapper;
 import com.pulpapp.ms_users.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.function.Function;
+
 @Service
 public class UserServiceImpl
         extends BaseServiceImpl<User, UserResponseDTO, UserRequestDTO, UserRepository>
         implements IUserService {
 
+    private final UserMapper mapper;
+
     public UserServiceImpl(UserRepository repository, UserMapper mapper) {
-        super(repository, mapper);
+        super(repository);
+        this.mapper = mapper;
     }
 
     @Override
     protected String getEntityName() {
         return "User";
     }
+
+    // MapStruct integración con BaseServiceImpl
+
+    @Override
+    protected Function<User, UserResponseDTO> toResponseMapper() {
+        return mapper::toResponseDto;
+    }
+
+    @Override
+    protected Function<UserRequestDTO, User> toEntityMapper() {
+        return mapper::toEntity;
+    }
+
+    @Override
+    protected void updateEntityFromDto(UserRequestDTO dto, User entity) {
+        mapper.updateEntityFromDto(dto, entity);
+    }
+
+    // Lógica específica
 
     @Override
     public UserResponseDTO findByCedula(String cedula) {
@@ -35,7 +59,9 @@ public class UserServiceImpl
     public UserResponseDTO validarUsuario(String cedula, String telefono) {
         User user = repository.findByCedulaAndTelefono(cedula, telefono)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("User not found with cedula and telefono"));
+                        new ResourceNotFoundException(
+                                "User not found with cedula: " + cedula + " and telefono: " + telefono
+                        ));
         return mapper.toResponseDto(user);
     }
 }

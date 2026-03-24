@@ -6,21 +6,22 @@
   <component name="ChangeListManager">
     <list default="true" id="89256da1-e398-401a-a9cd-ae02780b6b6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserRequestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/entity/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api-gateway/target/classes/com/pulpapp/apigateway/ApiGatewayApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/target/classes/com/pulpapp/apigateway/ApiGatewayApplication.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/core/BaseServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/core/BaseServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/exception/ResourceNotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/exception/ResourceNotFoundException.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/mapper/EntityMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/mapper/UserMapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="211" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -37,6 +38,9 @@
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="DEPENDENCY_CHECKER_PROBLEMS_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
@@ -67,15 +71,21 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;ml.llm.LLMConfigurable&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Andre\OneDrive\Escritorio\SistemasDistribuidos\Sofware\PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales\ms-users\src\main\java\com\pulpapp\ms_users" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
-        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
+        <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.31033.145" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.31033.145" />
       </set>
     </attachedChunks>
   </component>
@@ -92,10 +102,21 @@
       <workItem from="1773076031321" duration="87000" />
       <workItem from="1773086382524" duration="3883000" />
       <workItem from="1773173632300" duration="3652000" />
+      <workItem from="1773536938561" duration="657000" />
+      <workItem from="1773791400400" duration="6606000" />
+      <workItem from="1773877523039" duration="3338000" />
+      <workItem from="1773887862929" duration="8229000" />
+      <workItem from="1773936475036" duration="1326000" />
+      <workItem from="1773980437114" duration="9864000" />
+      <workItem from="1774366169722" duration="1714000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
