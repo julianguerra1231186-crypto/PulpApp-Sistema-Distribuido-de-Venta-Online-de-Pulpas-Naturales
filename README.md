@@ -28,6 +28,36 @@ Cada microservicio implementará internamente el patrón arquitectónico MVC (Mo
 
 https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9
 
+<hr>
+# Finalización Exitosa del Curso de GitHub
+
+Nos complace informar que se ha completado satisfactoriamente el curso **"Introduction to GitHub"**, fortaleciendo conocimientos clave en control de versiones y trabajo colaborativo en entornos de desarrollo.
+
+## Objetivo del Curso
+El curso tuvo como propósito introducir y consolidar conceptos fundamentales de GitHub, permitiendo:
+- Gestionar repositorios de manera eficiente  
+- Trabajar con control de versiones usando Git  
+- Colaborar en proyectos mediante pull requests  
+- Aplicar buenas prácticas en desarrollo colaborativo  
+
+## Contenido Desarrollado
+Durante el proceso se abordaron los siguientes temas:
+- Creación y administración de repositorios  
+- Uso de commits y control de cambios  
+- Manejo de ramas (branches)  
+- Pull requests y revisión de código  
+- Resolución de conflictos  
+
+## Resultado
+El curso fue finalizado con éxito, logrando:
+- Mayor dominio de herramientas de desarrollo colaborativo  
+- Fortalecimiento de habilidades técnicas en GitHub  
+- Aplicación práctica en proyectos reales  
+
+## Evidencia del Curso
+Puedes consultar el repositorio trabajado en el siguiente enlace:
+
+https://github.com/julianguerra1231186-crypto/skills-introduction-to-github
 
 <hr>
 
