@@ -1,3 +1,11 @@
+<!--
+CONFIG
+FULL_NAME:Julian Andres Guerra Garcia
+GITHUB_USER: julianguerra1231186@gmail.com
+CODE_ORGANIZATION: code-corhuila
+-->
+
+
 # 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
 Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
 
