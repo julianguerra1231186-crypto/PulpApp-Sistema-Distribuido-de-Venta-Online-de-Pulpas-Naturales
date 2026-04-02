@@ -39,6 +39,31 @@ https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/K
 
 <hr>
 
+# Actividad: Desarrollo de Carrito de Compras (MVP)
+
+ - Como parte del proceso de construcción del sistema, se desarrolló un MVP (Minimum Viable Product) de un carrito de compras, con el objetivo de validar la lógica base del manejo de productos dentro de una posible solución de comercio electrónico.
+
+### El desarrollo se llevó a cabo utilizando un enfoque práctico basado en:
+
+ - Implementación de historias de usuario
+ - Uso de ramas por funcionalidad (feature branches)
+ - Integración progresiva del código
+
+### Durante esta actividad se implementaron funcionalidades clave como:
+
+ - Gestión de productos dentro del carrito
+ - Visualización de los elementos seleccionados
+ - Cálculo del total de la compra
+ - Cada funcionalidad fue desarrollada de forma independiente, permitiendo un mejor control del código, organización del proyecto y simulación de un entorno real de desarrollo.
+
+Este MVP representa una base sólida para futuras integraciones con otros componentes del sistema, como usuarios, productos y autenticación.
+
+### Acceso al repositorio
+
+Para ver la implementación completa, las historias de usuario y la estructura de ramas utilizadas:
+
+ - https://github.com/julianguerra1231186-crypto/carrito-compras-mvp
+
 # Finalización Exitosa del Curso de GitHub
 
 Nos complace informar que se ha completado satisfactoriamente el curso **"Introduction to GitHub"**, fortaleciendo conocimientos clave en control de versiones y trabajo colaborativo en entornos de desarrollo.
