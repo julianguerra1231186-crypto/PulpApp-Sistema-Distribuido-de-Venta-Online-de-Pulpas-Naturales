@@ -62,6 +62,8 @@ Este MVP representa una base sólida para futuras integraciones con otros compon
 
 Para ver la implementación completa, las historias de usuario y la estructura de ramas utilizadas:
 
+ - Dejo todo debidamente evidenciado con capturas de pantalla : https://github.com/julianguerra1231186-crypto/carrito-compras-mvp/tree/main/docs
+
  - https://github.com/julianguerra1231186-crypto/carrito-compras-mvp
 
 # Finalización Exitosa del Curso de GitHub
