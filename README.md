@@ -1,3 +1,11 @@
+<!--
+CONFIG
+FULL_NAME:Julian Andres Guerra Garcia
+GITHUB_USER: julianguerra1231186@gmail.com
+CODE_ORGANIZATION: code-corhuila
+-->
+
+
 # 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
 Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
 
@@ -19,6 +27,74 @@ El sistema está dividido en microservicios independientes que se comunican medi
 - 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
 ### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo : https://corhuila517226.monday.com/boards/18401580258
 Cada microservicio implementará internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, la capa de acceso a datos y la gestión de solicitudes HTTP. Esta estructura mejora la mantenibilidad y escalabilidad del sistema distribuido.
+<hr>
+
+# ADR
+
+🖥️ [ADR](https://github.com/julianguerra1231186-crypto/ADR/blob/main/1-ADR.md) 
+
+### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo Yira :  
+
+https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9
+
+<hr>
+
+# Actividad: Desarrollo de Carrito de Compras (MVP)
+
+ - Como parte del proceso de construcción del sistema, se desarrolló un MVP (Minimum Viable Product) de un carrito de compras, con el objetivo de validar la lógica base del manejo de productos dentro de una posible solución de comercio electrónico.
+
+### El desarrollo se llevó a cabo utilizando un enfoque práctico basado en:
+
+ - Implementación de historias de usuario
+ - Uso de ramas por funcionalidad (feature branches)
+ - Integración progresiva del código
+
+### Durante esta actividad se implementaron funcionalidades clave como:
+
+ - Gestión de productos dentro del carrito
+ - Visualización de los elementos seleccionados
+ - Cálculo del total de la compra
+ - Cada funcionalidad fue desarrollada de forma independiente, permitiendo un mejor control del código, organización del proyecto y simulación de un entorno real de desarrollo.
+
+Este MVP representa una base sólida para futuras integraciones con otros componentes del sistema, como usuarios, productos y autenticación.
+
+### Acceso al repositorio
+
+Para ver la implementación completa, las historias de usuario y la estructura de ramas utilizadas:
+
+ - Dejo todo debidamente evidenciado con capturas de pantalla : https://github.com/julianguerra1231186-crypto/carrito-compras-mvp/tree/main/docs
+
+ - https://github.com/julianguerra1231186-crypto/carrito-compras-mvp
+
+# Finalización Exitosa del Curso de GitHub
+
+Nos complace informar que se ha completado satisfactoriamente el curso **"Introduction to GitHub"**, fortaleciendo conocimientos clave en control de versiones y trabajo colaborativo en entornos de desarrollo.
+
+## Objetivo del Curso
+El curso tuvo como propósito introducir y consolidar conceptos fundamentales de GitHub, permitiendo:
+- Gestionar repositorios de manera eficiente  
+- Trabajar con control de versiones usando Git  
+- Colaborar en proyectos mediante pull requests  
+- Aplicar buenas prácticas en desarrollo colaborativo  
+
+## Contenido Desarrollado
+Durante el proceso se abordaron los siguientes temas:
+- Creación y administración de repositorios  
+- Uso de commits y control de cambios  
+- Manejo de ramas (branches)  
+- Pull requests y revisión de código  
+- Resolución de conflictos  
+
+## Resultado
+El curso fue finalizado con éxito, logrando:
+- Mayor dominio de herramientas de desarrollo colaborativo  
+- Fortalecimiento de habilidades técnicas en GitHub  
+- Aplicación práctica en proyectos reales  
+
+## Evidencia del Curso
+Puedes consultar el repositorio trabajado en el siguiente enlace:
+
+https://github.com/julianguerra1231186-crypto/skills-introduction-to-github
 
 <hr>
 
