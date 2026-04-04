@@ -9,24 +9,36 @@ CODE_ORGANIZATION: code-corhuila
 # 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
 Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
 
-#mesa de trabajo : https://corhuila517226.monday.com/boards/18401580258
+   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/?continue=https%3A%2F%2Fjulianguerra1231186-1773894024267.atlassian.net%2Fwelcome%2Fsoftware%3FprojectId%3D10000&atlOrigin=eyJpIjoiOTdhMWY4ZGU5N2YwNDQ0MDk3NTZjODkxYTU5ZWVlZWQiLCJwIjoiamlyYS1zb2Z0d2FyZSJ9)
+     
 <hr>
-## 👥 Integrantes
 
+# Integrantes
 - Julian Guerra
 - Edwin Menendez
 - -Grupo 5 
-
 <hr>
+
 ## 📌 Arquitectura Del Backend
 
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
-- 📦 [ms-users](https://github.com/julianguerra1231186-crypto/ms-users)
-- 🛒 [ms-Api](https://github.com/julianguerra1231186-crypto/ms-products)
-- 🖥️ [front](https://github.com/julianguerra1231186-crypto/Frontend)
-### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo : https://corhuila517226.monday.com/boards/18401580258
-Cada microservicio implementará internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, la capa de acceso a datos y la gestión de solicitudes HTTP. Esta estructura mejora la mantenibilidad y escalabilidad del sistema distribuido.
+-  [ms-users](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
+-  [ms-products](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
+-  [ms-orders](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
+-  [front](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
+-  [Api-Gatawey](https://github.com/julianguerra1231186-crypto/Api-Gatawey)
+
+Cada microservicio se ejecuta de forma independiente en su propio contenedor Docker y expone su API en un puerto específico (8081, 8082 y 8083 respectivamente). Esto permite que cada servicio funcione de manera desacoplada, facilitando su desarrollo, despliegue y mantenimiento.
+La comunicación entre microservicios se realiza mediante HTTP utilizando los nombres de servicio dentro de la red Docker, lo que permite una interacción correcta sin depender de localhost, garantizando una arquitectura distribuida real.
+### Se deja evidencia de todas las Historias de Usuario en la mesa de trabajo:
+   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/?continue=https%3A%2F%2Fjulianguerra1231186-1773894024267.atlassian.net%2Fwelcome%2Fsoftware%3FprojectId%3D10000&atlOrigin=eyJpIjoiOTdhMWY4ZGU5N2YwNDQ0MDk3NTZjODkxYTU5ZWVlZWQiLCJwIjoiamlyYS1zb2Z0d2FyZSJ9)
+
+Cada microservicio implementa internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, el acceso a datos y la gestión de solicitudes HTTP. 
+Esta estructura mejora la mantenibilidad, escalabilidad y organización del sistema distribuido.
+
+Adicionalmente, el sistema utiliza PostgreSQL como base de datos y Docker Compose para la orquestación de los servicios, permitiendo levantar toda la arquitectura de manera controlada y reproducible.
+
 <hr>
 
 # ADR
@@ -35,7 +47,7 @@ Cada microservicio implementará internamente el patrón arquitectónico MVC (Mo
 
 ### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo Yira :  
 
-https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9
+   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9)
 
 <hr>
 
@@ -176,7 +188,6 @@ Se utilizará para la contenedorización de los microservicios, permitiendo su d
 Sistema de control de versiones distribuido que permitirá la gestión colaborativa del código bajo una estrategia estructurada de ramas.
 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Diagramade%20dependencias.png)
-
 
 
 
