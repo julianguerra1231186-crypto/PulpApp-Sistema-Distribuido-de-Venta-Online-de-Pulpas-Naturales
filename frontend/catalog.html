@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Catalogo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/catalog.css">
+</head>
+<body data-page="catalog">
+<header class="site-header">
+    <div class="brand-block">
+        <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+        <div>
+            <span class="brand-kicker">PulpApp</span>
+            <strong>Mercado natural en linea</strong>
+        </div>
+    </div>
+
+    <nav class="site-nav" aria-label="Principal">
+        <a href="index.html">Inicio</a>
+        <a href="catalog.html" class="is-active">Catalogo</a>
+        <a href="cart.html">Carrito</a>
+        <a href="login.html">Mi cuenta</a>
+    </nav>
+
+    <a href="cart.html" class="cart-chip">
+        <span>Carrito</span>
+        <strong id="navCartCount">0</strong>
+    </a>
+</header>
+
+<main class="page-content">
+    <header class="page-banner glass-card">
+        <div>
+            <span class="eyebrow">Catalogo conectado a ms-products</span>
+            <h1>Selecciona tus pulpas favoritas</h1>
+            <p>Explora productos actualizados en tiempo real y agregalos al carrito para continuar la compra.</p>
+        </div>
+
+        <label class="search-field">
+            <span>Buscar producto</span>
+            <input type="search" id="catalogSearchInput" placeholder="Ej. Fresa, Mora, Maracuya" autocomplete="off">
+        </label>
+    </header>
+
+    <section class="mini-summary glass-card" aria-label="Resumen del carrito">
+        <div>
+            <span class="eyebrow">Resumen actual</span>
+            <h2 id="catalogSummaryTitle">0 productos en el carrito</h2>
+            <p id="catalogSummaryText">Agrega productos para construir tu pedido.</p>
+        </div>
+        <a href="cart.html" class="btn btn-primary">Ir al carrito</a>
+    </section>
+
+    <section id="catalogGrid" class="product-grid" aria-label="Listado de productos"></section>
+</main>
+
+<div id="productModal" class="modal hidden" aria-hidden="true" role="dialog" aria-label="Vista ampliada del producto">
+    <div class="modal-card">
+        <button id="closeProductModal" class="modal-close" type="button" aria-label="Cerrar">X</button>
+        <img id="modalImage" src="" alt="Imagen ampliada del producto">
+    </div>
+</div>
+
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="services.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

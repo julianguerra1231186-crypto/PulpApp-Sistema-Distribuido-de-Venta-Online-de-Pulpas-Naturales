@@ -15,7 +15,10 @@ public class User {
     @Column(nullable = false, unique = true)
     private String cedula;
 
-    @Column(nullable = false)
+    // Se deja nullable a nivel de esquema para permitir la migracion sobre registros
+    // historicos ya existentes. Los usuarios nuevos siguen obligados a enviar telefono
+    // porque UserRequestDTO lo valida como campo requerido.
+    @Column
     private String telefono;
 
     @Column(nullable = false)

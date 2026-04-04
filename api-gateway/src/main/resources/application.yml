@@ -1,11 +1,52 @@
+# API Gateway — escucha en 8080 y reenvia a los microservicios.
+#
+# URIs de destino (uri:):
+# - Por defecto: http://localhost:8081|8082|8083 para ejecutar el gateway en la maquina host
+#   (mvn spring-boot:run) mientras los MS tambien estan en localhost.
+# - En Docker: docker-compose inyecta GATEWAY_MS_USERS_URI, etc. con nombres de servicio
+#   (http://ms-users:8081, ...). Dentro de la red bridge del compose, "localhost" apunta al
+#   propio contenedor del gateway, no a los otros servicios; por eso se usan los DNS internos
+#   que Docker resuelve al contenedor correcto en pulpapp-network.
 server:
   port: 8080
 
 spring:
   cloud:
     gateway:
+      # CORS global: los navegadores aplican la politica cross-origin; Postman/curl no la aplican.
+      # Las peticiones "simples" (p. ej. muchos GET) pueden pasar sin preflight; POST con
+      # Content-Type: application/json dispara preflight OPTIONS. El gateway debe responder
+      # a OPTIONS con Access-Control-* antes de que el navegador envie el POST.
+      globalcors:
+        # Recomendado por Spring para que OPTIONS (preflight) reciba CORS aunque el predicado
+        # de ruta no coincida con el metodo OPTIONS en algunos casos.
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: false
       routes:
+        # Usuarios → ms-users (REST bajo /users).
         - id: ms-users
-          uri: http://localhost:8081
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
           predicates:
             - Path=/users/**
+
+        # Catalogo → ms-products (REST bajo /products).
+        - id: ms-products
+          uri: ${GATEWAY_MS_PRODUCTS_URI:http://localhost:8082}
+          predicates:
+            - Path=/products/**
+
+        # Pedidos → ms-orders (REST bajo /orders).
+        - id: ms-orders
+          uri: ${GATEWAY_MS_ORDERS_URI:http://localhost:8083}
+          predicates:
+            - Path=/orders/**

@@ -1,0 +1,284 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Mi cuenta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body data-page="login">
+<header class="site-header">
+    <div class="brand-block">
+        <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+        <div>
+            <span class="brand-kicker">PulpApp</span>
+            <strong>Mercado natural en linea</strong>
+        </div>
+    </div>
+
+    <nav class="site-nav" aria-label="Principal">
+        <a href="index.html">Inicio</a>
+        <a href="catalog.html">Catalogo</a>
+        <a href="cart.html">Carrito</a>
+        <a href="login.html" class="is-active">Mi cuenta</a>
+    </nav>
+
+    <a href="cart.html" class="cart-chip">
+        <span>Carrito</span>
+        <strong id="navCartCount">0</strong>
+    </a>
+</header>
+
+
+
+<main class="page-content auth-layout">
+    <!--
+        Panel de autenticacion funcional.
+        En este proyecto el ingreso se basa en consultar usuarios por cedula y telefono.
+    -->
+    <section class="glass-card auth-card">
+        <span class="eyebrow">Ingreso</span>
+        <h1>Accede a tu perfil de compra</h1>
+        <p>Consulta tu usuario para autocompletar el checkout o registra uno nuevo si aun no existes en el sistema.</p>
+
+        <form id="authForm" class="form-grid auth-form-grid">
+            <label>
+                <span>Cedula</span>
+                <input type="text" id="authCedula" placeholder="Documento del cliente">
+            </label>
+            <label>
+                <span>Telefono</span>
+                <input type="text" id="authTelefono" placeholder="Telefono registrado">
+            </label>
+            <label>
+                <span>Nombre completo</span>
+                <input type="text" id="authNombre" placeholder="Nombre del cliente">
+            </label>
+            <label>
+                <span>Correo electronico</span>
+                <input type="email" id="authCorreo" placeholder="correo@ejemplo.com">
+            </label>
+            <label class="full-width">
+                <span>Direccion</span>
+                <input type="text" id="authDireccion" placeholder="Direccion de entrega">
+            </label>
+        </form>
+
+        <div class="auth-actions" role="group" aria-label="Registro de usuario">
+            <button id="createUserButton" class="btn btn-primary auth-create-btn" type="button">
+                Crear usuario
+            </button>
+        </div>
+    </section>
+
+    <!--
+        Panel informativo de apoyo.
+        Explica visualmente el beneficio del ingreso antes de comprar.
+    -->
+    <aside class="glass-card auth-side-card">
+        <span class="eyebrow">Ventajas</span>
+        <h2>Compra mas rapido en tu siguiente pedido</h2>
+        <ul class="bullet-list">
+            <li>Autocompletado de datos en el carrito.</li>
+            <li>Menos errores al registrar la compra.</li>
+            <li>Persistencia local del usuario actual.</li>
+            <li>Flujo alineado con ms-users y ms-orders.</li>
+        </ul>
+
+        <div class="current-user-box">
+            <strong id="loginStatusTitle">Sin sesion activa</strong>
+            <p id="loginStatusText">Consulta o registra un usuario para continuar con el checkout.</p>
+        </div>
+    </aside>
+</main>
+
+
+
+
+
+
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="services.js"></script>
+<script src="app.js"></script>
+<script>
+    /*
+        Registro de cliente reutilizando PulpAppServices (services.js):
+        - createUser() -> POST http://localhost:8081/users (ms-users), con password fija como en el backend.
+        - findUserByCedula() si la cedula ya existe (mensaje claro + carga del usuario local).
+        Persistencia: claves "user" y "pulpapp_user" + saveCurrentUser() para alinear con el resto del frontend.
+    */
+    (function initializeSimplifiedLoginFlow() {
+        const api = window.PulpAppServices;
+
+        if (!api || typeof api.createUser !== "function") {
+            console.error("PulpAppServices.createUser no esta disponible. Verifica que services.js cargue antes.");
+            return;
+        }
+
+        const createUserButton = document.getElementById("createUserButton");
+        const authCedula = document.getElementById("authCedula");
+        const authTelefono = document.getElementById("authTelefono");
+        const authNombre = document.getElementById("authNombre");
+        const authCorreo = document.getElementById("authCorreo");
+        const authDireccion = document.getElementById("authDireccion");
+        const loginStatusTitle = document.getElementById("loginStatusTitle");
+        const loginStatusText = document.getElementById("loginStatusText");
+
+        function showMessage(message, type) {
+            if (typeof window.mostrarMensaje === "function") {
+                window.mostrarMensaje(message, type);
+                return;
+            }
+
+            const toast = document.getElementById("appToast");
+
+            if (!toast) {
+                return;
+            }
+
+            toast.textContent = message;
+            toast.classList.add("show");
+            toast.classList.toggle("error", type === "error");
+
+            clearTimeout(window.__loginToastTimer);
+            window.__loginToastTimer = setTimeout(() => {
+                toast.classList.remove("show");
+                toast.classList.remove("error");
+            }, 2800);
+        }
+
+        function saveUserToLocalStorage(user) {
+            localStorage.setItem("user", JSON.stringify(user));
+            localStorage.setItem("pulpapp_user", JSON.stringify(user));
+            api.saveCurrentUser(user);
+        }
+
+        function loadUserFromLocalStorage() {
+            return JSON.parse(localStorage.getItem("user") || localStorage.getItem("pulpapp_user") || "null");
+        }
+
+        function getFormData() {
+            return {
+                cedula: authCedula.value.trim(),
+                telefono: authTelefono.value.trim(),
+                name: authNombre.value.trim(),
+                email: authCorreo.value.trim(),
+                direccion: authDireccion.value.trim()
+            };
+        }
+
+        function fillForm(user) {
+            authCedula.value = user?.cedula || "";
+            authTelefono.value = user?.telefono || "";
+            authNombre.value = user?.name || "";
+            authCorreo.value = user?.email || "";
+            authDireccion.value = user?.direccion || "";
+        }
+
+        function showSessionState(user) {
+            fillForm(user);
+
+            if (loginStatusTitle && loginStatusText) {
+                loginStatusTitle.textContent = `Usuario listo: ${user.name}`;
+                loginStatusText.textContent = "Tu sesion esta activa. Abre Carrito desde el menu superior para seguir comprando.";
+            }
+        }
+
+        function validateFormData(userData) {
+            if (!userData.cedula || !userData.telefono || !userData.name || !userData.email || !userData.direccion) {
+                throw new Error("Completa todos los campos para crear el usuario");
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userData.email)) {
+                throw new Error("Ingresa un correo electronico valido");
+            }
+
+            const phoneDigits = userData.telefono.replace(/\D/g, "");
+
+            if (phoneDigits.length < 7) {
+                throw new Error("Ingresa un telefono de contacto valido (minimo 7 digitos)");
+            }
+        }
+
+        async function tryLoadExistingByCedula(cedula) {
+            if (!cedula) {
+                return null;
+            }
+
+            try {
+                return await api.findUserByCedula(cedula);
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function handleCreateUser() {
+            try {
+                const userData = getFormData();
+                validateFormData(userData);
+
+                createUserButton.disabled = true;
+                createUserButton.textContent = "Creando usuario...";
+
+                const created = await api.createUser(userData);
+
+                saveUserToLocalStorage(created);
+                showSessionState(created);
+                showMessage("Usuario creado correctamente. Tu sesion quedo activa.", "success");
+            } catch (error) {
+                console.error("Error creando usuario:", error);
+                const raw = String(error.message || "");
+                const lower = raw.toLowerCase();
+
+                const duplicate =
+                    lower.includes("ya esta registrado")
+                    || lower.includes("ya existe")
+                    || lower.includes("duplicate")
+                    || lower.includes("duplicado")
+                    || lower.includes("unique constraint")
+                    || lower.includes("already exists");
+
+                if (duplicate) {
+                    const existing = await tryLoadExistingByCedula(getFormData().cedula);
+
+                    if (existing) {
+                        saveUserToLocalStorage(existing);
+                        showSessionState(existing);
+                    }
+
+                    showMessage("El usuario ya esta registrado. Usa Carrito en el menu para comprar.", "error");
+                    return;
+                }
+
+                if (
+                    lower.includes("failed to fetch")
+                    || lower.includes("network")
+                    || lower.includes("connection")
+                ) {
+                    showMessage("Error de conexion con el servidor", "error");
+                } else {
+                    showMessage(raw || "No fue posible registrar el usuario", "error");
+                }
+            } finally {
+                createUserButton.disabled = false;
+                createUserButton.textContent = "Crear usuario";
+            }
+        }
+
+        const savedUser = loadUserFromLocalStorage();
+
+        if (savedUser) {
+            api.saveCurrentUser(savedUser);
+            showSessionState(savedUser);
+        }
+
+        createUserButton.addEventListener("click", handleCreateUser);
+    })();
+</script>
+</body>
+</html>

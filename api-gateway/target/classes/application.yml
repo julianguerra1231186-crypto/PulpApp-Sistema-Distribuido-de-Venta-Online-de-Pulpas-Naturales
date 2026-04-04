@@ -5,7 +5,20 @@ spring:
   cloud:
     gateway:
       routes:
+        # Forwards user endpoints to ms-users (REST API served under /users).
         - id: ms-users
           uri: http://localhost:8081
           predicates:
             - Path=/users/**
+
+        # Forwards product catalog endpoints to ms-products (REST API under /products).
+        - id: ms-products
+          uri: http://localhost:8082
+          predicates:
+            - Path=/products/**
+
+        # Forwards order endpoints to ms-orders (REST API under /orders).
+        - id: ms-orders
+          uri: http://localhost:8083
+          predicates:
+            - Path=/orders/**
