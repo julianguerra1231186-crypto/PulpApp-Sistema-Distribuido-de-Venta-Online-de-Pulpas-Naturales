@@ -47,7 +47,7 @@ Adicionalmente, el sistema utiliza PostgreSQL como base de datos y Docker Compos
 
 ### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo Yira :  
 
-https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9
+   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9)
 
 <hr>
 
