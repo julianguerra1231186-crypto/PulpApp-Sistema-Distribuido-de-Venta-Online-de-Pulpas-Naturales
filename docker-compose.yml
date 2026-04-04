@@ -3,20 +3,28 @@ services:
 
   postgres:
     image: postgres:15
-    container_name: pulpapp_users_db
     restart: always
     environment:
-      POSTGRES_DB: pulpapp_users
+      POSTGRES_DB: pulpapp_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
+    # Este mapeo expone PostgreSQL al host sin cambiar la red interna de Docker.
+    # Dentro de Docker los microservicios siguen usando "postgres:5432", pero desde el host
+    # herramientas externas como pgAdmin pueden entrar por "localhost:5434".
     ports:
       - "5434:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d pulpapp_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pulpapp-network
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
@@ -24,22 +32,100 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    networks:
+      - pulpapp-network
 
   ms-users:
     build:
       context: ./ms-users
       dockerfile: Dockerfile
-    container_name: ms_users_service
     restart: always
     ports:
       - "8081:8081"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://pulpapp_users_db:5432/pulpapp_users
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
+      SERVER_PORT: 8081
+    networks:
+      - pulpapp-network
+
+  ms-products:
+    build:
+      context: ./ms-products
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SERVER_PORT: 8082
+    networks:
+      - pulpapp-network
+
+  ms-orders:
+    build:
+      context: ./ms-orders
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ms-products:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+      SERVER_PORT: 8083
+      MS_PRODUCTS_BASE_URL: http://ms-products:8082
+    networks:
+      - pulpapp-network
+
+  # Punto de entrada HTTP unico: desde el host usar localhost:8090 (mapeado al 8080 del contenedor).
+  # En la red interna pulpapp-network el gateway resuelve ms-users, ms-products y ms-orders
+  # por DNS de Docker (no usar localhost dentro del contenedor para llegar a otros servicios).
+  # Host 8090 -> container 8080: el gateway sigue escuchando en 8080 DENTRO del contenedor
+  # (SERVER_PORT / Spring). El puerto 8080 en el HOST suele estar ocupado (otra app, IDE, etc.),
+  # lo que provoca "Only one usage of each socket address...". Publicamos 8090 en el host para
+  # evitar el conflicto sin tocar application.yml ni el puerto interno del servicio.
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8090:8080"
+    depends_on:
+      ms-users:
+        condition: service_started
+      ms-products:
+        condition: service_started
+      ms-orders:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      GATEWAY_MS_USERS_URI: http://ms-users:8081
+      GATEWAY_MS_PRODUCTS_URI: http://ms-products:8082
+      GATEWAY_MS_ORDERS_URI: http://ms-orders:8083
+    networks:
+      - pulpapp-network
 
 volumes:
   postgres_data:
+
+networks:
+  pulpapp-network:
+    driver: bridge
