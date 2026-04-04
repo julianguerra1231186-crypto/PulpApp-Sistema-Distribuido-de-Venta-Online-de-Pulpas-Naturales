@@ -1,195 +1,136 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>PulpApp</title>
-
-    <link rel="stylesheet" href="style.css">
-
+    <title>PulpApp — Pulpas naturales en línea</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
-
-<body>
-
-<div id="splash">
-    <img src="img/sinfondologo-removebg-preview.png" class="logo-splash">
-</div>
-
-<div id="app" class="hidden">
-
-    <header class="navbar">
-
-        <h1>Catálogo</h1>
-
-        <a href="landing.html" class="btn-volver">
-            ← Volver al inicio
-        </a>
-
-    </header>
-
-    <div class="carrito-flotante" onclick="abrirCarrito()">
-        🛒
-        <span id="contador">0</span>
+<body data-page="home">
+<header class="site-header">
+    <div class="brand-block">
+        <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+        <div>
+            <span class="brand-kicker">PulpApp</span>
+        </div>
     </div>
 
-    <div class="busqueda-container">
+    <nav class="site-nav" aria-label="Principal">
+        <a href="index.html" class="is-active">Inicio</a>
+        <a href="catalog.html">Catalogo</a>
+        <a href="cart.html">Carrito</a>
+        <a href="login.html">Mi cuenta</a>
+    </nav>
 
-        <input
-                type="text"
-                id="buscador"
-                placeholder="🔎 Buscar pulpas..."
-                onkeyup="buscarProducto()">
+    <a href="cart.html" class="cart-chip">
+        <span>Carrito</span>
+        <strong id="navCartCount">0</strong>
+    </a>
+</header>
 
-    </div>
+<main>
+    <section class="hero-section" aria-labelledby="hero-heading">
+        <div class="hero-copy">
+            <div class="hero-intro">
+                <span class="eyebrow">Fruta natural en tu hogar</span>
+                <h1 id="hero-heading">Pulpas frescas, del campo a tu vaso</h1>
+                <p class="hero-lead">
+                    Explora el catalogo conectado, guarda tu carrito en el navegador
+                    y registra pedidos reales sin perder trazabilidad.
+                </p>
+            </div>
 
-    <section class="catalogo">
+            <ul class="trust-strip" aria-label="Por que comprar en PulpApp">
+                <li>
+                    <svg class="trust-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    Compra segura
+                </li>
+                <li>
+                    <svg class="trust-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="1" y="3" width="15" height="13" rx="2"/>
+                        <path d="M16 8h4l3 3v8a2 2 0 0 1-2 2h-7M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                    Entrega a domicilio
+                </li>
+                <li>
+                    <svg class="trust-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    Calidad natural
+                </li>
+            </ul>
 
-        <div class="producto">
-
-            <img src="img/fresa.png" class="producto-img" onclick="verImagen(this.src)">
-
-            <h3>🍓 Pulpa de Fresa</h3>
-
-            <p class="precio">$6000</p>
-
-            <button onclick="agregarCarrito('Pulpa de Fresa',6000)">
-                Agregar
-            </button>
-
+            <div class="hero-actions">
+                <a href="catalog.html" class="btn btn-primary">Explorar catalogo</a>
+                <a href="login.html" class="btn btn-secondary">Ingresar o registrarme</a>
+            </div>
         </div>
 
-        <div class="producto">
-
-            <img src="img/mora.png" class="producto-img" onclick="verImagen(this.src)">
-
-            <h3>🍒 Pulpa de Mora</h3>
-
-            <p class="precio">$6500</p>
-
-            <button onclick="agregarCarrito('Pulpa de Mora',6500)">
-                Agregar
-            </button>
-
+        <div class="hero-panel glass-card">
+            <p class="panel-label">Estado del ecosistema</p>
+            <div class="stats-grid">
+                <article>
+                    <strong id="homeProductCount">0</strong>
+                    <span>productos publicados</span>
+                </article>
+                <article>
+                    <strong>100%</strong>
+                    <span>carrito persistente</span>
+                </article>
+                <article>
+                    <strong>REST</strong>
+                    <span>integracion entre servicios</span>
+                </article>
+            </div>
         </div>
-
-        <div class="producto">
-
-            <img src="img/maracuya.png" class="producto-img" onclick="verImagen(this.src)">
-
-            <h3>🍊 Pulpa de Maracuyá</h3>
-
-            <p class="precio">$7000</p>
-
-            <button onclick="agregarCarrito('Pulpa de Maracuyá',7000)">
-                Agregar
-            </button>
-
-        </div>
-
-        <div class="producto">
-
-            <img src="img/lulo.png" class="producto-img" onclick="verImagen(this.src)">
-
-            <h3>🍋 Pulpa de Lulo</h3>
-
-            <p class="precio">$6500</p>
-
-            <button onclick="agregarCarrito('Pulpa de Lulo',6500)">
-                Agregar
-            </button>
-
-        </div>
-
-        <div class="producto">
-
-            <img src="img/coco.png" class="producto-img" onclick="verImagen(this.src)">
-
-            <h3>🥥 Pulpa de Coco</h3>
-
-            <p class="precio">$7500</p>
-
-            <button onclick="agregarCarrito('Pulpa de Coco',7500)">
-                Agregar
-            </button>
-
-        </div>
-
-        <div class="producto">
-
-            <img src="img/durazno.png" class="producto-img" onclick="verImagen(this.src)">
-
-            <h3>🍑 Pulpa de Durazno</h3>
-
-            <p class="precio">$6500</p>
-
-            <button onclick="agregarCarrito('Pulpa de Durazno',6500)">
-                Agregar
-            </button>
-
-        </div>
-
     </section>
 
-
-    <div id="panelCarrito" class="panel-carrito hidden">
-
-        <button class="cerrar-carrito" onclick="cerrarCarrito()">✖</button>
-
-        <h2>Tu carrito</h2>
-
-        <ul id="listaCarrito"></ul>
-
-        <h3>Total: $<span id="total">0</span></h3>
-
-        <h3>Datos del cliente</h3>
-
-        <label>Cédula</label>
-        <input type="text" id="cedula">
-
-        <label>Teléfono</label>
-        <input type="text" id="telefono">
-
-        <button onclick="buscarUsuario()">Consultar</button>
-
-        <label>Nombre completo</label>
-        <input type="text" id="nombre">
-
-        <label>Correo</label>
-        <input type="email" id="correo">
-
-        <label>Dirección</label>
-        <input type="text" id="direccion">
-
-        <div style="margin-top:10px">
-
-            <button onclick="crearUsuario()" class="btn-guardar">
-                Agregar usuario
-            </button>
-
-            <button onclick="modificarUsuario()" class="btn-editar">
-                Modificar usuario
-            </button>
-
+    <section class="feature-section" aria-labelledby="features-heading">
+        <div class="section-heading">
+            <span class="eyebrow">Por que comprar aqui</span>
+            <h2 id="features-heading">Un flujo de compra claro, rapido y trazable</h2>
         </div>
 
-        <button class="btn-comprar" onclick="enviarPedido()">
-            Confirmar pedido por WhatsApp
-        </button>
+        <div class="feature-grid">
+            <article class="glass-card feature-card">
+                <h3>Catalogo dinamico</h3>
+                <p>Los productos se consultan directamente desde el microservicio de productos para evitar datos quemados.</p>
+            </article>
+            <article class="glass-card feature-card">
+                <h3>Compra persistente</h3>
+                <p>El carrito se conserva en <code>localStorage</code>, por lo que el usuario no pierde su seleccion al navegar.</p>
+            </article>
+            <article class="glass-card feature-card">
+                <h3>Pedidos reales</h3>
+                <p>Cada compra se registra primero en backend antes de ofrecer canales complementarios como WhatsApp.</p>
+            </article>
+        </div>
+    </section>
 
-    </div>
+    <section class="status-section" aria-label="Estado de tu sesion y carrito">
+        <article class="glass-card status-card">
+            <span class="eyebrow">Sesion actual</span>
+            <h3 id="homeUserStatus">No has iniciado sesion</h3>
+            <p id="homeUserDetail">Ingresa en la seccion Mi cuenta para autocompletar tu compra.</p>
+        </article>
+        <article class="glass-card status-card">
+            <span class="eyebrow">Carrito</span>
+            <h3 id="homeCartStatus">0 productos agregados</h3>
+            <p id="homeCartDetail">Tu resumen se actualiza automaticamente mientras navegas.</p>
+        </article>
+    </section>
+</main>
 
-    <div id="modalImagen" class="modal hidden" onclick="cerrarImagen()">
-        <img id="imagenGrande">
-    </div>
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
 
-</div>
-
-<div id="notificacion"></div>
-
+<script src="services.js"></script>
 <script src="app.js"></script>
-
 </body>
 </html>
