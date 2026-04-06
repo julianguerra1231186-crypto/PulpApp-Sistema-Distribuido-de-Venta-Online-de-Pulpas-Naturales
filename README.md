@@ -39,6 +39,41 @@ Esta estructura mejora la mantenibilidad, escalabilidad y organización del sist
 
 Adicionalmente, el sistema utiliza PostgreSQL como base de datos y Docker Compose para la orquestación de los servicios, permitiendo levantar toda la arquitectura de manera controlada y reproducible.
 
+# El sistema se encuentra completamente funcional:
+- Backend distribuido.
+- API Gateway.
+- Frontend conectado.
+- Base de datos persistente.
+- Docker Compose.
+
+  ████████████████████████████████████ 100%
+
+- Kubernetes: Pendiente , En Revisicion para implementacion
+### Historias de Usuario Implementadas
+ - HU-REG-001 — Registro de usuario
+   - Permite registrar usuarios desde el frontend enviando datos al microservicio ms-users a través del API Gateway.
+ - HU-REG-002 — Validación de cédula
+   - Valida si un usuario ya existe antes de permitir su registro, evitando duplicados.
+ - HU-REG-003 — Persistencia de sesión
+   - Mantiene datos del usuario y carrito utilizando localStorage para mejorar la experiencia.
+ - HU-CAT-004 — Catálogo de productos
+   - Obtiene productos desde ms-products vía gateway y los renderiza dinámicamente en el frontend.
+ - HU-ORD-005 — Creación de pedidos
+   - Permite registrar pedidos desde el carrito hacia ms-orders.
+ - HU-ARC-006 — API Gateway unificado
+   - Centraliza todas las peticiones en un solo origen (localhost:8090).
+ - HU-DEVOPS-007 — Docker Compose
+   - Permite levantar todo el sistema con un solo comando.
+ - HU-DB-008 — Persistencia en PostgreSQL
+   - Centraliza el almacenamiento de datos de usuarios, productos y pedidos.
+ - HU-FE-009 — Manejo de errores
+   - Muestra errores claros al usuario mediante toasts y registra logs técnicos en consola.
+ - HU-UI-010 — Modal de productos
+   - Permite visualizar imágenes ampliadas desde el catálogo.
+ - HU-INT-011 — Integración CORS
+   - Permite comunicación completa frontend-backend sin bloqueos del navegador.
+ - HU-K8S-012 — Despliegue en Kubernetes
+   - Demuestra portabilidad del sistema en un clúster con pods y servicios activos.
 <hr>
 
 # ADR
