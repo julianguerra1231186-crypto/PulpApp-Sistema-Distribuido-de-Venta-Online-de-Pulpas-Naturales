@@ -1,52 +1,75 @@
-# API Gateway — escucha en 8080 y reenvia a los microservicios.
-#
-# URIs de destino (uri:):
-# - Por defecto: http://localhost:8081|8082|8083 para ejecutar el gateway en la maquina host
-#   (mvn spring-boot:run) mientras los MS tambien estan en localhost.
-# - En Docker: docker-compose inyecta GATEWAY_MS_USERS_URI, etc. con nombres de servicio
-#   (http://ms-users:8081, ...). Dentro de la red bridge del compose, "localhost" apunta al
-#   propio contenedor del gateway, no a los otros servicios; por eso se usan los DNS internos
-#   que Docker resuelve al contenedor correcto en pulpapp-network.
+# ============================================
+# API GATEWAY - CONFIGURACIÓN PRINCIPAL
+# ============================================
+# Punto de entrada único para todos los microservicios
+# (users, products, orders)
+# Puerto interno del contenedor
+
 server:
   port: 8080
 
 spring:
   cloud:
     gateway:
-      # CORS global: los navegadores aplican la politica cross-origin; Postman/curl no la aplican.
-      # Las peticiones "simples" (p. ej. muchos GET) pueden pasar sin preflight; POST con
-      # Content-Type: application/json dispara preflight OPTIONS. El gateway debe responder
-      # a OPTIONS con Access-Control-* antes de que el navegador envie el POST.
+
+      # ============================================
+      # 🔥 SOLUCIÓN A CORS DUPLICADO
+      # ============================================
+      # Evita headers duplicados como "* , *"
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+      # ============================================
+      # CONFIGURACIÓN GLOBAL DE CORS
+      # ============================================
+      # Permite que el frontend (localhost:5500)
+      # consuma el gateway sin bloqueos del navegador
       globalcors:
-        # Recomendado por Spring para que OPTIONS (preflight) reciba CORS aunque el predicado
-        # de ruta no coincida con el metodo OPTIONS en algunos casos.
-        add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
+            # ⚠️ En producción usa:
+            # "http://localhost:5500"
             allowedOrigins: "*"
+
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
               - OPTIONS
+
             allowedHeaders: "*"
+
+            # No usar cookies / sesiones
             allowCredentials: false
+
+      # ============================================
+      # RUTAS HACIA MICROSERVICIOS
+      # ============================================
       routes:
-        # Usuarios → ms-users (REST bajo /users).
+
+        # --------------------------------------------
+        # MICROSERVICIO DE USUARIOS
+        # --------------------------------------------
         - id: ms-users
           uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
           predicates:
-            - Path=/users/**
+            - Path=/users, /users/**
 
-        # Catalogo → ms-products (REST bajo /products).
+        # --------------------------------------------
+        # MICROSERVICIO DE PRODUCTOS (CATÁLOGO)
+        # --------------------------------------------
         - id: ms-products
           uri: ${GATEWAY_MS_PRODUCTS_URI:http://localhost:8082}
           predicates:
-            - Path=/products/**
+            # 🔥 IMPORTANTE:
+            # Incluye /products y /products/**
+            - Path=/products, /products/**
 
-        # Pedidos → ms-orders (REST bajo /orders).
+        # --------------------------------------------
+        # MICROSERVICIO DE PEDIDOS
+        # --------------------------------------------
         - id: ms-orders
           uri: ${GATEWAY_MS_ORDERS_URI:http://localhost:8083}
           predicates:
-            - Path=/orders/**
+            - Path=/orders, /orders/**
