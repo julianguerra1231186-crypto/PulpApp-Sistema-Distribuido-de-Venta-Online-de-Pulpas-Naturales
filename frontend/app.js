@@ -339,15 +339,23 @@ function clearCart() {
 function loadProducts() {
     return api.fetchProducts()
         .then((products) => {
-            state.products = products;
+            const list = Array.isArray(products) ? products : [];
+
+            if (products != null && !Array.isArray(products)) {
+                console.warn("loadProducts: se esperaba un array de productos, se recibio:", typeof products, products);
+            }
+
+            state.products = list;
             syncCartWithProducts();
             renderHomePage();
-            renderCatalogPage(products);
+            renderCatalogPage(list);
             renderCartPage();
         })
         .catch((error) => {
             console.error("Error al cargar productos:", error);
+            console.error("Detalle backend / red:", error.message, error.status || "");
             mostrarMensaje(error.message || "No fue posible cargar el catalogo", "error");
+            state.products = [];
             renderCatalogPage([]);
         });
 }
@@ -382,7 +390,9 @@ function renderCatalogPage(products = state.products) {
         return;
     }
 
-    if (!products.length) {
+    const items = Array.isArray(products) ? products : [];
+
+    if (!items.length) {
         catalogGrid.innerHTML = `
             <article class="empty-state">
                 <h3>No hay productos disponibles</h3>
@@ -393,7 +403,7 @@ function renderCatalogPage(products = state.products) {
         return;
     }
 
-    catalogGrid.innerHTML = products.map((product, index) => {
+    catalogGrid.innerHTML = items.map((product, index) => {
         const image = getProductImage(product, index);
         const isAvailable = product.available !== false;
 
