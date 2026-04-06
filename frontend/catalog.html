@@ -70,5 +70,54 @@
 
 <script src="services.js"></script>
 <script src="app.js"></script>
+
+
+
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", async () => {
+        const grid = document.getElementById("catalogGrid");
+
+        try {
+
+            // 🔥 Verificar que existe el servicio
+            if (!window.PulpAppServices) {
+                throw new Error("PulpAppServices no está definido");
+            }
+
+            const products = await window.PulpAppServices.fetchProducts();
+
+            console.log("PRODUCTOS:", products);
+
+            grid.innerHTML = products.map(p => `
+            <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+                <h3>${p.name}</h3>
+                <p>Precio: ${p.price}</p>
+                <p>Stock: ${p.stock}</p>
+            </div>
+        `).join("");
+
+        } catch (error) {
+            console.error("ERROR:", error);
+            grid.innerHTML = "<p>Error cargando productos</p>";
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>
