@@ -1,16 +1,22 @@
 server:
-  port: 8081
+  port: ${SERVER_PORT:8081}
 spring:
   datasource:
-    url: jdbc:postgresql://pulpapp_users_db:5432/pulpapp_users
-    username: postgres
-    password: 1234
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/pulpapp_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    # Liquibase gestiona el esquema; Hibernate no debe modificar tablas
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Liquibase: apunta al changelog maestro del microservicio
+  liquibase:
+    change-log: classpath:db/changelog/changelog-master.yml
+    enabled: true

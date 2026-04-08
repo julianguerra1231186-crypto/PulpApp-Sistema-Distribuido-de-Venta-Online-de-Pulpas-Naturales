@@ -56,6 +56,12 @@
 			<artifactId>postgresql</artifactId>
 		</dependency>
 
+		<!-- Liquibase: versionado de esquema de base de datos -->
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
 		<!--  MapStruct -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
