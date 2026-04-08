@@ -1,29 +1,24 @@
-##
-# changelog-master.yml — ms-products
-#
-# Archivo maestro de Liquibase para el microservicio de productos.
-# Incluye los changeSets en orden de ejecución.
-# Liquibase registra cada changeSet en la tabla databasechangelog
-# para garantizar que no se ejecute dos veces.
-##
-
 databaseChangeLog:
 
   # ============================================================
   # changeSet 1: Tabla category
-  # Entidad base que clasifica los productos (ej: Tropicales,
-  # Cítricas, Berries). Debe crearse ANTES que products
-  # porque products tiene FK hacia category.
+  # Entidad padre que clasifica los productos.
+  # Relación: Category (1) -> Product (N)
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 1-create-category-table
       author: pulpapp-team
-      comment: "Crea la tabla category. Entidad padre de products (relación 1:N)."
+      comment: Crea la tabla category. Entidad padre de products relacion 1-N.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: category
       changes:
         - createTable:
             tableName: category
             columns:
-              # PK autoincremental
               - column:
                   name: id
                   type: BIGINT
@@ -31,14 +26,12 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-              # Nombre único de la categoría (ej: "Tropicales")
               - column:
                   name: name
                   type: VARCHAR(100)
                   constraints:
                     nullable: false
                     unique: true
-              # Descripción opcional de la categoría
               - column:
                   name: description
                   type: VARCHAR(255)
@@ -47,14 +40,19 @@ databaseChangeLog:
 
   # ============================================================
   # changeSet 2: Tabla products
-  # Catálogo de pulpas. Tiene FK opcional hacia category.
-  # Se usa addColumn para agregar category_id sin romper
-  # registros existentes (nullable: true en la migración).
+  # Catálogo de pulpas. Columnas en snake_case para coincidir
+  # con la convención de nombres que usa Hibernate (imageUrl -> image_url).
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 2-create-products-table
       author: pulpapp-team
-      comment: "Crea la tabla products con todos sus campos base."
+      comment: Crea la tabla products con todos sus campos base.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: products
       changes:
         - createTable:
             tableName: products
@@ -92,6 +90,7 @@ databaseChangeLog:
                   type: BOOLEAN
                   constraints:
                     nullable: false
+              # Hibernate convierte imageUrl -> image_url (snake_case)
               - column:
                   name: image_url
                   type: VARCHAR(255)
@@ -99,16 +98,21 @@ databaseChangeLog:
                     nullable: true
 
   # ============================================================
-  # changeSet 3: FK products → category
-  # Agrega la columna category_id a products y crea la
-  # restricción de clave foránea. Nullable para no romper
-  # productos ya existentes sin categoría asignada.
-  # Relación: Product (N) → Category (1)
+  # changeSet 3: FK products -> category
+  # Agrega category_id a products y crea la FK.
+  # onDelete SET NULL: borrar categoría no borra productos.
+  # onFail: MARK_RAN — si la columna ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 3-add-category-fk-to-products
       author: pulpapp-team
-      comment: "Agrega category_id a products y crea FK hacia category."
+      comment: Agrega category_id a products y crea FK hacia category.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: products
+            columnName: category_id
       changes:
         - addColumn:
             tableName: products
@@ -124,52 +128,56 @@ databaseChangeLog:
             constraintName: fk_products_category
             referencedTableName: category
             referencedColumnNames: id
-            # Al eliminar una categoría, los productos quedan sin categoría (no se borran)
             onDelete: SET NULL
 
   # ============================================================
   # changeSet 4: Datos semilla — categorías iniciales
-  # Inserta las categorías base para que el catálogo tenga
-  # clasificación desde el primer arranque.
+  # Inserta las 4 categorías base si la tabla está vacía.
+  # onFail: MARK_RAN — si ya hay datos, se registra sin error.
   # ============================================================
   - changeSet:
       id: 4-seed-categories
       author: pulpapp-team
-      comment: "Inserta categorías iniciales de pulpas de fruta."
+      comment: Inserta categorias iniciales de pulpas de fruta.
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "0"
+          sql: SELECT COUNT(*) FROM category
       changes:
         - insert:
             tableName: category
             columns:
               - column:
                   name: name
-                  value: "Tropicales"
+                  value: Tropicales
               - column:
                   name: description
-                  value: "Pulpas de frutas tropicales como mango, maracuyá y lulo"
+                  value: Pulpas de frutas tropicales como mango maracuya y lulo
         - insert:
             tableName: category
             columns:
               - column:
                   name: name
-                  value: "Cítricas"
+                  value: Citricas
               - column:
                   name: description
-                  value: "Pulpas de frutas cítricas como naranja y limón"
+                  value: Pulpas de frutas citricas como naranja y limon
         - insert:
             tableName: category
             columns:
               - column:
                   name: name
-                  value: "Berries"
+                  value: Berries
               - column:
                   name: description
-                  value: "Pulpas de frutos rojos como fresa y mora"
+                  value: Pulpas de frutos rojos como fresa y mora
         - insert:
             tableName: category
             columns:
               - column:
                   name: name
-                  value: "Exóticas"
+                  value: Exoticas
               - column:
                   name: description
-                  value: "Pulpas de frutas exóticas y poco comunes"
+                  value: Pulpas de frutas exoticas y poco comunes

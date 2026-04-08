@@ -6,17 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="89256da1-e398-401a-a9cd-ae02780b6b6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/Copiadecodigo.txt" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/Copiadecodigo.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/catalog.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/catalog.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-orders/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-products/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +124,7 @@
       <workItem from="1775440490301" duration="10125000" />
       <workItem from="1775485661883" duration="6086000" />
       <workItem from="1775599201590" duration="3991000" />
-      <workItem from="1775681605505" duration="1783000" />
+      <workItem from="1775681605505" duration="4546000" />
     </task>
     <servers />
   </component>

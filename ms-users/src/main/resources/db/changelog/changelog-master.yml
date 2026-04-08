@@ -1,29 +1,25 @@
-##
-# changelog-master.yml — ms-users
-#
-# Archivo maestro de Liquibase para el microservicio de usuarios.
-# Gestiona las tablas users y pedidos.
-# Relación: Pedido (N) → User (1)
-##
-
 databaseChangeLog:
 
   # ============================================================
   # changeSet 1: Tabla users
-  # Almacena los datos de los clientes registrados en PulpApp.
-  # La cédula y el email son únicos por usuario.
-  # El teléfono es nullable para compatibilidad con registros
-  # históricos (validado a nivel de DTO en nuevos registros).
+  # Almacena los clientes registrados en PulpApp.
+  # cedula y email son unicos. telefono es nullable por
+  # compatibilidad con registros historicos.
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 1-create-users-table
       author: pulpapp-team
-      comment: "Crea la tabla users con cédula y email únicos."
+      comment: Crea la tabla users con cedula y email unicos.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: users
       changes:
         - createTable:
             tableName: users
             columns:
-              # PK autoincremental
               - column:
                   name: id
                   type: BIGINT
@@ -31,39 +27,34 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-              # Número de identificación único del usuario
               - column:
                   name: cedula
                   type: VARCHAR(20)
                   constraints:
                     nullable: false
                     unique: true
-              # Teléfono nullable por compatibilidad con datos históricos
+              # Nullable por compatibilidad con datos historicos
               - column:
                   name: telefono
                   type: VARCHAR(20)
                   constraints:
                     nullable: true
-              # Nombre completo del usuario
               - column:
                   name: name
                   type: VARCHAR(150)
                   constraints:
                     nullable: false
-              # Email único para identificación y contacto
               - column:
                   name: email
                   type: VARCHAR(150)
                   constraints:
                     nullable: false
                     unique: true
-              # Contraseña (en producción debe almacenarse hasheada)
               - column:
                   name: password
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
-              # Dirección de entrega del usuario
               - column:
                   name: direccion
                   type: VARCHAR(255)
@@ -73,20 +64,22 @@ databaseChangeLog:
   # ============================================================
   # changeSet 2: Tabla pedidos
   # Pedidos internos gestionados desde ms-users.
-  # Relación: Pedido (N) → User (1) mediante FK user_id.
-  # Esta tabla es independiente de ms-orders; representa
-  # pedidos simples manejados directamente por el servicio
-  # de usuarios (PedidoController).
+  # Relacion: Pedido (N) -> User (1) mediante FK user_id.
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 2-create-pedidos-table
       author: pulpapp-team
-      comment: "Crea la tabla pedidos con FK hacia users. Relación N:1 (muchos pedidos por usuario)."
+      comment: Crea la tabla pedidos con FK hacia users. Relacion N-1.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: pedidos
       changes:
         - createTable:
             tableName: pedidos
             columns:
-              # PK autoincremental
               - column:
                   name: id
                   type: BIGINT
@@ -94,13 +87,11 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-              # Descripción del pedido
               - column:
                   name: descripcion
                   type: VARCHAR(255)
                   constraints:
                     nullable: false
-              # Total del pedido
               - column:
                   name: total
                   type: DOUBLE PRECISION
@@ -114,14 +105,19 @@ databaseChangeLog:
                     nullable: false
 
   # ============================================================
-  # changeSet 3: FK pedidos → users
-  # Crea la restricción de clave foránea entre pedidos y users.
-  # RESTRICT: no se puede eliminar un usuario que tenga pedidos.
+  # changeSet 3: FK pedidos -> users
+  # RESTRICT: no se puede eliminar un usuario con pedidos.
+  # onFail: MARK_RAN — si la FK ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 3-add-fk-pedidos-to-users
       author: pulpapp-team
-      comment: "Crea FK pedidos.user_id → users.id con RESTRICT para proteger integridad."
+      comment: Crea FK pedidos.user_id hacia users.id con RESTRICT.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          foreignKeyConstraintExists:
+            foreignKeyName: fk_pedidos_user
       changes:
         - addForeignKeyConstraint:
             baseTableName: pedidos
@@ -129,5 +125,4 @@ databaseChangeLog:
             constraintName: fk_pedidos_user
             referencedTableName: users
             referencedColumnNames: id
-            # No permite eliminar un usuario que tenga pedidos asociados
             onDelete: RESTRICT

@@ -1,30 +1,25 @@
-##
-# changelog-master.yml — ms-orders
-#
-# Archivo maestro de Liquibase para el microservicio de pedidos.
-# Gestiona las tablas orders y order_items.
-# Relación: Order (1) → OrderItem (N) → product_id (referencia lógica a ms-products)
-##
-
 databaseChangeLog:
 
   # ============================================================
   # changeSet 1: Tabla orders
-  # Encabezado del pedido. Almacena el usuario que lo realizó
-  # (user_id como referencia lógica a ms-users), el total
-  # calculado y la fecha de creación.
-  # Nota: user_id es referencia lógica (no FK física) porque
-  # users vive en ms-users (microservicio separado).
+  # Encabezado del pedido.
+  # Hibernate convierte userId -> user_id (snake_case).
+  # user_id es referencia logica a ms-users (sin FK fisica cross-service).
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 1-create-orders-table
       author: pulpapp-team
-      comment: "Crea la tabla orders. Cabecera del pedido con referencia lógica al usuario."
+      comment: Crea la tabla orders. Cabecera del pedido con referencia logica al usuario.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: orders
       changes:
         - createTable:
             tableName: orders
             columns:
-              # PK autoincremental del pedido
               - column:
                   name: id
                   type: BIGINT
@@ -32,19 +27,17 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-              # Referencia lógica al usuario (ms-users). Sin FK física por arquitectura de microservicios.
+              # Hibernate convierte userId -> user_id
               - column:
                   name: user_id
                   type: BIGINT
                   constraints:
                     nullable: false
-              # Total calculado del pedido (suma de subtotales de order_items)
               - column:
                   name: total
                   type: DOUBLE PRECISION
                   constraints:
                     nullable: false
-              # Fecha y hora de creación del pedido
               - column:
                   name: fecha
                   type: TIMESTAMP
@@ -53,21 +46,24 @@ databaseChangeLog:
 
   # ============================================================
   # changeSet 2: Tabla order_items
-  # Líneas de detalle del pedido. Cada fila representa un
-  # producto dentro de un pedido con su cantidad y precio
-  # capturado al momento de la compra (precio histórico).
-  # Relación: OrderItem (N) → Order (1)  [FK física]
-  # Relación: OrderItem → product_id     [referencia lógica a ms-products]
+  # Detalle del pedido con precio historico.
+  # Hibernate convierte: productId -> product_id,
+  #                      precioUnitario -> precio_unitario
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 2-create-order-items-table
       author: pulpapp-team
-      comment: "Crea la tabla order_items. Detalle de cada pedido con FK hacia orders."
+      comment: Crea la tabla order_items. Detalle de cada pedido con FK hacia orders.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: order_items
       changes:
         - createTable:
             tableName: order_items
             columns:
-              # PK autoincremental del item
               - column:
                   name: id
                   type: BIGINT
@@ -75,31 +71,29 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
                     nullable: false
-              # FK hacia orders (relación física dentro del mismo microservicio)
+              # FK fisica hacia orders (mismo microservicio)
               - column:
                   name: order_id
                   type: BIGINT
                   constraints:
                     nullable: false
-              # Referencia lógica al producto en ms-products (sin FK física cross-service)
+              # Hibernate convierte productId -> product_id
               - column:
                   name: product_id
                   type: BIGINT
                   constraints:
                     nullable: false
-              # Cantidad de unidades del producto en este item
               - column:
                   name: cantidad
                   type: INTEGER
                   constraints:
                     nullable: false
-              # Precio unitario capturado al momento de la compra (precio histórico)
+              # Hibernate convierte precioUnitario -> precio_unitario
               - column:
                   name: precio_unitario
                   type: DOUBLE PRECISION
                   constraints:
                     nullable: false
-              # Subtotal = cantidad * precio_unitario
               - column:
                   name: subtotal
                   type: DOUBLE PRECISION
@@ -107,15 +101,19 @@ databaseChangeLog:
                     nullable: false
 
   # ============================================================
-  # changeSet 3: FK order_items → orders
-  # Crea la restricción de clave foránea entre order_items
-  # y orders. CASCADE DELETE: al eliminar un pedido se
-  # eliminan automáticamente sus items.
+  # changeSet 3: FK order_items -> orders
+  # CASCADE DELETE: al borrar un pedido se borran sus items.
+  # onFail: MARK_RAN — si la FK ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 3-add-fk-order-items-to-orders
       author: pulpapp-team
-      comment: "Crea FK order_items.order_id → orders.id con CASCADE DELETE."
+      comment: Crea FK order_items.order_id hacia orders.id con CASCADE DELETE.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          foreignKeyConstraintExists:
+            foreignKeyName: fk_order_items_order
       changes:
         - addForeignKeyConstraint:
             baseTableName: order_items
@@ -123,18 +121,22 @@ databaseChangeLog:
             constraintName: fk_order_items_order
             referencedTableName: orders
             referencedColumnNames: id
-            # Al eliminar un pedido, sus items se eliminan en cascada
             onDelete: CASCADE
 
   # ============================================================
-  # changeSet 4: Índice en order_items.order_id
-  # Mejora el rendimiento de las consultas que buscan todos
-  # los items de un pedido específico.
+  # changeSet 4: Indice en order_items.order_id
+  # Optimiza consultas de detalle de pedido.
+  # onFail: MARK_RAN — si el indice ya existe, se registra sin error.
   # ============================================================
   - changeSet:
       id: 4-index-order-items-order-id
       author: pulpapp-team
-      comment: "Crea índice en order_items.order_id para optimizar consultas de detalle de pedido."
+      comment: Crea indice en order_items.order_id para optimizar consultas.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_order_items_order_id
       changes:
         - createIndex:
             tableName: order_items
