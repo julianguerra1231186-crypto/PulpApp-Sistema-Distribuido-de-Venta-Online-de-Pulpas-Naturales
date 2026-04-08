@@ -1,0 +1,175 @@
+##
+# changelog-master.yml — ms-products
+#
+# Archivo maestro de Liquibase para el microservicio de productos.
+# Incluye los changeSets en orden de ejecución.
+# Liquibase registra cada changeSet en la tabla databasechangelog
+# para garantizar que no se ejecute dos veces.
+##
+
+databaseChangeLog:
+
+  # ============================================================
+  # changeSet 1: Tabla category
+  # Entidad base que clasifica los productos (ej: Tropicales,
+  # Cítricas, Berries). Debe crearse ANTES que products
+  # porque products tiene FK hacia category.
+  # ============================================================
+  - changeSet:
+      id: 1-create-category-table
+      author: pulpapp-team
+      comment: "Crea la tabla category. Entidad padre de products (relación 1:N)."
+      changes:
+        - createTable:
+            tableName: category
+            columns:
+              # PK autoincremental
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              # Nombre único de la categoría (ej: "Tropicales")
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              # Descripción opcional de la categoría
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 2: Tabla products
+  # Catálogo de pulpas. Tiene FK opcional hacia category.
+  # Se usa addColumn para agregar category_id sin romper
+  # registros existentes (nullable: true en la migración).
+  # ============================================================
+  - changeSet:
+      id: 2-create-products-table
+      author: pulpapp-team
+      comment: "Crea la tabla products con todos sus campos base."
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(120)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: stock
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: available
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: image_url
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 3: FK products → category
+  # Agrega la columna category_id a products y crea la
+  # restricción de clave foránea. Nullable para no romper
+  # productos ya existentes sin categoría asignada.
+  # Relación: Product (N) → Category (1)
+  # ============================================================
+  - changeSet:
+      id: 3-add-category-fk-to-products
+      author: pulpapp-team
+      comment: "Agrega category_id a products y crea FK hacia category."
+      changes:
+        - addColumn:
+            tableName: products
+            columns:
+              - column:
+                  name: category_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+        - addForeignKeyConstraint:
+            baseTableName: products
+            baseColumnNames: category_id
+            constraintName: fk_products_category
+            referencedTableName: category
+            referencedColumnNames: id
+            # Al eliminar una categoría, los productos quedan sin categoría (no se borran)
+            onDelete: SET NULL
+
+  # ============================================================
+  # changeSet 4: Datos semilla — categorías iniciales
+  # Inserta las categorías base para que el catálogo tenga
+  # clasificación desde el primer arranque.
+  # ============================================================
+  - changeSet:
+      id: 4-seed-categories
+      author: pulpapp-team
+      comment: "Inserta categorías iniciales de pulpas de fruta."
+      changes:
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Tropicales"
+              - column:
+                  name: description
+                  value: "Pulpas de frutas tropicales como mango, maracuyá y lulo"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Cítricas"
+              - column:
+                  name: description
+                  value: "Pulpas de frutas cítricas como naranja y limón"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Berries"
+              - column:
+                  name: description
+                  value: "Pulpas de frutos rojos como fresa y mora"
+        - insert:
+            tableName: category
+            columns:
+              - column:
+                  name: name
+                  value: "Exóticas"
+              - column:
+                  name: description
+                  value: "Pulpas de frutas exóticas y poco comunes"

@@ -1,0 +1,509 @@
+application.yml: antes de corregir el código . 12:23 am 6/04/2025
+
+
+# API Gateway — escucha en 8080 y reenvia a los microservicios.
+#
+# URIs de destino (uri:):
+# - Por defecto: http://localhost:8081|8082|8083 para ejecutar el gateway en la maquina host
+#   (mvn spring-boot:run) mientras los MS tambien estan en localhost.
+# - En Docker: docker-compose inyecta GATEWAY_MS_USERS_URI, etc. con nombres de servicio
+#   (http://ms-users:8081, ...). Dentro de la red bridge del compose, "localhost" apunta al
+#   propio contenedor del gateway, no a los otros servicios; por eso se usan los DNS internos
+#   que Docker resuelve al contenedor correcto en pulpapp-network.
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      # CORS global: los navegadores aplican la politica cross-origin; Postman/curl no la aplican.
+      # Las peticiones "simples" (p. ej. muchos GET) pueden pasar sin preflight; POST con
+      # Content-Type: application/json dispara preflight OPTIONS. El gateway debe responder
+      # a OPTIONS con Access-Control-* antes de que el navegador envie el POST.
+      globalcors:
+        # Recomendado por Spring para que OPTIONS (preflight) reciba CORS aunque el predicado
+        # de ruta no coincida con el metodo OPTIONS en algunos casos.
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: false
+      routes:
+        # Usuarios → ms-users (REST bajo /users).
+        - id: ms-users
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/users/**
+
+        # Catalogo → ms-products (REST bajo /products).
+        - id: ms-products
+          uri: ${GATEWAY_MS_PRODUCTS_URI:http://localhost:8082}
+          predicates:
+            - Path=/products/**
+
+        # Pedidos → ms-orders (REST bajo /orders).
+        - id: ms-orders
+          uri: ${GATEWAY_MS_ORDERS_URI:http://localhost:8083}
+          predicates:
+            - Path=/orders/**
+
+archivo original antes de modificar  el archivo services.js 12:23 am 6/04/2025
+
+
+
+/*
+    services.js centraliza el consumo de APIs REST y las utilidades de almacenamiento local.
+    Esto separa la logica de datos de la logica visual para mantener una arquitectura frontend limpia.
+*/
+
+(function initializeServices(global) {
+    /*
+        Comunicacion via API Gateway (Spring Cloud Gateway), no directamente contra cada microservicio.
+        Un solo origen (API_BASE_URL) centraliza las peticiones, alinea el frontend con la arquitectura
+        y facilita CORS y despliegues. El gateway enruta /users, /products y /orders a ms-users,
+        ms-products y ms-orders respectivamente.
+        Puerto 8090: mapeo host en docker-compose (contenedor del gateway sigue en 8080).
+    */
+    const API_BASE_URL = "http://localhost:8090";
+    /*
+        Catalogo: URL completa del API Gateway (no usar 8082 ni rutas relativas sueltas).
+        Debe coincidir con lo que ves en DevTools → Network (GET ...8090/products).
+    */
+    const API_URL = "http://localhost:8090/products";
+    const USERS_API_URL = `${API_BASE_URL}/users`;
+    const ORDERS_API_URL = `${API_BASE_URL}/orders`;
+
+    /*
+        Claves de localStorage.
+        Se nombran de forma explicita para evitar colisiones con otros datos del navegador.
+    */
+    const STORAGE_KEYS = {
+        cart: "pulpapp_cart",
+        user: "pulpapp_user"
+    };
+
+    /*
+        Intenta convertir una respuesta fetch en JSON si el cuerpo realmente existe.
+        Esto evita errores cuando el backend devuelve cuerpo vacio.
+    */
+    async function parseJsonResponse(response) {
+        const text = await response.text();
+
+        if (!text) {
+            return null;
+        }
+
+        try {
+            return JSON.parse(text);
+        } catch (error) {
+            return { message: text };
+        }
+    }
+
+    /*
+        Normaliza el manejo de errores HTTP.
+        Si el backend responde con error, construimos un mensaje util para la UI.
+    */
+    async function handleResponse(response, defaultMessage) {
+        const data = await parseJsonResponse(response);
+
+        if (!response.ok) {
+            /*
+                Se adjunta el codigo HTTP al error para que la capa de UI pueda tomar decisiones
+                mas precisas, por ejemplo distinguir entre un duplicado y un fallo generico.
+            */
+            const error = new Error(data?.error || data?.message || defaultMessage);
+            error.status = response.status;
+            throw error;
+        }
+
+        return data;
+    }
+
+    /*
+        Traduce mensajes tecnicos del backend a mensajes amables para el usuario final.
+        Esto evita mostrar detalles internos de PostgreSQL o trazas de negocio poco claras.
+    */
+    function normalizeUserApiErrorMessage(message, fallbackMessage) {
+        const normalizedMessage = String(message || "").toLowerCase();
+
+        if (
+            normalizedMessage.includes("duplicate")
+            || normalizedMessage.includes("already exists")
+            || normalizedMessage.includes("unique constraint")
+            || normalizedMessage.includes("duplicate key")
+        ) {
+            return "Este usuario ya esta registrado. Inicia sesion.";
+        }
+
+        if (normalizedMessage.includes("not found")) {
+            return "No encontramos un usuario con los datos suministrados.";
+        }
+
+        return fallbackMessage;
+    }
+
+    /*
+        Determina si un error recibido desde ms-users corresponde a un caso de duplicidad.
+        Esto permite responder con un mensaje de negocio claro en lugar de mostrar detalles tecnicos.
+    */
+    function isDuplicateUserError(error) {
+        const normalizedMessage = String(error?.message || "").toLowerCase();
+        const status = Number(error?.status || 0);
+
+        return (
+            status === 409
+            || status === 500
+            || normalizedMessage.includes("duplicate")
+            || normalizedMessage.includes("already exists")
+            || normalizedMessage.includes("unique constraint")
+            || normalizedMessage.includes("duplicate key")
+        );
+    }
+
+    /*
+        Normaliza la respuesta del GET /products a un arreglo (el gateway devuelve JSON de ms-products).
+        Si el backend envolviera la lista en otro campo, se extrae aqui sin tocar el backend.
+    */
+    function normalizeProductList(data) {
+        if (Array.isArray(data)) {
+            return data;
+        }
+
+        if (data && Array.isArray(data.content)) {
+            return data.content;
+        }
+
+        if (data && Array.isArray(data.products)) {
+            return data.products;
+        }
+
+        if (data == null) {
+            return [];
+        }
+
+        console.warn("fetchProducts: formato de lista inesperado, se usa arreglo vacio", data);
+        return [];
+    }
+
+    /*
+        getProducts / fetchProducts: unico origen para el catalogo (API Gateway :8090).
+        No export (scripts clasicos); app.js usa api.fetchProducts() o api.getProducts().
+    */
+    async function getProducts() {
+        console.log("Fetching from:", API_URL);
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "GET",
+                headers: {
+                    Accept: "application/json"
+                },
+                mode: "cors",
+                credentials: "omit"
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const products = normalizeProductList(data);
+
+            console.log("Products response:", data);
+            console.log("Products array (normalized):", products);
+
+            return products;
+        } catch (error) {
+            console.error("Error fetching products:", error);
+            throw error;
+        }
+    }
+
+    const fetchProducts = getProducts;
+
+    /*
+        Consulta un usuario por cedula y telefono.
+        Esta es la forma de login disponible segun el backend actual.
+    */
+    async function findUserByDocument(cedula, telefono) {
+        const response = await fetch(`${USERS_API_URL}/validar/${cedula}/${telefono}`);
+
+        try {
+            return await handleResponse(response, "No fue posible encontrar el usuario");
+        } catch (error) {
+            throw new Error(normalizeUserApiErrorMessage(error.message, "No encontramos un usuario con esa cedula y telefono."));
+        }
+    }
+
+    /*
+        Consulta un usuario unicamente por cedula.
+        Se usa antes del registro para evitar intentar crear usuarios duplicados.
+    */
+    async function findUserByCedula(cedula) {
+        /*
+            El backend real expone la busqueda por cedula en /users/cedula/{cedula}.
+            Se usa este contrato para verificar existencia antes de registrar y evitar duplicados.
+        */
+        const response = await fetch(`${USERS_API_URL}/cedula/${cedula}`);
+
+        if (response.status === 404) {
+            return null;
+        }
+
+        try {
+            return await handleResponse(response, "No fue posible verificar el usuario");
+        } catch (error) {
+            throw new Error(normalizeUserApiErrorMessage(error.message, "No fue posible verificar si el usuario ya existe."));
+        }
+    }
+
+    /*
+        Crea un usuario nuevo via POST a USERS_API_URL (API Gateway → /users).
+        El cuerpo es JSON (payload con password fija); Content-Type y Accept explicitos para el gateway y CORS.
+    */
+    async function createUser(userData) {
+        const payload = {
+            ...userData,
+            password: "123456"
+        };
+
+        try {
+            const existingUser = await findUserByCedula(userData.cedula);
+
+            if (existingUser) {
+                throw new Error("El usuario ya existe, puedes actualizar sus datos");
+            }
+
+            let response;
+
+            try {
+                response = await fetch(USERS_API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Accept: "application/json"
+                    },
+                    body: JSON.stringify(payload)
+                });
+            } catch (networkError) {
+                console.error("createUser: fallo de red o CORS al POST", USERS_API_URL, networkError);
+                throw networkError;
+            }
+
+            if (!response.ok) {
+                try {
+                    const errBody = await response.clone().text();
+                    console.error("createUser: respuesta HTTP no exitosa", response.status, errBody);
+                } catch (logErr) {
+                    console.error("createUser: respuesta HTTP no exitosa", response.status, logErr);
+                }
+            }
+
+            return await handleResponse(response, "No fue posible registrar el usuario");
+        } catch (error) {
+            console.error("createUser:", error);
+
+            if (isDuplicateUserError(error)) {
+                throw new Error("Este usuario ya esta registrado");
+            }
+
+            throw new Error(normalizeUserApiErrorMessage(error.message, "No fue posible registrar el usuario."));
+        }
+    }
+
+    /*
+        Actualiza un usuario existente en ms-users.
+    */
+    async function updateUser(userId, userData) {
+        const payload = {
+            ...userData,
+            password: "123456"
+        };
+
+        try {
+            const existingUser = await findUserByCedula(userData.cedula);
+
+            if (existingUser && Number(existingUser.id) !== Number(userId)) {
+                throw new Error("Este usuario ya esta registrado");
+            }
+
+            const response = await fetch(`${USERS_API_URL}/${userId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+
+            return await handleResponse(response, "No fue posible actualizar el usuario");
+        } catch (error) {
+            if (isDuplicateUserError(error)) {
+                throw new Error("Este usuario ya esta registrado");
+            }
+
+            throw new Error(normalizeUserApiErrorMessage(error.message, "No fue posible actualizar el usuario."));
+        }
+    }
+
+    /*
+        Crea un pedido real en ms-orders.
+        El payload debe cumplir exactamente con el contrato del microservicio.
+    */
+    async function createOrder(orderData) {
+        const response = await fetch(ORDERS_API_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        return handleResponse(response, "No fue posible registrar el pedido");
+    }
+
+    /*
+        Lee el carrito persistido.
+        Si no existe informacion previa, devuelve un arreglo vacio.
+    */
+    function getCart() {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.cart) || "[]");
+    }
+
+    /*
+        Guarda el carrito actual en localStorage.
+    */
+    function saveCart(cart) {
+        localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(cart));
+    }
+
+    /*
+        Obtiene el usuario autenticado localmente.
+        Devuelve null cuando el usuario aun no se ha consultado o registrado.
+    */
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.user) || "null");
+    }
+
+    /*
+        Persiste el usuario actual para reutilizarlo en otras paginas como carrito o login.
+    */
+    function saveCurrentUser(user) {
+        localStorage.setItem(STORAGE_KEYS.user, JSON.stringify(user));
+    }
+
+    /*
+        Limpia el usuario autenticado localmente.
+    */
+    function clearCurrentUser() {
+        localStorage.removeItem(STORAGE_KEYS.user);
+    }
+
+    /*
+        Exponemos un unico objeto global para que app.js consuma servicios
+        sin contaminar el espacio global con multiples funciones sueltas.
+    */
+    global.PulpAppServices = {
+        fetchProducts,
+        getProducts,
+        findUserByDocument,
+        findUserByCedula,
+        createUser,
+        updateUser,
+        createOrder,
+        getCart,
+        saveCart,
+        getCurrentUser,
+        saveCurrentUser,
+        clearCurrentUser
+    };
+})(window);
+
+
+aplicattion.yml original antes de modificar el 6/04/2026
+
+
+
+
+# ============================================
+# API GATEWAY - CONFIGURACIÓN PRINCIPAL
+# ============================================
+# Este servicio actúa como punto de entrada
+# para todos los microservicios (users, products, orders).
+# Escucha en el puerto 8080 dentro del contenedor.
+
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+
+      # ============================================
+      # CONFIGURACIÓN GLOBAL DE CORS
+      # ============================================
+      # Permite que el frontend (ej: localhost:5500)
+      # pueda consumir el API Gateway sin bloqueos del navegador.
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            # ⚠️ Puedes cambiar "*" por:
+            # "http://localhost:5500" para mayor seguridad
+            allowedOrigins: "*"
+
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+
+            allowedHeaders: "*"
+
+            # No usar credenciales (cookies, sesiones)
+            allowCredentials: false
+
+      # ============================================
+      # RUTAS HACIA MICROSERVICIOS
+      # ============================================
+      routes:
+
+        # --------------------------------------------
+        # MICROSERVICIO DE USUARIOS
+        # --------------------------------------------
+        - id: ms-users
+          # En Docker usa nombre del servicio (ms-users)
+          # En local usa localhost:8081
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/users, /users/**
+
+        # --------------------------------------------
+        # MICROSERVICIO DE PRODUCTOS (CATÁLOGO)
+        # --------------------------------------------
+        - id: ms-products
+          uri: ${GATEWAY_MS_PRODUCTS_URI:http://localhost:8082}
+          predicates:
+            # 🔥 IMPORTANTE:
+            # Incluye /products y /products/**
+            # para evitar errores 404 en el gateway
+            - Path=/products, /products/**
+
+        # --------------------------------------------
+        # MICROSERVICIO DE PEDIDOS
+        # --------------------------------------------
+        - id: ms-orders
+          uri: ${GATEWAY_MS_ORDERS_URI:http://localhost:8083}
+          predicates:
+            - Path=/orders, /orders/**
+
+
+

@@ -13,7 +13,7 @@ spring:
     gateway:
 
       # ============================================
-      # 🔥 SOLUCIÓN A CORS DUPLICADO
+      # SOLUCIÓN A CORS DUPLICADO
       # ============================================
       # Evita headers duplicados como "* , *"
       default-filters:
@@ -27,7 +27,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            # ⚠️ En producción usa:
+            # ⚠ En producción usa:
             # "http://localhost:5500"
             allowedOrigins: "*"
 
@@ -62,7 +62,7 @@ spring:
         - id: ms-products
           uri: ${GATEWAY_MS_PRODUCTS_URI:http://localhost:8082}
           predicates:
-            # 🔥 IMPORTANTE:
+            #  IMPORTANTE:
             # Incluye /products y /products/**
             - Path=/products, /products/**
 
