@@ -282,3 +282,226 @@ main {
     }
 }
 
+
+/* ══════════════════════════════════════════════════════
+   HERO SLIDER
+══════════════════════════════════════════════════════ */
+
+.hero-slider {
+    position: relative;
+    width: 100%;
+    height: 65vh;
+    min-height: 420px;
+    overflow: hidden;
+    margin-bottom: 0;
+}
+
+/* Pista de slides */
+.slider-track {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Overlay degradado */
+.slider-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        rgba(10, 40, 20, 0.62) 0%,
+        rgba(10, 40, 20, 0.28) 60%,
+        transparent 100%
+    );
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+}
+
+.slider-content {
+    pointer-events: all;
+    padding: clamp(28px, 6vw, 72px);
+    max-width: 600px;
+}
+
+.slider-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    margin: 10px 0 14px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.slider-subtitle {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: rgba(255,255,255,0.88);
+    margin: 0 0 28px;
+    line-height: 1.5;
+}
+
+.slider-cta {
+    min-height: 52px;
+    padding: 0 30px;
+    font-size: 1rem;
+    box-shadow: 0 12px 36px rgba(13,122,77,0.45);
+}
+
+/* Flechas */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.22s ease, transform 0.22s ease;
+    z-index: 10;
+}
+
+.slider-arrow:hover {
+    background: rgba(255,255,255,0.32);
+    transform: translateY(-50%) scale(1.08);
+}
+
+.slider-arrow svg {
+    width: 22px;
+    height: 22px;
+}
+
+.slider-arrow--prev { left: 18px; }
+.slider-arrow--next { right: 18px; }
+
+/* Dots */
+.slider-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.slider-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.slider-dot.is-active {
+    background: #fff;
+    border-color: #fff;
+    transform: scale(1.25);
+}
+
+/* Responsive */
+@media (max-width: 760px) {
+    .hero-slider {
+        height: 55vw;
+        min-height: 280px;
+    }
+
+    .slider-arrow {
+        width: 38px;
+        height: 38px;
+    }
+
+    .slider-arrow--prev { left: 10px; }
+    .slider-arrow--next { right: 10px; }
+}
+
+/* ── Franja de beneficios ── */
+.benefits-bar {
+    width: 100%;
+    background: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    padding: 0 24px;
+    min-height: 56px;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.benefit-item strong {
+    font-weight: 800;
+    color: #4ade80;
+}
+
+.benefit-icon {
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.benefit-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255,255,255,0.18);
+    flex-shrink: 0;
+}
+
+@media (max-width: 760px) {
+    .benefits-bar {
+        gap: 0;
+        padding: 0 12px;
+    }
+
+    .benefit-item {
+        padding: 10px 14px;
+        font-size: 0.8rem;
+    }
+
+    .benefit-divider {
+        display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .benefits-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 20px;
+        gap: 8px;
+    }
+
+    .benefit-item {
+        padding: 4px 0;
+    }
+}

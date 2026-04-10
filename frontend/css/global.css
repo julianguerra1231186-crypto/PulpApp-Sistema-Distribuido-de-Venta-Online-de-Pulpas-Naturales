@@ -64,24 +64,35 @@ a {
 
 /* ——— Cabecera ——— */
 .site-header {
-    width: min(1200px, calc(100% - 32px));
-    margin: 20px auto 0;
-    padding: 14px 22px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.88));
+    border: none;
+    border-bottom: 1px solid rgba(26, 50, 31, 0.08);
+    border-radius: 0;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: 0 2px 20px rgba(18, 42, 28, 0.07);
+    transition: box-shadow 0.35s var(--ease-out);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.site-header:hover {
+    box-shadow: 0 4px 28px rgba(18, 42, 28, 0.1);
+}
+
+/* Contenedor interno alineado con el slider */
+.site-header .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 18px;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.78));
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    border-radius: var(--radius-pill);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    box-shadow: var(--shadow-md);
-    transition: box-shadow 0.35s var(--ease-out);
-}
-
-.site-header:hover {
-    box-shadow: var(--shadow-xl);
 }
 
 .brand-block {
@@ -501,13 +512,13 @@ a {
 @media (max-width: 760px) {
     .site-header,
     .page-content {
-        width: min(100% - 20px, 100%);
+        width: 100%;
     }
 
-    .site-header {
+    .site-header .header-inner {
         flex-direction: column;
         align-items: stretch;
-        border-radius: var(--radius-lg);
+        padding: 12px 16px;
     }
 
     .site-nav {
@@ -526,4 +537,30 @@ a {
     .form-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ——— Navbar: botón cerrar sesión ——— */
+.nav-logout-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--danger);
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition:
+            background 0.25s var(--ease-out),
+            color 0.25s var(--ease-out),
+            transform 0.25s var(--ease-out);
+}
+
+.nav-logout-btn:hover {
+    background: rgba(184, 50, 40, 0.08);
+    transform: translateY(-1px);
+}
+
+.nav-logout-btn:focus-visible {
+    outline: 2px solid var(--danger);
+    outline-offset: 3px;
 }

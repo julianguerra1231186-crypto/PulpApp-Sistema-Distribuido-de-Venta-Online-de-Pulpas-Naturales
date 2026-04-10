@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body data-page="dashboard">
+
+<!-- ═══════════════════════════════════════════════════════════ NAVBAR -->
+<header class="site-header">
+<div class="header-inner">
+    <div class="brand-block">
+        <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+        <div><span class="brand-kicker">PulpApp</span></div>
+    </div>
+    <nav class="site-nav" aria-label="Principal">
+        <a href="index.html">Inicio</a>
+        <a href="catalog.html">Catálogo</a>
+        <a href="cart.html">Carrito</a>
+        <a href="dashboard.html" class="is-active" data-nav="account">Mi cuenta</a>
+    </nav>
+    <a href="cart.html" class="cart-chip">
+        <span>Carrito</span>
+        <strong id="navCartCount">0</strong>
+    </a>
+</div>
+</header>
+
+<main class="page-content">
+
+    <!-- ── Banner bienvenida ── -->
+    <section class="page-banner glass-card dashboard-banner">
+        <div>
+            <span class="eyebrow" id="dashRoleBadge">Usuario</span>
+            <h1 id="dashWelcome">Bienvenido/a</h1>
+            <p id="dashRoleDesc" style="color:var(--text-muted); margin:0"></p>
+        </div>
+        <button id="dashLogoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
+    </section>
+
+    <!-- ── Tabs (se inyectan dinámicamente según rol) ── -->
+    <nav class="dash-tabs" id="dashTabs" aria-label="Secciones"></nav>
+
+    <!-- ══════════════════════════════════ PANELES SELLER + ADMIN -->
+
+    <!-- TAB: Perfil -->
+    <section id="tab-perfil" class="dash-panel glass-card hidden">
+        <span class="eyebrow">Información personal</span>
+        <h2>Tu perfil</h2>
+        <div class="profile-grid">
+            <div class="profile-field">
+                <span class="profile-label">Nombre</span>
+                <strong id="profileName">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Email</span>
+                <strong id="profileEmail">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Cédula</span>
+                <strong id="profileCedula">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Teléfono</span>
+                <strong id="profileTelefono">—</strong>
+            </div>
+            <div class="profile-field full-width">
+                <span class="profile-label">Dirección</span>
+                <strong id="profileDireccion">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Rol</span>
+                <strong id="profileRole">—</strong>
+            </div>
+        </div>
+        <div class="inline-actions" style="margin-top:28px">
+            <button id="profileLogoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
+        </div>
+    </section>
+
+    <!-- TAB: Mis pedidos (SELLER) -->
+    <section id="tab-pedidos" class="dash-panel glass-card hidden">
+        <span class="eyebrow">Historial</span>
+        <h2>Mis pedidos</h2>
+        <div id="ordersList"><p class="helper-text">Cargando...</p></div>
+    </section>
+
+    <!-- TAB: Nueva compra -->
+    <section id="tab-comprar" class="dash-panel glass-card hidden">
+        <span class="eyebrow">Catálogo</span>
+        <h2>Explorar productos</h2>
+        <p class="helper-text">Agrega productos al carrito y finaliza tu compra.</p>
+        <a href="catalog.html" class="btn btn-primary" style="margin-top:8px">Ir al catálogo</a>
+    </section>
+
+    <!-- ══════════════════════════════════ PANELES SOLO ADMIN -->
+
+    <!-- TAB: Gestión de productos -->
+    <section id="tab-admin-productos" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <h2>Gestión de productos</h2>
+
+        <!-- Formulario agregar / editar -->
+        <div class="admin-form-block glass-card" style="margin-bottom:28px">
+            <h3 id="productFormTitle">Agregar producto</h3>
+            <input type="hidden" id="editProductId">
+            <div class="form-grid">
+                <label>
+                    <span>Nombre</span>
+                    <input type="text" id="pName" placeholder="Nombre del producto">
+                </label>
+                <label>
+                    <span>Precio</span>
+                    <input type="number" id="pPrice" placeholder="0" min="0">
+                </label>
+                <label>
+                    <span>Stock</span>
+                    <input type="number" id="pStock" placeholder="0" min="0">
+                </label>
+                <label>
+                    <span>Disponible</span>
+                    <select id="pAvailable">
+                        <option value="true">Sí</option>
+                        <option value="false">No</option>
+                    </select>
+                </label>
+                <label class="full-width">
+                    <span>Descripción</span>
+                    <input type="text" id="pDescription" placeholder="Descripción breve">
+                </label>
+            </div>
+            <div class="inline-actions">
+                <button id="saveProductBtn" class="btn btn-primary" type="button">Guardar producto</button>
+                <button id="cancelEditBtn" class="btn btn-secondary hidden" type="button">Cancelar edición</button>
+            </div>
+            <p id="productFormMsg" class="helper-text" style="margin-top:12px"></p>
+        </div>
+
+        <!-- Lista de productos -->
+        <h3>Productos registrados</h3>
+        <div id="adminProductList"><p class="helper-text">Cargando productos...</p></div>
+    </section>
+
+    <!-- TAB: Gestión de clientes -->
+    <section id="tab-admin-clientes" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <h2>Gestión de clientes</h2>
+        <div id="adminUserList"><p class="helper-text">Cargando usuarios...</p></div>
+
+        <!-- Detalle de pedidos por cliente -->
+        <div id="clientOrdersBlock" class="hidden" style="margin-top:28px">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px">
+                <h3 id="clientOrdersTitle" style="margin:0">Pedidos del cliente</h3>
+                <button id="closeClientOrders" class="btn btn-secondary" type="button" style="min-height:36px; padding:0 14px; font-size:0.85rem">✕ Cerrar</button>
+            </div>
+            <div id="clientOrdersList"><p class="helper-text">Cargando...</p></div>
+        </div>
+    </section>
+
+</main>
+
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Botón flotante WhatsApp -->
+<a href="https://wa.me/573001234567?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20PulpApp"
+   target="_blank" rel="noopener noreferrer"
+   class="whatsapp-fab" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span>¿Necesitas ayuda?</span>
+</a>
+
+<script src="services.js"></script>
+<script src="auth.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    const BASE = "http://localhost:8090";
+
+    // ─────────────────────────────────────────────────────────────
+    // Utilidades
+    // ─────────────────────────────────────────────────────────────
+
+    function toast(msg, type) {
+        const el = document.getElementById("appToast");
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__toastT);
+        window.__toastT = setTimeout(() => { el.className = "toast"; }, 3200);
+    }
+
+    function authHeaders() {
+        return {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${window.PulpAuth.getToken()}`
+        };
+    }
+
+    async function apiFetch(path, options) {
+        const res = await fetch(BASE + path, {
+            headers: authHeaders(),
+            ...options
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || `Error ${res.status}`);
+        }
+        const text = await res.text();
+        return text ? JSON.parse(text) : null;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Sistema de tabs
+    // ─────────────────────────────────────────────────────────────
+
+    function buildTabs(isAdmin) {
+        const tabsNav = document.getElementById("dashTabs");
+
+        const sellerTabs = [
+            { id: "perfil",   label: "👤 Perfil",       first: true },
+            { id: "pedidos",  label: "📦 Mis pedidos" },
+            { id: "comprar",  label: "🛒 Nueva compra" }
+        ];
+
+        const adminTabs = [
+            { id: "admin-productos", label: "📦 Productos",  admin: true },
+            { id: "admin-clientes",  label: "👥 Clientes",   admin: true }
+        ];
+
+        const allTabs = isAdmin
+            ? [...sellerTabs, ...adminTabs]
+            : sellerTabs;
+
+        tabsNav.innerHTML = allTabs.map(t => `
+            <button class="dash-tab${t.first ? " is-active" : ""}${t.admin ? " admin-tab" : ""}"
+                    data-tab="${t.id}">
+                ${t.label}
+            </button>
+        `).join("");
+
+        // Mostrar primer panel
+        showPanel("perfil");
+
+        // Eventos
+        tabsNav.querySelectorAll(".dash-tab").forEach(btn => {
+            btn.addEventListener("click", () => {
+                tabsNav.querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
+                btn.classList.add("is-active");
+                showPanel(btn.dataset.tab);
+            });
+        });
+    }
+
+    function showPanel(tabId) {
+        document.querySelectorAll(".dash-panel").forEach(p => p.classList.add("hidden"));
+        const panel = document.getElementById("tab-" + tabId);
+        if (panel) panel.classList.remove("hidden");
+
+        // Carga lazy de datos
+        if (tabId === "pedidos")          loadMyOrders();
+        if (tabId === "admin-productos")  loadAdminProducts();
+        if (tabId === "admin-clientes")   loadAdminUsers();
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // SELLER — Mis pedidos
+    // ─────────────────────────────────────────────────────────────
+
+    async function loadMyOrders() {
+        const container = document.getElementById("ordersList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            const orders = await apiFetch("/orders");
+            if (!orders.length) {
+                container.innerHTML = "<p class='helper-text'>Aún no tienes pedidos.</p>";
+                return;
+            }
+            container.innerHTML = orders.map(o => `
+                <article class="order-card">
+                    <div class="order-header">
+                        <strong>Pedido #${o.id}</strong>
+                        <span class="order-date">${o.fecha ? new Date(o.fecha).toLocaleDateString("es-CO") : "—"}</span>
+                    </div>
+                    <p class="order-total">Total: <strong>$${Number(o.total || 0).toLocaleString("es-CO")}</strong></p>
+                </article>
+            `).join("");
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>${err.message}</p>`;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // ADMIN — Gestión de productos
+    // ─────────────────────────────────────────────────────────────
+
+    let editingProductId = null;
+
+    async function loadAdminProducts() {
+        const container = document.getElementById("adminProductList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            const products = await apiFetch("/products");
+            renderAdminProducts(products);
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>${err.message}</p>`;
+        }
+    }
+
+    function renderAdminProducts(products) {
+        const container = document.getElementById("adminProductList");
+        if (!products.length) {
+            container.innerHTML = "<p class='helper-text'>No hay productos registrados.</p>";
+            return;
+        }
+        container.innerHTML = `
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Nombre</th><th>Precio</th>
+                            <th>Stock</th><th>Disponible</th><th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${products.map(p => `
+                            <tr>
+                                <td>${p.id}</td>
+                                <td>${p.name}</td>
+                                <td>$${Number(p.price).toLocaleString("es-CO")}</td>
+                                <td>${p.stock}</td>
+                                <td>${p.available ? "✅" : "❌"}</td>
+                                <td>
+                                    <button class="btn-table-edit" data-id="${p.id}"
+                                        data-name="${p.name}" data-price="${p.price}"
+                                        data-stock="${p.stock}" data-available="${p.available}"
+                                        data-desc="${p.description || ""}">
+                                        ✏️ Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        container.querySelectorAll(".btn-table-edit").forEach(btn => {
+            btn.addEventListener("click", () => {
+                editingProductId = btn.dataset.id;
+                document.getElementById("editProductId").value  = btn.dataset.id;
+                document.getElementById("pName").value          = btn.dataset.name;
+                document.getElementById("pPrice").value         = btn.dataset.price;
+                document.getElementById("pStock").value         = btn.dataset.stock;
+                document.getElementById("pAvailable").value     = btn.dataset.available;
+                document.getElementById("pDescription").value   = btn.dataset.desc;
+                document.getElementById("productFormTitle").textContent = "Editar producto";
+                document.getElementById("cancelEditBtn").classList.remove("hidden");
+                document.getElementById("tab-admin-productos").scrollIntoView({ behavior: "smooth" });
+            });
+        });
+    }
+
+    document.getElementById("saveProductBtn").addEventListener("click", async () => {
+        const btn = document.getElementById("saveProductBtn");
+        const body = {
+            name:        document.getElementById("pName").value.trim(),
+            price:       Number(document.getElementById("pPrice").value),
+            stock:       Number(document.getElementById("pStock").value),
+            available:   document.getElementById("pAvailable").value === "true",
+            description: document.getElementById("pDescription").value.trim()
+        };
+
+        if (!body.name) { toast("El nombre es obligatorio", "error"); return; }
+
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+
+        try {
+            if (editingProductId) {
+                await apiFetch(`/products/${editingProductId}`, {
+                    method: "PUT",
+                    body: JSON.stringify(body)
+                });
+                toast("Producto actualizado ✓");
+            } else {
+                await apiFetch("/products", {
+                    method: "POST",
+                    body: JSON.stringify(body)
+                });
+                toast("Producto creado ✓");
+            }
+            resetProductForm();
+            loadAdminProducts();
+        } catch (err) {
+            toast(err.message, "error");
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar producto";
+        }
+    });
+
+    document.getElementById("cancelEditBtn").addEventListener("click", resetProductForm);
+
+    function resetProductForm() {
+        editingProductId = null;
+        ["pName","pPrice","pStock","pDescription"].forEach(id => {
+            document.getElementById(id).value = "";
+        });
+        document.getElementById("pAvailable").value = "true";
+        document.getElementById("editProductId").value = "";
+        document.getElementById("productFormTitle").textContent = "Agregar producto";
+        document.getElementById("cancelEditBtn").classList.add("hidden");
+        document.getElementById("productFormMsg").textContent = "";
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // ADMIN — Gestión de clientes
+    // ─────────────────────────────────────────────────────────────
+
+    async function loadAdminUsers() {
+        const container = document.getElementById("adminUserList");
+        container.innerHTML = "<p class='helper-text'>Cargando usuarios...</p>";
+        try {
+            const users = await apiFetch("/users");
+            renderAdminUsers(users);
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>${err.message}</p>`;
+        }
+    }
+
+    function renderAdminUsers(users) {
+        const container = document.getElementById("adminUserList");
+        if (!users.length) {
+            container.innerHTML = "<p class='helper-text'>No hay usuarios registrados.</p>";
+            return;
+        }
+        container.innerHTML = `
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Nombre</th><th>Email</th>
+                            <th>Cédula</th><th>Teléfono</th><th>Rol</th><th>Pedidos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${users.map(u => `
+                            <tr>
+                                <td>${u.id}</td>
+                                <td>${u.name}</td>
+                                <td>${u.email}</td>
+                                <td>${u.cedula}</td>
+                                <td>${u.telefono || "—"}</td>
+                                <td><span class="role-badge role-${(u.role || "").toLowerCase()}">${u.role || "—"}</span></td>
+                                <td>
+                                    <button class="btn-table-orders" data-id="${u.id}" data-name="${u.name}">
+                                        📋 Ver pedidos
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        container.querySelectorAll(".btn-table-orders").forEach(btn => {
+            btn.addEventListener("click", () => loadClientOrders(btn.dataset.id, btn.dataset.name));
+        });
+    }
+
+    async function loadClientOrders(userId, userName) {
+        const block     = document.getElementById("clientOrdersBlock");
+        const title     = document.getElementById("clientOrdersTitle");
+        const container = document.getElementById("clientOrdersList");
+
+        title.textContent = `Pedidos de ${userName}`;
+        block.classList.remove("hidden");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        block.scrollIntoView({ behavior: "smooth" });
+
+        try {
+            // Trae todos los pedidos y filtra por userId en frontend
+            // (el backend no expone /orders/user/{id} aún, se puede agregar después)
+            const orders = await apiFetch("/orders");
+            const filtered = orders.filter(o => String(o.userId) === String(userId));
+
+            if (!filtered.length) {
+                container.innerHTML = "<p class='helper-text'>Este cliente no tiene pedidos.</p>";
+                return;
+            }
+
+            container.innerHTML = filtered.map(o => `
+                <article class="order-card">
+                    <div class="order-header">
+                        <strong>Pedido #${o.id}</strong>
+                        <span class="order-date">${o.fecha ? new Date(o.fecha).toLocaleDateString("es-CO") : "—"}</span>
+                    </div>
+                    <p class="order-total">Total: <strong>$${Number(o.total || 0).toLocaleString("es-CO")}</strong></p>
+                    ${o.items ? `
+                        <ul class="order-items-list">
+                            ${o.items.map(i => `
+                                <li>${i.cantidad}x producto #${i.productId}
+                                    — $${Number(i.subtotal || 0).toLocaleString("es-CO")}
+                                </li>
+                            `).join("")}
+                        </ul>
+                    ` : ""}
+                </article>
+            `).join("");
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>${err.message}</p>`;
+        }
+    }
+
+    document.getElementById("closeClientOrders").addEventListener("click", () => {
+        document.getElementById("clientOrdersBlock").classList.add("hidden");
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // INIT
+    // ─────────────────────────────────────────────────────────────
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // Guard: sin sesión válida → login
+        if (!window.PulpAuth?.isTokenValid()) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const auth = window.PulpAuth;
+        const api  = window.PulpAppServices;
+
+        // Datos del usuario
+        const tokenUser  = auth.getSessionUser();
+        const storedUser = JSON.parse(
+            localStorage.getItem("pulpapp_user") ||
+            localStorage.getItem("user") || "null"
+        );
+        const fullUser = { ...tokenUser, ...storedUser };
+        const isAdmin  = fullUser.role === "ROLE_ADMIN";
+        const displayName = fullUser.name || fullUser.email || "Usuario";
+
+        // Banner
+        document.getElementById("dashWelcome").textContent  = `Hola, ${displayName} 👋`;
+        document.getElementById("dashRoleBadge").textContent = isAdmin ? "⚙️ Administrador" : "🛍️ Vendedor";
+        document.getElementById("dashRoleDesc").textContent  = isAdmin
+            ? "Tienes acceso completo al sistema"
+            : "Puedes consultar productos y gestionar tus pedidos";
+
+        // Perfil
+        document.getElementById("profileName").textContent      = fullUser.name      || "—";
+        document.getElementById("profileEmail").textContent     = fullUser.email     || "—";
+        document.getElementById("profileCedula").textContent    = fullUser.cedula    || "—";
+        document.getElementById("profileTelefono").textContent  = fullUser.telefono  || "—";
+        document.getElementById("profileDireccion").textContent = fullUser.direccion || "—";
+        document.getElementById("profileRole").textContent      = fullUser.role      || "—";
+
+        // Carrito en navbar
+        const cartTotal = api.getCart().reduce((s, i) => s + (i.cantidad || 0), 0);
+        const navCount  = document.getElementById("navCartCount");
+        if (navCount) navCount.textContent = String(cartTotal);
+
+        // Logout
+        document.getElementById("dashLogoutBtn").addEventListener("click", auth.logout);
+        document.getElementById("profileLogoutBtn").addEventListener("click", auth.logout);
+
+        // Construir tabs según rol
+        buildTabs(isAdmin);
+    });
+
+})();
+</script>
+</body>
+</html>

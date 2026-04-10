@@ -12,6 +12,7 @@
 </head>
 <body data-page="cart">
 <header class="site-header">
+<div class="header-inner">
     <div class="brand-block">
         <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
         <div>
@@ -19,18 +20,17 @@
             <strong>Mercado natural en linea</strong>
         </div>
     </div>
-
     <nav class="site-nav" aria-label="Principal">
         <a href="index.html">Inicio</a>
         <a href="catalog.html">Catalogo</a>
         <a href="cart.html" class="is-active">Carrito</a>
-        <a href="login.html">Mi cuenta</a>
+        <a href="login.html" data-nav="account">Mi cuenta</a>
     </nav>
-
     <a href="login.html" class="cart-chip">
         <span>Sesion</span>
         <strong id="navCartCount">0</strong>
     </a>
+</div>
 </header>
 
 <main class="page-content">
@@ -70,298 +70,76 @@
 
 
         <!--
-            Bloque de datos del cliente.
-            Se nutre del usuario guardado para autocompletar la compra.
+            Bloque de datos del cliente — flujo basado en JWT.
+            Detecta sesión automáticamente y renderiza según estado.
         -->
-        <article class="glass-card checkout-card">
+        <article class="glass-card checkout-card" id="clienteCard">
             <div class="card-heading">
                 <div>
                     <span class="eyebrow">Cliente</span>
+                    <h2>Datos de entrega</h2>
                 </div>
             </div>
 
-            <!--
-                Contenedor inicial del acceso al checkout.
-                Se centra para que el mensaje y las acciones principales tengan una jerarquia visual clara.
-            -->
-            <div id="checkoutAccessBlock" class="checkout-access-centered">
-                <!--
-                    Mensaje principal del estado sin sesion.
-                    Informa al usuario que primero debe autenticarse o registrarse.
-                -->
-                <div id="checkoutLoginNotice" class="helper-text">
-                    Debes iniciar sesion o registrarte para continuar con tu compra
-                </div>
-
-                <!--
-                    Acciones principales del estado inicial.
-                    Una permite abrir login manual en el mismo bloque y la otra redirige al registro.
-                -->
+            <!-- Estado: sin sesión -->
+            <div id="checkoutGuest" class="checkout-access-centered hidden">
+                <p class="helper-text" style="margin-bottom:20px">
+                    Inicia sesión para autocompletar tus datos y finalizar la compra.
+                </p>
                 <div class="inline-actions inline-actions--center">
-                    <button id="startLoginButton" class="btn btn-primary" type="button">
-                        Iniciar sesion
-                    </button>
-
-                    <button id="goToRegisterButton" class="btn btn-secondary" type="button">
-                        Registrarse
+                    <button id="checkoutLoginBtn" class="btn btn-primary" type="button">
+                        Iniciar sesión
                     </button>
                 </div>
+                <p style="text-align:center; margin-top:14px; font-size:0.88rem; color:var(--text-muted)">
+                    ¿No tienes cuenta?
+                    <a href="register.html" style="color:var(--brand); font-weight:600">Regístrate aquí</a>
+                </p>
+            </div>
 
-                <!--
-                    Bloque de login manual.
-                    Permanece oculto hasta que el usuario decide iniciar sesion directamente desde el checkout.
-                -->
-                <div id="manualLoginBlock" class="hidden">
-                    <form class="form-grid checkout-manual-form">
-                        <label>
-                            <span>Cedula</span>
-                            <input type="text" id="loginCedula" placeholder="Cedula">
-                        </label>
-                        <label>
-                            <span>Telefono</span>
-                            <input type="text" id="loginTelefono" placeholder="Telefono">
-                        </label>
-                    </form>
-
-                    <!--
-                        Mensaje de error amigable del login manual.
-                        Se muestra solo cuando los datos ingresados no coinciden con la sesion guardada.
-                    -->
-                    <div id="manualLoginError" class="helper-text hidden">
-                        Datos incorrectos
+            <!-- Estado: autenticado — datos autocargados -->
+            <div id="checkoutUserData" class="hidden">
+                <div class="checkout-user-info">
+                    <div class="checkout-user-avatar" id="checkoutAvatar">U</div>
+                    <div>
+                        <strong id="checkoutUserName">—</strong>
+                        <span id="checkoutUserEmail" style="display:block; color:var(--text-muted); font-size:0.88rem">—</span>
                     </div>
-
-                    <button id="validateLoginButton" class="btn btn-primary" type="button">
-                        Iniciar sesion
-                    </button>
                 </div>
-            </div>
 
-            <!--
-                Bloque basico del formulario.
-                Este primer bloque solo presenta cedula y telefono cuando existe sesion validada.
-                Se oculta al inicio para que el usuario sin sesion no pueda avanzar.
-            -->
-            <div id="checkoutBasicDataBlock" class="hidden">
-                <form id="checkoutForm" class="form-grid">
-                    <label>
-                        <span>Cedula</span>
-                        <input type="text" id="checkoutCedula" placeholder="Documento del cliente" disabled>
-                    </label>
-                    <label>
-                        <span>Telefono</span>
-                        <input type="text" id="checkoutTelefono" placeholder="Telefono de contacto" disabled>
-                    </label>
-                </form>
-
-                <!--
-                    Boton intermedio del flujo progresivo.
-                    Mantiene intacto el comportamiento existente que revela el resto del formulario.
-                -->
-                <button id="confirmBasicDataButton" class="btn btn-primary" type="button">
-                    Confirmar datos
-                </button>
-            </div>
-
-            <!--
-                Bloque completo del formulario.
-                Solo aparece despues de confirmar los datos basicos del usuario autenticado.
-            -->
-            <div id="checkoutFullDataBlock" class="hidden">
-                <form class="form-grid">
+                <div class="form-grid" style="margin-top:20px">
                     <label>
                         <span>Nombre completo</span>
-                        <input type="text" id="checkoutNombre" placeholder="Nombre del cliente" disabled>
+                        <input type="text" id="checkoutNombre" placeholder="Nombre" readonly>
                     </label>
                     <label>
-                        <span>Correo electronico</span>
-                        <input type="email" id="checkoutCorreo" placeholder="correo@ejemplo.com" disabled>
+                        <span>Teléfono</span>
+                        <input type="tel" id="checkoutTelefono" placeholder="Teléfono" readonly>
+                    </label>
+                    <label>
+                        <span>Correo electrónico</span>
+                        <input type="email" id="checkoutCorreo" placeholder="correo@ejemplo.com" readonly>
+                    </label>
+                    <label>
+                        <span>Cédula</span>
+                        <input type="text" id="checkoutCedula" placeholder="Cédula" readonly>
                     </label>
                     <label class="full-width">
-                        <span>Direccion de entrega</span>
-                        <input type="text" id="checkoutDireccion" placeholder="Direccion completa" disabled>
+                        <span>Dirección de entrega</span>
+                        <input type="text" id="checkoutDireccion" placeholder="Dirección" readonly>
                     </label>
-                </form>
+                </div>
+
+                <div class="inline-actions" style="margin-top:18px">
+                    <a href="dashboard.html" class="btn btn-secondary" style="font-size:0.88rem">
+                        ✏️ Editar perfil
+                    </a>
+                    <button id="checkoutLogoutBtn" class="btn btn-secondary" type="button"
+                            style="font-size:0.88rem; color:var(--danger)">
+                        Cerrar sesión
+                    </button>
+                </div>
             </div>
-
-            <div class="inline-actions">
-                <!--
-                    El boton de actualizacion permanece disponible, pero inicia oculto.
-                    Solo debe aparecer cuando el usuario ya avanzo al estado completo del formulario.
-                -->
-                <button id="updateUserButton" class="btn btn-secondary hidden" type="button">Actualizar usuario</button>
-            </div>
-
-            <script>
-                /*
-                    Este script amplía el flujo progresivo del checkout sin romper la logica ya existente:
-                    1. Sin sesion: se muestran dos botones, iniciar sesion y registrarse.
-                    2. Login manual validado: se muestra el bloque basico con cedula y telefono.
-                    3. Flujo normal existente: confirmBasicDataButton revela nombre, correo y direccion.
-                */
-                (function initializeCheckoutProgressiveFlow() {
-                    /*
-                        La sesion se consulta desde localStorage.
-                        Se usa primero la clave "user" pedida en el requerimiento y se conserva
-                        compatibilidad con "pulpapp_user" para no romper el resto del frontend.
-                    */
-                    const storedUser = JSON.parse(localStorage.getItem("user") || localStorage.getItem("pulpapp_user") || "null");
-
-                    /*
-                        Referencias a los contenedores y botones que participan en las transiciones de estado.
-                        Todo se muestra u oculta usando la clase "hidden".
-                    */
-                    const checkoutAccessBlock = document.getElementById("checkoutAccessBlock");
-                    const checkoutLoginNotice = document.getElementById("checkoutLoginNotice");
-                    const startLoginButton = document.getElementById("startLoginButton");
-                    const goToRegisterButton = document.getElementById("goToRegisterButton");
-                    const manualLoginBlock = document.getElementById("manualLoginBlock");
-                    const validateLoginButton = document.getElementById("validateLoginButton");
-                    const manualLoginError = document.getElementById("manualLoginError");
-                    const basicDataBlock = document.getElementById("checkoutBasicDataBlock");
-                    const fullDataBlock = document.getElementById("checkoutFullDataBlock");
-                    const confirmBasicDataButton = document.getElementById("confirmBasicDataButton");
-                    const updateUserButton = document.getElementById("updateUserButton");
-
-                    /*
-                        Referencias a los campos del login manual.
-                        Se usan para comparar cedula y telefono contra el usuario guardado.
-                    */
-                    const loginCedula = document.getElementById("loginCedula");
-                    const loginTelefono = document.getElementById("loginTelefono");
-
-                    /*
-                        Referencias al bloque basico visible tras validar sesion.
-                        Cedula y telefono se autocompletan cuando la validacion es correcta.
-                    */
-                    const checkoutCedula = document.getElementById("checkoutCedula");
-                    const checkoutTelefono = document.getElementById("checkoutTelefono");
-
-                    /*
-                        Referencias al bloque completo del formulario.
-                        Se usan en el paso final del flujo progresivo para autocompletar nombre, correo y direccion.
-                    */
-                    const checkoutNombre = document.getElementById("checkoutNombre");
-                    const checkoutCorreo = document.getElementById("checkoutCorreo");
-                    const checkoutDireccion = document.getElementById("checkoutDireccion");
-
-                    /*
-                        Activa el estado inicial del checkout.
-                        Este estado deja visible el mensaje y las dos acciones principales.
-                    */
-                    function showLoggedOutState() {
-                        checkoutAccessBlock.classList.remove("hidden");
-                        checkoutLoginNotice.classList.remove("hidden");
-                        manualLoginBlock.classList.add("hidden");
-                        manualLoginError.classList.add("hidden");
-                        basicDataBlock.classList.add("hidden");
-                        fullDataBlock.classList.add("hidden");
-                        updateUserButton.classList.add("hidden");
-                    }
-
-                    /*
-                        Activa el estado posterior a una validacion correcta de sesion.
-                        Aqui se oculta el acceso inicial y se muestra el bloque basico del flujo existente.
-                    */
-                    function showValidatedSessionState(user) {
-                        checkoutAccessBlock.classList.add("hidden");
-                        basicDataBlock.classList.remove("hidden");
-                        fullDataBlock.classList.add("hidden");
-                        updateUserButton.classList.add("hidden");
-
-                        /*
-                            Cedula y telefono se autocompletan usando los datos guardados en localStorage.
-                            Esto confirma visualmente al usuario que ingreso con la sesion correcta.
-                        */
-                        checkoutCedula.value = user.cedula || "";
-                        checkoutTelefono.value = user.telefono || "";
-                        checkoutCedula.disabled = false;
-                        checkoutTelefono.disabled = false;
-
-                        /*
-                            Los campos extendidos siguen bloqueados hasta que se confirme el bloque basico.
-                            Esto mantiene intacto el flujo progresivo ya existente.
-                        */
-                        checkoutNombre.disabled = true;
-                        checkoutCorreo.disabled = true;
-                        checkoutDireccion.disabled = true;
-                    }
-
-                    /*
-                        Si no existe sesion guardada, el checkout arranca en estado inicial.
-                        Si ya existe una sesion, se conserva el flujo normal mostrando el bloque basico.
-                    */
-                    if (!storedUser) {
-                        showLoggedOutState();
-                    } else {
-                        showValidatedSessionState(storedUser);
-                    }
-
-                    /*
-                        El boton "Registrarse" lleva al flujo de autenticacion general del proyecto.
-                    */
-                    goToRegisterButton.addEventListener("click", () => {
-                        window.location.href = "login.html";
-                    });
-
-                    /*
-                        El boton "Iniciar sesion" no redirige.
-                        Revela el bloque manual para pedir cedula y telefono directamente en el checkout.
-                    */
-                    startLoginButton.addEventListener("click", () => {
-                        manualLoginBlock.classList.remove("hidden");
-                        manualLoginError.classList.add("hidden");
-                    });
-
-                    /*
-                        Validacion del login manual.
-                        Se compara lo ingresado con el usuario guardado en localStorage.
-                        Si coincide, se considera una sesion valida y se habilita el flujo existente.
-                    */
-                    validateLoginButton.addEventListener("click", () => {
-                        const cedula = loginCedula.value.trim();
-                        const telefono = loginTelefono.value.trim();
-                        const user = JSON.parse(localStorage.getItem("user") || localStorage.getItem("pulpapp_user") || "null");
-
-                        if (user && user.cedula === cedula && user.telefono === telefono) {
-                            /*
-                                Se vuelve a guardar la sesion para asegurar que la clave "user"
-                                quede disponible como referencia del estado autenticado.
-                            */
-                            localStorage.setItem("user", JSON.stringify(user));
-                            manualLoginError.classList.add("hidden");
-                            showValidatedSessionState(user);
-                            return;
-                        }
-
-                        /*
-                            Si no coincide la informacion, se muestra un mensaje de error simple y visible.
-                            Asi evitamos errores tecnicos y mantenemos una UX mas limpia.
-                        */
-                        manualLoginError.classList.remove("hidden");
-                    });
-
-                    /*
-                        Paso final del flujo progresivo ya existente.
-                        Al confirmar los datos basicos, se revela el resto del formulario
-                        y se autocompletan nombre, correo y direccion desde la sesion guardada.
-                    */
-                    confirmBasicDataButton.addEventListener("click", () => {
-                        const user = JSON.parse(localStorage.getItem("user") || localStorage.getItem("pulpapp_user") || "null");
-
-                        fullDataBlock.classList.remove("hidden");
-                        updateUserButton.classList.remove("hidden");
-
-                        checkoutNombre.value = user?.name || "";
-                        checkoutCorreo.value = user?.email || "";
-                        checkoutDireccion.value = user?.direccion || "";
-
-                        checkoutNombre.disabled = false;
-                        checkoutCorreo.disabled = false;
-                        checkoutDireccion.disabled = false;
-                    });
-                })();
-            </script>
         </article>
 
 
@@ -400,7 +178,146 @@
 
 <div id="appToast" class="toast" role="status" aria-live="polite"></div>
 
+<a href="https://wa.me/573001234567?text=Hola%2C%20necesito%20ayuda%20con%20PulpApp"
+   target="_blank" rel="noopener noreferrer"
+   class="whatsapp-fab" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span>¿Necesitas ayuda?</span>
+</a>
+
+<link rel="stylesheet" href="css/dashboard.css">
 <script src="services.js"></script>
+<script src="auth.js"></script>
 <script src="app.js"></script>
+<script>
+/* ─────────────────────────────────────────────────────────────
+   checkout.js (inline) — Sección CLIENTE del carrito
+   Detecta sesión JWT y renderiza el estado correcto.
+───────────────────────────────────────────────────────────── */
+(function initCheckout() {
+
+    // ── Helpers ──────────────────────────────────────────────
+
+    function checkAuth() {
+        return window.PulpAuth?.isTokenValid() === true;
+    }
+
+    function loadUserFromStorage() {
+        try {
+            const fromJwt    = window.PulpAuth?.getSessionUser() || {};
+            const fromStore  = JSON.parse(
+                localStorage.getItem("pulpapp_user") ||
+                localStorage.getItem("user") || "null"
+            ) || {};
+            return { ...fromJwt, ...fromStore };
+        } catch {
+            return null;
+        }
+    }
+
+    function redirectToLogin() {
+        // Guarda la URL actual para volver después del login
+        localStorage.setItem("pulpapp_redirect", "cart.html");
+        window.location.href = "login.html";
+    }
+
+    function getInitials(name) {
+        if (!name) return "U";
+        return name.trim().split(" ")
+            .slice(0, 2)
+            .map(w => w[0].toUpperCase())
+            .join("");
+    }
+
+    // ── Render ───────────────────────────────────────────────
+
+    function renderUserData(user) {
+        document.getElementById("checkoutUserName").textContent  = user.name  || "—";
+        document.getElementById("checkoutUserEmail").textContent = user.email || "—";
+        document.getElementById("checkoutAvatar").textContent    = getInitials(user.name || user.email);
+        document.getElementById("checkoutNombre").value    = user.name      || "";
+        document.getElementById("checkoutTelefono").value  = user.telefono  || "";
+        document.getElementById("checkoutCorreo").value    = user.email     || "";
+        document.getElementById("checkoutCedula").value    = user.cedula    || "";
+        document.getElementById("checkoutDireccion").value = user.direccion || "";
+    }
+
+    function showGuestState() {
+        document.getElementById("checkoutGuest").classList.remove("hidden");
+        document.getElementById("checkoutUserData").classList.add("hidden");
+    }
+
+    function showAuthState(user) {
+        document.getElementById("checkoutGuest").classList.add("hidden");
+        document.getElementById("checkoutUserData").classList.remove("hidden");
+        renderUserData(user);
+    }
+
+    // ── Init ─────────────────────────────────────────────────
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        if (checkAuth()) {
+            const user = loadUserFromStorage();
+            if (user) {
+                showAuthState(user);
+            } else {
+                showGuestState();
+            }
+        } else {
+            showGuestState();
+        }
+
+        // Botón "Iniciar sesión" → redirige guardando return URL
+        const loginBtn = document.getElementById("checkoutLoginBtn");
+        if (loginBtn) {
+            loginBtn.addEventListener("click", redirectToLogin);
+        }
+
+        // Botón "Cerrar sesión" dentro del checkout
+        const logoutBtn = document.getElementById("checkoutLogoutBtn");
+        if (logoutBtn) {
+            logoutBtn.addEventListener("click", () => {
+                window.PulpAuth?.logout();
+            });
+        }
+
+        // Botón "Finalizar compra" — solo funciona si está autenticado
+        const checkoutBtn = document.getElementById("checkoutButton");
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener("click", (e) => {
+                if (!checkAuth()) {
+                    e.preventDefault();
+                    // Muestra mensaje y redirige al login
+                    const toast = document.getElementById("appToast");
+                    if (toast) {
+                        toast.textContent = "Debes iniciar sesión para finalizar la compra";
+                        toast.className = "toast show error";
+                        clearTimeout(window.__cartToast);
+                        window.__cartToast = setTimeout(() => {
+                            toast.className = "toast";
+                            redirectToLogin();
+                        }, 2000);
+                    } else {
+                        redirectToLogin();
+                    }
+                }
+                // Si está autenticado, app.js maneja el submit del pedido normalmente
+            });
+        }
+    });
+
+    // Retorno automático tras login si había redirect guardado
+    document.addEventListener("DOMContentLoaded", () => {
+        const redirect = localStorage.getItem("pulpapp_redirect");
+        if (redirect && window.location.pathname.includes("cart")) {
+            localStorage.removeItem("pulpapp_redirect");
+        }
+    });
+
+})();
+</script>
 </body>
 </html>

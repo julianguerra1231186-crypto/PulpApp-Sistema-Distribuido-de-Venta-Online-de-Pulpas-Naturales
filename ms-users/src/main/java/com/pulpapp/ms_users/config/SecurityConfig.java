@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity          // habilita @PreAuthorize en controllers
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -31,84 +31,69 @@ public class SecurityConfig {
     private final JwtAuthEntryPoint jwtAuthEntryPoint;
     private final UserDetailsServiceImpl userDetailsService;
 
-    // ---------------------------------------------------------------
-    // Cadena de filtros principal
-    // ---------------------------------------------------------------
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Sin estado: JWT no necesita sesión ni CSRF
             .csrf(AbstractHttpConfigurer::disable)
-            // CORS delegado al CorsConfig (WebMvcConfigurer) ya existente
             .cors(cors -> cors.configure(http))
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            // Reglas de autorización por ruta y rol
             .authorizeHttpRequests(auth -> auth
 
-                // Rutas públicas — login y registro no requieren token
+                // ── Autenticación JWT ──────────────────────────────────────
                 .requestMatchers("/auth/**").permitAll()
 
-                // Gestión de usuarios — solo ADMIN
-                .requestMatchers("/users/**").hasAuthority("ROLE_ADMIN")
+                // ── Usuarios: operaciones del frontend sin token ───────────
+                // El frontend crea, consulta y actualiza usuarios sin JWT
+                .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                .requestMatchers(HttpMethod.PUT,  "/users/**").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/users/cedula/**").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/users/validar/**").permitAll()
 
-                // Productos — lectura libre para autenticados, escritura solo ADMIN
-                .requestMatchers(HttpMethod.GET,    "/products/**").authenticated()
+                // Listar todos los usuarios y eliminar: solo ADMIN
+                .requestMatchers(HttpMethod.GET,    "/users").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("ROLE_ADMIN")
+
+                // ── Productos: lectura pública, escritura solo ADMIN ───────
+                .requestMatchers(HttpMethod.GET,    "/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET,    "/products").permitAll()
                 .requestMatchers(HttpMethod.POST,   "/products/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PUT,    "/products/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/products/**").hasAuthority("ROLE_ADMIN")
 
-                // Pedidos — ADMIN y SELLER pueden crear y consultar
-                .requestMatchers("/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                // ── Pedidos: el frontend los crea sin token ────────────────
+                .requestMatchers(HttpMethod.POST, "/orders").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                .requestMatchers(HttpMethod.GET,  "/orders").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
 
                 // Cualquier otra ruta requiere autenticación
                 .anyRequest().authenticated()
             )
 
-            // Proveedor de autenticación con BCrypt
             .authenticationProvider(authenticationProvider())
 
-            // Respuesta 401 en JSON para requests sin token válido
             .exceptionHandling(ex ->
                 ex.authenticationEntryPoint(jwtAuthEntryPoint))
 
-            // Registra el filtro JWT antes del filtro estándar de usuario/contraseña
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // ---------------------------------------------------------------
-    // Beans de infraestructura de autenticación
-    // ---------------------------------------------------------------
-
-    /**
-     * Proveedor que conecta UserDetailsService + PasswordEncoder.
-     * Spring Security lo usa para validar credenciales en el login.
-     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
-    /**
-     * AuthenticationManager expuesto como bean para que AuthService
-     * pueda invocar la autenticación programáticamente en /auth/login.
-     */
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    /**
-     * BCrypt strength 12 — balance entre seguridad y rendimiento.
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);

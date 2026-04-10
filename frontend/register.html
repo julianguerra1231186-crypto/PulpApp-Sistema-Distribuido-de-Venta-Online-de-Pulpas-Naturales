@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Registrarse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body data-page="register">
+
+<header class="site-header">
+<div class="header-inner">
+    <div class="brand-block">
+        <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+        <div><span class="brand-kicker">PulpApp</span></div>
+    </div>
+    <nav class="site-nav" aria-label="Principal">
+        <a href="index.html">Inicio</a>
+        <a href="catalog.html">Catalogo</a>
+        <a href="cart.html">Carrito</a>
+        <a href="login.html" data-nav="account">Iniciar sesión</a>
+    </nav>
+    <a href="cart.html" class="cart-chip">
+        <span>Carrito</span>
+        <strong id="navCartCount">0</strong>
+    </a>
+</div>
+</header>
+
+<main class="page-content auth-layout">
+    <section class="glass-card auth-card">
+        <span class="eyebrow">Crear cuenta</span>
+        <h1>Regístrate en PulpApp</h1>
+        <p>Completa tus datos para crear tu cuenta y empezar a comprar.</p>
+
+        <form id="registerForm" class="form-grid" novalidate>
+            <label>
+                <span>Cédula</span>
+                <input type="text" id="regCedula" placeholder="Número de documento" required>
+            </label>
+            <label>
+                <span>Teléfono</span>
+                <input type="tel" id="regTelefono" placeholder="Ej. 3001234567" required>
+            </label>
+            <label>
+                <span>Nombre completo</span>
+                <input type="text" id="regNombre" placeholder="Tu nombre" required>
+            </label>
+            <label>
+                <span>Correo electrónico</span>
+                <input type="email" id="regEmail" placeholder="correo@ejemplo.com" required>
+            </label>
+            <label>
+                <span>Contraseña</span>
+                <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required>
+            </label>
+            <label>
+                <span>Dirección</span>
+                <input type="text" id="regDireccion" placeholder="Dirección de entrega" required>
+            </label>
+        </form>
+
+        <div class="inline-actions" style="margin-top:24px">
+            <button id="registerBtn" class="btn btn-primary btn-block" type="button">
+                Registrarse
+            </button>
+        </div>
+
+        <p style="text-align:center; margin-top:18px; color:var(--text-muted); font-size:0.9rem">
+            ¿Ya tienes cuenta?
+            <a href="login.html" style="color:var(--brand); font-weight:600">Inicia sesión</a>
+        </p>
+    </section>
+
+    <aside class="glass-card auth-side-card">
+        <span class="eyebrow">Beneficios</span>
+        <h2>Tu cuenta, tu experiencia</h2>
+        <ul class="bullet-list">
+            <li>Historial de pedidos guardado.</li>
+            <li>Checkout más rápido con datos precargados.</li>
+            <li>Acceso a tu dashboard personal.</li>
+            <li>Soporte directo por WhatsApp.</li>
+        </ul>
+    </aside>
+</main>
+
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="services.js"></script>
+<script src="auth.js"></script>
+<script>
+(function() {
+    // Si ya está autenticado, redirige al dashboard
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.PulpAuth?.isTokenValid()) {
+            window.location.href = "dashboard.html";
+            return;
+        }
+    });
+
+    function toast(msg, type) {
+        const el = document.getElementById("appToast");
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__toastT);
+        window.__toastT = setTimeout(() => { el.className = "toast"; }, 3000);
+    }
+
+    document.getElementById("registerBtn").addEventListener("click", async () => {
+        const btn = document.getElementById("registerBtn");
+        const cedula    = document.getElementById("regCedula").value.trim();
+        const telefono  = document.getElementById("regTelefono").value.trim();
+        const name      = document.getElementById("regNombre").value.trim();
+        const email     = document.getElementById("regEmail").value.trim();
+        const password  = document.getElementById("regPassword").value.trim();
+        const direccion = document.getElementById("regDireccion").value.trim();
+
+        if (!cedula || !telefono || !name || !email || !password || !direccion) {
+            toast("Completa todos los campos", "error"); return;
+        }
+        if (password.length < 6) {
+            toast("La contraseña debe tener mínimo 6 caracteres", "error"); return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Registrando...";
+
+        try {
+            const data = await window.PulpAppServices.authRegister({
+                cedula, telefono, name, email, password, direccion
+            });
+            // Guarda también los datos completos del usuario
+            localStorage.setItem("pulpapp_user", JSON.stringify(data));
+            localStorage.setItem("user", JSON.stringify(data));
+            toast("Cuenta creada. Bienvenido/a 🎉");
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
+        } catch (err) {
+            toast(err.message || "No fue posible registrarte", "error");
+            btn.disabled = false;
+            btn.textContent = "Registrarse";
+        }
+    });
+})();
+</script>
+</body>
+</html>
