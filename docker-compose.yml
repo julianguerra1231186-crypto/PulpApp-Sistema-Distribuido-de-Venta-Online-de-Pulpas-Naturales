@@ -52,6 +52,10 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
       SERVER_PORT: 8081
+      # Directorio de CVs dentro del contenedor, mapeado al host via volumen
+      UPLOADS_DIR: /app/uploads/cv
+    volumes:
+      - cv_uploads:/app/uploads/cv
     networks:
       - pulpapp-network
 
@@ -125,6 +129,7 @@ services:
 
 volumes:
   postgres_data:
+  cv_uploads:
 
 networks:
   pulpapp-network:

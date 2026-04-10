@@ -44,6 +44,11 @@ public class SecurityConfig {
                 // ── Autenticación JWT ──────────────────────────────────────
                 .requestMatchers("/auth/**").permitAll()
 
+                // ── Postulaciones laborales ────────────────────────────────
+                .requestMatchers(HttpMethod.POST, "/job-applications").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/job-applications").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.GET,  "/job-applications/**").hasAuthority("ROLE_ADMIN")
+
                 // ── Usuarios: operaciones del frontend sin token ───────────
                 // El frontend crea, consulta y actualiza usuarios sin JWT
                 .requestMatchers(HttpMethod.POST, "/users").permitAll()

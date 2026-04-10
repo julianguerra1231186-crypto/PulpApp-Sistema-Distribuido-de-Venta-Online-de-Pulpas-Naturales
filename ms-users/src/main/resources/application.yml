@@ -1,5 +1,6 @@
 server:
   port: ${SERVER_PORT:8081}
+
 spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/pulpapp_db}
@@ -8,7 +9,6 @@ spring:
     driver-class-name: org.postgresql.Driver
 
   jpa:
-    # Liquibase gestiona el esquema; Hibernate no debe modificar tablas
     hibernate:
       ddl-auto: none
     show-sql: true
@@ -16,12 +16,18 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  # Liquibase: apunta al changelog maestro del microservicio
   liquibase:
     change-log: classpath:db/changelog/changelog-master.yml
     enabled: true
 
-# JWT — en producción reemplazar secret por variable de entorno
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
 jwt:
   secret: ${JWT_SECRET:cGVwcGVyTWludFB1bHBBcHBTZWNyZXRLZXkyMDI2IVhZWg==}
-  expiration-ms: ${JWT_EXPIRATION_MS:86400000}   # 24 horas
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+app:
+  uploads-dir: ${UPLOADS_DIR:uploads/cv}

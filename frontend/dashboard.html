@@ -134,6 +134,19 @@
                     <span>Descripción</span>
                     <input type="text" id="pDescription" placeholder="Descripción breve">
                 </label>
+                <label class="full-width">
+                    <span>Imagen del producto</span>
+                    <div class="product-img-upload-wrap">
+                        <input type="file" id="pImageFile" accept="image/*" class="jobs-file-input">
+                        <div class="product-img-preview" id="pImagePreview"
+                             onclick="document.getElementById('pImageFile').click()">
+                            <span id="pImagePreviewText">📷 Seleccionar imagen (JPG, PNG, WEBP)</span>
+                            <img id="pImagePreviewImg" src="" alt="Vista previa" style="display:none; max-height:120px; border-radius:10px; object-fit:cover">
+                        </div>
+                        <input type="hidden" id="pImageUrl" placeholder="O pega una URL de imagen">
+                        <input type="text" id="pImageUrlInput" placeholder="O pega una URL de imagen (opcional)">
+                    </div>
+                </label>
             </div>
             <div class="inline-actions">
                 <button id="saveProductBtn" class="btn btn-primary" type="button">Guardar producto</button>
@@ -162,6 +175,33 @@
             <div id="clientOrdersList"><p class="helper-text">Cargando...</p></div>
         </div>
     </section>
+
+    <!-- TAB: Postulaciones (solo ADMIN) -->
+    <section id="tab-admin-postulaciones" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <h2>Postulaciones laborales</h2>
+
+        <!-- Filtros -->
+        <div class="applications-filters">
+            <input type="search" id="appFilterInput" placeholder="Filtrar por cargo o nombre..." class="app-filter-input">
+            <span id="appCount" class="app-count-badge">0 postulaciones</span>
+        </div>
+
+        <!-- Tabla -->
+        <div class="admin-table-wrap" style="margin-top:16px">
+            <div id="applicationsList"><p class="helper-text">Cargando postulaciones...</p></div>
+        </div>
+    </section>
+
+    <!-- Modal detalle postulación -->
+    <div id="appDetailModal" class="app-modal hidden" role="dialog" aria-modal="true" aria-label="Detalle de postulación">
+        <div class="app-modal-card glass-card">
+            <button id="closeAppModal" class="modal-close" type="button" aria-label="Cerrar">✕</button>
+            <span class="eyebrow">Detalle del candidato</span>
+            <h3 id="modalAppName" style="margin:8px 0 20px; font-family:var(--font-display); font-size:1.4rem"></h3>
+            <div class="app-modal-grid" id="modalAppContent"></div>
+        </div>
+    </div>
 
 </main>
 
@@ -232,13 +272,13 @@
         ];
 
         const adminTabs = [
-            { id: "admin-productos", label: "📦 Productos",  admin: true },
-            { id: "admin-clientes",  label: "👥 Clientes",   admin: true }
+            { id: "perfil",              label: "👤 Perfil",        first: true },
+            { id: "admin-productos",     label: "📦 Productos",     admin: true },
+            { id: "admin-clientes",      label: "👥 Clientes",      admin: true },
+            { id: "admin-postulaciones", label: "🧑‍💼 Postulaciones", admin: true }
         ];
 
-        const allTabs = isAdmin
-            ? [...sellerTabs, ...adminTabs]
-            : sellerTabs;
+        const allTabs = isAdmin ? adminTabs : sellerTabs;
 
         tabsNav.innerHTML = allTabs.map(t => `
             <button class="dash-tab${t.first ? " is-active" : ""}${t.admin ? " admin-tab" : ""}"
@@ -247,10 +287,8 @@
             </button>
         `).join("");
 
-        // Mostrar primer panel
-        showPanel("perfil");
+        showPanel(allTabs[0].id);
 
-        // Eventos
         tabsNav.querySelectorAll(".dash-tab").forEach(btn => {
             btn.addEventListener("click", () => {
                 tabsNav.querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
@@ -265,10 +303,10 @@
         const panel = document.getElementById("tab-" + tabId);
         if (panel) panel.classList.remove("hidden");
 
-        // Carga lazy de datos
-        if (tabId === "pedidos")          loadMyOrders();
-        if (tabId === "admin-productos")  loadAdminProducts();
-        if (tabId === "admin-clientes")   loadAdminUsers();
+        if (tabId === "pedidos")               loadMyOrders();
+        if (tabId === "admin-productos")       loadAdminProducts();
+        if (tabId === "admin-clientes")        loadAdminUsers();
+        if (tabId === "admin-postulaciones")   loadApplications();
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -342,7 +380,8 @@
                                     <button class="btn-table-edit" data-id="${p.id}"
                                         data-name="${p.name}" data-price="${p.price}"
                                         data-stock="${p.stock}" data-available="${p.available}"
-                                        data-desc="${p.description || ""}">
+                                        data-desc="${p.description || ""}"
+                                        data-img="${p.imageUrl || ""}">
                                         ✏️ Editar
                                     </button>
                                 </td>
@@ -362,6 +401,14 @@
                 document.getElementById("pStock").value         = btn.dataset.stock;
                 document.getElementById("pAvailable").value     = btn.dataset.available;
                 document.getElementById("pDescription").value   = btn.dataset.desc;
+                // Precargar imagen existente en el campo URL
+                const existingImg = btn.dataset.img || "";
+                document.getElementById("pImageUrlInput").value = existingImg;
+                if (existingImg) {
+                    document.getElementById("pImagePreviewImg").src = existingImg;
+                    document.getElementById("pImagePreviewImg").style.display = "block";
+                    document.getElementById("pImagePreviewText").style.display = "none";
+                }
                 document.getElementById("productFormTitle").textContent = "Editar producto";
                 document.getElementById("cancelEditBtn").classList.remove("hidden");
                 document.getElementById("tab-admin-productos").scrollIntoView({ behavior: "smooth" });
@@ -371,12 +418,39 @@
 
     document.getElementById("saveProductBtn").addEventListener("click", async () => {
         const btn = document.getElementById("saveProductBtn");
+        const imageFile = document.getElementById("pImageFile").files[0];
+        const imageUrlInput = document.getElementById("pImageUrlInput").value.trim();
+
+        // Determinar imageUrl: archivo subido tiene prioridad sobre URL manual
+        let imageUrl = imageUrlInput || null;
+
+        // Si hay archivo, subirlo primero
+        if (imageFile) {
+            try {
+                const formData = new FormData();
+                formData.append("file", imageFile);
+                const uploadRes = await fetch("http://localhost:8090/products/upload-image", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${window.PulpAuth.getToken()}` },
+                    body: formData
+                });
+                if (uploadRes.ok) {
+                    const uploadData = await uploadRes.json();
+                    imageUrl = uploadData.imageUrl || imageUrl;
+                }
+            } catch (e) {
+                // Si falla la subida, continúa sin imagen
+                console.warn("No se pudo subir la imagen:", e.message);
+            }
+        }
+
         const body = {
             name:        document.getElementById("pName").value.trim(),
             price:       Number(document.getElementById("pPrice").value),
             stock:       Number(document.getElementById("pStock").value),
             available:   document.getElementById("pAvailable").value === "true",
-            description: document.getElementById("pDescription").value.trim()
+            description: document.getElementById("pDescription").value.trim(),
+            imageUrl:    imageUrl
         };
 
         if (!body.name) { toast("El nombre es obligatorio", "error"); return; }
@@ -412,7 +486,7 @@
 
     function resetProductForm() {
         editingProductId = null;
-        ["pName","pPrice","pStock","pDescription"].forEach(id => {
+        ["pName","pPrice","pStock","pDescription","pImageUrlInput"].forEach(id => {
             document.getElementById(id).value = "";
         });
         document.getElementById("pAvailable").value = "true";
@@ -420,6 +494,11 @@
         document.getElementById("productFormTitle").textContent = "Agregar producto";
         document.getElementById("cancelEditBtn").classList.add("hidden");
         document.getElementById("productFormMsg").textContent = "";
+        // Limpiar preview imagen
+        document.getElementById("pImageFile").value = "";
+        document.getElementById("pImagePreviewImg").style.display = "none";
+        document.getElementById("pImagePreviewImg").src = "";
+        document.getElementById("pImagePreviewText").style.display = "inline";
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -527,6 +606,172 @@
     });
 
     // ─────────────────────────────────────────────────────────────
+    // ADMIN — Postulaciones laborales
+    // ─────────────────────────────────────────────────────────────
+
+    let allApplications = [];
+
+    async function loadApplications() {
+        const container = document.getElementById("applicationsList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            allApplications = await apiFetch("/job-applications");
+            renderApplications(allApplications);
+
+            // Filtro en tiempo real
+            const filterInput = document.getElementById("appFilterInput");
+            filterInput.oninput = () => {
+                const q = filterInput.value.toLowerCase();
+                const filtered = allApplications.filter(a =>
+                    (a.fullName  || "").toLowerCase().includes(q) ||
+                    (a.position  || "").toLowerCase().includes(q) ||
+                    (a.email     || "").toLowerCase().includes(q)
+                );
+                renderApplications(filtered);
+            };
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>${err.message}</p>`;
+        }
+    }
+
+    function renderApplications(list) {
+        const container = document.getElementById("applicationsList");
+        const countBadge = document.getElementById("appCount");
+        if (countBadge) countBadge.textContent = `${list.length} postulación${list.length !== 1 ? "es" : ""}`;
+
+        if (!list.length) {
+            container.innerHTML = "<p class='helper-text'>No hay postulaciones registradas.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <table class="admin-table applications-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Teléfono</th>
+                        <th>Cargo</th>
+                        <th>Fecha</th>
+                        <th>CV</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${list.map(a => `
+                        <tr>
+                            <td>${a.id}</td>
+                            <td><strong>${a.fullName}</strong></td>
+                            <td>${a.email}</td>
+                            <td>${a.phone}</td>
+                            <td>
+                                ${a.position
+                                    ? `<span class="app-position-badge">${a.position}</span>`
+                                    : "<span style='color:var(--text-muted)'>—</span>"}
+                            </td>
+                            <td style="white-space:nowrap">
+                                ${a.createdAt ? new Date(a.createdAt).toLocaleDateString("es-CO") : "—"}
+                            </td>
+                            <td>
+                                ${a.cvFile
+                                    ? `<button class="btn-table-orders btn-download-cv"
+                                               data-id="${a.id}"
+                                               data-name="${a.cvFile}">
+                                          📄 Descargar
+                                       </button>`
+                                    : "<span style='color:var(--text-muted); font-size:0.82rem'>Sin CV</span>"}
+                            </td>
+                            <td>
+                                <button class="btn-table-edit btn-app-detail"
+                                        data-id="${a.id}">
+                                    👁 Ver detalle
+                                </button>
+                            </td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+        `;
+
+        // Eventos modal detalle
+        container.querySelectorAll(".btn-app-detail").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const app = allApplications.find(a => String(a.id) === btn.dataset.id);
+                if (app) openAppModal(app);
+            });
+        });
+    }
+
+    function openAppModal(app) {
+        document.getElementById("modalAppName").textContent = app.fullName;
+        document.getElementById("modalAppContent").innerHTML = `
+            <div class="app-modal-field"><span>Email</span><strong>${app.email}</strong></div>
+            <div class="app-modal-field"><span>Teléfono</span><strong>${app.phone}</strong></div>
+            <div class="app-modal-field"><span>Cargo</span><strong>${app.position || "—"}</strong></div>
+            <div class="app-modal-field"><span>Fecha</span><strong>${app.createdAt ? new Date(app.createdAt).toLocaleString("es-CO") : "—"}</strong></div>
+            <div class="app-modal-field full-width">
+                <span>Presentación</span>
+                <p style="margin:6px 0 0; color:var(--text-muted); line-height:1.65">${app.message || "Sin mensaje"}</p>
+            </div>
+            <div class="app-modal-field full-width">
+                <span>Hoja de vida</span>
+                ${app.cvFile
+                    ? `<button class="btn btn-primary btn-download-cv"
+                               data-id="${app.id}" data-name="${app.cvFile}"
+                               style="margin-top:8px; min-height:40px; font-size:0.88rem">
+                               📄 Descargar CV
+                       </button>`
+                    : `<p style="color:var(--text-muted); margin:6px 0 0">No adjuntó hoja de vida</p>`}
+            </div>
+        `;
+        document.getElementById("appDetailModal").classList.remove("hidden");
+    }
+
+    document.getElementById("closeAppModal").addEventListener("click", () => {
+        document.getElementById("appDetailModal").classList.add("hidden");
+    });
+
+    document.getElementById("appDetailModal").addEventListener("click", (e) => {
+        if (e.target === e.currentTarget) {
+            e.currentTarget.classList.add("hidden");
+        }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // Descarga de CV con token JWT (fetch + blob)
+    // ─────────────────────────────────────────────────────────────
+
+    async function downloadCv(id, filename) {
+        try {
+            const res = await fetch(`http://localhost:8090/job-applications/${id}/download`, {
+                headers: { "Authorization": `Bearer ${window.PulpAuth.getToken()}` }
+            });
+
+            if (!res.ok) throw new Error("No autorizado o archivo no encontrado");
+
+            const blob = await res.blob();
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement("a");
+            a.href     = url;
+            a.download = filename || `cv-${id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            toast(err.message, "error");
+        }
+    }
+
+    // Delegación de eventos para todos los botones de descarga (tabla + modal)
+    document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".btn-download-cv");
+        if (!btn) return;
+        downloadCv(btn.dataset.id, btn.dataset.name);
+    });
+
+    // ─────────────────────────────────────────────────────────────
     // INIT
     // ─────────────────────────────────────────────────────────────
 
@@ -577,6 +822,35 @@
 
         // Construir tabs según rol
         buildTabs(isAdmin);
+    });
+
+    // ── Preview imagen en tiempo real ──────────────────────────
+    document.getElementById("pImageFile").addEventListener("change", function() {
+        const file = this.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById("pImagePreviewImg").src = e.target.result;
+            document.getElementById("pImagePreviewImg").style.display = "block";
+            document.getElementById("pImagePreviewText").style.display = "none";
+            // Limpiar URL manual si se selecciona archivo
+            document.getElementById("pImageUrlInput").value = "";
+        };
+        reader.readAsDataURL(file);
+    });
+
+    document.getElementById("pImageUrlInput").addEventListener("input", function() {
+        const url = this.value.trim();
+        if (url) {
+            document.getElementById("pImagePreviewImg").src = url;
+            document.getElementById("pImagePreviewImg").style.display = "block";
+            document.getElementById("pImagePreviewText").style.display = "none";
+            // Limpiar archivo si se escribe URL
+            document.getElementById("pImageFile").value = "";
+        } else {
+            document.getElementById("pImagePreviewImg").style.display = "none";
+            document.getElementById("pImagePreviewText").style.display = "inline";
+        }
     });
 
 })();
