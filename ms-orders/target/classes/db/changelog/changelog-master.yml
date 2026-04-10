@@ -1,0 +1,146 @@
+databaseChangeLog:
+
+  # ============================================================
+  # changeSet 1: Tabla orders
+  # Encabezado del pedido.
+  # Hibernate convierte userId -> user_id (snake_case).
+  # user_id es referencia logica a ms-users (sin FK fisica cross-service).
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 1-create-orders-table
+      author: pulpapp-team
+      comment: Crea la tabla orders. Cabecera del pedido con referencia logica al usuario.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: orders
+      changes:
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              # Hibernate convierte userId -> user_id
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: fecha
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+
+  # ============================================================
+  # changeSet 2: Tabla order_items
+  # Detalle del pedido con precio historico.
+  # Hibernate convierte: productId -> product_id,
+  #                      precioUnitario -> precio_unitario
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 2-create-order-items-table
+      author: pulpapp-team
+      comment: Crea la tabla order_items. Detalle de cada pedido con FK hacia orders.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: order_items
+      changes:
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              # FK fisica hacia orders (mismo microservicio)
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              # Hibernate convierte productId -> product_id
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cantidad
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              # Hibernate convierte precioUnitario -> precio_unitario
+              - column:
+                  name: precio_unitario
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subtotal
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: false
+
+  # ============================================================
+  # changeSet 3: FK order_items -> orders
+  # CASCADE DELETE: al borrar un pedido se borran sus items.
+  # onFail: MARK_RAN — si la FK ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 3-add-fk-order-items-to-orders
+      author: pulpapp-team
+      comment: Crea FK order_items.order_id hacia orders.id con CASCADE DELETE.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          foreignKeyConstraintExists:
+            foreignKeyName: fk_order_items_order
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: order_items
+            baseColumnNames: order_id
+            constraintName: fk_order_items_order
+            referencedTableName: orders
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+  # ============================================================
+  # changeSet 4: Indice en order_items.order_id
+  # Optimiza consultas de detalle de pedido.
+  # onFail: MARK_RAN — si el indice ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 4-index-order-items-order-id
+      author: pulpapp-team
+      comment: Crea indice en order_items.order_id para optimizar consultas.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_order_items_order_id
+      changes:
+        - createIndex:
+            tableName: order_items
+            indexName: idx_order_items_order_id
+            columns:
+              - column:
+                  name: order_id
