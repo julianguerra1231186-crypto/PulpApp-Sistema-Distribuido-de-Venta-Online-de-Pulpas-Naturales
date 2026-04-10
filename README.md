@@ -27,6 +27,7 @@ El sistema está dividido en microservicios independientes que se comunican medi
 -  [ms-products](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
 -  [ms-orders](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
 -  [front](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
+-  [BaseDeDatos](https://github.com/julianguerra1231186-crypto/BaseDeDatos)
 -  [Api-Gatawey](https://github.com/julianguerra1231186-crypto/Api-Gatawey)
 
 Cada microservicio se ejecuta de forma independiente en su propio contenedor Docker y expone su API en un puerto específico (8081, 8082 y 8083 respectivamente). Esto permite que cada servicio funcione de manera desacoplada, facilitando su desarrollo, despliegue y mantenimiento.
@@ -223,3 +224,5 @@ Se utilizará para la contenedorización de los microservicios, permitiendo su d
 Sistema de control de versiones distribuido que permitirá la gestión colaborativa del código bajo una estrategia estructurada de ramas.
 
 ![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Diagramade%20dependencias.png)
+
+
