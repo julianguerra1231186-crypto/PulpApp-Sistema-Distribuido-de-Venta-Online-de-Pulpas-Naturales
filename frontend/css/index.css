@@ -1,3 +1,4 @@
+/* Sección principal tipo ecommerce moderno */
 /* PulpApp — página de inicio (index.html, data-page="home") */
 
 main {
@@ -16,8 +17,8 @@ main {
 .hero-copy {
     padding: clamp(28px, 4vw, 40px);
     background:
-        linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.82) 100%),
-        linear-gradient(135deg, rgba(227, 244, 234, 0.35) 0%, transparent 55%);
+            linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.82) 100%),
+            linear-gradient(135deg, rgba(227, 244, 234, 0.35) 0%, transparent 55%);
     border-radius: var(--radius-xl);
     box-shadow: var(--shadow-xl);
     border: 1px solid rgba(255, 255, 255, 0.65);
@@ -83,8 +84,8 @@ main {
     color: var(--text-main);
     box-shadow: var(--shadow-sm);
     transition:
-        transform 0.2s var(--ease-out),
-        border-color 0.2s ease;
+            transform 0.2s var(--ease-out),
+            border-color 0.2s ease;
 }
 
 .trust-strip li:hover {
@@ -146,8 +147,8 @@ main {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(246, 251, 247, 0.85));
     border: 1px solid var(--line);
     transition:
-        transform 0.25s var(--ease-out),
-        box-shadow 0.25s var(--ease-out);
+            transform 0.25s var(--ease-out),
+            box-shadow 0.25s var(--ease-out);
 }
 
 .stats-grid article:hover {
@@ -199,8 +200,8 @@ main {
 .feature-card {
     padding: 28px;
     transition:
-        transform 0.3s var(--ease-out),
-        box-shadow 0.3s var(--ease-out);
+            transform 0.3s var(--ease-out),
+            box-shadow 0.3s var(--ease-out);
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
@@ -280,3 +281,4 @@ main {
         width: min(100% - 20px, 100%);
     }
 }
+

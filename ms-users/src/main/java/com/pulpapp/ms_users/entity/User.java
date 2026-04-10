@@ -33,4 +33,8 @@ public class User {
     @Column(nullable = false)
     private String direccion;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.ROLE_SELLER;
+
 }
