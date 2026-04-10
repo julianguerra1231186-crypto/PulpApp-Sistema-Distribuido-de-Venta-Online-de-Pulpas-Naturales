@@ -122,6 +122,35 @@
         return handleResponse(response, "No fue posible actualizar el usuario");
     }
 
+    // ── Autenticación JWT ──────────────────────────────────────────
+
+    async function authLogin(email, password) {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await handleResponse(response, "Credenciales incorrectas");
+        // Guarda el token y actualiza el navbar automáticamente
+        if (data?.token && window.PulpAuth) {
+            window.PulpAuth.login(data.token, data);
+        }
+        return data;
+    }
+
+    async function authRegister(userData) {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData)
+        });
+        const data = await handleResponse(response, "No fue posible registrar el usuario");
+        if (data?.token && window.PulpAuth) {
+            window.PulpAuth.login(data.token, data);
+        }
+        return data;
+    }
+
     async function createOrder(orderData) {
         const response = await fetch(ORDERS_API_URL, {
             method: "POST",
@@ -161,6 +190,8 @@
         findUserByCedula,
         createUser,
         updateUser,
+        authLogin,
+        authRegister,
         createOrder,
         getCart,
         saveCart,
