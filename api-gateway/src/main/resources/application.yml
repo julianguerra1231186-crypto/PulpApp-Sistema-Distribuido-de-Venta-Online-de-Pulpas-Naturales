@@ -16,6 +16,8 @@ spring:
       # SOLUCIÓN A CORS DUPLICADO
       # ============================================
       # Evita headers duplicados como "* , *"
+      # RemoveRequestHeader: NO se elimina Authorization
+      # para que el JWT llegue intacto a cada microservicio.
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
@@ -47,6 +49,16 @@ spring:
       # RUTAS HACIA MICROSERVICIOS
       # ============================================
       routes:
+
+        # --------------------------------------------
+        # AUTENTICACIÓN (login / register) — PÚBLICO
+        # Debe ir ANTES que ms-users para que el
+        # predicado más específico tome precedencia.
+        # --------------------------------------------
+        - id: ms-auth
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/auth, /auth/**
 
         # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
