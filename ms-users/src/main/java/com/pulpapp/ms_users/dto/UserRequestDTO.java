@@ -1,5 +1,6 @@
 package com.pulpapp.ms_users.dto;
 
+import com.pulpapp.ms_users.entity.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -27,4 +28,7 @@ public class UserRequestDTO {
 
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
+
+    // Opcional: si no se envía, el servicio asigna ROLE_SELLER por defecto
+    private Role role;
 }

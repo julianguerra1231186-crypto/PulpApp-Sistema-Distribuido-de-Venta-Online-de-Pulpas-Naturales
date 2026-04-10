@@ -105,6 +105,33 @@ databaseChangeLog:
                     nullable: false
 
   # ============================================================
+  # changeSet 4: Columna role en users
+  # Almacena el rol del usuario para RBAC (ROLE_ADMIN, ROLE_SELLER).
+  # DEFAULT ROLE_SELLER para compatibilidad con registros historicos.
+  # onFail: MARK_RAN — si la columna ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 4-add-role-to-users
+      author: pulpapp-team
+      comment: Agrega columna role a users con valor por defecto ROLE_SELLER.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: role
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  defaultValue: ROLE_SELLER
+                  constraints:
+                    nullable: false
+
+  # ============================================================
   # changeSet 3: FK pedidos -> users
   # RESTRICT: no se puede eliminar un usuario con pedidos.
   # onFail: MARK_RAN — si la FK ya existe, se registra sin error.
