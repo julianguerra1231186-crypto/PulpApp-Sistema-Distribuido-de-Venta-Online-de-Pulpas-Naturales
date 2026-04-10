@@ -153,3 +153,66 @@ databaseChangeLog:
             referencedTableName: users
             referencedColumnNames: id
             onDelete: RESTRICT
+
+  # ============================================================
+  # changeSet 5: Tabla job_applications
+  # Almacena postulaciones del formulario "Trabaja con nosotros".
+  # cv_file guarda solo el nombre del archivo subido.
+  # onFail: MARK_RAN — si la tabla ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 5-create-job-applications-table
+      author: pulpapp-team
+      comment: Crea la tabla job_applications para postulaciones laborales.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: job_applications
+      changes:
+        - createTable:
+            tableName: job_applications
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: message
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: cv_file
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false

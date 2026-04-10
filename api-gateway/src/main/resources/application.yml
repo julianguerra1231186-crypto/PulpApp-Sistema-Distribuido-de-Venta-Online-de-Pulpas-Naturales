@@ -51,6 +51,14 @@ spring:
       routes:
 
         # --------------------------------------------
+        # POSTULACIONES LABORALES — PÚBLICO POST / ADMIN GET
+        # --------------------------------------------
+        - id: ms-job-applications
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/job-applications, /job-applications/**
+
+        # --------------------------------------------
         # AUTENTICACIÓN (login / register) — PÚBLICO
         # Debe ir ANTES que ms-users para que el
         # predicado más específico tome precedencia.

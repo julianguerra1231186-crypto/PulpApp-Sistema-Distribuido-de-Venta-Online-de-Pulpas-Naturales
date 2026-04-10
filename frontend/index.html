@@ -99,39 +99,117 @@
         </div>
     </div>
 
-    <section class="feature-section" aria-labelledby="features-heading">
-        <div class="section-heading">
-            <span class="eyebrow">Por que comprar aqui</span>
-            <h2 id="features-heading">Un flujo de compra claro, rapido y trazable</h2>
+    <!-- ══════════════════════ CARRUSEL PRODUCTOS ══════════════════════ -->
+    <section class="featured-section" aria-labelledby="featured-heading">
+        <div class="featured-header">
+            <span class="eyebrow">Lo más pedido</span>
+            <h2 id="featured-heading">Productos más vendidos</h2>
         </div>
 
-        <div class="feature-grid">
-            <article class="glass-card feature-card">
-                <h3>Catalogo dinamico</h3>
-                <p>Los productos se consultan directamente desde el microservicio de productos para evitar datos quemados.</p>
-            </article>
-            <article class="glass-card feature-card">
-                <h3>Compra persistente</h3>
-                <p>El carrito se conserva en <code>localStorage</code>, por lo que el usuario no pierde su seleccion al navegar.</p>
-            </article>
-            <article class="glass-card feature-card">
-                <h3>Pedidos reales</h3>
-                <p>Cada compra se registra primero en backend antes de ofrecer canales complementarios como WhatsApp.</p>
-            </article>
+        <div class="coverflow-wrapper">
+            <button class="coverflow-arrow coverflow-arrow--prev" id="cfPrev" aria-label="Anterior">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+
+            <div class="coverflow-track" id="cfTrack">
+                <article class="cf-card" data-index="0">
+                    <div class="cf-img-wrap">
+                        <img src="img/mango1.png" alt="Pulpa de Mango">
+                    </div>
+                    <div class="cf-body">
+                        <h3>Pulpa de Mango</h3>
+                        <p class="cf-price">$8.500</p>
+                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
+                    </div>
+                </article>
+
+                <article class="cf-card" data-index="1">
+                    <div class="cf-img-wrap">
+                        <img src="img/mora1.png" alt="Pulpa de Mora">
+                    </div>
+                    <div class="cf-body">
+                        <h3>Pulpa de Mora</h3>
+                        <p class="cf-price">$7.900</p>
+                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
+                    </div>
+                </article>
+
+                <article class="cf-card" data-index="2">
+                    <div class="cf-img-wrap">
+                        <img src="img/guanabana1.png" alt="Pulpa de Guanábana">
+                    </div>
+                    <div class="cf-body">
+                        <h3>Pulpa de Guanábana</h3>
+                        <p class="cf-price">$9.200</p>
+                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
+                    </div>
+                </article>
+
+                <article class="cf-card" data-index="3">
+                    <div class="cf-img-wrap">
+                        <img src="img/limon1.png" alt="Pulpa de Limón">
+                    </div>
+                    <div class="cf-body">
+                        <h3>Pulpa de Limón</h3>
+                        <p class="cf-price">$6.800</p>
+                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
+                    </div>
+                </article>
+
+                <article class="cf-card" data-index="4">
+                    <div class="cf-img-wrap">
+                        <img src="img/mora.png" alt="Pulpa de Mora Premium">
+                    </div>
+                    <div class="cf-body">
+                        <h3>Mora Premium</h3>
+                        <p class="cf-price">$8.100</p>
+                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
+                    </div>
+                </article>
+            </div>
+
+            <button class="coverflow-arrow coverflow-arrow--next" id="cfNext" aria-label="Siguiente">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Dots -->
+        <div class="cf-dots" id="cfDots"></div>
+    </section>
+
+    <!-- ══════════════════════ QUIÉNES SOMOS ══════════════════════ -->
+    <section class="about-section" aria-labelledby="about-heading">
+        <div class="about-image-wrap">
+            <img src="img/quienessomos.png" alt="Equipo Frutos y Sabores en el campo" class="about-img">
+        </div>
+        <div class="about-content">
+            <span class="eyebrow">Nuestra historia</span>
+            <h2 id="about-heading">¿Quiénes somos?</h2>
+            <p>En <strong>Frutos &amp; Sabores</strong> somos una empresa comprometida con llevar lo mejor del campo a tu mesa. Nacemos del trabajo y dedicación de familias campesinas que cultivan con amor cada fruta, garantizando productos frescos, naturales y de la más alta calidad.</p>
+            <p>Nos especializamos en la producción de pulpas de fruta 100% naturales, elaboradas sin conservantes ni aditivos artificiales, conservando el sabor, aroma y propiedades nutritivas de cada cosecha. Nuestro proceso inicia desde la selección cuidadosa de la fruta en su punto óptimo de maduración, hasta su transformación en pulpas listas para el consumo.</p>
+            <p>Trabajamos de la mano con agricultores locales, apoyando el desarrollo del campo y promoviendo prácticas sostenibles que respetan el medio ambiente. Creemos en el valor de lo natural, en el esfuerzo de nuestra gente y en ofrecer productos que aporten bienestar a nuestros clientes.</p>
+            <p class="about-closing">En <strong>Frutos &amp; Sabores</strong>, más que pulpas, entregamos frescura, tradición y calidad en cada empaque.</p>
+            <a href="catalog.html" class="btn btn-primary" style="margin-top:8px">Ver nuestros productos</a>
         </div>
     </section>
 
-    <section class="status-section" aria-label="Estado de tu sesion y carrito">
-        <article class="glass-card status-card">
-            <span class="eyebrow">Sesion actual</span>
-            <h3 id="homeUserStatus">No has iniciado sesion</h3>
-            <p id="homeUserDetail">Ingresa en la seccion Mi cuenta para autocompletar tu compra.</p>
-        </article>
-        <article class="glass-card status-card">
-            <span class="eyebrow">Carrito</span>
-            <h3 id="homeCartStatus">0 productos agregados</h3>
-            <p id="homeCartDetail">Tu resumen se actualiza automaticamente mientras navegas.</p>
-        </article>
+    <!-- ══════════════════════ CTA TRABAJA CON NOSOTROS ══════════════════════ -->
+    <section class="jobs-cta-section">
+        <div class="jobs-cta-inner">
+            <span class="eyebrow">Únete al equipo</span>
+            <h2>¿Te apasiona el campo y los productos naturales?</h2>
+            <p>Somos una empresa en crecimiento que valora el talento humano. Aquí encontrarás un ambiente de trabajo cálido, oportunidades reales y el orgullo de trabajar con lo mejor de la naturaleza colombiana.</p>
+            <div class="jobs-cta-btn-wrap">
+                <a href="trabaja-con-nosotros.html" class="btn btn-primary jobs-cta-btn" id="jobsCtaBtn">
+                    🌿 Trabaja con nosotros
+                </a>
+                <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+            </div>
+        </div>
     </section>
 </main>
 
@@ -151,7 +229,133 @@
 <script src="auth.js"></script>
 <script src="app.js"></script>
 <script>
-/* ── Slider hero ── */
+/* ── Confeti botón trabaja con nosotros ── */
+(function initConfetti() {
+    const btn    = document.getElementById("jobsCtaBtn");
+    const canvas = document.getElementById("confettiCanvas");
+    if (!btn || !canvas) return;
+
+    const ctx    = canvas.getContext("2d");
+    const COLORS = ["#0d7a4d","#15995f","#e8892e","#fff","#4ade80","#fbbf24"];
+    let particles = [];
+    let raf = null;
+    let running = false;
+
+    function resize() {
+        const rect = btn.getBoundingClientRect();
+        canvas.width  = rect.width;
+        canvas.height = rect.height;
+    }
+
+    function spawn() {
+        resize();
+        particles = [];
+        for (let i = 0; i < 55; i++) {
+            particles.push({
+                x:  Math.random() * canvas.width,
+                y:  canvas.height * 0.6,
+                vx: (Math.random() - 0.5) * 5,
+                vy: -(Math.random() * 5 + 3),
+                size: Math.random() * 6 + 3,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                alpha: 1,
+                rot: Math.random() * 360,
+                rotV: (Math.random() - 0.5) * 8
+            });
+        }
+    }
+
+    function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let alive = false;
+        particles.forEach(p => {
+            p.x  += p.vx;
+            p.y  += p.vy;
+            p.vy += 0.18;          // gravedad
+            p.alpha -= 0.018;
+            p.rot   += p.rotV;
+            if (p.alpha > 0) {
+                alive = true;
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, p.alpha);
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.5);
+                ctx.restore();
+            }
+        });
+        if (alive) { raf = requestAnimationFrame(tick); }
+        else        { running = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+    }
+
+    btn.addEventListener("mouseenter", () => {
+        if (running) return;
+        running = true;
+        spawn();
+        raf = requestAnimationFrame(tick);
+    });
+
+    btn.addEventListener("mouseleave", () => {
+        cancelAnimationFrame(raf);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        running = false;
+    });
+})();
+/* ── Coverflow productos ── */
+(function initCoverflow() {
+    const cards  = Array.from(document.querySelectorAll(".cf-card"));
+    const total  = cards.length;
+    const dots   = document.getElementById("cfDots");
+    let current  = Math.floor(total / 2); // arranca en el centro
+
+    // Crear dots
+    cards.forEach((_, i) => {
+        const d = document.createElement("button");
+        d.className = "cf-dot";
+        d.setAttribute("aria-label", `Producto ${i + 1}`);
+        d.addEventListener("click", () => goTo(i));
+        dots.appendChild(d);
+    });
+
+    function goTo(index) {
+        current = (index + total) % total;
+        cards.forEach((card, i) => {
+            const offset = i - current;
+            const abs    = Math.abs(offset);
+
+            // Escala y opacidad según distancia al centro
+            const scale   = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.68;
+            const opacity = abs === 0 ? 1 : abs === 1 ? 0.7  : 0.45;
+            const tx      = offset * 72; // desplazamiento horizontal en %
+            const zIndex  = total - abs;
+
+            card.style.transform  = `translateX(${tx}%) scale(${scale})`;
+            card.style.opacity    = opacity;
+            card.style.zIndex     = zIndex;
+            card.classList.toggle("is-active", i === current);
+        });
+
+        // Dots
+        dots.querySelectorAll(".cf-dot").forEach((d, i) => {
+            d.classList.toggle("is-active", i === current);
+        });
+    }
+
+    document.getElementById("cfPrev").addEventListener("click", () => goTo(current - 1));
+    document.getElementById("cfNext").addEventListener("click", () => goTo(current + 1));
+
+    // Swipe táctil
+    const track = document.getElementById("cfTrack");
+    let tx0 = 0;
+    track.addEventListener("touchstart", e => { tx0 = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener("touchend",   e => {
+        const diff = tx0 - e.changedTouches[0].clientX;
+        if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+    });
+
+    goTo(current);
+})();
 (function initSlider() {
     const TOTAL    = 5;
     const INTERVAL = 4000;
