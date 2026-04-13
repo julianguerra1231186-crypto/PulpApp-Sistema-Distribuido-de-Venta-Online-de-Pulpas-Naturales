@@ -23,10 +23,10 @@ Plataforma escalable de gestión distribuida para la comercialización inteligen
 
 El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
 
--  [ms-users](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [ms-products](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [ms-orders](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [front](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
+-  [ms-users](https://github.com/julianguerra1231186-crypto/ms-users)
+-  [ms-products](https://github.com/julianguerra1231186-crypto/ms-products)
+-  [ms-orders](https://github.com/julianguerra1231186-crypto/ms-orders)
+-  [front](https://github.com/julianguerra1231186-crypto/Frontend)
 -  [BaseDeDatos](https://github.com/julianguerra1231186-crypto/BaseDeDatos)
 -  [Api-Gatawey](https://github.com/julianguerra1231186-crypto/Api-Gatawey)
 
