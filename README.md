@@ -1,227 +1,397 @@
 <!--
 CONFIG
-FULL_NAME:Julian Andres Guerra Garcia
+FULL_NAME: Julian Andres Guerra Garcia
 GITHUB_USER: julianguerra1231186@gmail.com
 CODE_ORGANIZATION: code-corhuila
 -->
 
+<div align="center">
+
+# 🍊 PulpApp — Sistema Distribuido de Venta Online de Pulpas Naturales
+
+**Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.**
+
+[![Estado](https://img.shields.io/badge/Estado-Funcional%20100%25-brightgreen?style=for-the-badge)](https://github.com)
+[![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java)](https://www.java.com)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.3-green?style=for-the-badge&logo=springboot)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue?style=for-the-badge&logo=postgresql)](https://www.postgresql.org)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com)
+
+</div>
+
+---
+
+## 👥 Integrantes
+
+| Nombre | Rol |
+|--------|-----|
+| Julian Andres Guerra Garcia | Desarrollador Full Stack |
+| Edwin Menéndez | Desarrollador Full Stack |
+
+**Grupo 5** — Programa de Ingeniería de Sistemas
+
+📋 [Mesa de Trabajo — Jira](https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC)
+
+---
 
-# 🍊 PulpApp – Sistema Distribuido de Venta Online 🍊
-Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.
+## 📌 Descripción del Proyecto
 
-   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/?continue=https%3A%2F%2Fjulianguerra1231186-1773894024267.atlassian.net%2Fwelcome%2Fsoftware%3FprojectId%3D10000&atlOrigin=eyJpIjoiOTdhMWY4ZGU5N2YwNDQ0MDk3NTZjODkxYTU5ZWVlZWQiLCJwIjoiamlyYS1zb2Z0d2FyZSJ9)
-     
-<hr>
+PulpApp es una plataforma de comercio electrónico construida con arquitectura de **microservicios**, diseñada para la venta online de pulpas de fruta naturales. El sistema permite a los clientes explorar el catálogo, registrarse, iniciar sesión con autenticación JWT, agregar productos al carrito y realizar pedidos reales que se persisten en base de datos.
 
-# Integrantes
-- Julian Guerra
-- Edwin Menendez
-- -Grupo 5 
-<hr>
+El sistema también incluye un módulo de reclutamiento para gestionar postulaciones laborales, y un panel de administración con control de acceso basado en roles (RBAC).
 
-## 📌 Arquitectura Del Backend
+---
 
-El sistema está dividido en microservicios independientes que se comunican mediante API REST, permitiendo escalabilidad, mantenimiento modular y separación de responsabilidades.
+## 🏗️ Arquitectura del Sistema
 
--  [ms-users](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [ms-products](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [ms-orders](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [front](https://github.com/julianguerra1231186-crypto/MicroserviciosPulpapp/blob/main/README.md)
--  [BaseDeDatos](https://github.com/julianguerra1231186-crypto/BaseDeDatos)
--  [Api-Gatawey](https://github.com/julianguerra1231186-crypto/Api-Gatawey)
+```
+                        ┌─────────────────────────────────┐
+                        │         FRONTEND                │
+                        │   HTML + CSS + JavaScript       │
+                        │   (Vanilla, sin frameworks)     │
+                        └──────────────┬──────────────────┘
+                                       │ HTTP
+                                       ▼
+                        ┌─────────────────────────────────┐
+                        │         API GATEWAY             │
+                        │   Spring Cloud Gateway          │
+                        │   Puerto: 8090                  │
+                        └──────┬──────────┬───────┬───────┘
+                               │          │       │
+                    /auth/**   │  /prod** │       │ /orders/**
+                    /users/**  │          │       │
+                    /job-app** │          │       │
+                               ▼          ▼       ▼
+              ┌────────────────┐  ┌───────────┐  ┌───────────────┐
+              │   ms-users     │  │ms-products│  │   ms-orders   │
+              │   Puerto 8081  │  │Puerto 8082│  │   Puerto 8083 │
+              │                │  │           │  │               │
+              │ - Auth JWT     │  │ - Catálogo│  │ - Pedidos     │
+              │ - Usuarios     │  │ - Categorías  │ - Items       │
+              │ - Postulaciones│  │           │  │               │
+              └───────┬────────┘  └─────┬─────┘  └───────┬───────┘
+                      │                 │                 │
+                      └─────────────────┴─────────────────┘
+                                        │
+                                        ▼
+                        ┌─────────────────────────────────┐
+                        │         PostgreSQL 15           │
+                        │         pulpapp_db              │
+                        │         Puerto: 5434            │
+                        └─────────────────────────────────┘
+```
 
-Cada microservicio se ejecuta de forma independiente en su propio contenedor Docker y expone su API en un puerto específico (8081, 8082 y 8083 respectivamente). Esto permite que cada servicio funcione de manera desacoplada, facilitando su desarrollo, despliegue y mantenimiento.
-La comunicación entre microservicios se realiza mediante HTTP utilizando los nombres de servicio dentro de la red Docker, lo que permite una interacción correcta sin depender de localhost, garantizando una arquitectura distribuida real.
-### Se deja evidencia de todas las Historias de Usuario en la mesa de trabajo:
-   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/?continue=https%3A%2F%2Fjulianguerra1231186-1773894024267.atlassian.net%2Fwelcome%2Fsoftware%3FprojectId%3D10000&atlOrigin=eyJpIjoiOTdhMWY4ZGU5N2YwNDQ0MDk3NTZjODkxYTU5ZWVlZWQiLCJwIjoiamlyYS1zb2Z0d2FyZSJ9)
+Cada microservicio se ejecuta en su propio contenedor Docker, se comunica mediante HTTP usando los nombres de servicio de la red interna de Docker (`ms-users:8081`, `ms-products:8082`, `ms-orders:8083`), y gestiona su propio esquema de base de datos con Liquibase.
 
-Cada microservicio implementa internamente el patrón arquitectónico MVC (Modelo – Vista – Controlador), permitiendo la separación entre la lógica de negocio, el acceso a datos y la gestión de solicitudes HTTP. 
-Esta estructura mejora la mantenibilidad, escalabilidad y organización del sistema distribuido.
+---
 
-Adicionalmente, el sistema utiliza PostgreSQL como base de datos y Docker Compose para la orquestación de los servicios, permitiendo levantar toda la arquitectura de manera controlada y reproducible.
+## 🧩 Microservicios
 
-# El sistema se encuentra completamente funcional:
-- Backend distribuido.
-- API Gateway.
-- Frontend conectado.
-- Base de datos persistente.
-- Docker Compose.
+| Servicio | Puerto | Responsabilidad | Repositorio |
+|---------|--------|-----------------|-------------|
+| ms-users | 8081 | Autenticación JWT, usuarios, postulaciones | [🔗 Ver](https://github.com/julianguerra1231186-crypto/ms-users) |
+| ms-products | 8082 | Catálogo de productos y categorías | [🔗 Ver](https://github.com/julianguerra1231186-crypto/ms-products) |
+| ms-orders | 8083 | Gestión de pedidos con precio histórico | [🔗 Ver](https://github.com/julianguerra1231186-crypto/ms-orders) |
+| api-gateway | 8090 | Enrutamiento centralizado y CORS | [🔗 Ver](https://github.com/julianguerra1231186-crypto/Api-Gatawey) |
+| frontend | — | Interfaz de usuario HTML/CSS/JS | [🔗 Ver](https://github.com/julianguerra1231186-crypto/Frontend) |
+| base de datos | 5434 | PostgreSQL + pgAdmin | [🔗 Ver](https://github.com/julianguerra1231186-crypto/BaseDeDatos) |
 
-  ████████████████████████████████████ 100%
+---
 
-- Kubernetes: Pendiente , En Revisicion para implementacion
-### Historias de Usuario Implementadas
- - HU-REG-001 — Registro de usuario
-   - Permite registrar usuarios desde el frontend enviando datos al microservicio ms-users a través del API Gateway.
- - HU-REG-002 — Validación de cédula
-   - Valida si un usuario ya existe antes de permitir su registro, evitando duplicados.
- - HU-REG-003 — Persistencia de sesión
-   - Mantiene datos del usuario y carrito utilizando localStorage para mejorar la experiencia.
- - HU-CAT-004 — Catálogo de productos
-   - Obtiene productos desde ms-products vía gateway y los renderiza dinámicamente en el frontend.
- - HU-ORD-005 — Creación de pedidos
-   - Permite registrar pedidos desde el carrito hacia ms-orders.
- - HU-ARC-006 — API Gateway unificado
-   - Centraliza todas las peticiones en un solo origen (localhost:8090).
- - HU-DEVOPS-007 — Docker Compose
-   - Permite levantar todo el sistema con un solo comando.
- - HU-DB-008 — Persistencia en PostgreSQL
-   - Centraliza el almacenamiento de datos de usuarios, productos y pedidos.
- - HU-FE-009 — Manejo de errores
-   - Muestra errores claros al usuario mediante toasts y registra logs técnicos en consola.
- - HU-UI-010 — Modal de productos
-   - Permite visualizar imágenes ampliadas desde el catálogo.
- - HU-INT-011 — Integración CORS
-   - Permite comunicación completa frontend-backend sin bloqueos del navegador.
- - HU-K8S-012 — Despliegue en Kubernetes
-   - Demuestra portabilidad del sistema en un clúster con pods y servicios activos.
-<hr>
+## 🔐 Seguridad — JWT y Control de Roles (RBAC)
 
-# ADR
+El sistema implementa autenticación y autorización basada en **JSON Web Tokens (JWT)** con dos roles diferenciados:
 
-🖥️ [ADR](https://github.com/julianguerra1231186-crypto/ADR/blob/main/1-ADR.md) 
+| Rol | Permisos |
+|-----|----------|
+| `ROLE_ADMIN` | CRUD de productos, gestión de usuarios, ver todos los pedidos, gestionar postulaciones |
+| `ROLE_SELLER` | Consultar productos, crear pedidos, ver sus propios pedidos |
 
-### se deja evidencia de todas las Historias de usuarios en la mesa de trabajo Yira :  
+### Flujo de autenticación
 
-   - [Mesa De Trabajo](https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC&atlOrigin=eyJpIjoiMWEwMjhmNmU1OWJhNDhjNGJmZDViYzA3OTM3MzRkNjAiLCJwIjoiaiJ9)
+```
+1. POST /auth/register o /auth/login
+2. Backend valida credenciales con BCrypt
+3. Genera token JWT firmado con HMAC-SHA256
+4. Token incluye: {role, sub (email), iat, exp}
+5. Frontend guarda token en localStorage
+6. Cada request protegido envía: Authorization: Bearer <token>
+7. JwtAuthFilter valida firma y expiración en cada microservicio
+```
 
-<hr>
+---
 
-# Actividad: Desarrollo de Carrito de Compras (MVP)
+## 🗄️ Base de Datos
 
- - Como parte del proceso de construcción del sistema, se desarrolló un MVP (Minimum Viable Product) de un carrito de compras, con el objetivo de validar la lógica base del manejo de productos dentro de una posible solución de comercio electrónico.
+**PostgreSQL 15** — una sola instancia compartida, con tablas independientes por microservicio.
 
-### El desarrollo se llevó a cabo utilizando un enfoque práctico basado en:
+| Microservicio | Tablas |
+|---------------|--------|
+| ms-users | `users`, `pedidos`, `job_applications` |
+| ms-products | `category`, `products` |
+| ms-orders | `orders`, `order_items` |
 
- - Implementación de historias de usuario
- - Uso de ramas por funcionalidad (feature branches)
- - Integración progresiva del código
+El esquema es gestionado por **Liquibase** — no se ejecutan scripts SQL manualmente. Al arrancar, cada microservicio aplica automáticamente sus changesets pendientes.
 
-### Durante esta actividad se implementaron funcionalidades clave como:
+---
 
- - Gestión de productos dentro del carrito
- - Visualización de los elementos seleccionados
- - Cálculo del total de la compra
- - Cada funcionalidad fue desarrollada de forma independiente, permitiendo un mejor control del código, organización del proyecto y simulación de un entorno real de desarrollo.
+## 🖥️ Frontend
 
-Este MVP representa una base sólida para futuras integraciones con otros componentes del sistema, como usuarios, productos y autenticación.
+Aplicación web en **HTML5, CSS3 y JavaScript vanilla** (sin frameworks). Se comunica con el backend exclusivamente a través del API Gateway.
 
-### Acceso al repositorio
+| Página | Descripción |
+|--------|-------------|
+| `index.html` | Landing con slider, carrusel de productos y sección institucional |
+| `catalog.html` | Catálogo dinámico conectado a ms-products |
+| `cart.html` | Carrito persistente y checkout con autocompletado |
+| `login.html` | Inicio de sesión con JWT |
+| `register.html` | Registro de nuevos usuarios |
+| `dashboard.html` | Panel por rol (SELLER / ADMIN) |
+| `trabaja-con-nosotros.html` | Reclutamiento con formulario y CV adjunto |
 
-Para ver la implementación completa, las historias de usuario y la estructura de ramas utilizadas:
+---
 
- - Dejo todo debidamente evidenciado con capturas de pantalla : https://github.com/julianguerra1231186-crypto/carrito-compras-mvp/tree/main/docs
+## 📦 Módulo de Reclutamiento
 
- - https://github.com/julianguerra1231186-crypto/carrito-compras-mvp
+El sistema incluye un módulo completo de gestión de postulaciones laborales:
 
-# Finalización Exitosa del Curso de GitHub
+- Formulario público en `trabaja-con-nosotros.html`
+- Adjunto de hoja de vida (PDF/DOC) con almacenamiento persistente en volumen Docker
+- Panel ADMIN en el dashboard para ver candidatos, filtrar y descargar CVs
+- Endpoint `GET /job-applications/{id}/download` con autenticación JWT
 
-Nos complace informar que se ha completado satisfactoriamente el curso **"Introduction to GitHub"**, fortaleciendo conocimientos clave en control de versiones y trabajo colaborativo en entornos de desarrollo.
+---
 
-## Objetivo del Curso
-El curso tuvo como propósito introducir y consolidar conceptos fundamentales de GitHub, permitiendo:
-- Gestionar repositorios de manera eficiente  
-- Trabajar con control de versiones usando Git  
-- Colaborar en proyectos mediante pull requests  
-- Aplicar buenas prácticas en desarrollo colaborativo  
+## 🚀 Levantar el Sistema
 
-## Contenido Desarrollado
-Durante el proceso se abordaron los siguientes temas:
-- Creación y administración de repositorios  
-- Uso de commits y control de cambios  
-- Manejo de ramas (branches)  
-- Pull requests y revisión de código  
-- Resolución de conflictos  
+### Requisitos previos
 
-## Resultado
-El curso fue finalizado con éxito, logrando:
-- Mayor dominio de herramientas de desarrollo colaborativo  
-- Fortalecimiento de habilidades técnicas en GitHub  
-- Aplicación práctica en proyectos reales  
+- Docker Desktop instalado y corriendo
+- Puerto 8090, 8081, 8082, 8083, 5434 y 5050 disponibles
+
+### Comando único
+
+```bash
+docker-compose up --build
+```
 
-## Evidencia del Curso
-Puedes consultar el repositorio trabajado en el siguiente enlace:
+### Verificar que todo está corriendo
 
-https://github.com/julianguerra1231186-crypto/skills-introduction-to-github
+```bash
+docker-compose ps
+```
 
-<hr>
+### Servicios disponibles
 
-## Descripción de los Microservicios 
+| Servicio | URL |
+|---------|-----|
+| Frontend | Abrir `frontend/index.html` en el navegador |
+| API Gateway | http://localhost:8090 |
+| ms-users | http://localhost:8081 |
+| ms-products | http://localhost:8082 |
+| ms-orders | http://localhost:8083 |
+| pgAdmin | http://localhost:5050 |
 
+### Credenciales pgAdmin
 
-1.  ms-users:
-Microservicio encargado de la gestión de usuarios del sistema. Permite el registro, autenticación e inicio de sesión de los clientes, así como la administración de su información personal. Se conecta a la base de datos MySQL para almacenar y validar los datos.
+```
+Email:      admin@admin.com
+Contraseña: admin123
+```
 
-2.  ms-products:
-Microservicio responsable de la gestión del catálogo de pulpas. Administra la información de los productos, incluyendo nombre, descripción, precio, disponibilidad y stock.
+### Crear usuario administrador (Postman)
 
-3.  ms-orders:
-Microservicio encargado de la gestión de pedidos. Permite crear órdenes de compra, registrar la dirección de entrega, calcular el total del pedido y actualizar su estado (pendiente, gestionado, entregado).
+```json
+POST http://localhost:8090/auth/register
+{
+  "cedula": "111222333",
+  "telefono": "3001234567",
+  "name": "Admin Principal",
+  "email": "admin@pulpapp.com",
+  "password": "admin123",
+  "direccion": "Calle 1 # 2-3",
+  "role": "ROLE_ADMIN"
+}
+```
 
-4.  ms-notifications:
-Microservicio responsable de la notificación y gestión interna de los pedidos. Recibe la información de las órdenes generadas y la envía al asesor encargado para su validación y coordinación de entrega.
+---
 
-5. Frontend:
-Registrarse e iniciar sesión Aplicación web que funciona como interfaz de usuario. Permite a los clientes registrarse, iniciar sesión, consultar el catálogo de productos y realizar pedidos, comunicándose con los microservicios a través de API REST.
+## 🛠️ Stack Tecnológico
 
-![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Diagrama%20de%20microservicios.png)
-<hr>
+### Backend
 
-## Como Haremos Nuestro Backend:
+| Tecnología | Versión | Uso |
+|-----------|---------|-----|
+| Java | 17 | Lenguaje base |
+| Spring Boot | 4.0.3 | Framework de microservicios |
+| Spring Security | Incluido | Autenticación y autorización |
+| Spring Cloud Gateway | 2023.0.1 | API Gateway reactivo |
+| Spring Data JPA | Incluido | Persistencia con Hibernate |
+| JJWT | 0.12.6 | Generación y validación de JWT |
+| Liquibase | Incluido | Versionado del esquema de BD |
+| Lombok | 1.18.38 | Reducción de boilerplate |
+| MapStruct | 1.5.5.Final | Mapeo entre entidades y DTOs |
+| BCrypt | Incluido | Encriptación de contraseñas |
 
-* **Lenguaje:** Java 17
-* **Framework Backend:** Spring Boot 3.x
-* **Herramienta de Construcción:** Maven
-* **IDE:** IntelliJ IDEA
-* **Frontend:** Angular
+### Base de datos e infraestructura
 
-1.  Backend:
-Se implementarán microservicios orientados a la creación de APIs REST, permitiendo la comunicación entre los diferentes componentes del sistema de manera independiente.
+| Tecnología | Versión | Uso |
+|-----------|---------|-----|
+| PostgreSQL | 15 | Base de datos relacional |
+| pgAdmin | 4 | Administración visual de BD |
+| Docker | — | Contenedorización |
+| Docker Compose | — | Orquestación de servicios |
 
-2.  Base de Datos:
-Se utilizará MySQL como sistema de gestión de base de datos relacional para almacenar la información de usuarios, productos y pedidos.
+### Frontend
+
+| Tecnología | Uso |
+|-----------|-----|
+| HTML5 | Estructura de páginas |
+| CSS3 | Estilos y diseño responsivo |
+| JavaScript ES6+ | Lógica de la aplicación |
+| Fetch API | Comunicación con el backend |
+| localStorage | Persistencia de sesión y carrito |
+| Canvas API | Efecto confeti en botón CTA |
 
-3.  Frontend:
-Se desarrollará una aplicación web como interfaz de usuario, la cual consumirá los servicios REST del backend.
+---
 
-4.  Control de Versiones:
-Se empleará Git como sistema de control de versiones distribuido, siguiendo una estrategia de ramas estructurada (develop, qa, release y main) para garantizar un desarrollo organizado.
+## 📐 Patrones y Principios Aplicados
 
-5.  Contenedores:
-Se implementará Docker para la contenedorización de los microservicios, facilitando su despliegue y escalabilidad.
+| Patrón | Descripción |
+|--------|-------------|
+| **Microservicios** | Cada dominio es un servicio independiente con su propia BD |
+| **API Gateway** | Punto de entrada único para todo el tráfico |
+| **MVC** | Separación en Controller, Service y Repository en cada microservicio |
+| **DTO Pattern** | Objetos de transferencia separados de las entidades de dominio |
+| **Repository Pattern** | Abstracción del acceso a datos con Spring Data JPA |
+| **RBAC** | Control de acceso basado en roles (ROLE_ADMIN, ROLE_SELLER) |
+| **Stateless Auth** | Autenticación sin sesión usando JWT |
+| **Passthrough JWT** | El gateway reenvía el token sin validarlo — cada servicio lo valida |
+| **Precio histórico** | ms-orders captura el precio al momento de la compra |
+| **Idempotencia** | Changesets de Liquibase con `onFail: MARK_RAN` |
 
-![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/diagrama%20de%20tecnologias.png)
+---
 
-<hr>
+## � Propuesta de Valor Comercial
 
-## Dependencias que utlizaremos
+> *PulpApp no es solo un proyecto académico — es una solución lista para ser adoptada por empresas del sector agroindustrial y de alimentos naturales que quieran digitalizar su operación de ventas.*
 
-🔹 Spring Boot Starter Web
-Permite la creación de APIs REST para la comunicación entre los microservicios del sistema.
+### ¿A quién va dirigido?
 
-🔹 Spring Boot Starter Data JPA
-Facilita la persistencia de datos y la interacción con la base de datos MySQL mediante el uso de entidades y repositorios.
+| Segmento | Descripción |
+|----------|-------------|
+| 🏭 Productores de pulpas | Empresas que procesan y distribuyen pulpas de fruta a nivel local o regional |
+| 🛒 Tiendas naturistas | Negocios que venden productos saludables y necesitan una vitrina digital |
+| 🍽️ Restaurantes y hoteles | Establecimientos que compran pulpas en volumen para preparación de bebidas |
+| 🏪 Distribuidores mayoristas | Intermediarios que gestionan pedidos de múltiples clientes |
 
-🔹 MySQL Connector
-Permite la conexión entre los microservicios y la base de datos relacional MySQL.
+### ¿Qué problema resuelve?
 
-🔹 Spring Boot Starter Security
-Se utilizará para implementar mecanismos de seguridad y control de acceso a los endpoints del sistema.
+Muchas empresas del sector de alimentos naturales en Colombia y Latinoamérica aún gestionan sus ventas por WhatsApp, llamadas telefónicas o planillas de Excel. Esto genera:
 
-🔹 JWT (JSON Web Token)
-Se empleará para la autenticación y autorización de usuarios dentro del entorno distribuido.
+- Pérdida de pedidos por falta de trazabilidad
+- Errores en precios y stock
+- Imposibilidad de escalar sin contratar más personal
+- Cero visibilidad del historial de compras por cliente
 
-🔹 Spring Boot Starter Validation
-Permitirá validar los datos enviados por los usuarios (correo electrónico, campos obligatorios, formatos, etc.).
+**PulpApp digitaliza y automatiza todo ese proceso.**
 
-🔹 Lombok
-Reducirá código repetitivo, facilitando la escritura y mantenimiento del proyecto.
+### ¿Qué ofrece el sistema?
 
-🔹 Docker
-Se utilizará para la contenedorización de los microservicios, permitiendo su despliegue independiente y escalabilidad.
+| Funcionalidad | Beneficio comercial |
+|---------------|---------------------|
+| Catálogo digital en línea | Los clientes compran 24/7 sin necesidad de un vendedor |
+| Carrito persistente | El cliente no pierde su selección al navegar |
+| Pedidos con precio histórico | Trazabilidad total — siempre se sabe qué se cobró y cuándo |
+| Panel de administración | El dueño gestiona productos, precios y stock desde cualquier lugar |
+| Control de roles | Vendedores y administradores con permisos diferenciados |
+| Módulo de reclutamiento | Gestión de talento humano integrada en la misma plataforma |
+| Autenticación segura JWT | Protección profesional de datos de clientes y operaciones |
 
-🔹 Git
-Sistema de control de versiones distribuido que permitirá la gestión colaborativa del código bajo una estrategia estructurada de ramas.
+### ¿Por qué elegir PulpApp?
 
-![](https://github.com/julianguerra1231186-crypto/PulpApp-Sistema-Distribuido-de-Venta-Online-de-Pulpas-Naturales/blob/main/docs/planning/04-week/Diagramade%20dependencias.png)
+- **Arquitectura escalable** — crece con el negocio sin reescribir el sistema
+- **Tecnología moderna** — Spring Boot, Docker, JWT, PostgreSQL — stack empresarial real
+- **Despliegue sencillo** — un solo comando levanta todo el sistema
+- **Código organizado** — fácil de mantener, extender y auditar
+- **Seguridad profesional** — autenticación JWT con roles, contraseñas encriptadas con BCrypt
 
+### Posibilidades de expansión
+
+- 📱 Aplicación móvil (React Native o Flutter) consumiendo la misma API
+- 📊 Dashboard de analítica de ventas con reportes por período
+- 💳 Integración con pasarelas de pago (PSE, Nequi, Wompi)
+- 📧 Notificaciones por email al confirmar pedidos
+- 🚚 Módulo de logística y seguimiento de entregas
+- ☁️ Despliegue en la nube (AWS, GCP, Azure) con Kubernetes
+
+---
+
+## 🔄 Estado del Sistema
+
+```
+████████████████████████████████████ 100%
+```
+
+| Componente | Estado |
+|-----------|--------|
+| Backend distribuido (3 microservicios) | ✅ Funcional |
+| API Gateway | ✅ Funcional |
+| Frontend conectado | ✅ Funcional |
+| Base de datos persistente | ✅ Funcional |
+| Docker Compose | ✅ Funcional |
+| Autenticación JWT + RBAC | ✅ Funcional |
+| Módulo de reclutamiento | ✅ Funcional |
+| Kubernetes | 🔄 En revisión para implementación |
+
+---
+
+## 📚 ADR — Registro de Decisiones de Arquitectura
+
+Las decisiones técnicas clave del proyecto están documentadas en el ADR:
+
+🖥️ [Ver ADR](https://github.com/julianguerra1231186-crypto/ADR/blob/main/1-ADR.md)
+
+---
+
+## 🛒 MVP — Carrito de Compras
+
+Como parte del proceso de construcción del sistema, se desarrolló un MVP del carrito de compras para validar la lógica base antes de integrar con los microservicios.
+
+### Funcionalidades implementadas en el MVP
+
+- Gestión de productos dentro del carrito
+- Visualización de elementos seleccionados
+- Cálculo del total de la compra
+- Desarrollo por feature branches con integración progresiva
+
+### Repositorio del MVP
+
+- 📸 [Evidencias con capturas de pantalla](https://github.com/julianguerra1231186-crypto/carrito-compras-mvp/tree/main/docs)
+- 💻 [Repositorio completo](https://github.com/julianguerra1231186-crypto/carrito-compras-mvp)
+
+---
+
+## 🎓 Curso Introduction to GitHub
+
+Se completó satisfactoriamente el curso **"Introduction to GitHub"**, fortaleciendo conocimientos en control de versiones y trabajo colaborativo.
+
+### Temas abordados
+
+- Creación y administración de repositorios
+- Commits y control de cambios
+- Manejo de ramas (branches)
+- Pull requests y revisión de código
+- Resolución de conflictos
+
+### Evidencia
+
+💻 [Ver repositorio del curso](https://github.com/julianguerra1231186-crypto/skills-introduction-to-github)
+
+---
+
+<div align="center">
+
+**PulpApp** — Desarrollado con ❤️ por Julian Guerra y Edwin Menéndez · Grupo 5
+
+</div>

@@ -37,4 +37,6 @@ public class User {
     @Column(nullable = false)
     private Role role = Role.ROLE_SELLER;
 
+    @Column(nullable = false)
+    private Boolean activo = true;
 }

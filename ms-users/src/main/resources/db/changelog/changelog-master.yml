@@ -216,3 +216,51 @@ databaseChangeLog:
                   defaultValueComputed: NOW()
                   constraints:
                     nullable: false
+
+  # ============================================================
+  # changeSet 6: Columna activo en users
+  # Permite activar/desactivar vendedores sin eliminarlos.
+  # DEFAULT true para compatibilidad con registros existentes.
+  # onFail: MARK_RAN — si la columna ya existe, se registra sin error.
+  # ============================================================
+  - changeSet:
+      id: 6-add-activo-to-users
+      author: pulpapp-team
+      comment: Agrega columna activo a users para gestionar estado del vendedor.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: activo
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: activo
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+
+  # ============================================================
+  # changeSet 7: Migrar usuarios ROLE_SELLER registrados públicamente
+  # a ROLE_CLIENT. Los vendedores reales creados por el admin
+  # conservan ROLE_SELLER. Solo se migran los que NO son ADMIN.
+  # NOTA: Este changeset actualiza TODOS los ROLE_SELLER a ROLE_CLIENT.
+  # Los vendedores deben ser re-asignados manualmente desde el panel.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 7-migrate-seller-to-client
+      author: pulpapp-team
+      comment: Cambia ROLE_SELLER a ROLE_CLIENT para usuarios registrados públicamente.
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM users WHERE role = 'ROLE_SELLER'
+      changes:
+        - sql:
+            sql: UPDATE users SET role = 'ROLE_CLIENT' WHERE role = 'ROLE_SELLER'

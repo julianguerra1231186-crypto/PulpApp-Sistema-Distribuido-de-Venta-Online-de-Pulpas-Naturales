@@ -13,7 +13,11 @@ import lombok.NoArgsConstructor;
 public class AuthResponseDTO {
 
     private String token;
+    private Long   id;
     private String email;
     private String name;
-    private Role role;
+    private String cedula;
+    private String telefono;
+    private String direccion;
+    private Role   role;
 }

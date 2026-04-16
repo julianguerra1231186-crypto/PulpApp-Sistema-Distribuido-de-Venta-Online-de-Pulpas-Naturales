@@ -42,7 +42,6 @@
         <div>
             <span class="eyebrow">Checkout</span>
             <h1>Confirma tu pedido</h1>
-            <p>Revisa tu carrito, valida tus datos y registra la compra en <strong>ms-orders</strong>.</p>
         </div>
         <a href="catalog.html" class="btn btn-secondary">Seguir comprando</a>
     </section>
@@ -63,12 +62,6 @@
 
             <div id="cartList" class="cart-list"></div>
         </article>
-
-
-
-
-
-
         <!--
             Bloque de datos del cliente — flujo basado en JWT.
             Detecta sesión automáticamente y renderiza según estado.
@@ -131,9 +124,12 @@
                 </div>
 
                 <div class="inline-actions" style="margin-top:18px">
-                    <a href="dashboard.html" class="btn btn-secondary" style="font-size:0.88rem">
-                        ✏️ Editar perfil
-                    </a>
+                    <button id="checkoutEditBtn" class="btn btn-secondary" type="button" style="font-size:0.88rem">
+                        ✏️ Editar datos
+                    </button>
+                    <button id="checkoutSaveBtn" class="btn btn-primary hidden" type="button" style="font-size:0.88rem">
+                        💾 Guardar cambios
+                    </button>
                     <button id="checkoutLogoutBtn" class="btn btn-secondary" type="button"
                             style="font-size:0.88rem; color:var(--danger)">
                         Cerrar sesión
@@ -168,9 +164,6 @@
                     <strong id="cartGrandTotal">$0</strong>
                 </div>
             </div>
-            <p class="helper-text">
-                Al finalizar, el sistema envia el pedido a <code>ms-orders</code> y deja evidencia en backend.
-            </p>
             <button id="checkoutButton" class="btn btn-primary btn-block" type="button">Finalizar compra</button>
         </article>
     </section>
@@ -206,12 +199,42 @@
 
     function loadUserFromStorage() {
         try {
-            const fromJwt    = window.PulpAuth?.getSessionUser() || {};
-            const fromStore  = JSON.parse(
+            // Prioridad: pulpapp_user (guardado por login/register con todos los campos)
+            // luego "user" (flujo legacy), luego lo que se pueda extraer del JWT
+            const raw = JSON.parse(
                 localStorage.getItem("pulpapp_user") ||
                 localStorage.getItem("user") || "null"
             ) || {};
-            return { ...fromJwt, ...fromStore };
+
+            // Elimina campos null/undefined para que no sobreescriban valores válidos del JWT
+            const fromStore = Object.fromEntries(
+                Object.entries(raw).filter(([, v]) => v !== null && v !== undefined && v !== "")
+            );
+
+            // Del JWT solo tomamos lo que no esté ya en fromStore
+            const fromJwt = window.PulpAuth?.getSessionUser() || {};
+
+            const merged = { ...fromJwt, ...fromStore };
+
+            // Si el store tiene datos útiles, lo usamos directamente
+            if (merged.email || merged.name) return merged;
+            return null;
+        } catch {
+            return null;
+        }
+    }
+
+    // Intenta completar el perfil desde el backend si faltan campos clave
+    async function fetchAndStoreFullProfile(email) {
+        try {
+            const res = await fetch(`http://localhost:8090/users/email?email=${encodeURIComponent(email)}`, {
+                headers: { "Authorization": `Bearer ${window.PulpAuth?.getToken()}` }
+            });
+            if (!res.ok) return null;
+            const user = await res.json();
+            // Guarda el perfil completo para futuras visitas
+            localStorage.setItem("pulpapp_user", JSON.stringify(user));
+            return user;
         } catch {
             return null;
         }
@@ -257,12 +280,52 @@
 
     // ── Init ─────────────────────────────────────────────────
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
 
         if (checkAuth()) {
-            const user = loadUserFromStorage();
+            let user = loadUserFromStorage();
+
+            // ── DIAGNÓSTICO (quitar en producción) ───────────────
+            console.group("🛒 PulpApp Checkout — diagnóstico");
+            console.log("pulpapp_user raw:", localStorage.getItem("pulpapp_user"));
+            console.log("user raw:", localStorage.getItem("user"));
+            console.log("pulpapp_jwt:", localStorage.getItem("pulpapp_jwt") ? "presente" : "ausente");
+            console.log("user tras loadUserFromStorage():", user);
+            console.groupEnd();
+            // ─────────────────────────────────────────────────────
+
+            // Si faltan campos importantes (cedula, telefono, direccion), los buscamos en backend
+            const needsProfile = !user?.cedula || !user?.telefono || !user?.direccion;
+            if (user && needsProfile && user.email) {
+                const fullProfile = await fetchAndStoreFullProfile(user.email);
+                console.log("🔄 fetchAndStoreFullProfile resultado:", fullProfile);
+                if (fullProfile) user = { ...user, ...fullProfile };
+            }
+
             if (user) {
                 showAuthState(user);
+
+                // Si aún faltan campos tras el fetch, activa modo edición automáticamente
+                const stillMissing = !user.cedula || !user.telefono || !user.direccion;
+                if (stillMissing) {
+                    const editBtn = document.getElementById("checkoutEditBtn");
+                    const saveBtn = document.getElementById("checkoutSaveBtn");
+                    const editableFields = ["checkoutNombre","checkoutTelefono","checkoutCedula","checkoutDireccion"];
+                    editableFields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.removeAttribute("readonly");
+                    });
+                    if (editBtn) editBtn.classList.add("hidden");
+                    if (saveBtn) saveBtn.classList.remove("hidden");
+
+                    // Avisa al usuario que complete sus datos
+                    const toast = document.getElementById("appToast");
+                    if (toast) {
+                        toast.textContent = "⚠️ Completa tus datos de entrega para finalizar la compra";
+                        toast.className = "toast show";
+                        setTimeout(() => { toast.className = "toast"; }, 4000);
+                    }
+                }
             } else {
                 showGuestState();
             }
@@ -290,7 +353,6 @@
             checkoutBtn.addEventListener("click", (e) => {
                 if (!checkAuth()) {
                     e.preventDefault();
-                    // Muestra mensaje y redirige al login
                     const toast = document.getElementById("appToast");
                     if (toast) {
                         toast.textContent = "Debes iniciar sesión para finalizar la compra";
@@ -304,7 +366,105 @@
                         redirectToLogin();
                     }
                 }
-                // Si está autenticado, app.js maneja el submit del pedido normalmente
+            });
+        }
+
+        // ── Botón Editar / Guardar datos ─────────────────────────
+        const editBtn = document.getElementById("checkoutEditBtn");
+        const saveBtn = document.getElementById("checkoutSaveBtn");
+        const editableFields = ["checkoutNombre","checkoutTelefono","checkoutCedula","checkoutDireccion"];
+
+        if (editBtn) {
+            editBtn.addEventListener("click", () => {
+                // Habilita los campos para editar
+                editableFields.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.removeAttribute("readonly");
+                });
+                editBtn.classList.add("hidden");
+                saveBtn.classList.remove("hidden");
+            });
+        }
+
+        if (saveBtn) {
+            saveBtn.addEventListener("click", async () => {
+                let stored = JSON.parse(localStorage.getItem("pulpapp_user") || "null");
+
+                // Si no hay id, intenta recuperarlo desde el backend por email
+                if (!stored?.id && stored?.email) {
+                    try {
+                        const res = await fetch(`http://localhost:8090/users/email?email=${encodeURIComponent(stored.email)}`);
+                        if (res.ok) {
+                            const profile = await res.json();
+                            stored = { ...stored, ...profile };
+                            localStorage.setItem("pulpapp_user", JSON.stringify(stored));
+                        }
+                    } catch(e) { /* continúa */ }
+                }
+
+                if (!stored?.id) {
+                    const t = document.getElementById("appToast");
+                    if (t) { t.textContent = "❌ No se pudo identificar el usuario. Vuelve a iniciar sesión."; t.className = "toast show error"; setTimeout(() => t.className = "toast", 3000); }
+                    return;
+                }
+
+                const nombre   = document.getElementById("checkoutNombre").value.trim();
+                const telefono = document.getElementById("checkoutTelefono").value.trim();
+                const cedula   = document.getElementById("checkoutCedula").value.trim();
+                const direccion= document.getElementById("checkoutDireccion").value.trim();
+
+                if (!nombre || !telefono || !cedula || !direccion) {
+                    const t = document.getElementById("appToast");
+                    if (t) { t.textContent = "Completa todos los campos"; t.className = "toast show error"; setTimeout(() => t.className = "toast", 2500); }
+                    return;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.textContent = "Guardando...";
+
+                try {
+                    const res = await fetch(`http://localhost:8090/users/${stored.id}`, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            name: nombre,
+                            telefono,
+                            cedula,
+                            direccion,
+                            email: stored.email,
+                            password: stored.password || "123456"
+                        })
+                    });
+
+                    if (!res.ok) throw new Error("No se pudo guardar");
+
+                    const updated = await res.json();
+                    const merged = { ...stored, ...updated };
+                    localStorage.setItem("pulpapp_user", JSON.stringify(merged));
+
+                    // Refresca los datos visibles en pantalla
+                    renderUserData(merged);
+
+                    // Vuelve a modo lectura
+                    editableFields.forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.setAttribute("readonly", true);
+                    });
+                    editBtn.classList.remove("hidden");
+                    saveBtn.classList.add("hidden");
+
+                    const t = document.getElementById("appToast");
+                    if (t) { t.textContent = "✅ Datos actualizados"; t.className = "toast show"; setTimeout(() => t.className = "toast", 2500); }
+
+                } catch (err) {
+                    const t = document.getElementById("appToast");
+                    if (t) { t.textContent = "❌ " + err.message; t.className = "toast show error"; setTimeout(() => t.className = "toast", 2500); }
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = "💾 Guardar cambios";
+                }
             });
         }
     });

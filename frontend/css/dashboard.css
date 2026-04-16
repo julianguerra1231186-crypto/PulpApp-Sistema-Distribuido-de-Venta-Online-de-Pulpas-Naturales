@@ -492,3 +492,26 @@
 .product-img-upload-wrap input[type="text"]:focus {
     border-color: rgba(13,122,77,0.4);
 }
+
+/* ── Filtros vendedores ── */
+.seller-filter-btn {
+    padding: 8px 18px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: rgba(255,255,255,0.85);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out);
+}
+
+.seller-filter-btn:hover {
+    background: var(--brand-soft);
+    border-color: rgba(13,122,77,0.3);
+}
+
+.seller-filter-btn.is-active {
+    background: linear-gradient(135deg, var(--brand-mid), var(--brand-dark));
+    color: #fff;
+    border-color: transparent;
+}

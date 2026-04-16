@@ -6,15 +6,33 @@
   <component name="ChangeListManager">
     <list default="true" id="89256da1-e398-401a-a9cd-ae02780b6b6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/api-gateway/src/main/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/cart.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/cart.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/catalog.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/catalog.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/css/catalog.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/css/catalog.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/css/dashboard.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/css/dashboard.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/css/index.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/register.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/dto/ProductRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/dto/ProductRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/exception/GlobalExceptionHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/AuthResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/AuthResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/dto/UserResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/entity/Role.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/entity/Role.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/mapper/UserMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/mapper/UserMapper.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-users/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -135,7 +153,12 @@
       <workItem from="1775762899805" duration="864000" />
       <workItem from="1775796950095" duration="2778000" />
       <workItem from="1775801741552" duration="1974000" />
-      <workItem from="1775838082674" duration="9537000" />
+      <workItem from="1775838082674" duration="11765000" />
+      <workItem from="1776039768471" duration="3278000" />
+      <workItem from="1776138851418" duration="3554000" />
+      <workItem from="1776204361735" duration="7269000" />
+      <workItem from="1776283030773" duration="899000" />
+      <workItem from="1776296665655" duration="771000" />
     </task>
     <servers />
   </component>

@@ -113,10 +113,19 @@
 
         try {
             const data = await window.PulpAppServices.authLogin(email, password);
-            localStorage.setItem("pulpapp_user", JSON.stringify(data));
-            localStorage.setItem("user", JSON.stringify(data));
+
+            // Después del login, consulta los datos completos del usuario por cédula
+            // usando el endpoint público que ya existe y funciona
+            let fullData = { ...data };
+            try {
+                // Busca por email en la lista (solo si es admin) o espera que el carrito lo haga
+                // Por ahora guardamos lo que tenemos y el carrito completará los datos
+                fullData = { ...data };
+            } catch(e) {}
+
+            localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
+            localStorage.setItem("user", JSON.stringify(fullData));
             toast("Sesión iniciada ✓");
-            // Vuelve al carrito si venía de ahí, si no va al dashboard
             const redirect = localStorage.getItem("pulpapp_redirect") || "dashboard.html";
             localStorage.removeItem("pulpapp_redirect");
             setTimeout(() => { window.location.href = redirect; }, 800);

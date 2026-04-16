@@ -410,10 +410,10 @@ function renderCatalogPage(products = state.products) {
         return `
             <article class="product-card" data-name="${normalizeText(product.name)}">
                 <div class="product-media">
-                    <span class="stock-badge">${isAvailable ? "Disponible" : "Agotado"}</span>
                     <img src="${image}" alt="${product.name}" data-image="${image}">
                 </div>
                 <div class="product-body">
+                    <span class="stock-badge">${isAvailable ? "Disponible" : "Agotado"}</span>
                     <h3>${product.name}</h3>
                     <p>${product.description || "Pulpa natural lista para compra en linea."}</p>
                     <div class="product-meta">
@@ -572,10 +572,15 @@ function bindCartEvents() {
 
 /*
     Toma el usuario guardado localmente y autocompleta el formulario del checkout.
-    Esto materializa la historia de usuario de autocompletado.
+    Solo actúa si el script inline del carrito no tomó el control (no hay sesión JWT activa).
 */
 function fillCheckoutForm() {
     if (getCurrentPage() !== "cart") {
+        return;
+    }
+
+    // Si hay sesión JWT válida, el script inline de cart.html maneja el formulario
+    if (window.PulpAuth?.isTokenValid()) {
         return;
     }
 
@@ -597,25 +602,21 @@ function fillCheckoutForm() {
 }
 
 /*
-    Controla el estado visual y funcional del formulario del checkout segun exista o no una sesion.
-    Si no hay usuario autenticado, bloquea los campos, deja visible el mensaje y muestra el boton de login.
-    Si hay usuario, habilita la edicion, oculta el mensaje de acceso y revela la opcion de actualizar datos.
+    Controla el estado visual del formulario del checkout.
+    Solo actúa si no hay sesión JWT activa (el script inline de cart.html maneja ese caso).
 */
 function syncCheckoutAccessState() {
     if (getCurrentPage() !== "cart") {
         return;
     }
 
-    /*
-        Se consulta primero la clave "user" porque fue la referencia solicitada para esta validacion.
-        Como respaldo, tambien se usa el estado actual para no romper el flujo existente del proyecto.
-    */
-    const localSessionUser = JSON.parse(localStorage.getItem("user") || "null");
-    const activeUser = localSessionUser || state.user;
+    // Si hay sesión JWT válida, el script inline de cart.html maneja todo
+    if (window.PulpAuth?.isTokenValid()) {
+        return;
+    }
 
-    /*
-        Referencias a los elementos que cambian segun el estado de autenticacion.
-    */
+    // Sin JWT: flujo legacy con state.user
+    const activeUser = JSON.parse(localStorage.getItem("user") || "null") || state.user;
     const loginNotice = document.getElementById("checkoutLoginNotice");
     const loginRedirectButton = document.getElementById("checkoutLoginRedirectButton");
     const updateUserButton = document.getElementById("updateUserButton");
@@ -627,49 +628,19 @@ function syncCheckoutAccessState() {
         document.getElementById("checkoutDireccion")
     ];
 
-    /*
-        Sin sesion activa:
-        - se bloquean todos los campos
-        - se mantiene visible el mensaje de acceso
-        - se muestra el boton para ir a login
-        - se oculta la opcion de actualizar usuario
-    */
     if (!activeUser?.id) {
-        checkoutInputs.forEach((input) => {
-            if (input) {
-                input.disabled = true;
-            }
-        });
-
+        checkoutInputs.forEach((input) => { if (input) input.disabled = true; });
         loginNotice?.classList.remove("hidden");
         loginRedirectButton?.classList.remove("hidden");
         updateUserButton?.classList.add("hidden");
         return;
     }
 
-    /*
-        Con sesion activa:
-        - se habilitan los campos del formulario
-        - se ocultan los mensajes y accesos de bloqueo
-        - se muestra el boton de actualizar
-        - se sincroniza el estado global con el usuario encontrado en almacenamiento local
-    */
     state.user = activeUser;
-
-    checkoutInputs.forEach((input) => {
-        if (input) {
-            input.disabled = false;
-        }
-    });
-
+    checkoutInputs.forEach((input) => { if (input) input.disabled = false; });
     loginNotice?.classList.add("hidden");
     loginRedirectButton?.classList.add("hidden");
     updateUserButton?.classList.remove("hidden");
-
-    /*
-        Se completa automaticamente el formulario con los datos del usuario autenticado
-        para evitar digitacion repetida y dar una experiencia mas profesional.
-    */
     fillCheckoutForm();
 }
 
@@ -966,8 +937,16 @@ function logoutUser() {
     Construye el payload exacto que espera ms-orders a partir del carrito actual.
 */
 function buildOrderPayload() {
+    // Intenta obtener el usuario desde state, localStorage o JWT
     if (!state.user?.id) {
-        throw new Error("Debes iniciar sesion o registrar un usuario antes de comprar");
+        const stored = JSON.parse(localStorage.getItem("pulpapp_user") || localStorage.getItem("user") || "null");
+        if (stored?.id) {
+            state.user = stored;
+        }
+    }
+
+    if (!state.user?.id) {
+        throw new Error("Debes iniciar sesion antes de comprar");
     }
 
     if (!state.cart.length) {
@@ -999,6 +978,12 @@ async function submitOrder() {
 
     if (!checkoutData.direccion) {
         throw new Error("Ingresa la direccion de entrega antes de finalizar");
+    }
+
+    // Sincroniza state.user desde localStorage si viene de flujo JWT
+    if (!state.user?.id) {
+        const stored = JSON.parse(localStorage.getItem("pulpapp_user") || localStorage.getItem("user") || "null");
+        if (stored?.id) state.user = stored;
     }
 
     if (state.user?.direccion !== checkoutData.direccion) {

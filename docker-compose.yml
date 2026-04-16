@@ -74,6 +74,10 @@ services:
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
       SERVER_PORT: 8082
+      APP_BASE_URL: http://localhost:8090
+      APP_UPLOAD_DIR: /app/uploads/products
+    volumes:
+      - product_images:/app/uploads/products
     networks:
       - pulpapp-network
 
@@ -105,6 +109,18 @@ services:
   # (SERVER_PORT / Spring). El puerto 8080 en el HOST suele estar ocupado (otra app, IDE, etc.),
   # lo que provoca "Only one usage of each socket address...". Publicamos 8090 en el host para
   # evitar el conflicto sin tocar application.yml ni el puerto interno del servicio.
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - pulpapp-network
+
   api-gateway:
     build:
       context: ./api-gateway
@@ -130,6 +146,7 @@ services:
 volumes:
   postgres_data:
   cv_uploads:
+  product_images:
 
 networks:
   pulpapp-network:

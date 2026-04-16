@@ -55,10 +55,12 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,  "/users/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/users/cedula/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/users/validar/**").permitAll()
+                .requestMatchers(HttpMethod.GET,  "/users/email").permitAll()
 
                 // Listar todos los usuarios y eliminar: solo ADMIN
                 .requestMatchers(HttpMethod.GET,    "/users").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PATCH,  "/users/**").hasAuthority("ROLE_ADMIN")
 
                 // ── Productos: lectura pública, escritura solo ADMIN ───────
                 .requestMatchers(HttpMethod.GET,    "/products/**").permitAll()
@@ -69,8 +71,8 @@ public class SecurityConfig {
 
                 // ── Pedidos: el frontend los crea sin token ────────────────
                 .requestMatchers(HttpMethod.POST, "/orders").permitAll()
-                .requestMatchers(HttpMethod.GET,  "/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
-                .requestMatchers(HttpMethod.GET,  "/orders").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                .requestMatchers(HttpMethod.GET,  "/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CLIENT")
+                .requestMatchers(HttpMethod.GET,  "/orders").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CLIENT")
 
                 // Cualquier otra ruta requiere autenticación
                 .anyRequest().authenticated()

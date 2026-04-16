@@ -29,6 +29,12 @@ public class UserController {
         return userService.findByCedula(cedula);
     }
 
+    // BUSCAR POR EMAIL (público — para cargar perfil propio)
+    @GetMapping("/email")
+    public UserResponseDTO getByEmail(@RequestParam String email) {
+        return userService.findByEmail(email);
+    }
+
     // VALIDAR CEDULA + TELEFONO
     @GetMapping("/validar/{cedula}/{telefono}")
     public UserResponseDTO validarUsuario(
@@ -58,6 +64,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         userService.delete(id);
+    }
+
+    // ACTIVAR / DESACTIVAR vendedor
+    @PatchMapping("/{id}/activo")
+    public UserResponseDTO toggleActivo(@PathVariable Long id,
+                                        @RequestParam boolean activo) {
+        return userService.toggleActivo(id, activo);
     }
 
 }

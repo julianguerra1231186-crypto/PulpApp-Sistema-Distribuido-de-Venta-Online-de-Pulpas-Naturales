@@ -181,3 +181,18 @@ databaseChangeLog:
               - column:
                   name: description
                   value: Pulpas de frutas exoticas y poco comunes
+
+  # ============================================================
+  # changeSet 5: Ampliar image_url a TEXT para soportar base64
+  # ============================================================
+  - changeSet:
+      id: 5-alter-image-url-to-text
+      author: pulpapp-team
+      comment: Cambia image_url de VARCHAR(255) a TEXT para soportar imagenes en base64.
+      preConditions:
+        onFail: MARK_RAN
+      changes:
+        - modifyDataType:
+            tableName: products
+            columnName: image_url
+            newDataType: TEXT

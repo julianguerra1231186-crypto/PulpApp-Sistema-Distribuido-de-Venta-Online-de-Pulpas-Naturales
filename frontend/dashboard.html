@@ -74,10 +74,6 @@
                 <span class="profile-label">Dirección</span>
                 <strong id="profileDireccion">—</strong>
             </div>
-            <div class="profile-field">
-                <span class="profile-label">Rol</span>
-                <strong id="profileRole">—</strong>
-            </div>
         </div>
         <div class="inline-actions" style="margin-top:28px">
             <button id="profileLogoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
@@ -116,8 +112,38 @@
                     <input type="text" id="pName" placeholder="Nombre del producto">
                 </label>
                 <label>
-                    <span>Precio</span>
-                    <input type="number" id="pPrice" placeholder="0" min="0">
+                    <span>Precio de compra</span>
+                    <input type="number" id="pPrecioCompra" placeholder="0" min="0">
+                </label>
+                <label>
+                    <span>Precio de venta</span>
+                    <input type="number" id="pPrecioVenta" placeholder="0" min="0">
+                </label>
+                <label class="full-width">
+                    <span>Ganancia estimada</span>
+                    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+                        <input type="number" id="pPrice" placeholder="0" min="0" readonly
+                               style="background:var(--surface-2, #f0faf0); font-weight:700; color:var(--brand-dark, #2e7d32); cursor:default; flex:1; min-width:120px">
+                        <div style="display:flex; align-items:center; gap:8px">
+                            <label style="display:flex; align-items:center; gap:6px; font-weight:500; cursor:pointer; margin:0">
+                                <input type="checkbox" id="pPagaIva" style="width:16px; height:16px; cursor:pointer">
+                                <span style="font-size:0.9rem">¿Paga IVA? (19%)</span>
+                            </label>
+                        </div>
+                        <div id="ivaBlock" style="display:none; align-items:center; gap:8px">
+                            <span style="font-size:0.85rem; color:var(--text-muted)">IVA:</span>
+                            <input type="number" id="pIvaValor" readonly placeholder="0"
+                                   style="width:110px; background:#fff3e0; color:#e65100; font-weight:600; cursor:default">
+                        </div>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-muted); margin-top:6px" id="pGananciaDesc"></p>
+                    <!-- Ganancia + IVA: solo visible cuando paga IVA -->
+                    <div id="gananciaIvaBlock" style="display:none; margin-top:10px; align-items:center; gap:12px">
+                        <label style="font-weight:600; font-size:0.9rem; color:#1565c0; margin:0">Ganancia + IVA:</label>
+                        <input type="number" id="pGananciaConIva" readonly placeholder="0"
+                               style="width:140px; background:#e3f2fd; color:#1565c0; font-weight:700; cursor:default; border:1.5px solid #90caf9; border-radius:8px; padding:8px 12px">
+                        <span style="font-size:0.82rem; color:var(--text-muted)">= Precio sugerido de venta con IVA incluido</span>
+                    </div>
                 </label>
                 <label>
                     <span>Stock</span>
@@ -130,22 +156,43 @@
                         <option value="false">No</option>
                     </select>
                 </label>
+                <!-- Totales de stock -->
+                <label>
+                    <span>Valor total stock comprado</span>
+                    <input type="number" id="pStockTotalCompra" readonly placeholder="0"
+                           style="background:#fce4ec; color:#b71c1c; font-weight:700; cursor:default; border:1.5px solid #ef9a9a; border-radius:8px; padding:8px 12px">
+                    <small style="color:var(--text-muted); font-size:0.78rem"></small>
+                </label>
+                <label>
+                    <span>Stock ganancia</span>
+                    <input type="number" id="pStockGanancia" readonly placeholder="0"
+                           style="background:#e8f5e9; color:#1b5e20; font-weight:700; cursor:default; border:1.5px solid #a5d6a7; border-radius:8px; padding:8px 12px">
+                    <small style="color:var(--text-muted); font-size:0.78rem" id="pStockGananciaDesc"></small>
+                </label>
                 <label class="full-width">
                     <span>Descripción</span>
                     <input type="text" id="pDescription" placeholder="Descripción breve">
                 </label>
                 <label class="full-width">
                     <span>Imagen del producto</span>
-                    <div class="product-img-upload-wrap">
-                        <input type="file" id="pImageFile" accept="image/*" class="jobs-file-input">
-                        <div class="product-img-preview" id="pImagePreview"
-                             onclick="document.getElementById('pImageFile').click()">
-                            <span id="pImagePreviewText">📷 Seleccionar imagen (JPG, PNG, WEBP)</span>
-                            <img id="pImagePreviewImg" src="" alt="Vista previa" style="display:none; max-height:120px; border-radius:10px; object-fit:cover">
-                        </div>
-                        <input type="hidden" id="pImageUrl" placeholder="O pega una URL de imagen">
-                        <input type="text" id="pImageUrlInput" placeholder="O pega una URL de imagen (opcional)">
+                    <div id="imgPickerGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:10px; margin-top:8px">
+                        <div class="img-option" data-src="img/fresa.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/fresa.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/mora.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/mora.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/maracuya.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/maracuya.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/Lulo.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/Lulo.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/coco.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/coco.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/durazno.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/durazno.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/mango.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/mango.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/manzana.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/manzana.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/Piña.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/Piña.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/banano1.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/banano1.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/guanabana1.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/guanabana1.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/limon1.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/limon1.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/mango1.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/mango1.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
+                        <div class="img-option" data-src="img/mora1.png" onclick="selectProductImage(this)" style="cursor:pointer;border:2px solid transparent;border-radius:10px;padding:4px;text-align:center"><img src="img/mora1.png" style="width:100%;height:70px;object-fit:cover;border-radius:8px"></div>
                     </div>
+                    <p id="pImageSelected" style="margin-top:8px;font-size:0.85rem;color:var(--text-muted)">Ninguna imagen seleccionada</p>
+                    <input type="hidden" id="pImageFile">
                 </label>
             </div>
             <div class="inline-actions">
@@ -190,6 +237,62 @@
         <!-- Tabla -->
         <div class="admin-table-wrap" style="margin-top:16px">
             <div id="applicationsList"><p class="helper-text">Cargando postulaciones...</p></div>
+        </div>
+    </section>
+
+    <!-- TAB: Vendedores (solo ADMIN) -->
+    <section id="tab-admin-vendedores" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <h2>Gestión de vendedores</h2>
+
+        <!-- Formulario crear vendedor -->
+        <div class="admin-form-block glass-card" style="margin-bottom:28px">
+            <h3>Crear nuevo vendedor</h3>
+            <div class="form-grid">
+                <label>
+                    <span>Nombre completo</span>
+                    <input type="text" id="vName" placeholder="Nombre del vendedor">
+                </label>
+                <label>
+                    <span>Correo electrónico</span>
+                    <input type="email" id="vEmail" placeholder="correo@ejemplo.com">
+                </label>
+                <label>
+                    <span>Cédula</span>
+                    <input type="text" id="vCedula" placeholder="Número de documento">
+                </label>
+                <label>
+                    <span>Teléfono</span>
+                    <input type="tel" id="vTelefono" placeholder="3001234567">
+                </label>
+                <label>
+                    <span>Contraseña</span>
+                    <input type="password" id="vPassword" placeholder="Mínimo 6 caracteres">
+                </label>
+                <label>
+                    <span>Dirección</span>
+                    <input type="text" id="vDireccion" placeholder="Dirección del vendedor">
+                </label>
+            </div>
+            <div class="inline-actions" style="margin-top:16px">
+                <button id="saveSellerBtn" class="btn btn-primary" type="button">Crear vendedor</button>
+            </div>
+            <p id="sellerFormMsg" class="helper-text" style="margin-top:10px"></p>
+        </div>
+
+        <!-- Filtro activos / inactivos -->
+        <div class="applications-filters" style="margin-bottom:16px">
+            <div style="display:flex; gap:8px">
+                <button class="seller-filter-btn is-active" data-filter="activos">✅ Activos</button>
+                <button class="seller-filter-btn" data-filter="inactivos">❌ Inactivos</button>
+                <button class="seller-filter-btn" data-filter="todos">👥 Todos</button>
+            </div>
+            <span id="sellerCount" class="app-count-badge">0 vendedores</span>
+        </div>
+
+        <!-- Lista de vendedores -->
+        <div class="admin-table-wrap">
+            <div id="sellerList"><p class="helper-text">Cargando vendedores...</p></div>
         </div>
     </section>
 
@@ -265,7 +368,7 @@
     function buildTabs(isAdmin) {
         const tabsNav = document.getElementById("dashTabs");
 
-        const sellerTabs = [
+        const clientTabs = [
             { id: "perfil",   label: "👤 Perfil",       first: true },
             { id: "pedidos",  label: "📦 Mis pedidos" },
             { id: "comprar",  label: "🛒 Nueva compra" }
@@ -275,10 +378,11 @@
             { id: "perfil",              label: "👤 Perfil",        first: true },
             { id: "admin-productos",     label: "📦 Productos",     admin: true },
             { id: "admin-clientes",      label: "👥 Clientes",      admin: true },
-            { id: "admin-postulaciones", label: "🧑‍💼 Postulaciones", admin: true }
+            { id: "admin-postulaciones", label: "🧑‍💼 Postulaciones", admin: true },
+            { id: "admin-vendedores",    label: "🏷️ Vendedores",    admin: true }
         ];
 
-        const allTabs = isAdmin ? adminTabs : sellerTabs;
+        const allTabs = isAdmin ? adminTabs : clientTabs;
 
         tabsNav.innerHTML = allTabs.map(t => `
             <button class="dash-tab${t.first ? " is-active" : ""}${t.admin ? " admin-tab" : ""}"
@@ -307,6 +411,7 @@
         if (tabId === "admin-productos")       loadAdminProducts();
         if (tabId === "admin-clientes")        loadAdminUsers();
         if (tabId === "admin-postulaciones")   loadApplications();
+        if (tabId === "admin-vendedores")      loadSellers();
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -341,6 +446,19 @@
     // ─────────────────────────────────────────────────────────────
 
     let editingProductId = null;
+    let selectedImageUrl = null;
+
+    // Selección visual de imagen
+    window.selectProductImage = function(el) {
+        document.querySelectorAll(".img-option").forEach(o => {
+            o.style.borderColor = "transparent";
+            o.style.background = "transparent";
+        });
+        el.style.borderColor = "var(--brand)";
+        el.style.background = "var(--brand-light, #e8f5e9)";
+        selectedImageUrl = el.dataset.src;
+        document.getElementById("pImageSelected").textContent = "✅ Seleccionada: " + selectedImageUrl;
+    };
 
     async function loadAdminProducts() {
         const container = document.getElementById("adminProductList");
@@ -401,13 +519,18 @@
                 document.getElementById("pStock").value         = btn.dataset.stock;
                 document.getElementById("pAvailable").value     = btn.dataset.available;
                 document.getElementById("pDescription").value   = btn.dataset.desc;
-                // Precargar imagen existente en el campo URL
+                // Preseleccionar imagen actual
                 const existingImg = btn.dataset.img || "";
-                document.getElementById("pImageUrlInput").value = existingImg;
+                selectedImageUrl = existingImg || null;
                 if (existingImg) {
-                    document.getElementById("pImagePreviewImg").src = existingImg;
-                    document.getElementById("pImagePreviewImg").style.display = "block";
-                    document.getElementById("pImagePreviewText").style.display = "none";
+                    document.querySelectorAll(".img-option").forEach(o => {
+                        if (o.dataset.src === existingImg) {
+                            o.style.borderColor = "var(--brand)";
+                            o.style.background = "var(--brand-light, #e8f5e9)";
+                        }
+                    });
+                    document.getElementById("pImageSelected").textContent = "✅ Seleccionada: " + existingImg;
+                    document.getElementById("pImageFile").value = existingImg;
                 }
                 document.getElementById("productFormTitle").textContent = "Editar producto";
                 document.getElementById("cancelEditBtn").classList.remove("hidden");
@@ -418,31 +541,6 @@
 
     document.getElementById("saveProductBtn").addEventListener("click", async () => {
         const btn = document.getElementById("saveProductBtn");
-        const imageFile = document.getElementById("pImageFile").files[0];
-        const imageUrlInput = document.getElementById("pImageUrlInput").value.trim();
-
-        // Determinar imageUrl: archivo subido tiene prioridad sobre URL manual
-        let imageUrl = imageUrlInput || null;
-
-        // Si hay archivo, subirlo primero
-        if (imageFile) {
-            try {
-                const formData = new FormData();
-                formData.append("file", imageFile);
-                const uploadRes = await fetch("http://localhost:8090/products/upload-image", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${window.PulpAuth.getToken()}` },
-                    body: formData
-                });
-                if (uploadRes.ok) {
-                    const uploadData = await uploadRes.json();
-                    imageUrl = uploadData.imageUrl || imageUrl;
-                }
-            } catch (e) {
-                // Si falla la subida, continúa sin imagen
-                console.warn("No se pudo subir la imagen:", e.message);
-            }
-        }
 
         const body = {
             name:        document.getElementById("pName").value.trim(),
@@ -450,7 +548,7 @@
             stock:       Number(document.getElementById("pStock").value),
             available:   document.getElementById("pAvailable").value === "true",
             description: document.getElementById("pDescription").value.trim(),
-            imageUrl:    imageUrl
+            imageUrl:    selectedImageUrl || document.getElementById("pImageFile").value || null
         };
 
         if (!body.name) { toast("El nombre es obligatorio", "error"); return; }
@@ -460,16 +558,10 @@
 
         try {
             if (editingProductId) {
-                await apiFetch(`/products/${editingProductId}`, {
-                    method: "PUT",
-                    body: JSON.stringify(body)
-                });
+                await apiFetch(`/products/${editingProductId}`, { method: "PUT", body: JSON.stringify(body) });
                 toast("Producto actualizado ✓");
             } else {
-                await apiFetch("/products", {
-                    method: "POST",
-                    body: JSON.stringify(body)
-                });
+                await apiFetch("/products", { method: "POST", body: JSON.stringify(body) });
                 toast("Producto creado ✓");
             }
             resetProductForm();
@@ -484,21 +576,78 @@
 
     document.getElementById("cancelEditBtn").addEventListener("click", resetProductForm);
 
+    // Cálculo automático de ganancia con IVA opcional
+    function calcularGanancia() {
+        const compra   = parseFloat(document.getElementById("pPrecioCompra").value) || 0;
+        const venta    = parseFloat(document.getElementById("pPrecioVenta").value)  || 0;
+        const stock    = parseFloat(document.getElementById("pStock").value)        || 0;
+        const pagaIva  = document.getElementById("pPagaIva").checked;
+        const ivaBlock = document.getElementById("ivaBlock");
+        const ivaInput = document.getElementById("pIvaValor");
+        const desc     = document.getElementById("pGananciaDesc");
+        const gananciaIvaBlock    = document.getElementById("gananciaIvaBlock");
+        const gananciaConIvaInput = document.getElementById("pGananciaConIva");
+
+        const iva      = pagaIva ? Math.round(compra * 0.19) : 0;
+        const ganancia = venta - compra;
+
+        // IVA
+        ivaBlock.style.display = pagaIva ? "flex" : "none";
+        ivaInput.value = pagaIva ? iva : "";
+
+        // Ganancia estimada
+        document.getElementById("pPrice").value = ganancia > 0 ? ganancia : 0;
+
+        // Ganancia + IVA
+        if (pagaIva) {
+            gananciaConIvaInput.value = (ganancia + iva) > 0 ? ganancia + iva : 0;
+            gananciaIvaBlock.style.display = "flex";
+            desc.textContent = "";
+        } else {
+            gananciaIvaBlock.style.display = "none";
+            gananciaConIvaInput.value = "";
+            desc.textContent = "";
+        }
+
+        // Valor total stock comprado
+        document.getElementById("pStockTotalCompra").value = Math.round(stock * compra);
+
+        // Stock ganancia: stock × precio de venta, si paga IVA se suma el IVA unitario
+        const ventaConIva = pagaIva ? venta + iva : venta;
+        document.getElementById("pStockGanancia").value = Math.round(stock * ventaConIva);
+        document.getElementById("pStockGananciaDesc").textContent = "";
+    }
+
+    document.getElementById("pPrecioCompra").addEventListener("input", calcularGanancia);
+    document.getElementById("pPrecioVenta").addEventListener("input", calcularGanancia);
+    document.getElementById("pPagaIva").addEventListener("change", calcularGanancia);
+    document.getElementById("pStock").addEventListener("input", calcularGanancia);
+
     function resetProductForm() {
         editingProductId = null;
-        ["pName","pPrice","pStock","pDescription","pImageUrlInput"].forEach(id => {
-            document.getElementById(id).value = "";
+        selectedImageUrl = null;
+        ["pName","pPrice","pStock","pDescription","pPrecioCompra","pPrecioVenta","pIvaValor","pGananciaConIva","pStockTotalCompra","pStockGanancia"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
         });
+        const pagaIva = document.getElementById("pPagaIva");
+        if (pagaIva) pagaIva.checked = false;
+        const ivaBlock = document.getElementById("ivaBlock");
+        if (ivaBlock) ivaBlock.style.display = "none";
+        const gananciaIvaBlock = document.getElementById("gananciaIvaBlock");
+        if (gananciaIvaBlock) gananciaIvaBlock.style.display = "none";
+        const desc = document.getElementById("pGananciaDesc");
+        if (desc) desc.textContent = "= Precio de venta − Precio de compra";
         document.getElementById("pAvailable").value = "true";
         document.getElementById("editProductId").value = "";
         document.getElementById("productFormTitle").textContent = "Agregar producto";
         document.getElementById("cancelEditBtn").classList.add("hidden");
         document.getElementById("productFormMsg").textContent = "";
-        // Limpiar preview imagen
-        document.getElementById("pImageFile").value = "";
-        document.getElementById("pImagePreviewImg").style.display = "none";
-        document.getElementById("pImagePreviewImg").src = "";
-        document.getElementById("pImagePreviewText").style.display = "inline";
+        document.getElementById("pImageSelected").textContent = "Ninguna imagen seleccionada";
+        document.querySelectorAll(".img-option").forEach(o => {
+            o.style.borderColor = "transparent";
+            o.style.background = "transparent";
+        });
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -775,7 +924,7 @@
     // INIT
     // ─────────────────────────────────────────────────────────────
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
 
         // Guard: sin sesión válida → login
         if (!window.PulpAuth?.isTokenValid()) {
@@ -786,21 +935,41 @@
         const auth = window.PulpAuth;
         const api  = window.PulpAppServices;
 
-        // Datos del usuario
+        // Datos del usuario — combina token + localStorage
         const tokenUser  = auth.getSessionUser();
         const storedUser = JSON.parse(
             localStorage.getItem("pulpapp_user") ||
             localStorage.getItem("user") || "null"
         );
-        const fullUser = { ...tokenUser, ...storedUser };
+        let fullUser = { ...tokenUser, ...storedUser };
+
+        // Siempre consulta el backend para obtener datos completos del usuario
+        try {
+            const email = fullUser.email || tokenUser?.email;
+            if (email) {
+                // Endpoint público que busca por email — no requiere token ADMIN
+                const r = await fetch(`${BASE}/users/email/${encodeURIComponent(email)}`);
+                if (r.ok) {
+                    const found = await r.json();
+                    fullUser = { ...fullUser, ...found };
+                    localStorage.setItem("pulpapp_user", JSON.stringify(fullUser));
+                }
+            }
+        } catch (e) {
+            // Si falla el fetch, usa los datos del localStorage
+        }
+
         const isAdmin  = fullUser.role === "ROLE_ADMIN";
+        const isSeller = fullUser.role === "ROLE_SELLER";
         const displayName = fullUser.name || fullUser.email || "Usuario";
 
         // Banner
         document.getElementById("dashWelcome").textContent  = `Hola, ${displayName} 👋`;
-        document.getElementById("dashRoleBadge").textContent = isAdmin ? "⚙️ Administrador" : "🛍️ Vendedor";
+        document.getElementById("dashRoleBadge").textContent = isAdmin ? "⚙️ Administrador" : isSeller ? "🏷️ Vendedor" : "🛍️ Cliente";
         document.getElementById("dashRoleDesc").textContent  = isAdmin
             ? "Tienes acceso completo al sistema"
+            : isSeller
+            ? "Puedes gestionar ventas y consultar pedidos"
             : "Puedes consultar productos y gestionar tus pedidos";
 
         // Perfil
@@ -809,7 +978,6 @@
         document.getElementById("profileCedula").textContent    = fullUser.cedula    || "—";
         document.getElementById("profileTelefono").textContent  = fullUser.telefono  || "—";
         document.getElementById("profileDireccion").textContent = fullUser.direccion || "—";
-        document.getElementById("profileRole").textContent      = fullUser.role      || "—";
 
         // Carrito en navbar
         const cartTotal = api.getCart().reduce((s, i) => s + (i.cantidad || 0), 0);
@@ -824,34 +992,168 @@
         buildTabs(isAdmin);
     });
 
-    // ── Preview imagen en tiempo real ──────────────────────────
-    document.getElementById("pImageFile").addEventListener("change", function() {
-        const file = this.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            document.getElementById("pImagePreviewImg").src = e.target.result;
-            document.getElementById("pImagePreviewImg").style.display = "block";
-            document.getElementById("pImagePreviewText").style.display = "none";
-            // Limpiar URL manual si se selecciona archivo
-            document.getElementById("pImageUrlInput").value = "";
-        };
-        reader.readAsDataURL(file);
-    });
+    // ─────────────────────────────────────────────────────────────
+    // ADMIN — Gestión de vendedores
+    // ─────────────────────────────────────────────────────────────
 
-    document.getElementById("pImageUrlInput").addEventListener("input", function() {
-        const url = this.value.trim();
-        if (url) {
-            document.getElementById("pImagePreviewImg").src = url;
-            document.getElementById("pImagePreviewImg").style.display = "block";
-            document.getElementById("pImagePreviewText").style.display = "none";
-            // Limpiar archivo si se escribe URL
-            document.getElementById("pImageFile").value = "";
-        } else {
-            document.getElementById("pImagePreviewImg").style.display = "none";
-            document.getElementById("pImagePreviewText").style.display = "inline";
+    let allSellers = [];
+    let sellerFilter = "activos";
+
+    // Crear vendedor
+    document.getElementById("saveSellerBtn").addEventListener("click", async () => {
+        const btn  = document.getElementById("saveSellerBtn");
+        const msg  = document.getElementById("sellerFormMsg");
+        const name     = document.getElementById("vName").value.trim();
+        const email    = document.getElementById("vEmail").value.trim();
+        const cedula   = document.getElementById("vCedula").value.trim();
+        const telefono = document.getElementById("vTelefono").value.trim();
+        const password = document.getElementById("vPassword").value.trim();
+        const direccion= document.getElementById("vDireccion").value.trim();
+
+        if (!name || !email || !cedula || !telefono || !password || !direccion) {
+            msg.textContent = "Completa todos los campos.";
+            msg.style.color = "var(--danger)";
+            return;
+        }
+        if (password.length < 6) {
+            msg.textContent = "La contraseña debe tener mínimo 6 caracteres.";
+            msg.style.color = "var(--danger)";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Creando...";
+        msg.textContent = "";
+
+        try {
+            // Usa el endpoint público POST /users para crear con ROLE_SELLER
+            const res = await fetch(`${BASE}/users`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, cedula, telefono, password, direccion, role: "ROLE_SELLER" })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || `Error ${res.status}`);
+            }
+
+            msg.textContent = "✅ Vendedor creado correctamente.";
+            msg.style.color = "var(--brand-dark)";
+
+            // Limpiar formulario
+            ["vName","vEmail","vCedula","vTelefono","vPassword","vDireccion"].forEach(id => {
+                document.getElementById(id).value = "";
+            });
+
+            // Recargar lista
+            loadSellers();
+        } catch (err) {
+            msg.textContent = "❌ " + err.message;
+            msg.style.color = "var(--danger)";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Crear vendedor";
         }
     });
+
+    // Filtros activos / inactivos / todos
+    document.querySelectorAll(".seller-filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".seller-filter-btn").forEach(b => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            sellerFilter = btn.dataset.filter;
+            renderSellers(allSellers);
+        });
+    });
+
+    // Cargar vendedores desde el backend
+    async function loadSellers() {
+        const container = document.getElementById("sellerList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            const users = await apiFetch("/users");
+            // Filtra solo los que tienen ROLE_SELLER
+            allSellers = users.filter(u => u.role === "ROLE_SELLER");
+            renderSellers(allSellers);
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>${err.message}</p>`;
+        }
+    }
+
+    function renderSellers(sellers) {
+        const container  = document.getElementById("sellerList");
+        const countBadge = document.getElementById("sellerCount");
+
+        // Aplicar filtro
+        let filtered = sellers;
+        if (sellerFilter === "activos")   filtered = sellers.filter(s => s.activo !== false);
+        if (sellerFilter === "inactivos") filtered = sellers.filter(s => s.activo === false);
+
+        if (countBadge) countBadge.textContent = `${filtered.length} vendedor${filtered.length !== 1 ? "es" : ""}`;
+
+        if (!filtered.length) {
+            container.innerHTML = "<p class='helper-text'>Visualiza los vendedores activos.</p>";
+            return;
+        }
+
+        container.innerHTML = `
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filtered.map(s => `
+                        <tr>
+                            <td>${s.id}</td>
+                            <td><strong>${s.name}</strong></td>
+                            <td>${s.email}</td>
+                            <td>${s.cedula || "—"}</td>
+                            <td>${s.telefono || "—"}</td>
+                            <td>${s.direccion || "—"}</td>
+                            <td>
+                                <span class="role-badge ${s.activo !== false ? 'role-role_seller' : ''}"
+                                      style="${s.activo === false ? 'background:rgba(184,50,40,0.1);color:var(--danger)' : ''}">
+                                    ${s.activo !== false ? "✅ Activo" : "❌ Inactivo"}
+                                </span>
+                            </td>
+                            <td>
+                                <button class="btn-table-edit btn-toggle-seller"
+                                        data-id="${s.id}"
+                                        data-activo="${s.activo !== false}">
+                                    ${s.activo !== false ? "Desactivar" : "Activar"}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join("")}
+                </tbody>
+            </table>
+        `;
+
+        // Eventos activar/desactivar
+        container.querySelectorAll(".btn-toggle-seller").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                const id     = btn.dataset.id;
+                const activo = btn.dataset.activo === "true";
+                try {
+                    await apiFetch(`/users/${id}/activo?activo=${!activo}`, { method: "PATCH" });
+                    toast(activo ? "Vendedor desactivado" : "Vendedor activado");
+                    loadSellers();
+                } catch (err) {
+                    toast(err.message, "error");
+                }
+            });
+        });
+    }
 
 })();
 </script>

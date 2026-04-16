@@ -57,8 +57,12 @@ public class AuthService {
 
         return AuthResponseDTO.builder()
                 .token(token)
+                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
+                .cedula(user.getCedula())
+                .telefono(user.getTelefono())
+                .direccion(user.getDireccion())
                 .role(user.getRole())
                 .build();
     }
@@ -86,8 +90,9 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setDireccion(request.getDireccion());
-        // Si no se envía rol se asigna ROLE_SELLER por defecto
-        user.setRole(request.getRole() != null ? request.getRole() : Role.ROLE_SELLER);
+        // El registro público SIEMPRE asigna ROLE_CLIENT
+        // Los vendedores solo los crea el ADMIN desde el panel
+        user.setRole(Role.ROLE_CLIENT);
 
         userRepository.save(user);
 
@@ -96,8 +101,12 @@ public class AuthService {
 
         return AuthResponseDTO.builder()
                 .token(token)
+                .id(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
+                .cedula(user.getCedula())
+                .telefono(user.getTelefono())
+                .direccion(user.getDireccion())
                 .role(user.getRole())
                 .build();
     }
