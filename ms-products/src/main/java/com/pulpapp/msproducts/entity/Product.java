@@ -35,7 +35,7 @@ public class Product {
     @Column(nullable = false)
     private Boolean available;
 
-    @Column(length = 255)
+    @Column(columnDefinition = "TEXT")
     private String imageUrl;
 
     /**

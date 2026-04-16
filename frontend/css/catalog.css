@@ -88,12 +88,15 @@
         transform 0.3s var(--ease-out),
         box-shadow 0.3s var(--ease-out),
         border-color 0.3s ease;
+    position: relative;
+    z-index: 0;
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-4px);
     box-shadow: var(--shadow-xl);
     border-color: rgba(13, 122, 77, 0.18);
+    z-index: 2;
 }
 
 .product-media {
@@ -108,6 +111,8 @@
     align-items: center;
     justify-content: center;
     cursor: zoom-in;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    overflow: hidden;
 }
 
 .product-media img {
@@ -124,19 +129,17 @@
 }
 
 .stock-badge {
-    position: absolute;
-    top: 14px;
-    left: 14px;
-    padding: 6px 12px;
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 4px 12px;
     border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(13, 122, 77, 0.15);
+    background: rgba(13, 122, 77, 0.08);
+    border: 1px solid rgba(13, 122, 77, 0.2);
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--brand-dark);
-    box-shadow: var(--shadow-sm);
 }
 
 .product-body {

@@ -13,5 +13,6 @@ public class UserResponseDTO {
     private String direccion;
     private String telefono;
     private Role role;
+    private Boolean activo;
 
 }

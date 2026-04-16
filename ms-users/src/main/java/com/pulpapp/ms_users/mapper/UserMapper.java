@@ -20,6 +20,7 @@ public class UserMapper {
         dto.setDireccion(user.getDireccion());
         dto.setTelefono(user.getTelefono());
         dto.setRole(user.getRole());
+        dto.setActivo(user.getActivo());
         return dto;
     }
 

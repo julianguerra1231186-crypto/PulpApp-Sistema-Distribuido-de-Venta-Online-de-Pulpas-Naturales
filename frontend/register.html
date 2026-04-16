@@ -134,9 +134,10 @@
             const data = await window.PulpAppServices.authRegister({
                 cedula, telefono, name, email, password, direccion
             });
-            // Guarda también los datos completos del usuario
-            localStorage.setItem("pulpapp_user", JSON.stringify(data));
-            localStorage.setItem("user", JSON.stringify(data));
+            // Guarda los datos completos incluyendo los que no vienen en el token
+            const fullData = { ...data, cedula, telefono, direccion, name };
+            localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
+            localStorage.setItem("user", JSON.stringify(fullData));
             toast("Cuenta creada. Bienvenido/a 🎉");
             setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
         } catch (err) {

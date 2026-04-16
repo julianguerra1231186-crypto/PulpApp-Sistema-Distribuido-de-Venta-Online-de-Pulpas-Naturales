@@ -29,6 +29,6 @@ public class UserRequestDTO {
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
 
-    // Opcional: si no se envía, el servicio asigna ROLE_SELLER por defecto
+    // Opcional: si no se envía, el servicio asigna ROLE_CLIENTE por defecto
     private Role role;
 }

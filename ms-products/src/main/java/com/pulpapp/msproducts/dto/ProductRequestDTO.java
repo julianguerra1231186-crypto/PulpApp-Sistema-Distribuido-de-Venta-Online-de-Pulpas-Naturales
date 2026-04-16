@@ -28,6 +28,5 @@ public class ProductRequestDTO {
     @NotNull(message = "La disponibilidad es obligatoria")
     private Boolean available;
 
-    @Size(max = 255, message = "La URL de imagen no debe superar 255 caracteres")
     private String imageUrl;
 }

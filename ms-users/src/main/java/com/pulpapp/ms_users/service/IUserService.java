@@ -18,6 +18,9 @@ public interface IUserService {
 
     UserResponseDTO findByCedula(String cedula);
 
-    // VALIDAR CEDULA + TELEFONO
     UserResponseDTO validarUsuario(String cedula, String telefono);
+
+    UserResponseDTO findByEmail(String email);
+
+    UserResponseDTO toggleActivo(Long id, boolean activo);
 }

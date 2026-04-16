@@ -54,7 +54,10 @@ public class UserServiceImpl
         User entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
         mapper.updateEntityFromDto(dto, entity);
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        // Solo re-encripta si la contraseña enviada no parece un hash BCrypt
+        if (dto.getPassword() != null && !dto.getPassword().startsWith("$2a$")) {
+            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         return mapper.toResponseDto(repository.save(entity));
     }
 
@@ -75,5 +78,21 @@ public class UserServiceImpl
                         new ResourceNotFoundException(
                                 "User not found with cedula: " + cedula + " and telefono: " + telefono));
         return mapper.toResponseDto(user);
+    }
+
+    @Override
+    public UserResponseDTO findByEmail(String email) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("User not found with email: " + email));
+        return mapper.toResponseDto(user);
+    }
+
+    @Override
+    public UserResponseDTO toggleActivo(Long id, boolean activo) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        user.setActivo(activo);
+        return mapper.toResponseDto(repository.save(user));
     }
 }

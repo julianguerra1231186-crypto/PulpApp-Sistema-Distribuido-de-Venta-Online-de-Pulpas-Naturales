@@ -84,7 +84,7 @@ spring:
           predicates:
             #  IMPORTANTE:
             # Incluye /products y /products/**
-            - Path=/products, /products/**
+            - Path=/products, /products/**, /images/**
 
         # --------------------------------------------
         # MICROSERVICIO DE PEDIDOS
