@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Reportes de Ventas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        /* ── KPI Cards ── */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .kpi-card {
+            background: #fff;
+            border: 1.5px solid rgba(13,122,77,0.12);
+            border-radius: var(--radius-lg, 16px);
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: box-shadow 0.18s;
+        }
+
+        .kpi-card:hover {
+            box-shadow: 0 4px 20px rgba(13,122,77,0.12);
+        }
+
+        .kpi-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .kpi-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted, #666);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .kpi-value {
+            font-family: var(--font-display, 'Fraunces', serif);
+            font-size: clamp(1.4rem, 3vw, 1.9rem);
+            font-weight: 700;
+            color: var(--brand-dark, #0d7a4d);
+            line-height: 1.1;
+        }
+
+        .kpi-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted, #888);
+        }
+
+        /* ── Section headers ── */
+        .report-section {
+            margin-bottom: 36px;
+        }
+
+        .report-section-title {
+            font-family: var(--font-display, 'Fraunces', serif);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Tables ── */
+        .report-table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-lg, 16px);
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+        }
+
+        .report-table thead {
+            background: linear-gradient(135deg, var(--brand-mid, #1a7a4a), var(--brand-dark, #0d7a4d));
+            color: #fff;
+        }
+
+        .report-table th {
+            padding: 13px 16px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .report-table th.text-right,
+        .report-table td.text-right {
+            text-align: right;
+        }
+
+        .report-table tbody tr {
+            border-bottom: 1px solid var(--line, rgba(0,0,0,0.07));
+            transition: background 0.15s;
+        }
+
+        .report-table tbody tr:hover {
+            background: var(--brand-soft, #f0faf5);
+        }
+
+        .report-table td {
+            padding: 12px 16px;
+        }
+
+        .report-table .total-row td {
+            font-weight: 700;
+            background: var(--brand-soft, #f0faf5);
+            color: var(--brand-dark, #0d7a4d);
+        }
+
+        /* ── Bar chart (CSS-only) ── */
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 48px 1fr 56px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar-label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted, #666);
+            text-align: right;
+        }
+
+        .bar-track {
+            background: rgba(13,122,77,0.08);
+            border-radius: 999px;
+            height: 22px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-mid, #1a7a4a), var(--brand-dark, #0d7a4d));
+            border-radius: 999px;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 2px;
+        }
+
+        .bar-count {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--brand-dark, #0d7a4d);
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        /* ── Page header ── */
+        .report-page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .report-page-header h1 {
+            font-family: var(--font-display, 'Fraunces', serif);
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            margin: 0;
+        }
+
+        /* ── Empty / loading states ── */
+        .report-empty {
+            text-align: center;
+            padding: 40px 16px;
+            color: var(--text-muted, #777);
+        }
+
+        .skeleton-kpi {
+            height: 80px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: var(--radius-lg, 16px);
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 600px) {
+            .kpi-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .bar-row {
+                grid-template-columns: 36px 1fr 44px;
+            }
+        }
+    </style>
+</head>
+<body data-page="sales-report">
+
+<!-- ═══════════════════════════════════════════════════════════ NAVBAR -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="brand-block">
+            <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+            <div><span class="brand-kicker">PulpApp</span></div>
+        </div>
+        <nav class="site-nav" aria-label="Principal">
+            <a href="index.html">Inicio</a>
+            <a href="catalog.html">Catálogo</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="seller-orders.html">Pedidos Clientes</a>
+            <a href="sales-report.html" class="is-active" data-nav="account">Reportes</a>
+        </nav>
+        <a href="cart.html" class="cart-chip">
+            <span>Carrito</span>
+            <strong id="navCartCount">0</strong>
+        </a>
+    </div>
+</header>
+
+<main class="page-content">
+
+    <!-- ── Banner ── -->
+    <section class="page-banner glass-card dashboard-banner">
+        <div>
+            <span class="eyebrow" id="roleBadge">Vendedor</span>
+            <h1>Reportes de Ventas</h1>
+            <p style="color:var(--text-muted); margin:0">
+                Análisis de pedidos, ingresos y comportamiento de compra.
+            </p>
+        </div>
+        <button id="logoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
+    </section>
+
+    <!-- ── Panel principal ── -->
+    <section class="dash-panel glass-card">
+
+        <div class="report-page-header">
+            <div>
+                <span class="eyebrow">Análisis completo</span>
+                <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">
+                    Resumen de ventas
+                </h2>
+            </div>
+            <a href="seller-orders.html" class="btn btn-secondary"
+               style="min-height:40px; padding:0 18px; font-size:0.88rem; display:inline-flex; align-items:center; gap:6px; text-decoration:none">
+                ← Volver
+            </a>
+        </div>
+
+        <!-- ── KPIs ── -->
+        <div id="kpiGrid" class="kpi-grid" aria-label="Indicadores clave">
+            <!-- Skeleton mientras carga -->
+            <div class="skeleton-kpi"></div>
+            <div class="skeleton-kpi"></div>
+            <div class="skeleton-kpi"></div>
+            <div class="skeleton-kpi"></div>
+        </div>
+
+        <!-- ── Ventas por día ── -->
+        <div class="report-section">
+            <h3 class="report-section-title">📅 Ventas por día</h3>
+            <div class="report-table-wrap">
+                <table class="report-table" id="dailyTable" aria-label="Ventas agrupadas por día">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th class="text-right">Pedidos</th>
+                            <th class="text-right">Ingresos</th>
+                            <th class="text-right">Ticket promedio</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dailyTableBody">
+                        <tr><td colspan="4" class="report-empty">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── Estadísticas por hora ── -->
+        <div class="report-section">
+            <h3 class="report-section-title">🕐 Pedidos por hora del día</h3>
+            <div id="hourlyChart" class="bar-chart" aria-label="Distribución de pedidos por hora">
+                <p class="report-empty">Cargando...</p>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+
+<!-- Toast de notificaciones -->
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- Botón flotante WhatsApp -->
+<a href="https://wa.me/573001234567?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20PulpApp"
+   target="_blank" rel="noopener noreferrer"
+   class="whatsapp-fab" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span>¿Necesitas ayuda?</span>
+</a>
+
+<script src="auth.js"></script>
+<script src="whatsapp.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    const BASE = "http://localhost:8090";
+
+    // ─────────────────────────────────────────────────────────────
+    // Utilidades
+    // ─────────────────────────────────────────────────────────────
+
+    function toast(msg, type) {
+        const el = document.getElementById("appToast");
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => { el.className = "toast"; }, 3200);
+    }
+
+    function authHeaders() {
+        const token = window.PulpAuth?.getToken();
+        return {
+            "Content-Type": "application/json",
+            "Authorization": token ? `Bearer ${token}` : ""
+        };
+    }
+
+    /**
+     * Formatea un número como moneda colombiana.
+     * @param {number} value
+     * @returns {string}  ej: "$ 12.500"
+     */
+    function formatCurrency(value) {
+        return "$ " + new Intl.NumberFormat("es-CO").format(Math.round(Number(value || 0)));
+    }
+
+    /**
+     * Convierte una fecha ISO a "dd/mm/yyyy" en zona local.
+     * @param {string} isoDate
+     * @returns {string}
+     */
+    function toLocalDateKey(isoDate) {
+        const d = new Date(isoDate);
+        const dd   = String(d.getDate()).padStart(2, "0");
+        const mm   = String(d.getMonth() + 1).padStart(2, "0");
+        const yyyy = d.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    /**
+     * Extrae la hora local (0-23) de una fecha ISO.
+     * @param {string} isoDate
+     * @returns {number}
+     */
+    function toLocalHour(isoDate) {
+        return new Date(isoDate).getHours();
+    }
+
+    /**
+     * Escapa caracteres HTML para prevenir XSS.
+     * @param {string} str
+     * @returns {string}
+     */
+    function escapeHtml(str) {
+        const div = document.createElement("div");
+        div.appendChild(document.createTextNode(String(str || "")));
+        return div.innerHTML;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Procesamiento de datos (todo frontend puro)
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * Calcula los 4 KPIs a partir del array de pedidos.
+     * @param {Array} orders  - SellerOrderDTO[]
+     * @returns {{ totalOrders, totalRevenue, uniqueClients, avgTicket }}
+     */
+    function computeKPIs(orders) {
+        const totalOrders   = orders.length;
+        const totalRevenue  = orders.reduce((sum, o) => sum + Number(o.total || 0), 0);
+        const uniqueClients = new Set(orders.map(o => o.clientEmail || o.clientName)).size;
+        const avgTicket     = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+        return { totalOrders, totalRevenue, uniqueClients, avgTicket };
+    }
+
+    /**
+     * Agrupa pedidos por fecha local (dd/mm/yyyy), ordenados cronológicamente.
+     * @param {Array} orders
+     * @returns {Array<{ date, count, revenue }>}
+     */
+    function groupByDay(orders) {
+        const map = new Map();
+
+        orders.forEach(o => {
+            if (!o.fecha) return;
+            const key = toLocalDateKey(o.fecha);
+            if (!map.has(key)) {
+                map.set(key, { date: key, count: 0, revenue: 0, _raw: o.fecha });
+            }
+            const entry = map.get(key);
+            entry.count++;
+            entry.revenue += Number(o.total || 0);
+        });
+
+        // Ordenar cronológicamente usando la fecha original
+        return Array.from(map.values()).sort((a, b) => {
+            return new Date(a._raw) - new Date(b._raw);
+        });
+    }
+
+    /**
+     * Cuenta pedidos por hora del día (0-23).
+     * @param {Array} orders
+     * @returns {number[]}  Array de 24 posiciones con el conteo por hora
+     */
+    function groupByHour(orders) {
+        const counts = new Array(24).fill(0);
+        orders.forEach(o => {
+            if (!o.fecha) return;
+            counts[toLocalHour(o.fecha)]++;
+        });
+        return counts;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Renderizado
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * Renderiza las 4 tarjetas KPI.
+     */
+    function renderKPIs({ totalOrders, totalRevenue, uniqueClients, avgTicket }) {
+        const grid = document.getElementById("kpiGrid");
+        grid.innerHTML = `
+            <div class="kpi-card">
+                <span class="kpi-icon">📦</span>
+                <span class="kpi-label">Total pedidos</span>
+                <span class="kpi-value">${totalOrders}</span>
+                <span class="kpi-sub">pedidos registrados</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-icon">💰</span>
+                <span class="kpi-label">Ingresos totales</span>
+                <span class="kpi-value">${formatCurrency(totalRevenue)}</span>
+                <span class="kpi-sub">suma de todos los pedidos</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-icon">👥</span>
+                <span class="kpi-label">Clientes únicos</span>
+                <span class="kpi-value">${uniqueClients}</span>
+                <span class="kpi-sub">emails distintos</span>
+            </div>
+            <div class="kpi-card">
+                <span class="kpi-icon">🎯</span>
+                <span class="kpi-label">Ticket promedio</span>
+                <span class="kpi-value">${formatCurrency(avgTicket)}</span>
+                <span class="kpi-sub">por pedido</span>
+            </div>
+        `;
+    }
+
+    /**
+     * Renderiza la tabla de ventas por día.
+     * @param {Array<{ date, count, revenue }>} rows
+     */
+    function renderDailyTable(rows) {
+        const tbody = document.getElementById("dailyTableBody");
+
+        if (!rows.length) {
+            tbody.innerHTML = `<tr><td colspan="4" class="report-empty">Sin datos de ventas.</td></tr>`;
+            return;
+        }
+
+        const totalCount   = rows.reduce((s, r) => s + r.count, 0);
+        const totalRevenue = rows.reduce((s, r) => s + r.revenue, 0);
+
+        const dataRows = rows.map(r => {
+            const avg = r.count > 0 ? r.revenue / r.count : 0;
+            return `
+                <tr>
+                    <td>${escapeHtml(r.date)}</td>
+                    <td class="text-right">${r.count}</td>
+                    <td class="text-right">${formatCurrency(r.revenue)}</td>
+                    <td class="text-right">${formatCurrency(avg)}</td>
+                </tr>
+            `;
+        }).join("");
+
+        const totalAvg = totalCount > 0 ? totalRevenue / totalCount : 0;
+        const totalRow = `
+            <tr class="total-row">
+                <td><strong>Total</strong></td>
+                <td class="text-right"><strong>${totalCount}</strong></td>
+                <td class="text-right"><strong>${formatCurrency(totalRevenue)}</strong></td>
+                <td class="text-right"><strong>${formatCurrency(totalAvg)}</strong></td>
+            </tr>
+        `;
+
+        tbody.innerHTML = dataRows + totalRow;
+    }
+
+    /**
+     * Renderiza el gráfico de barras CSS por hora del día.
+     * Solo muestra las horas que tienen al menos 1 pedido,
+     * más las horas adyacentes para dar contexto.
+     * @param {number[]} counts  - Array de 24 posiciones
+     */
+    function renderHourlyChart(counts) {
+        const container = document.getElementById("hourlyChart");
+        const maxCount  = Math.max(...counts, 1);
+        const total     = counts.reduce((s, c) => s + c, 0);
+
+        if (total === 0) {
+            container.innerHTML = `<p class="report-empty">Sin datos de pedidos por hora.</p>`;
+            return;
+        }
+
+        // Mostrar las 24 horas; las vacías se ven con barra mínima
+        const bars = counts.map((count, hour) => {
+            const pct     = Math.round((count / maxCount) * 100);
+            const label   = String(hour).padStart(2, "0") + "h";
+            const isEmpty = count === 0;
+            return `
+                <div class="bar-row" aria-label="${label}: ${count} pedido${count !== 1 ? "s" : ""}">
+                    <span class="bar-label">${label}</span>
+                    <div class="bar-track">
+                        <div class="bar-fill"
+                             style="width:${isEmpty ? 0 : Math.max(pct, 2)}%;
+                                    opacity:${isEmpty ? 0.15 : 1}">
+                        </div>
+                    </div>
+                    <span class="bar-count" style="opacity:${isEmpty ? 0.35 : 1}">
+                        ${count}
+                    </span>
+                </div>
+            `;
+        }).join("");
+
+        container.innerHTML = bars;
+
+        // Animar barras con un pequeño delay para efecto visual
+        requestAnimationFrame(() => {
+            container.querySelectorAll(".bar-fill").forEach((bar, i) => {
+                const targetWidth = bar.style.width;
+                bar.style.width = "0";
+                setTimeout(() => { bar.style.width = targetWidth; }, i * 18);
+            });
+        });
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Carga de datos
+    // ─────────────────────────────────────────────────────────────
+
+    async function loadReport() {
+        try {
+            const response = await fetch(`${BASE}/orders/seller`, {
+                method: "GET",
+                headers: authHeaders()
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                toast("Sesión expirada o sin permisos. Redirigiendo...", "error");
+                setTimeout(() => { window.location.href = "login.html"; }, 1800);
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+
+            const orders = await response.json();
+
+            // Procesar y renderizar
+            const kpis      = computeKPIs(orders);
+            const dailyRows = groupByDay(orders);
+            const hourly    = groupByHour(orders);
+
+            renderKPIs(kpis);
+            renderDailyTable(dailyRows);
+            renderHourlyChart(hourly);
+
+        } catch (err) {
+            // Mostrar error en KPIs
+            document.getElementById("kpiGrid").innerHTML = `
+                <div style="grid-column:1/-1; text-align:center; padding:32px; color:var(--danger, #c0392b)">
+                    <p style="font-weight:600">❌ No se pudieron cargar los datos</p>
+                    <p style="font-size:0.85rem; margin-top:4px">${escapeHtml(err.message)}</p>
+                </div>
+            `;
+            document.getElementById("dailyTableBody").innerHTML =
+                `<tr><td colspan="4" class="report-empty" style="color:var(--danger)">Error al cargar datos.</td></tr>`;
+            document.getElementById("hourlyChart").innerHTML =
+                `<p class="report-empty" style="color:var(--danger)">Error al cargar datos.</p>`;
+            toast(err.message, "error");
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Inicialización
+    // ─────────────────────────────────────────────────────────────
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // Guard: sin sesión válida → redirigir al login
+        if (!window.PulpAuth?.isTokenValid()) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user = window.PulpAuth.getSessionUser();
+        const role = user?.role || "";
+
+        // Guard: solo SELLER y ADMIN pueden acceder
+        if (role !== "ROLE_SELLER" && role !== "ROLE_ADMIN") {
+            toast("No tienes permisos para ver esta sección.", "error");
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 1800);
+            return;
+        }
+
+        // Badge de rol en el banner
+        const roleBadge = document.getElementById("roleBadge");
+        if (roleBadge) {
+            roleBadge.textContent = role === "ROLE_ADMIN" ? "⚙️ Administrador" : "🏷️ Vendedor";
+        }
+
+        // Contador del carrito en navbar
+        const navCount = document.getElementById("navCartCount");
+        if (navCount) {
+            try {
+                const cart  = JSON.parse(localStorage.getItem("pulpapp_cart") || "[]");
+                const total = cart.reduce((s, i) => s + (i.cantidad || 0), 0);
+                navCount.textContent = String(total);
+            } catch {
+                navCount.textContent = "0";
+            }
+        }
+
+        // Logout
+        document.getElementById("logoutBtn")?.addEventListener("click", () => {
+            window.PulpAuth.logout();
+        });
+
+        // Cargar reporte
+        loadReport();
+    });
+
+})();
+</script>
+</body>
+</html>
