@@ -981,6 +981,11 @@ async function submitOrder() {
         throw new Error("Ingresa la direccion de entrega antes de finalizar");
     }
 
+    // Validar que el carrito no esté vacío
+    if (!state.cart || state.cart.length === 0) {
+        throw new Error("Tu carrito esta vacio. Agrega productos antes de finalizar.");
+    }
+
     // Sincroniza state.user desde localStorage si viene de flujo JWT
     if (!state.user?.id) {
         const stored = JSON.parse(localStorage.getItem("pulpapp_user") || localStorage.getItem("user") || "null");
@@ -1000,9 +1005,8 @@ async function submitOrder() {
     persistCart();
     renderCartPage();
 
-    // Redirigir a la página de confirmación con el ID del pedido
-    // La página de confirmación maneja el método de pago y el WhatsApp
-    window.location.href = `pedido-confirmado.html?id=${createdOrder?.id || ""}`;
+    // Redirigir a pedido-confirmado.html con el ID del pedido creado
+    window.location.href = "pedido-confirmado.html?id=" + (createdOrder?.id || "");
 
     return createdOrder;
 }
