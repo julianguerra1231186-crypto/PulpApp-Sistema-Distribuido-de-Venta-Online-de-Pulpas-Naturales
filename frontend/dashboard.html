@@ -969,7 +969,8 @@
             const email = fullUser.email || tokenUser?.email;
             if (email) {
                 // Endpoint público que busca por email — no requiere token ADMIN
-                const r = await fetch(`${BASE}/users/email/${encodeURIComponent(email)}`);
+                // Usa query param: GET /users/email?email=...
+                const r = await fetch(`${BASE}/users/email?email=${encodeURIComponent(email)}`);
                 if (r.ok) {
                     const found = await r.json();
                     fullUser = { ...fullUser, ...found };
