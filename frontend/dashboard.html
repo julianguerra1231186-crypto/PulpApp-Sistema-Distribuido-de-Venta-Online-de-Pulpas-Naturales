@@ -958,6 +958,12 @@
 
         // Datos del usuario — combina token + localStorage
         const tokenUser  = auth.getSessionUser();
+
+        // Guard: ROLE_CLIENT tiene su propia página
+        if (tokenUser?.role === "ROLE_CLIENT") {
+            window.location.href = "mi-cuenta.html";
+            return;
+        }
         const storedUser = JSON.parse(
             localStorage.getItem("pulpapp_user") ||
             localStorage.getItem("user") || "null"

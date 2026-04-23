@@ -1,0 +1,454 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Mi Cuenta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        /* ── Estado de pago badges ── */
+        .pay-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+        .pay-PENDING_PAYMENT  { background:#fff3e0; color:#e65100; }
+        .pay-PENDING_APPROVAL { background:#e3f2fd; color:#1565c0; }
+        .pay-APPROVED         { background:#e8f5e9; color:#1b5e20; }
+        .pay-REJECTED         { background:#ffebee; color:#b71c1c; }
+
+        /* ── Tarjeta de pedido ── */
+        .order-card-client {
+            background: #fff;
+            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin-bottom: 14px;
+            transition: box-shadow 0.2s;
+        }
+        .order-card-client:hover { box-shadow: 0 4px 20px rgba(13,122,77,0.1); }
+
+        .order-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        /* ── Monto único destacado ── */
+        .unique-amount-box {
+            background: linear-gradient(135deg, #e8f5e9, #f0faf5);
+            border: 2px solid rgba(13,122,77,0.25);
+            border-radius: 12px;
+            padding: 14px 18px;
+            margin-top: 12px;
+        }
+
+        .unique-amount-box .amount {
+            font-family: var(--font-display);
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--brand-dark, #0d7a4d);
+        }
+
+        /* ── Botón "Ya pagué" ── */
+        .btn-paid {
+            background: linear-gradient(135deg, #1565c0, #0d47a1);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 22px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 44px;
+        }
+        .btn-paid:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(21,101,192,0.3); }
+        .btn-paid:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        /* ── Productos expandibles ── */
+        .products-toggle {
+            background: none;
+            border: 1.5px solid rgba(13,122,77,0.2);
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--brand-dark);
+            cursor: pointer;
+            transition: all 0.18s;
+        }
+        .products-toggle:hover { background: var(--brand-soft); }
+
+        .products-list {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease, margin 0.2s;
+        }
+        .products-list.open { max-height: 400px; margin-top: 12px; }
+
+        .product-chip-client {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--brand-soft, #e8f5e9);
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 0.83rem;
+            margin: 4px;
+        }
+    </style>
+</head>
+<body data-page="mi-cuenta">
+
+<!-- NAVBAR -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="brand-block">
+            <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+            <div><span class="brand-kicker">PulpApp</span></div>
+        </div>
+        <nav class="site-nav" aria-label="Principal">
+            <a href="index.html">Inicio</a>
+            <a href="catalog.html">Catálogo</a>
+            <a href="cart.html">Carrito</a>
+            <a href="mi-cuenta.html" class="is-active">Mi cuenta</a>
+        </nav>
+        <a href="cart.html" class="cart-chip">
+            <span>Carrito</span>
+            <strong id="navCartCount">0</strong>
+        </a>
+    </div>
+</header>
+
+<main class="page-content">
+
+    <!-- Banner -->
+    <section class="page-banner glass-card dashboard-banner">
+        <div>
+            <span class="eyebrow" id="clientRoleBadge">🛍️ Cliente</span>
+            <h1 id="clientWelcome">Mi cuenta</h1>
+            <p style="color:var(--text-muted); margin:0">
+                Consulta tus pedidos y gestiona tus pagos por transferencia.
+            </p>
+        </div>
+        <button id="logoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
+    </section>
+
+    <!-- Tabs -->
+    <nav class="dash-tabs" aria-label="Secciones">
+        <button class="dash-tab is-active" data-tab="perfil">👤 Perfil</button>
+        <button class="dash-tab" data-tab="pedidos">📦 Mis pedidos</button>
+    </nav>
+
+    <!-- TAB: Perfil -->
+    <section id="tab-perfil" class="dash-panel glass-card">
+        <span class="eyebrow">Información personal</span>
+        <h2>Tu perfil</h2>
+        <div class="profile-grid">
+            <div class="profile-field">
+                <span class="profile-label">Nombre</span>
+                <strong id="pName">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Email</span>
+                <strong id="pEmail">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Cédula</span>
+                <strong id="pCedula">—</strong>
+            </div>
+            <div class="profile-field">
+                <span class="profile-label">Teléfono</span>
+                <strong id="pTelefono">—</strong>
+            </div>
+            <div class="profile-field full-width">
+                <span class="profile-label">Dirección</span>
+                <strong id="pDireccion">—</strong>
+            </div>
+        </div>
+        <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap">
+            <a href="catalog.html" class="btn btn-primary" style="text-decoration:none">
+                🛒 Ir al catálogo
+            </a>
+            <button id="logoutBtnPerfil" class="btn btn-danger" type="button">Cerrar sesión</button>
+        </div>
+    </section>
+
+    <!-- TAB: Mis pedidos -->
+    <section id="tab-pedidos" class="dash-panel glass-card hidden">
+        <span class="eyebrow">Historial</span>
+        <h2>Mis pedidos</h2>
+        <p class="helper-text" style="margin-bottom:20px">
+            Aquí puedes ver el estado de tus pedidos y confirmar tu pago por transferencia.
+        </p>
+        <div id="clientOrdersList"><p class="helper-text">Cargando...</p></div>
+    </section>
+
+</main>
+
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- WhatsApp FAB -->
+<a href="https://wa.me/573001234567?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20PulpApp"
+   target="_blank" rel="noopener noreferrer"
+   class="whatsapp-fab" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span>¿Necesitas ayuda?</span>
+</a>
+
+<script src="auth.js"></script>
+<script src="whatsapp.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    const BASE = "http://localhost:8090";
+
+    // ── Utilidades ────────────────────────────────────────────────
+
+    function toast(msg, type) {
+        const el = document.getElementById("appToast");
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => { el.className = "toast"; }, 3200);
+    }
+
+    function authHeaders() {
+        const token = window.PulpAuth?.getToken();
+        return { "Content-Type": "application/json", "Authorization": token ? `Bearer ${token}` : "" };
+    }
+
+    function fmtCurrency(v) {
+        return "$ " + new Intl.NumberFormat("es-CO").format(Math.round(Number(v || 0)));
+    }
+
+    function esc(str) {
+        const d = document.createElement("div");
+        d.appendChild(document.createTextNode(String(str || "")));
+        return d.innerHTML;
+    }
+
+    const PAY_LABELS = {
+        PENDING_PAYMENT:  "⏳ Pendiente de pago",
+        PENDING_APPROVAL: "🔍 Verificando pago",
+        APPROVED:         "✅ Pago aprobado",
+        REJECTED:         "❌ Pago rechazado"
+    };
+
+    // ── Tabs ──────────────────────────────────────────────────────
+
+    document.querySelectorAll(".dash-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            document.querySelectorAll(".dash-panel").forEach(p => p.classList.add("hidden"));
+            const panel = document.getElementById("tab-" + btn.dataset.tab);
+            if (panel) panel.classList.remove("hidden");
+            if (btn.dataset.tab === "pedidos") loadClientOrders();
+        });
+    });
+
+    // ── Carga de pedidos del cliente ──────────────────────────────
+
+    async function loadClientOrders() {
+        const container = document.getElementById("clientOrdersList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+
+        const user = window.PulpAuth?.getSessionUser();
+        if (!user) { container.innerHTML = "<p class='helper-text'>Sin sesión activa.</p>"; return; }
+
+        try {
+            // Obtener todos los pedidos y filtrar por userId del usuario actual
+            const storedUser = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+            const userId = storedUser.id;
+
+            // Cargar pedidos desde /orders (requiere auth)
+            const res = await fetch(`${BASE}/orders`, { headers: authHeaders() });
+            if (!res.ok) throw new Error(`Error ${res.status}`);
+            const allOrders = await res.json();
+
+            // Filtrar por userId si está disponible, sino mostrar todos los del token
+            const myOrders = userId
+                ? allOrders.filter(o => String(o.userId) === String(userId))
+                : allOrders;
+
+            if (!myOrders.length) {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:40px 16px; color:var(--text-muted)">
+                        <p style="font-size:1.1rem; margin-bottom:12px">📭 Aún no tienes pedidos</p>
+                        <a href="catalog.html" class="btn btn-primary" style="text-decoration:none">
+                            Ir al catálogo
+                        </a>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = myOrders.map(order => {
+                const d      = order.fecha ? new Date(order.fecha) : null;
+                const date   = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
+                const time   = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
+                const status = order.paymentStatus || "PENDING_PAYMENT";
+                const label  = PAY_LABELS[status] || status;
+
+                // Chips de productos
+                const chips = (order.items || []).map(it =>
+                    `<span class="product-chip-client">
+                        <strong>${esc(it.productName || "Producto #" + it.productId)}</strong>
+                        × ${it.cantidad}
+                    </span>`).join("");
+
+                // Caja de monto único (solo si está pendiente de pago)
+                const uniqueBox = (status === "PENDING_PAYMENT" && order.uniqueAmount) ? `
+                    <div class="unique-amount-box">
+                        <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px">
+                            💳 Monto exacto a transferir
+                        </div>
+                        <div class="amount">${fmtCurrency(order.uniqueAmount)}</div>
+                        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:6px">
+                            Transfiere exactamente este valor para que podamos identificar tu pago.
+                            Los centavos son únicos para tu pedido.
+                        </div>
+                        <div style="margin-top:14px">
+                            <button class="btn-paid" data-order-id="${order.id}" type="button">
+                                ✅ Ya realicé la transferencia
+                            </button>
+                        </div>
+                    </div>` : "";
+
+                // Mensaje si está en revisión
+                const reviewMsg = status === "PENDING_APPROVAL" ? `
+                    <div style="margin-top:12px; padding:12px 16px; background:#e3f2fd; border-radius:10px; font-size:0.85rem; color:#1565c0">
+                        🔍 Tu pago está siendo verificado por el equipo. Te notificaremos pronto.
+                    </div>` : "";
+
+                // Mensaje si fue aprobado
+                const approvedMsg = status === "APPROVED" ? `
+                    <div style="margin-top:12px; padding:12px 16px; background:#e8f5e9; border-radius:10px; font-size:0.85rem; color:#1b5e20">
+                        ✅ ¡Pago confirmado! Tu pedido está en proceso.
+                    </div>` : "";
+
+                return `
+                    <div class="order-card-client">
+                        <div class="order-card-header">
+                            <div>
+                                <strong style="font-size:1rem">Pedido #${order.id}</strong>
+                                <span style="color:var(--text-muted); font-size:0.85rem; margin-left:10px">${date} · ${time}</span>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+                                <span class="pay-badge pay-${status}">${label}</span>
+                                <strong style="color:var(--brand-dark); font-size:1rem">${fmtCurrency(order.total)}</strong>
+                            </div>
+                        </div>
+
+                        <!-- Productos -->
+                        <div>
+                            <button class="products-toggle" data-target="prod-${order.id}" type="button">
+                                📦 Ver productos (${(order.items||[]).length}) ▾
+                            </button>
+                            <div class="products-list" id="prod-${order.id}">
+                                <div style="display:flex; flex-wrap:wrap; gap:4px; padding:4px 0">
+                                    ${chips || "<span style='color:var(--text-muted); font-size:0.85rem'>Sin productos</span>"}
+                                </div>
+                            </div>
+                        </div>
+
+                        ${uniqueBox}
+                        ${reviewMsg}
+                        ${approvedMsg}
+                    </div>`;
+            }).join("");
+
+            // Eventos expand productos
+            container.querySelectorAll(".products-toggle").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    const list = document.getElementById(btn.dataset.target);
+                    list.classList.toggle("open");
+                    btn.textContent = list.classList.contains("open")
+                        ? btn.textContent.replace("▾", "▴")
+                        : btn.textContent.replace("▴", "▾");
+                });
+            });
+
+            // Eventos "Ya pagué"
+            container.querySelectorAll(".btn-paid").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    btn.disabled = true;
+                    btn.textContent = "Enviando...";
+                    try {
+                        const r = await fetch(`${BASE}/orders/${btn.dataset.orderId}/pay`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" }
+                        });
+                        if (!r.ok) throw new Error(`Error ${r.status}`);
+                        toast("✅ Confirmación enviada. El equipo verificará tu pago.");
+                        loadClientOrders(); // recargar
+                    } catch (err) {
+                        toast("No se pudo confirmar el pago: " + err.message, "error");
+                        btn.disabled = false;
+                        btn.textContent = "✅ Ya realicé la transferencia";
+                    }
+                });
+            });
+
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>❌ ${esc(err.message)}</p>`;
+        }
+    }
+
+    // ── Inicialización ────────────────────────────────────────────
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // Guard: sin sesión → login
+        if (!window.PulpAuth?.isTokenValid()) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user       = window.PulpAuth.getSessionUser();
+        const storedUser = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+        const fullUser   = { ...user, ...storedUser };
+
+        // Banner
+        document.getElementById("clientWelcome").textContent =
+            `Hola, ${fullUser.name || fullUser.email || "Cliente"} 👋`;
+
+        // Perfil
+        document.getElementById("pName").textContent      = fullUser.name      || "—";
+        document.getElementById("pEmail").textContent     = fullUser.email     || "—";
+        document.getElementById("pCedula").textContent    = fullUser.cedula    || "—";
+        document.getElementById("pTelefono").textContent  = fullUser.telefono  || "—";
+        document.getElementById("pDireccion").textContent = fullUser.direccion || "—";
+
+        // Carrito navbar
+        try {
+            const cart = JSON.parse(localStorage.getItem("pulpapp_cart") || "[]");
+            const n = cart.reduce((s, i) => s + (i.cantidad || 0), 0);
+            document.getElementById("navCartCount").textContent = String(n);
+        } catch { /* silencioso */ }
+
+        // Logout
+        const logout = () => window.PulpAuth.logout();
+        document.getElementById("logoutBtn").addEventListener("click", logout);
+        document.getElementById("logoutBtnPerfil").addEventListener("click", logout);
+    });
+
+})();
+</script>
+</body>
+</html>
