@@ -80,15 +80,20 @@
         </div>
     </section>
 
-    <!-- TAB: Mis pedidos (SELLER) -->
+    <!-- TAB: Pedidos Clientes (SELLER) -->
     <section id="tab-pedidos" class="dash-panel glass-card hidden">
         <span class="eyebrow">Historial</span>
-        <h2>Mis pedidos</h2>
+        <h2>Pedidos Clientes</h2>
+        <p class="helper-text" style="margin-bottom:16px">
+            Vista rápida de tus pedidos. Para la vista completa con datos de clientes y productos,
+            <a href="seller-orders.html" style="color:var(--brand-dark); font-weight:600">ve a Pedidos Clientes →</a>
+        </p>
         <div id="ordersList"><p class="helper-text">Cargando...</p></div>
     </section>
 
-    <!-- TAB: Nueva compra -->
-    <section id="tab-comprar" class="dash-panel glass-card hidden">
+    <!-- TAB: Nueva compra — eliminado en Fase 1 (seller-orders.html reemplaza esta funcionalidad) -->
+    <!-- El acceso al catálogo sigue disponible desde el navbar -->
+    <section id="tab-comprar" class="dash-panel glass-card hidden" aria-hidden="true" style="display:none !important">
         <span class="eyebrow">Catálogo</span>
         <h2>Explorar productos</h2>
         <p class="helper-text">Agrega productos al carrito y finaliza tu compra.</p>
@@ -369,9 +374,9 @@
         const tabsNav = document.getElementById("dashTabs");
 
         const clientTabs = [
-            { id: "perfil",   label: "👤 Perfil",       first: true },
-            { id: "pedidos",  label: "📦 Mis pedidos" },
-            { id: "comprar",  label: "🛒 Nueva compra" }
+            { id: "perfil",   label: "👤 Perfil",              first: true },
+            { id: "pedidos",  label: "📦 Pedidos Clientes",
+              link: "seller-orders.html" }
         ];
 
         const adminTabs = [
@@ -386,7 +391,8 @@
 
         tabsNav.innerHTML = allTabs.map(t => `
             <button class="dash-tab${t.first ? " is-active" : ""}${t.admin ? " admin-tab" : ""}"
-                    data-tab="${t.id}">
+                    data-tab="${t.id}"
+                    ${t.link ? `data-link="${t.link}"` : ""}>
                 ${t.label}
             </button>
         `).join("");
@@ -395,6 +401,11 @@
 
         tabsNav.querySelectorAll(".dash-tab").forEach(btn => {
             btn.addEventListener("click", () => {
+                // Si el tab tiene un link externo, navegar a esa página
+                if (btn.dataset.link) {
+                    window.location.href = btn.dataset.link;
+                    return;
+                }
                 tabsNav.querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
                 btn.classList.add("is-active");
                 showPanel(btn.dataset.tab);

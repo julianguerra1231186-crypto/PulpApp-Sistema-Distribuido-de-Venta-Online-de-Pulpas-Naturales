@@ -71,6 +71,8 @@ public class SecurityConfig {
 
                 // ── Pedidos: el frontend los crea sin token ────────────────
                 .requestMatchers(HttpMethod.POST, "/orders").permitAll()
+                // Vista enriquecida para vendedor y admin (Fase 1 — seller orders)
+                .requestMatchers(HttpMethod.GET,  "/orders/seller").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
                 .requestMatchers(HttpMethod.GET,  "/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CLIENT")
                 .requestMatchers(HttpMethod.GET,  "/orders").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CLIENT")
 
