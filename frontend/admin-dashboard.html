@@ -237,6 +237,66 @@
             gap: 8px;
         }
 
+        /* Sección colapsable */
+        .rpt-section-collapsible .rpt-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 14px 18px;
+            background: var(--brand-soft, #f0faf5);
+            border: 1.5px solid rgba(13,122,77,0.15);
+            border-radius: 12px;
+            margin-bottom: 0;
+            transition: all 0.2s;
+        }
+
+        .rpt-section-collapsible .rpt-section-header:hover {
+            background: rgba(13,122,77,0.12);
+            border-color: rgba(13,122,77,0.25);
+        }
+
+        .rpt-section-collapsible .rpt-section-header h3 {
+            margin: 0;
+            font-family: var(--font-display);
+            font-size: 1.05rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rpt-section-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--brand-dark, #0d7a4d);
+            transition: transform 0.2s;
+        }
+
+        .rpt-section-toggle .arrow {
+            display: inline-block;
+            transition: transform 0.2s;
+            font-style: normal;
+        }
+
+        .rpt-section-collapsible.is-open .rpt-section-toggle .arrow {
+            transform: rotate(180deg);
+        }
+
+        .rpt-section-body {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease, margin 0.3s;
+        }
+
+        .rpt-section-collapsible.is-open .rpt-section-body {
+            max-height: 2000px;
+            margin-top: 16px;
+        }
+
         .rpt-table-wrap { overflow-x: auto; border-radius: 14px; }
 
         .rpt-table {
@@ -664,39 +724,53 @@
             </div>
 
             <!-- Ventas por día -->
-            <div class="rpt-section">
-                <h3 class="rpt-section-title">📅 Ventas por día</h3>
-                <div class="rpt-table-wrap">
-                    <table class="rpt-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th class="text-right">Pedidos</th>
-                                <th class="text-right">Ingresos</th>
-                                <th class="text-right">
-                                    Ticket promedio
-                                    <span class="kpi-tooltip" aria-label="¿Qué es el ticket promedio?">
-                                        ?
-                                        <span class="kpi-tooltip-text">
-                                            Ingresos del día ÷ pedidos del día.
-                                            Cuánto gastó en promedio cada cliente ese día.
+            <div class="rpt-section rpt-section-collapsible" id="sectionDaily">
+                <div class="rpt-section-header" onclick="toggleSection('sectionDaily')">
+                    <h3>📅 Ventas por día</h3>
+                    <span class="rpt-section-toggle">
+                        Ver <i class="arrow">▾</i>
+                    </span>
+                </div>
+                <div class="rpt-section-body">
+                    <div class="rpt-table-wrap">
+                        <table class="rpt-table">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th class="text-right">Pedidos</th>
+                                    <th class="text-right">Ingresos</th>
+                                    <th class="text-right">
+                                        Ticket promedio
+                                        <span class="kpi-tooltip" aria-label="¿Qué es el ticket promedio?">
+                                            ?
+                                            <span class="kpi-tooltip-text">
+                                                Ingresos del día ÷ pedidos del día.
+                                                Cuánto gastó en promedio cada cliente ese día.
+                                            </span>
                                         </span>
-                                    </span>
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="rptDailyBody">
-                            <tr><td colspan="4" class="rpt-empty">Cargando...</td></tr>
-                        </tbody>
-                    </table>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="rptDailyBody">
+                                <tr><td colspan="4" class="rpt-empty">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
             <!-- Pedidos por hora -->
-            <div class="rpt-section">
-                <h3 class="rpt-section-title">🕐 Pedidos por hora del día</h3>
-                <div id="rptHourlyChart" class="rpt-bar-chart" aria-label="Distribución por hora">
-                    <p class="rpt-empty">Cargando...</p>
+            <div class="rpt-section rpt-section-collapsible" id="sectionHourly">
+                <div class="rpt-section-header" onclick="toggleSection('sectionHourly')">
+                    <h3>🕐 Pedidos por hora del día</h3>
+                    <span class="rpt-section-toggle">
+                        Ver <i class="arrow">▾</i>
+                    </span>
+                </div>
+                <div class="rpt-section-body">
+                    <div id="rptHourlyChart" class="rpt-bar-chart" aria-label="Distribución por hora">
+                        <p class="rpt-empty">Cargando...</p>
+                    </div>
                 </div>
             </div>
 
@@ -1408,6 +1482,19 @@
             container.innerHTML = `<p class="rpt-empty" style="color:var(--danger)">❌ ${esc(err.message)}</p>`;
         }
     }
+
+    /** Expande o colapsa una sección colapsable por su ID */
+    window.toggleSection = function(id) {
+        const section = document.getElementById(id);
+        if (!section) return;
+        section.classList.toggle("is-open");
+        const toggle = section.querySelector(".rpt-section-toggle");
+        if (toggle) {
+            toggle.innerHTML = section.classList.contains("is-open")
+                ? 'Ocultar <i class="arrow" style="transform:rotate(180deg)">▾</i>'
+                : 'Ver <i class="arrow">▾</i>';
+        }
+    };
 
     // ─────────────────────────────────────────────────────────────
     // INICIALIZACIÓN
