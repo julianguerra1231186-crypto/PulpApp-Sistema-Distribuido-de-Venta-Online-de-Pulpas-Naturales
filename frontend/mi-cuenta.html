@@ -117,7 +117,15 @@ var chips="";
 var extra="";
 if(st==="PENDING_PAYMENT")extra="<div style='margin-top:12px'><a href='pedido-confirmado.html?id="+o.id+"' class='btn btn-primary' style='text-decoration:none;min-height:40px'>Elegir metodo de pago</a></div>";
 else if(st==="PENDING_APPROVAL")extra="<div style='margin-top:10px;padding:10px 14px;background:#e3f2fd;border-radius:10px;font-size:.85rem;color:#1565c0'>Tu pago esta siendo verificado.</div>";
-else if(st==="APPROVED")extra="<div style='margin-top:10px;padding:10px 14px;background:#e8f5e9;border-radius:10px;font-size:.85rem;color:#1b5e20'>Pago confirmado. Tu pedido esta en camino.</div>";
+else if(st==="APPROVED"){
+    var approvedBy = o.approvedBy ? " por " + o.approvedBy : "";
+    var approvedAt = o.approvedAt ? new Date(o.approvedAt).toLocaleString("es-CO",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}) : "";
+    var uniqueInfo = o.uniqueAmount ? " · Monto verificado: " + fmt(o.uniqueAmount) : "";
+    extra="<div style='margin-top:10px;padding:14px 16px;background:#e8f5e9;border:1.5px solid rgba(27,94,32,0.2);border-radius:10px;font-size:.85rem;color:#1b5e20'>" +
+        "<div style='font-weight:700;margin-bottom:6px'>✅ Pago verificado y aprobado</div>" +
+        "<div style='color:#2e7d32'>Aprobado" + approvedBy + (approvedAt ? " el " + approvedAt : "") + uniqueInfo + "</div>" +
+        "</div>";
+}
 return"<div class='order-card-client'><div class='order-card-header'><div><strong>Pedido #"+o.id+"</strong><span style='color:var(--text-muted);font-size:.85rem;margin-left:8px'>"+dt+"</span></div><div style='display:flex;align-items:center;gap:8px;flex-wrap:wrap'><span class='pay-badge pay-"+st+"'>"+(PAY[st]||st)+"</span><strong style='color:var(--brand-dark)'>"+fmt(o.total)+"</strong></div></div><div style='display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px'>"+(chips||"<span style='color:var(--text-muted)'>Sin productos</span>")+"</div>"+extra+"</div>";
 }
 function loadLatest(){
@@ -162,4 +170,5 @@ if (tabParam) {
 </script>
 </body>
 </html>
+
 

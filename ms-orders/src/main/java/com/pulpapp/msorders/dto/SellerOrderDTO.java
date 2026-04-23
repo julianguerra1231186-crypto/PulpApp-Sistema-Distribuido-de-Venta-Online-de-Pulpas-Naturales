@@ -51,6 +51,12 @@ public class SellerOrderDTO {
     /** Monto único con centavos para identificar la transferencia. */
     private Double uniqueAmount;
 
+    /** Email del admin que aprobó o rechazó el pago (auditoría). */
+    private String approvedBy;
+
+    /** Timestamp cuando el admin aprobó o rechazó. */
+    private LocalDateTime approvedAt;
+
     // ── Temporalidad ───────────────────────────────────────────────────────
 
     /**
