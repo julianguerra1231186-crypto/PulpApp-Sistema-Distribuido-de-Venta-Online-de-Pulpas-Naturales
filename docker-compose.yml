@@ -99,6 +99,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: 1234
       SERVER_PORT: 8083
       MS_PRODUCTS_BASE_URL: http://ms-products:8082
+      MS_USERS_BASE_URL: http://ms-users:8081
     networks:
       - pulpapp-network
 
