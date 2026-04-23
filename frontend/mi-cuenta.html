@@ -149,8 +149,17 @@ function logout(){window.PulpAuth.logout();}
 document.getElementById("logoutBtn").addEventListener("click",logout);
 document.getElementById("logoutBtnPerfil").addEventListener("click",logout);
 loadLatest();
+// Leer parametro tab de la URL para abrir el tab correcto automaticamente
+// Ejemplo: mi-cuenta.html?tab=pedido-actual (viene de cart.html al finalizar compra)
+var urlParams = new URLSearchParams(window.location.search);
+var tabParam = urlParams.get("tab");
+if (tabParam) {
+    var targetBtn = document.querySelector('[data-tab="' + tabParam + '"]');
+    if (targetBtn) { targetBtn.click(); }
+}
 });
 })();
 </script>
 </body>
 </html>
+
