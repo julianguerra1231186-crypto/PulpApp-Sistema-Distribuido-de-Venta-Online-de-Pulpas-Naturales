@@ -67,6 +67,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,  "/users/cedula/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/users/validar/**").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/users/email").permitAll()
+                // Consulta por ID: usada internamente por ms-orders para resolver nombre/email del cliente
+                .requestMatchers(HttpMethod.GET,  "/users/{id}").permitAll()
 
                 // Listar todos los usuarios y eliminar: solo ADMIN
                 .requestMatchers(HttpMethod.GET,    "/users").hasAuthority("ROLE_ADMIN")
