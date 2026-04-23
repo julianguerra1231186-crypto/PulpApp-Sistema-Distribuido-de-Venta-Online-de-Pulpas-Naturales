@@ -101,7 +101,7 @@
 
     document.getElementById("loginBtn").addEventListener("click", async () => {
         const btn      = document.getElementById("loginBtn");
-        const email    = document.getElementById("loginEmail").value.trim();
+        const email    = document.getElementById("loginEmail").value.trim().toLowerCase();
         const password = document.getElementById("loginPassword").value.trim();
 
         if (!email || !password) {

@@ -1,0 +1,71 @@
+Asignarle al perfil vendedor la posibilidad de que pueda visualizar el tema que clientes están comprando y que hora, fecha realizaron la compra . 
+
+se cambie el botón de mis pedidos y que se llame , pedidos clientes , también que generar otro botón una pagina . HTML que cre los reportes de ventas de cuantos clientes están realizan pedidos por pedidos que solo ese perfil pueda ver eso también se quite el botón de nueva compra y que permita descargar el reprote en un pdf orgnaizado con el logo que se establezca 
+
+
+el rol administrador pueda modificar la interfaz principal pueda editarla cambiar imágenes del menú dinamico que publicar notificaciones y desactivar la parte de reclutadores a voluntad .
+
+en el rol administrador que les permita cambiar el  numero de whatsapp de la esfera flotante de la web 
+establecer un reporte en el rol de administrador de clientes frecuentes. llevar las cuentas de cada compra que realicen y si es por trasnferencia validar el pago por medio de un tercero o un externo que verifique el pago y proceda la compra whatsapp para verificarlo ect 
+añadir que cuando el cliente realice la compra le envie automáticamente la factura al correo del cliente , para manjear la facutracion electrnonica pero al finalizar la compra un mensaje que pregunte si el cliente desea facutrazion electrónica 
+
+adjuntar una pasarela de pagos que permita el pago por medio de cualquier trasnferencia :
+
+Verificación Manual Post-Registro. Aquí te explico cómo estructurarlo para que sea lo menos tedioso posible:
+
+
+Historia de Usuario: Gestión Organizada de Pagos por Transferencia (Validación Manual)
+Como: Administrador / Recepcionista de Pedidos.
+Quiero: Un tablero centralizado que me muestre los pedidos pendientes de pago y sus montos exactos con centavos.
+Para: Validar manualmente en mi app bancaria y aprobar el pedido en el sistema con un solo clic.
+
+1. El Flujo de Trabajo (Sin automatización de notificaciones)
+El Cliente: Realiza el pedido. El sistema le asigna un valor con centavos (ej: $25.012) y le muestra las instrucciones de pago. El cliente presiona "Ya pagué".
+
+El Sistema: Coloca el pedido en una lista de "Pendientes de Verificación" en el Dashboard del Administrador.
+
+El Administrador: * Tiene el celular de Nequi/Daviplata en la mano.
+
+Mira la pantalla del software y ve: "Pedido #105 - Juan Pérez - $25.012".
+
+Busca en los movimientos de su Nequi el ingreso de $25.012.
+
+Al encontrarlo, presiona el botón [APROBAR] en el software.
+
+2. Especificaciones para Kiro AI
+Generador de Centavos: Lógica para que cada pedido nuevo sume un valor aleatorio entre $0.01 y $0.99 (asegurando que no se repita en pedidos activos).
+
+Dashboard Administrativo:
+
+Vista de tabla con filtros por "Estado" (Pendiente, Pagado, Cancelado).
+
+Ordenamiento por hora de llegada.
+
+Botón de acción rápida para cambiar estado a PAGADO.
+
+WebSockets (Opcional pero recomendado): Para que cuando el cliente dé clic en "Ya pagué", el pedido aparezca en la pantalla del administrador instantáneamente sin refrescar.
+
+3. Criterios de Aceptación
+Claridad Visual: El monto con centavos debe resaltar (ej. en negrita o color diferente) para que el administrador no cometa errores al leer.
+
+Control de Estados: Una vez aprobado, el sistema debe disparar automáticamente la siguiente fase (ej. enviar el pedido a cocina o generar la orden de despacho).
+
+Registro de Auditoría: El sistema debe guardar quién aprobó el pago y a qué hora.
+
+¿Por qué este modelo es bueno para empezar?
+Costo de Desarrollo $0: No necesitas pagar servidores adicionales ni configurar apps de reenvío de SMS.
+
+Seguridad Total: No hay riesgo de que un "hacker" envíe notificaciones falsas al endpoint, porque el endpoint no existe. La única forma de aprobar es que una persona física vea la plata.
+
+Menos Complejidad: Te ahorras el parser de texto (Regex) y las configuraciones de seguridad del Webhook.
+
+Mi consejo como "ayudante ingeniero":
+Inicia así. Si en un mes ves que la persona encargada se la pasa "colgada" porque entran demasiados pedidos, ahí sí le pides a Kiro AI que te agregue el endpoint para automatizar la lectura de los SMS.
+
+¿Quieres que te pase el prompt final para que Kiro te cree esta estructura de Dashboard y la lógica de los centavos?
+
+analizar también te tema de los domicilios en el contexto de las trasnferencias si cobrar de un solo transferencia o que el cliente le pague directamente al domiciliario .
+
+
+
+

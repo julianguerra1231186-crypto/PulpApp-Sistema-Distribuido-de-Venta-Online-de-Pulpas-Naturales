@@ -44,6 +44,17 @@ public class SecurityConfig {
                 // ── Autenticación JWT ──────────────────────────────────────
                 .requestMatchers("/auth/**").permitAll()
 
+                // ── Configuración dinámica del sistema (Fase 2) ───────────
+                .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")
+
+                // ── Notificaciones (Fase 2) ────────────────────────────────
+                // Público: solo activas para el frontend
+                .requestMatchers(HttpMethod.GET, "/notifications").permitAll()
+                // Admin: crear, ver todas, desactivar
+                .requestMatchers("/admin/notifications").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin/notifications/**").hasAuthority("ROLE_ADMIN")
+
                 // ── Postulaciones laborales ────────────────────────────────
                 .requestMatchers(HttpMethod.POST, "/job-applications").permitAll()
                 .requestMatchers(HttpMethod.GET,  "/job-applications").hasAuthority("ROLE_ADMIN")
@@ -73,6 +84,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/orders").permitAll()
                 // Vista enriquecida para vendedor y admin (Fase 1 — seller orders)
                 .requestMatchers(HttpMethod.GET,  "/orders/seller").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                // Clientes frecuentes: solo ADMIN (Fase 2)
+                .requestMatchers(HttpMethod.GET,  "/orders/admin/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.GET,  "/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CLIENT")
                 .requestMatchers(HttpMethod.GET,  "/orders").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER", "ROLE_CLIENT")
 

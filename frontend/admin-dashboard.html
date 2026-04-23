@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PulpApp | Panel Administrativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        /* ── Estilos específicos del panel admin ── */
+
+        .admin-section { margin-bottom: 32px; }
+
+        .admin-section h2 {
+            font-family: var(--font-display);
+            font-size: clamp(1.2rem, 2vw, 1.6rem);
+            margin: 0 0 16px;
+        }
+
+        /* Formularios */
+        .admin-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .admin-form.single-col {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .admin-form input,
+        .admin-form textarea {
+            padding: 10px 14px;
+            border: 1.5px solid var(--line-strong, rgba(0,0,0,0.15));
+            border-radius: var(--radius-md, 10px);
+            font-size: 0.92rem;
+            font-family: inherit;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+
+        .admin-form input:focus,
+        .admin-form textarea:focus {
+            outline: none;
+            border-color: var(--brand-mid, #1a7a4a);
+        }
+
+        .admin-form textarea { resize: vertical; min-height: 80px; }
+
+        /* Tablas */
+        .admin-table-wrap { overflow-x: auto; }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 12px;
+        }
+
+        .admin-table thead {
+            background: linear-gradient(135deg, var(--brand-mid, #1a7a4a), var(--brand-dark, #0d7a4d));
+            color: #fff;
+        }
+
+        .admin-table th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .admin-table tbody tr {
+            border-bottom: 1px solid var(--line, rgba(0,0,0,0.07));
+            transition: background 0.15s;
+        }
+
+        .admin-table tbody tr:hover { background: var(--brand-soft, #f0faf5); }
+
+        .admin-table td {
+            padding: 12px 14px;
+            vertical-align: middle;
+        }
+
+        /* Badges */
+        .badge-active {
+            background: rgba(13,122,77,0.12);
+            color: var(--brand-dark, #0d7a4d);
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-inactive {
+            background: rgba(184,50,40,0.1);
+            color: var(--danger, #c0392b);
+            border-radius: 999px;
+            padding: 3px 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Config list */
+        .config-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .config-card {
+            background: var(--surface-2, #f8fffe);
+            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
+            border-radius: var(--radius-md, 10px);
+            padding: 14px 16px;
+        }
+
+        .config-card .config-key {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .config-card .config-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text, #1a1a1a);
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        /* WhatsApp preview */
+        .whatsapp-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            padding: 10px 14px;
+            background: #e8f5e9;
+            border-radius: var(--radius-md, 10px);
+            font-size: 0.88rem;
+        }
+
+        .whatsapp-preview a {
+            color: #1b5e20;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* Frequent clients */
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--brand-soft, #e8f5e9);
+            color: var(--brand-dark, #0d7a4d);
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .rank-badge.top-1 { background: #fff8e1; color: #f57f17; }
+        .rank-badge.top-2 { background: #f5f5f5; color: #616161; }
+        .rank-badge.top-3 { background: #fbe9e7; color: #bf360c; }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .admin-form { grid-template-columns: 1fr; }
+            .admin-table .col-hide { display: none; }
+        }
+    </style>
+</head>
+<body data-page="admin-dashboard">
+
+<!-- ═══════════════════════════════════════════════════════════ NAVBAR -->
+<header class="site-header">
+    <div class="header-inner">
+        <div class="brand-block">
+            <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
+            <div><span class="brand-kicker">PulpApp</span></div>
+        </div>
+        <nav class="site-nav" aria-label="Principal">
+            <a href="index.html">Inicio</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="seller-orders.html">Pedidos</a>
+            <a href="admin-dashboard.html" class="is-active">Panel Admin</a>
+        </nav>
+        <a href="cart.html" class="cart-chip">
+            <span>Carrito</span>
+            <strong id="navCartCount">0</strong>
+        </a>
+    </div>
+</header>
+
+<main class="page-content">
+
+    <!-- ── Banner ── -->
+    <section class="page-banner glass-card dashboard-banner">
+        <div>
+            <span class="eyebrow">⚙️ Administrador</span>
+            <h1>Panel Administrativo</h1>
+            <p style="color:var(--text-muted); margin:0">
+                Configuración del sistema, notificaciones y análisis de clientes.
+            </p>
+        </div>
+        <button id="logoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
+    </section>
+
+    <!-- ── Tabs ── -->
+    <nav class="dash-tabs" id="adminTabs" aria-label="Módulos admin">
+        <button class="dash-tab is-active" data-tab="config">⚙️ Configuración</button>
+        <button class="dash-tab" data-tab="notifications">🔔 Notificaciones</button>
+        <button class="dash-tab" data-tab="frequent">👥 Clientes frecuentes</button>
+    </nav>
+
+    <!-- ══════════════════════════════════ PANEL: CONFIGURACIÓN -->
+    <section id="tab-config" class="dash-panel glass-card">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <div class="admin-section">
+            <h2>Configuración del sistema</h2>
+
+            <!-- Formulario UPSERT -->
+            <div class="admin-form" id="configForm">
+                <label>
+                    Clave
+                    <input type="text" id="cfgKey" placeholder="ej: whatsapp_number">
+                </label>
+                <label>
+                    Valor
+                    <input type="text" id="cfgValue" placeholder="ej: 573124763922">
+                </label>
+                <button class="btn btn-primary" id="cfgSaveBtn" type="button"
+                        style="min-height:44px; align-self:end">
+                    Guardar
+                </button>
+            </div>
+
+            <!-- Atajos rápidos -->
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px">
+                <button class="btn btn-secondary" type="button"
+                        onclick="quickConfig('whatsapp_number')"
+                        style="font-size:0.82rem; min-height:36px; padding:0 14px">
+                    📱 WhatsApp
+                </button>
+                <button class="btn btn-secondary" type="button"
+                        onclick="quickConfig('recruitment_enabled')"
+                        style="font-size:0.82rem; min-height:36px; padding:0 14px">
+                    💼 Reclutamiento
+                </button>
+                <button class="btn btn-secondary" type="button"
+                        onclick="quickConfig('delivery_mode')"
+                        style="font-size:0.82rem; min-height:36px; padding:0 14px">
+                    🚚 Modo domicilio
+                </button>
+            </div>
+
+            <p id="cfgMsg" class="helper-text" style="margin-top:10px"></p>
+        </div>
+
+        <!-- Lista de configuraciones actuales -->
+        <div class="admin-section">
+            <h2>Configuración actual</h2>
+            <div id="configList"><p class="helper-text">Cargando...</p></div>
+        </div>
+
+        <!-- Preview WhatsApp -->
+        <div class="admin-section" id="whatsappPreviewBlock" style="display:none">
+            <h2>Vista previa — Botón WhatsApp</h2>
+            <div class="whatsapp-preview">
+                <span>🔗 Enlace generado:</span>
+                <a id="whatsappPreviewLink" href="#" target="_blank" rel="noopener">—</a>
+            </div>
+            <p class="helper-text" style="margin-top:8px">
+                El botón flotante del sitio usará este número automáticamente tras recargar la página.
+            </p>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════ PANEL: NOTIFICACIONES -->
+    <section id="tab-notifications" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <div class="admin-section">
+            <h2>Crear notificación</h2>
+            <div class="admin-form single-col">
+                <label>
+                    Título
+                    <input type="text" id="notifTitle" placeholder="ej: ¡Nuevos productos disponibles!">
+                </label>
+                <label>
+                    Mensaje
+                    <textarea id="notifMessage" placeholder="Escribe el mensaje para los usuarios..."></textarea>
+                </label>
+                <button class="btn btn-primary" id="notifSaveBtn" type="button">
+                    Publicar notificación
+                </button>
+            </div>
+            <p id="notifMsg" class="helper-text" style="margin-top:10px"></p>
+        </div>
+
+        <!-- Lista de notificaciones -->
+        <div class="admin-section">
+            <h2>Notificaciones publicadas</h2>
+            <div id="notifList"><p class="helper-text">Cargando...</p></div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════ PANEL: CLIENTES FRECUENTES -->
+    <section id="tab-frequent" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+        <div class="admin-section">
+            <h2>Clientes frecuentes</h2>
+            <p class="helper-text" style="margin-bottom:16px">
+                Clientes ordenados por número de pedidos realizados.
+            </p>
+            <div id="frequentList"><p class="helper-text">Cargando...</p></div>
+        </div>
+    </section>
+
+</main>
+
+<!-- Toast -->
+<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="auth.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    const BASE = "http://localhost:8090";
+
+    // ─────────────────────────────────────────────────────────────
+    // Utilidades
+    // ─────────────────────────────────────────────────────────────
+
+    function toast(msg, type) {
+        const el = document.getElementById("appToast");
+        if (!el) return;
+        el.textContent = msg;
+        el.className = "toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => { el.className = "toast"; }, 3200);
+    }
+
+    function authHeaders() {
+        return {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${window.PulpAuth?.getToken() || ""}`
+        };
+    }
+
+    function formatCurrency(v) {
+        return "$ " + new Intl.NumberFormat("es-CO").format(Number(v || 0));
+    }
+
+    function formatDate(iso) {
+        if (!iso) return "—";
+        return new Date(iso).toLocaleDateString("es-CO", {
+            day: "2-digit", month: "2-digit", year: "numeric",
+            hour: "2-digit", minute: "2-digit"
+        });
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement("div");
+        d.appendChild(document.createTextNode(String(str || "")));
+        return d.innerHTML;
+    }
+
+    async function apiFetch(path, options = {}) {
+        const res = await fetch(BASE + path, { headers: authHeaders(), ...options });
+        if (res.status === 401 || res.status === 403) {
+            toast("Sin permisos o sesión expirada.", "error");
+            setTimeout(() => { window.location.href = "login.html"; }, 1800);
+            throw new Error("Unauthorized");
+        }
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || `Error ${res.status}`);
+        }
+        const text = await res.text();
+        return text ? JSON.parse(text) : null;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // Sistema de tabs
+    // ─────────────────────────────────────────────────────────────
+
+    const TAB_LOADERS = {
+        config:        loadConfig,
+        notifications: loadNotifications,
+        frequent:      loadFrequentClients
+    };
+
+    document.getElementById("adminTabs").querySelectorAll(".dash-tab").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
+            btn.classList.add("is-active");
+            document.querySelectorAll(".dash-panel").forEach(p => p.classList.add("hidden"));
+            const panel = document.getElementById("tab-" + btn.dataset.tab);
+            if (panel) panel.classList.remove("hidden");
+            TAB_LOADERS[btn.dataset.tab]?.();
+        });
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: CONFIGURACIÓN
+    // ─────────────────────────────────────────────────────────────
+
+    /** Rellena el campo clave con un atajo rápido. */
+    window.quickConfig = function(key) {
+        document.getElementById("cfgKey").value = key;
+        document.getElementById("cfgValue").focus();
+    };
+
+    async function loadConfig() {
+        const container = document.getElementById("configList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            const configs = await apiFetch("/admin/config");
+            renderConfigList(configs);
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>
+                ❌ ${escapeHtml(err.message)}</p>`;
+        }
+    }
+
+    function renderConfigList(configs) {
+        const container = document.getElementById("configList");
+        const waBlock   = document.getElementById("whatsappPreviewBlock");
+        const waLink    = document.getElementById("whatsappPreviewLink");
+
+        if (!configs.length) {
+            container.innerHTML = "<p class='helper-text'>No hay configuraciones guardadas aún.</p>";
+            waBlock.style.display = "none";
+            return;
+        }
+
+        container.innerHTML = `<div class="config-list">
+            ${configs.map(c => `
+                <div class="config-card">
+                    <div class="config-key">${escapeHtml(c.configKey)}</div>
+                    <div class="config-value">${escapeHtml(c.configValue || "—")}</div>
+                </div>
+            `).join("")}
+        </div>`;
+
+        // Preview WhatsApp si existe el número
+        const waConfig = configs.find(c => c.configKey === "whatsapp_number");
+        if (waConfig?.configValue) {
+            const num = waConfig.configValue.replace(/\D/g, "");
+            const url = `https://wa.me/${num}?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20PulpApp`;
+            waLink.href = url;
+            waLink.textContent = url;
+            waBlock.style.display = "block";
+        } else {
+            waBlock.style.display = "none";
+        }
+    }
+
+    document.getElementById("cfgSaveBtn").addEventListener("click", async () => {
+        const btn   = document.getElementById("cfgSaveBtn");
+        const msg   = document.getElementById("cfgMsg");
+        const key   = document.getElementById("cfgKey").value.trim();
+        const value = document.getElementById("cfgValue").value.trim();
+
+        if (!key) { msg.textContent = "La clave es obligatoria."; msg.style.color = "var(--danger)"; return; }
+
+        btn.disabled = true;
+        btn.textContent = "Guardando...";
+        msg.textContent = "";
+
+        try {
+            await apiFetch("/admin/config", {
+                method: "PUT",
+                body: JSON.stringify({ configKey: key, configValue: value })
+            });
+            msg.textContent = "✅ Configuración guardada.";
+            msg.style.color = "var(--brand-dark)";
+            document.getElementById("cfgKey").value   = "";
+            document.getElementById("cfgValue").value = "";
+            loadConfig();
+            toast("Configuración actualizada");
+        } catch (err) {
+            msg.textContent = "❌ " + err.message;
+            msg.style.color = "var(--danger)";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Guardar";
+        }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: NOTIFICACIONES
+    // ─────────────────────────────────────────────────────────────
+
+    async function loadNotifications() {
+        const container = document.getElementById("notifList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            const notifs = await apiFetch("/admin/notifications");
+            renderNotifications(notifs, container);
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>
+                ❌ ${escapeHtml(err.message)}</p>`;
+        }
+    }
+
+    function renderNotifications(notifs, container) {
+        if (!notifs.length) {
+            container.innerHTML = "<p class='helper-text'>No hay notificaciones publicadas.</p>";
+            return;
+        }
+        container.innerHTML = `
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Título</th>
+                            <th class="col-hide">Mensaje</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${notifs.map(n => `
+                            <tr>
+                                <td>${n.id}</td>
+                                <td><strong>${escapeHtml(n.title)}</strong></td>
+                                <td class="col-hide" style="color:var(--text-muted); font-size:0.85rem; max-width:260px">
+                                    ${escapeHtml(n.message)}
+                                </td>
+                                <td>
+                                    <span class="${n.active ? 'badge-active' : 'badge-inactive'}">
+                                        ${n.active ? "✅ Activa" : "❌ Inactiva"}
+                                    </span>
+                                </td>
+                                <td style="white-space:nowrap; font-size:0.85rem">
+                                    ${formatDate(n.createdAt)}
+                                </td>
+                                <td>
+                                    ${n.active
+                                        ? `<button class="btn-table-edit btn-deactivate-notif"
+                                                   data-id="${n.id}"
+                                                   style="font-size:0.82rem">
+                                               Desactivar
+                                           </button>`
+                                        : `<span style="color:var(--text-muted); font-size:0.82rem">—</span>`
+                                    }
+                                </td>
+                            </tr>
+                        `).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        // Eventos desactivar
+        container.querySelectorAll(".btn-deactivate-notif").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                try {
+                    await apiFetch(`/admin/notifications/${btn.dataset.id}`, { method: "DELETE" });
+                    toast("Notificación desactivada");
+                    loadNotifications();
+                } catch (err) {
+                    toast(err.message, "error");
+                }
+            });
+        });
+    }
+
+    document.getElementById("notifSaveBtn").addEventListener("click", async () => {
+        const btn     = document.getElementById("notifSaveBtn");
+        const msg     = document.getElementById("notifMsg");
+        const title   = document.getElementById("notifTitle").value.trim();
+        const message = document.getElementById("notifMessage").value.trim();
+
+        if (!title)   { msg.textContent = "El título es obligatorio.";   msg.style.color = "var(--danger)"; return; }
+        if (!message) { msg.textContent = "El mensaje es obligatorio.";  msg.style.color = "var(--danger)"; return; }
+
+        btn.disabled = true;
+        btn.textContent = "Publicando...";
+        msg.textContent = "";
+
+        try {
+            await apiFetch("/admin/notifications", {
+                method: "POST",
+                body: JSON.stringify({ title, message })
+            });
+            msg.textContent = "✅ Notificación publicada.";
+            msg.style.color = "var(--brand-dark)";
+            document.getElementById("notifTitle").value   = "";
+            document.getElementById("notifMessage").value = "";
+            loadNotifications();
+            toast("Notificación publicada");
+        } catch (err) {
+            msg.textContent = "❌ " + err.message;
+            msg.style.color = "var(--danger)";
+        } finally {
+            btn.disabled = false;
+            btn.textContent = "Publicar notificación";
+        }
+    });
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: CLIENTES FRECUENTES
+    // ─────────────────────────────────────────────────────────────
+
+    async function loadFrequentClients() {
+        const container = document.getElementById("frequentList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+        try {
+            const clients = await apiFetch("/orders/admin/frequent-clients");
+            renderFrequentClients(clients, container);
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>
+                ❌ ${escapeHtml(err.message)}</p>`;
+        }
+    }
+
+    function renderFrequentClients(clients, container) {
+        if (!clients.length) {
+            container.innerHTML = "<p class='helper-text'>No hay pedidos registrados aún.</p>";
+            return;
+        }
+        container.innerHTML = `
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Cliente</th>
+                            <th class="col-hide">Email</th>
+                            <th>Pedidos</th>
+                            <th>Total gastado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${clients.map((c, i) => {
+                            const rankClass = i === 0 ? "top-1" : i === 1 ? "top-2" : i === 2 ? "top-3" : "";
+                            return `
+                                <tr>
+                                    <td>
+                                        <span class="rank-badge ${rankClass}">${i + 1}</span>
+                                    </td>
+                                    <td><strong>${escapeHtml(c.clientName || "—")}</strong></td>
+                                    <td class="col-hide" style="color:var(--text-muted); font-size:0.87rem">
+                                        ${escapeHtml(c.clientEmail || "—")}
+                                    </td>
+                                    <td>
+                                        <strong style="color:var(--brand-dark)">${c.orderCount}</strong>
+                                        pedido${c.orderCount !== 1 ? "s" : ""}
+                                    </td>
+                                    <td style="font-weight:700; color:var(--brand-dark)">
+                                        ${formatCurrency(c.totalSpent)}
+                                    </td>
+                                </tr>
+                            `;
+                        }).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // INICIALIZACIÓN
+    // ─────────────────────────────────────────────────────────────
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        // Guard: sin sesión válida → login
+        if (!window.PulpAuth?.isTokenValid()) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user = window.PulpAuth.getSessionUser();
+
+        // Guard: solo ADMIN puede acceder
+        if (user?.role !== "ROLE_ADMIN") {
+            toast("Acceso restringido a administradores.", "error");
+            setTimeout(() => { window.location.href = "dashboard.html"; }, 1800);
+            return;
+        }
+
+        // Contador carrito en navbar
+        try {
+            const cart = JSON.parse(localStorage.getItem("pulpapp_cart") || "[]");
+            const total = cart.reduce((s, i) => s + (i.cantidad || 0), 0);
+            const navCount = document.getElementById("navCartCount");
+            if (navCount) navCount.textContent = String(total);
+        } catch { /* silencioso */ }
+
+        // Logout
+        document.getElementById("logoutBtn")?.addEventListener("click", () => {
+            window.PulpAuth.logout();
+        });
+
+        // Cargar módulo inicial
+        loadConfig();
+    });
+
+})();
+</script>
+</body>
+</html>
