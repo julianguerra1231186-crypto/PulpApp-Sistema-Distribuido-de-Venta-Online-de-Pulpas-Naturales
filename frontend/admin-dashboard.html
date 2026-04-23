@@ -185,6 +185,234 @@
             .admin-form { grid-template-columns: 1fr; }
             .admin-table .col-hide { display: none; }
         }
+
+        /* ══════════════════════════════════════════════════════
+           PANEL REPORTES ADMIN
+        ══════════════════════════════════════════════════════ */
+
+        .rpt-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+
+        .rpt-kpi-card {
+            background: #fff;
+            border: 1.5px solid rgba(13,122,77,0.12);
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .rpt-kpi-icon  { font-size: 1.4rem; line-height: 1; }
+        .rpt-kpi-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+        .rpt-kpi-value { font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.7rem); font-weight: 700; color: var(--brand-dark); line-height: 1.1; }
+        .rpt-kpi-sub   { font-size: 0.76rem; color: var(--text-muted); }
+
+        .skeleton-kpi {
+            height: 90px;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.4s infinite;
+            border-radius: 14px;
+        }
+
+        @keyframes shimmer {
+            0%   { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .rpt-section { margin-bottom: 32px; }
+
+        .rpt-section-title {
+            font-family: var(--font-display);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0 0 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rpt-table-wrap { overflow-x: auto; border-radius: 14px; }
+
+        .rpt-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .rpt-table thead {
+            background: linear-gradient(135deg, var(--brand-mid), var(--brand-dark));
+            color: #fff;
+        }
+
+        .rpt-table th {
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .rpt-table th.text-right,
+        .rpt-table td.text-right { text-align: right; }
+
+        .rpt-table tbody tr {
+            border-bottom: 1px solid var(--line, rgba(0,0,0,0.07));
+            transition: background 0.15s;
+        }
+
+        .rpt-table tbody tr:hover { background: var(--brand-soft, #f0faf5); }
+
+        .rpt-table td { padding: 11px 14px; vertical-align: top; }
+
+        .rpt-table .total-row td {
+            font-weight: 700;
+            background: var(--brand-soft);
+            color: var(--brand-dark);
+        }
+
+        /* Barras por hora */
+        .rpt-bar-chart { display: flex; flex-direction: column; gap: 5px; }
+
+        .rpt-bar-row {
+            display: grid;
+            grid-template-columns: 44px 1fr 52px;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rpt-bar-label { font-size: 0.76rem; font-weight: 600; color: var(--text-muted); text-align: right; }
+
+        .rpt-bar-track {
+            background: rgba(13,122,77,0.08);
+            border-radius: 999px;
+            height: 20px;
+            overflow: hidden;
+        }
+
+        .rpt-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-mid), var(--brand-dark));
+            border-radius: 999px;
+            transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+            min-width: 2px;
+        }
+
+        .rpt-bar-count { font-size: 0.78rem; font-weight: 700; color: var(--brand-dark); text-align: right; }
+
+        /* Historial — botón expandir productos */
+        .btn-rpt-expand {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            background: var(--brand-soft);
+            color: var(--brand-dark);
+            border: 1.5px solid rgba(13,122,77,0.2);
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.18s;
+            white-space: nowrap;
+        }
+
+        .btn-rpt-expand:hover { background: var(--brand-mid); color: #fff; border-color: transparent; }
+        .btn-rpt-expand.is-open { background: var(--brand-dark); color: #fff; border-color: transparent; }
+
+        .rpt-expand-row { background: var(--brand-soft); }
+        .rpt-expand-row td { padding: 0 !important; }
+
+        .rpt-expand-content {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease, padding 0.2s;
+        }
+
+        .rpt-expand-content.is-open { max-height: 300px; padding: 12px 18px 14px; }
+
+        .rpt-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+
+        .rpt-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            background: #fff;
+            border: 1.5px solid rgba(13,122,77,0.15);
+            border-radius: 10px;
+            padding: 6px 12px;
+            font-size: 0.82rem;
+        }
+
+        .rpt-chip-name { font-weight: 600; }
+        .rpt-chip-qty  { background: var(--brand-soft); color: var(--brand-dark); border-radius: 999px; padding: 1px 7px; font-size: 0.75rem; font-weight: 700; }
+
+        /* Vendedores */
+        .seller-stat-card {
+            background: #fff;
+            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
+            border-radius: 14px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .seller-stat-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand-mid), var(--brand-dark));
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .seller-stat-info { flex: 1; min-width: 0; }
+        .seller-stat-name { font-weight: 700; font-size: 0.97rem; }
+        .seller-stat-email { font-size: 0.82rem; color: var(--text-muted); }
+
+        .seller-stat-meta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .seller-stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .seller-stat-item strong { font-size: 1.1rem; color: var(--brand-dark); font-weight: 700; }
+        .seller-stat-item span   { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+
+        .orders-count-badge {
+            background: var(--brand-soft);
+            color: var(--brand-dark);
+            border: 1px solid rgba(13,122,77,0.2);
+            border-radius: 999px;
+            padding: 5px 14px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
+
+        .rpt-empty { text-align: center; padding: 32px 16px; color: var(--text-muted); }
+
+        @media (max-width: 600px) {
+            .rpt-kpi-grid { grid-template-columns: 1fr 1fr; }
+            .rpt-bar-row  { grid-template-columns: 34px 1fr 40px; }
+        }
     </style>
 </head>
 <body data-page="admin-dashboard">
@@ -228,6 +456,7 @@
         <button class="dash-tab is-active" data-tab="config">⚙️ Configuración</button>
         <button class="dash-tab" data-tab="notifications">🔔 Notificaciones</button>
         <button class="dash-tab" data-tab="frequent">👥 Clientes frecuentes</button>
+        <button class="dash-tab" data-tab="reports">📊 Reportes</button>
     </nav>
 
     <!-- ══════════════════════════════════ PANEL: CONFIGURACIÓN -->
@@ -333,6 +562,105 @@
         </div>
     </section>
 
+    <!-- ══════════════════════════════════ PANEL: REPORTES ADMIN -->
+    <section id="tab-reports" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+
+        <!-- Sub-tabs de reportes -->
+        <nav class="dash-tabs" id="reportSubTabs" style="margin-bottom:24px" aria-label="Secciones de reportes">
+            <button class="dash-tab is-active" data-subtab="summary">📈 Resumen general</button>
+            <button class="dash-tab" data-subtab="history">📋 Historial clientes</button>
+            <button class="dash-tab" data-subtab="sellers">🏷️ Vendedores</button>
+        </nav>
+
+        <!-- ── SUB-TAB: Resumen general ── -->
+        <div id="subtab-summary">
+
+            <!-- KPIs -->
+            <div id="rptKpiGrid" class="rpt-kpi-grid" aria-label="Indicadores clave">
+                <div class="skeleton-kpi"></div>
+                <div class="skeleton-kpi"></div>
+                <div class="skeleton-kpi"></div>
+                <div class="skeleton-kpi"></div>
+            </div>
+
+            <!-- Ventas por día -->
+            <div class="rpt-section">
+                <h3 class="rpt-section-title">📅 Ventas por día</h3>
+                <div class="rpt-table-wrap">
+                    <table class="rpt-table">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th class="text-right">Pedidos</th>
+                                <th class="text-right">Ingresos</th>
+                                <th class="text-right">Ticket promedio</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rptDailyBody">
+                            <tr><td colspan="4" class="rpt-empty">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Pedidos por hora -->
+            <div class="rpt-section">
+                <h3 class="rpt-section-title">🕐 Pedidos por hora del día</h3>
+                <div id="rptHourlyChart" class="rpt-bar-chart" aria-label="Distribución por hora">
+                    <p class="rpt-empty">Cargando...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── SUB-TAB: Historial clientes ── -->
+        <div id="subtab-history" class="hidden">
+            <div class="rpt-section">
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px">
+                    <h3 class="rpt-section-title" style="margin:0">📋 Historial completo de pedidos</h3>
+                    <span id="rptHistoryCount" class="orders-count-badge">—</span>
+                </div>
+                <div class="rpt-table-wrap">
+                    <table class="rpt-table" id="rptHistoryTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Email</th>
+                                <th>Productos</th>
+                                <th>Fecha</th>
+                                <th class="text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rptHistoryBody">
+                            <tr><td colspan="6" class="rpt-empty">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── SUB-TAB: Vendedores ── -->
+        <div id="subtab-sellers" class="hidden">
+            <div class="rpt-section">
+                <h3 class="rpt-section-title">🏷️ Resumen de vendedores activos</h3>
+                <p class="helper-text" style="margin-bottom:16px">
+                    Vendedores registrados en el sistema con su estado y métricas de actividad.
+                </p>
+                <div id="rptSellersContent"><p class="rpt-empty">Cargando...</p></div>
+            </div>
+
+            <!-- Nota arquitectónica -->
+            <div style="margin-top:20px; padding:14px 18px; background:rgba(232,137,46,0.08); border:1.5px solid rgba(232,137,46,0.2); border-radius:12px; font-size:0.85rem; color:var(--text-muted)">
+                💡 <strong>Nota:</strong> Los pedidos se registran con el ID del cliente que compró.
+                Para asociar pedidos a un vendedor específico, se requiere agregar un campo
+                <code>vendedorId</code> al modelo de pedidos en una fase futura.
+            </div>
+        </div>
+
+    </section>
+
 </main>
 
 <!-- Toast -->
@@ -405,7 +733,8 @@
     const TAB_LOADERS = {
         config:        loadConfig,
         notifications: loadNotifications,
-        frequent:      loadFrequentClients
+        frequent:      loadFrequentClients,
+        reports:       loadReports
     };
 
     document.getElementById("adminTabs").querySelectorAll(".dash-tab").forEach(btn => {
@@ -679,6 +1008,307 @@
                 </table>
             </div>
         `;
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: REPORTES ADMIN
+    // ─────────────────────────────────────────────────────────────
+
+    let _ordersCache  = null; // cache para no repetir fetch al cambiar sub-tab
+    let _sellersCache = null;
+
+    /** Carga inicial del módulo de reportes */
+    async function loadReports() {
+        // Activar sub-tabs
+        document.getElementById("reportSubTabs").querySelectorAll(".dash-tab").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.getElementById("reportSubTabs")
+                    .querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
+                btn.classList.add("is-active");
+                ["summary","history","sellers"].forEach(id => {
+                    document.getElementById("subtab-" + id).classList.add("hidden");
+                });
+                document.getElementById("subtab-" + btn.dataset.subtab).classList.remove("hidden");
+                if (btn.dataset.subtab === "summary")  renderSummary();
+                if (btn.dataset.subtab === "history")  renderHistory();
+                if (btn.dataset.subtab === "sellers")  renderSellers();
+            });
+        });
+
+        // Cargar datos y mostrar resumen por defecto
+        await fetchOrdersData();
+        renderSummary();
+    }
+
+    /** Obtiene pedidos desde /orders/seller y los cachea */
+    async function fetchOrdersData() {
+        if (_ordersCache) return;
+        try {
+            _ordersCache = await apiFetch("/orders/seller");
+        } catch (err) {
+            _ordersCache = [];
+            toast("No se pudieron cargar los pedidos: " + err.message, "error");
+        }
+    }
+
+    // ── Utilidades de procesamiento ──────────────────────────────
+
+    function fmtCurrency(v) {
+        return "$ " + new Intl.NumberFormat("es-CO").format(Math.round(Number(v || 0)));
+    }
+
+    function toDateKey(iso) {
+        const d = new Date(iso);
+        return String(d.getDate()).padStart(2,"0") + "/" +
+               String(d.getMonth()+1).padStart(2,"0") + "/" + d.getFullYear();
+    }
+
+    function toHour(iso) { return new Date(iso).getHours(); }
+
+    function esc(str) {
+        const d = document.createElement("div");
+        d.appendChild(document.createTextNode(String(str || "")));
+        return d.innerHTML;
+    }
+
+    // ── SUB-TAB: Resumen general ─────────────────────────────────
+
+    function renderSummary() {
+        const orders = _ordersCache || [];
+
+        // KPIs
+        const total    = orders.length;
+        const revenue  = orders.reduce((s,o) => s + Number(o.total||0), 0);
+        const unique   = new Set(orders.map(o => o.clientEmail || o.clientName)).size;
+        const avg      = total > 0 ? revenue / total : 0;
+
+        document.getElementById("rptKpiGrid").innerHTML = `
+            <div class="rpt-kpi-card">
+                <span class="rpt-kpi-icon">📦</span>
+                <span class="rpt-kpi-label">Total pedidos</span>
+                <span class="rpt-kpi-value">${total}</span>
+                <span class="rpt-kpi-sub">pedidos registrados</span>
+            </div>
+            <div class="rpt-kpi-card">
+                <span class="rpt-kpi-icon">💰</span>
+                <span class="rpt-kpi-label">Ingresos totales</span>
+                <span class="rpt-kpi-value">${fmtCurrency(revenue)}</span>
+                <span class="rpt-kpi-sub">suma de todos los pedidos</span>
+            </div>
+            <div class="rpt-kpi-card">
+                <span class="rpt-kpi-icon">👥</span>
+                <span class="rpt-kpi-label">Clientes únicos</span>
+                <span class="rpt-kpi-value">${unique}</span>
+                <span class="rpt-kpi-sub">emails distintos</span>
+            </div>
+            <div class="rpt-kpi-card">
+                <span class="rpt-kpi-icon">🎯</span>
+                <span class="rpt-kpi-label">Ticket promedio</span>
+                <span class="rpt-kpi-value">${fmtCurrency(avg)}</span>
+                <span class="rpt-kpi-sub">ingresos ÷ pedidos</span>
+            </div>
+        `;
+
+        // Ventas por día
+        const dayMap = new Map();
+        orders.forEach(o => {
+            if (!o.fecha) return;
+            const k = toDateKey(o.fecha);
+            if (!dayMap.has(k)) dayMap.set(k, { date: k, count: 0, revenue: 0, _raw: o.fecha });
+            const e = dayMap.get(k);
+            e.count++;
+            e.revenue += Number(o.total || 0);
+        });
+        const days = Array.from(dayMap.values()).sort((a,b) => new Date(a._raw) - new Date(b._raw));
+
+        const totalCount   = days.reduce((s,r) => s + r.count, 0);
+        const totalRevenue = days.reduce((s,r) => s + r.revenue, 0);
+
+        document.getElementById("rptDailyBody").innerHTML = days.length ? [
+            ...days.map(r => `
+                <tr>
+                    <td>${esc(r.date)}</td>
+                    <td class="text-right">${r.count}</td>
+                    <td class="text-right">${fmtCurrency(r.revenue)}</td>
+                    <td class="text-right">${fmtCurrency(r.count > 0 ? r.revenue/r.count : 0)}</td>
+                </tr>`),
+            `<tr class="total-row">
+                <td><strong>Total</strong></td>
+                <td class="text-right"><strong>${totalCount}</strong></td>
+                <td class="text-right"><strong>${fmtCurrency(totalRevenue)}</strong></td>
+                <td class="text-right"><strong>${fmtCurrency(totalCount > 0 ? totalRevenue/totalCount : 0)}</strong></td>
+            </tr>`
+        ].join("") : `<tr><td colspan="4" class="rpt-empty">Sin datos de ventas.</td></tr>`;
+
+        // Pedidos por hora
+        const counts = new Array(24).fill(0);
+        orders.forEach(o => { if (o.fecha) counts[toHour(o.fecha)]++; });
+        const maxC = Math.max(...counts, 1);
+
+        const chart = document.getElementById("rptHourlyChart");
+        chart.innerHTML = counts.map((c, h) => `
+            <div class="rpt-bar-row">
+                <span class="rpt-bar-label">${String(h).padStart(2,"0")}h</span>
+                <div class="rpt-bar-track">
+                    <div class="rpt-bar-fill" style="width:${c > 0 ? Math.max(Math.round(c/maxC*100),2) : 0}%; opacity:${c===0?0.15:1}"></div>
+                </div>
+                <span class="rpt-bar-count" style="opacity:${c===0?0.35:1}">${c}</span>
+            </div>`).join("");
+
+        // Animar barras
+        requestAnimationFrame(() => {
+            chart.querySelectorAll(".rpt-bar-fill").forEach((bar, i) => {
+                const w = bar.style.width;
+                bar.style.width = "0";
+                setTimeout(() => { bar.style.width = w; }, i * 15);
+            });
+        });
+    }
+
+    // ── SUB-TAB: Historial clientes ──────────────────────────────
+
+    function renderHistory() {
+        const orders = _ordersCache || [];
+        const badge  = document.getElementById("rptHistoryCount");
+        if (badge) badge.textContent = `${orders.length} pedido${orders.length !== 1 ? "s" : ""}`;
+
+        const tbody = document.getElementById("rptHistoryBody");
+
+        if (!orders.length) {
+            tbody.innerHTML = `<tr><td colspan="6" class="rpt-empty">No hay pedidos registrados.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = orders.map(order => {
+            const d    = order.fecha ? new Date(order.fecha) : null;
+            const date = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
+            const time = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
+            const itemCount = (order.items || []).length;
+
+            const chips = (order.items || []).map(it => `
+                <div class="rpt-chip">
+                    <span class="rpt-chip-name">${esc(it.productName || "Producto #" + it.productId)}</span>
+                    <span class="rpt-chip-qty">× ${it.cantidad}</span>
+                </div>`).join("");
+
+            return `
+                <tr>
+                    <td><strong>#${order.id}</strong></td>
+                    <td><strong>${esc(order.clientName || "—")}</strong></td>
+                    <td style="color:var(--text-muted);font-size:0.85rem">${esc(order.clientEmail || "—")}</td>
+                    <td>
+                        <button class="btn-rpt-expand" data-target="rpt-exp-${order.id}" type="button">
+                            📦 Ver (${itemCount}) <span style="font-style:normal;transition:transform 0.2s">▾</span>
+                        </button>
+                    </td>
+                    <td style="white-space:nowrap;font-size:0.87rem">${date}<br><span style="color:var(--text-muted);font-size:0.8rem">${time}</span></td>
+                    <td class="text-right" style="font-weight:700;color:var(--brand-dark)">${fmtCurrency(order.total)}</td>
+                </tr>
+                <tr class="rpt-expand-row">
+                    <td colspan="6">
+                        <div class="rpt-expand-content" id="rpt-exp-${order.id}">
+                            <div class="rpt-chips">${chips || "<span style='color:var(--text-muted)'>Sin productos</span>"}</div>
+                        </div>
+                    </td>
+                </tr>`;
+        }).join("");
+
+        // Expand/collapse
+        tbody.querySelectorAll(".btn-rpt-expand").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const content = document.getElementById(btn.dataset.target);
+                const isOpen  = content.classList.contains("is-open");
+                tbody.querySelectorAll(".rpt-expand-content.is-open").forEach(el => el.classList.remove("is-open"));
+                tbody.querySelectorAll(".btn-rpt-expand.is-open").forEach(el => el.classList.remove("is-open"));
+                if (!isOpen) { content.classList.add("is-open"); btn.classList.add("is-open"); }
+            });
+        });
+    }
+
+    // ── SUB-TAB: Vendedores ──────────────────────────────────────
+
+    async function renderSellers() {
+        const container = document.getElementById("rptSellersContent");
+        container.innerHTML = "<p class='rpt-empty'>Cargando vendedores...</p>";
+
+        try {
+            // Obtener lista de vendedores (ROLE_SELLER) desde /users
+            if (!_sellersCache) {
+                const users = await apiFetch("/users");
+                _sellersCache = users.filter(u => u.role === "ROLE_SELLER");
+            }
+
+            const sellers = _sellersCache;
+            const orders  = _ordersCache || [];
+
+            if (!sellers.length) {
+                container.innerHTML = "<p class='rpt-empty'>No hay vendedores registrados.</p>";
+                return;
+            }
+
+            // Métricas globales del sistema para contexto
+            const totalOrders  = orders.length;
+            const totalRevenue = orders.reduce((s,o) => s + Number(o.total||0), 0);
+
+            container.innerHTML = `
+                <!-- Resumen global del sistema -->
+                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px">
+                    <div class="rpt-kpi-card">
+                        <span class="rpt-kpi-icon">🏷️</span>
+                        <span class="rpt-kpi-label">Vendedores activos</span>
+                        <span class="rpt-kpi-value">${sellers.filter(s => s.activo !== false).length}</span>
+                        <span class="rpt-kpi-sub">de ${sellers.length} registrados</span>
+                    </div>
+                    <div class="rpt-kpi-card">
+                        <span class="rpt-kpi-icon">📦</span>
+                        <span class="rpt-kpi-label">Pedidos totales</span>
+                        <span class="rpt-kpi-value">${totalOrders}</span>
+                        <span class="rpt-kpi-sub">gestionados en el sistema</span>
+                    </div>
+                    <div class="rpt-kpi-card">
+                        <span class="rpt-kpi-icon">💰</span>
+                        <span class="rpt-kpi-label">Ingresos totales</span>
+                        <span class="rpt-kpi-value">${fmtCurrency(totalRevenue)}</span>
+                        <span class="rpt-kpi-sub">suma de todos los pedidos</span>
+                    </div>
+                </div>
+
+                <!-- Tarjetas de vendedores -->
+                <div style="display:flex; flex-direction:column; gap:12px">
+                    ${sellers.map(s => {
+                        const initials = (s.name || "?").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
+                        const estado   = s.activo !== false;
+                        return `
+                            <div class="seller-stat-card">
+                                <div class="seller-stat-avatar">${esc(initials)}</div>
+                                <div class="seller-stat-info">
+                                    <div class="seller-stat-name">${esc(s.name || "—")}</div>
+                                    <div class="seller-stat-email">${esc(s.email || "—")}</div>
+                                    <div style="margin-top:4px">
+                                        <span style="font-size:0.75rem; padding:2px 8px; border-radius:999px;
+                                            background:${estado ? "rgba(13,122,77,0.1)" : "rgba(184,50,40,0.1)"};
+                                            color:${estado ? "var(--brand-dark)" : "var(--danger)"}; font-weight:700">
+                                            ${estado ? "✅ Activo" : "❌ Inactivo"}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="seller-stat-meta">
+                                    <div class="seller-stat-item">
+                                        <strong>${esc(s.cedula || "—")}</strong>
+                                        <span>Cédula</span>
+                                    </div>
+                                    <div class="seller-stat-item">
+                                        <strong>${esc(s.telefono || "—")}</strong>
+                                        <span>Teléfono</span>
+                                    </div>
+                                </div>
+                            </div>`;
+                    }).join("")}
+                </div>
+            `;
+        } catch (err) {
+            container.innerHTML = `<p class="rpt-empty" style="color:var(--danger)">❌ ${esc(err.message)}</p>`;
+        }
     }
 
     // ─────────────────────────────────────────────────────────────
