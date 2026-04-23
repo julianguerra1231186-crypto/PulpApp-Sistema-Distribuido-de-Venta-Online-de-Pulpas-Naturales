@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * Representa el encabezado de un pedido realizado por un usuario.
+ * Incluye campos de pago por transferencia (Fase 4).
  */
 @Entity
 @Table(name = "orders")
@@ -39,22 +40,50 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
+    // ── Campos de pago por transferencia ──────────────────────────
+
+    /**
+     * Monto único con centavos aleatorios (0.01–0.99) para identificar
+     * la transferencia del cliente. Nunca se repite en pedidos activos.
+     */
+    @Column(name = "unique_amount")
+    private Double uniqueAmount;
+
+    /**
+     * Estado del pago:
+     * PENDING_PAYMENT   — pedido creado, cliente aún no ha pagado
+     * PENDING_APPROVAL  — cliente marcó "Ya pagué", admin debe validar
+     * APPROVED          — admin aprobó el pago
+     * REJECTED          — admin rechazó el pago
+     */
+    @Column(name = "payment_status", nullable = false)
+    private String paymentStatus = "PENDING_PAYMENT";
+
+    /** Email del admin que aprobó o rechazó el pago. */
+    @Column(name = "approved_by")
+    private String approvedBy;
+
+    /** Timestamp cuando el cliente presionó "Ya pagué". */
+    @Column(name = "paid_at")
+    private LocalDateTime paidAt;
+
+    /** Timestamp cuando el admin aprobó el pago. */
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items = new ArrayList<>();
 
-    /**
-     * Inicializa la fecha de creacion del pedido antes de persistirlo.
-     */
     @PrePersist
     public void prePersist() {
         if (fecha == null) {
             fecha = LocalDateTime.now();
         }
+        if (paymentStatus == null) {
+            paymentStatus = "PENDING_PAYMENT";
+        }
     }
 
-    /**
-     * Agrega un item al pedido manteniendo la relacion bidireccional.
-     */
     public void addItem(OrderItem item) {
         item.setOrder(this);
         items.add(item);

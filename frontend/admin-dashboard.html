@@ -596,6 +596,8 @@
         <button class="dash-tab" data-tab="notifications">🔔 Notificaciones</button>
         <button class="dash-tab" data-tab="frequent">👥 Clientes frecuentes</button>
         <button class="dash-tab" data-tab="reports">📊 Reportes</button>
+        <button class="dash-tab" data-tab="payments">💳 Pagos</button>
+        <button class="dash-tab" data-tab="invoice">🧾 Factura</button>
     </nav>
 
     <!-- ══════════════════════════════════ PANEL: CONFIGURACIÓN -->
@@ -823,6 +825,127 @@
 
     </section>
 
+    <!-- ══════════════════════════════════ PANEL: PAGOS POR TRANSFERENCIA -->
+    <section id="tab-payments" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px">
+            <div>
+                <span class="eyebrow">Validación manual</span>
+                <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">Pagos por transferencia</h2>
+            </div>
+            <button class="btn btn-secondary" id="refreshPaymentsBtn" type="button"
+                    style="min-height:40px; padding:0 16px; font-size:0.88rem">
+                🔄 Actualizar
+            </button>
+        </div>
+
+        <!-- KPIs de pagos -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px" id="paymentKpis">
+        </div>
+
+        <!-- Tabla de pagos pendientes -->
+        <div class="admin-section">
+            <h3 class="rpt-section-title">⏳ Pendientes de aprobación</h3>
+            <div id="pendingPaymentsList"><p class="helper-text">Cargando...</p></div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════ PANEL: FACTURA -->
+    <section id="tab-invoice" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+
+        <div style="margin-bottom:20px">
+            <span class="eyebrow">Generación de documentos</span>
+            <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">Factura electrónica</h2>
+            <p class="helper-text" style="margin-top:8px">
+                Selecciona un pedido para generar y descargar la factura en PDF.
+            </p>
+        </div>
+
+        <!-- Selector de pedido -->
+        <div style="display:grid; grid-template-columns:1fr auto; gap:12px; align-items:end; margin-bottom:24px; max-width:500px">
+            <label style="display:flex; flex-direction:column; gap:6px; font-size:0.88rem; font-weight:600; color:var(--text-muted)">
+                Número de pedido
+                <input type="number" id="invoiceOrderId" placeholder="Ej: 1" min="1"
+                       style="padding:10px 14px; border:1.5px solid var(--line-strong); border-radius:10px; font:inherit; font-size:0.92rem">
+            </label>
+            <button class="btn btn-secondary" id="loadInvoiceBtn" type="button"
+                    style="min-height:44px; padding:0 18px; font-size:0.88rem">
+                Cargar pedido
+            </button>
+        </div>
+
+        <!-- Vista previa de la factura -->
+        <div id="invoicePreview" class="hidden">
+            <div style="background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:28px 32px; max-width:680px; margin-bottom:20px" id="invoiceDocument">
+
+                <!-- Cabecera -->
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px">
+                    <div>
+                        <div style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--brand-dark)">🍊 PulpApp</div>
+                        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px">Pulpas Naturales de Fruta</div>
+                    </div>
+                    <div style="text-align:right">
+                        <div style="font-size:1.1rem; font-weight:700; color:var(--brand-dark)">FACTURA</div>
+                        <div style="font-size:0.88rem; color:var(--text-muted)" id="invNumber">—</div>
+                        <div style="font-size:0.82rem; color:var(--text-muted)" id="invDate">—</div>
+                    </div>
+                </div>
+
+                <hr style="border:none; border-top:1.5px solid var(--line); margin-bottom:20px">
+
+                <!-- Datos del cliente -->
+                <div style="margin-bottom:20px">
+                    <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:8px">Cliente</div>
+                    <div style="font-weight:700; font-size:1rem" id="invClientName">—</div>
+                    <div style="font-size:0.88rem; color:var(--text-muted)" id="invClientEmail">—</div>
+                </div>
+
+                <!-- Tabla de productos -->
+                <table style="width:100%; border-collapse:collapse; font-size:0.88rem; margin-bottom:20px">
+                    <thead>
+                        <tr style="background:var(--brand-soft); border-radius:8px">
+                            <th style="padding:10px 12px; text-align:left; font-weight:700; color:var(--brand-dark)">Producto</th>
+                            <th style="padding:10px 12px; text-align:center; font-weight:700; color:var(--brand-dark)">Cant.</th>
+                            <th style="padding:10px 12px; text-align:right; font-weight:700; color:var(--brand-dark)">Precio unit.</th>
+                            <th style="padding:10px 12px; text-align:right; font-weight:700; color:var(--brand-dark)">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invItemsBody"></tbody>
+                    <tfoot>
+                        <tr style="border-top:2px solid var(--brand-soft)">
+                            <td colspan="3" style="padding:12px; text-align:right; font-weight:700; font-size:1rem">TOTAL</td>
+                            <td style="padding:12px; text-align:right; font-weight:700; font-size:1.1rem; color:var(--brand-dark)" id="invTotal">—</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <!-- Estado de pago -->
+                <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; background:var(--brand-soft); margin-bottom:16px">
+                    <span id="invPaymentBadge" style="font-weight:700; font-size:0.88rem">—</span>
+                </div>
+
+                <!-- Pie -->
+                <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:16px">
+                    Gracias por tu compra · PulpApp · pulpas naturales de fruta
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div style="display:flex; gap:12px; flex-wrap:wrap">
+                <button class="btn btn-primary" id="downloadPdfBtn" type="button">
+                    ⬇️ Descargar PDF
+                </button>
+                <button class="btn btn-secondary" id="clearInvoiceBtn" type="button">
+                    ✕ Limpiar
+                </button>
+            </div>
+        </div>
+
+        <p id="invoiceMsg" class="helper-text" style="margin-top:12px"></p>
+    </section>
+
 </main>
 
 <!-- Toast -->
@@ -896,7 +1019,9 @@
         config:        loadConfig,
         notifications: loadNotifications,
         frequent:      loadFrequentClients,
-        reports:       loadReports
+        reports:       loadReports,
+        payments:      loadPayments,
+        invoice:       initInvoice
     };
 
     document.getElementById("adminTabs").querySelectorAll(".dash-tab").forEach(btn => {
@@ -1486,6 +1611,252 @@
     /** Expande o colapsa una sección colapsable por su ID */
     window.toggleSection = function(id) {
         const section = document.getElementById(id);
+        if (!section) return;
+        section.classList.toggle("is-open");
+        const toggle = section.querySelector(".rpt-section-toggle");
+        if (toggle) {
+            toggle.innerHTML = section.classList.contains("is-open")
+                ? 'Ocultar <i class="arrow" style="transform:rotate(180deg)">▾</i>'
+                : 'Ver <i class="arrow">▾</i>';
+        }
+    };
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: PAGOS POR TRANSFERENCIA
+    // ─────────────────────────────────────────────────────────────
+
+    const PAYMENT_LABELS = {
+        PENDING_PAYMENT:  { text: "⏳ Pendiente de pago",     color: "#e65100", bg: "#fff3e0" },
+        PENDING_APPROVAL: { text: "🔍 Pendiente de aprobación", color: "#1565c0", bg: "#e3f2fd" },
+        APPROVED:         { text: "✅ Aprobado",               color: "#1b5e20", bg: "#e8f5e9" },
+        REJECTED:         { text: "❌ Rechazado",              color: "#b71c1c", bg: "#ffebee" }
+    };
+
+    function paymentBadge(status) {
+        const s = PAYMENT_LABELS[status] || { text: status, color: "#555", bg: "#f5f5f5" };
+        return `<span style="padding:3px 10px; border-radius:999px; font-size:0.8rem; font-weight:700;
+                    background:${s.bg}; color:${s.color}">${s.text}</span>`;
+    }
+
+    async function loadPayments() {
+        document.getElementById("refreshPaymentsBtn").onclick = loadPayments;
+
+        const container = document.getElementById("pendingPaymentsList");
+        const kpisEl    = document.getElementById("paymentKpis");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+
+        try {
+            // Cargar todos los pedidos para KPIs globales
+            const allOrders = await apiFetch("/orders/seller");
+            const byStatus  = { PENDING_PAYMENT: 0, PENDING_APPROVAL: 0, APPROVED: 0, REJECTED: 0 };
+            allOrders.forEach(o => { if (byStatus[o.paymentStatus] !== undefined) byStatus[o.paymentStatus]++; });
+
+            kpisEl.innerHTML = Object.entries(PAYMENT_LABELS).map(([key, lbl]) => `
+                <div class="rpt-kpi-card">
+                    <span class="rpt-kpi-label" style="color:${lbl.color}">${lbl.text}</span>
+                    <span class="rpt-kpi-value" style="color:${lbl.color}">${byStatus[key] || 0}</span>
+                    <span class="rpt-kpi-sub">pedidos</span>
+                </div>`).join("");
+
+            // Pedidos pendientes de aprobación
+            const pending = await apiFetch("/orders/admin/payments");
+
+            if (!pending.length) {
+                container.innerHTML = "<p class='helper-text'>✅ No hay pagos pendientes de aprobación.</p>";
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Pedido</th>
+                                <th>Total</th>
+                                <th>Monto único</th>
+                                <th>Cliente marcó "Ya pagué"</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${pending.map(p => `
+                                <tr id="pay-row-${p.orderId}">
+                                    <td><strong>#${p.orderId}</strong></td>
+                                    <td>${fmtCurrency(p.total)}</td>
+                                    <td style="font-weight:700; color:var(--brand-dark)">${fmtCurrency(p.uniqueAmount)}</td>
+                                    <td style="font-size:0.85rem; color:var(--text-muted)">
+                                        ${p.paidAt ? new Date(p.paidAt).toLocaleString("es-CO") : "—"}
+                                    </td>
+                                    <td>${paymentBadge(p.paymentStatus)}</td>
+                                    <td>
+                                        <div style="display:flex; gap:8px; flex-wrap:wrap">
+                                            <button class="btn btn-primary btn-approve-pay"
+                                                    data-id="${p.orderId}"
+                                                    style="min-height:36px; padding:0 14px; font-size:0.82rem">
+                                                ✅ Aprobar
+                                            </button>
+                                            <button class="btn btn-danger btn-reject-pay"
+                                                    data-id="${p.orderId}"
+                                                    style="min-height:36px; padding:0 14px; font-size:0.82rem">
+                                                ❌ Rechazar
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>`).join("")}
+                        </tbody>
+                    </table>
+                </div>`;
+
+            const adminEmail = window.PulpAuth?.getSessionUser()?.email || "admin@pulpapp.com";
+
+            container.querySelectorAll(".btn-approve-pay").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    btn.disabled = true;
+                    try {
+                        await apiFetch(`/orders/${btn.dataset.id}/approve`, {
+                            method: "PUT",
+                            body: JSON.stringify({ adminEmail })
+                        });
+                        toast("✅ Pago aprobado");
+                        loadPayments();
+                    } catch (err) { toast(err.message, "error"); btn.disabled = false; }
+                });
+            });
+
+            container.querySelectorAll(".btn-reject-pay").forEach(btn => {
+                btn.addEventListener("click", async () => {
+                    btn.disabled = true;
+                    try {
+                        await apiFetch(`/orders/${btn.dataset.id}/reject`, {
+                            method: "PUT",
+                            body: JSON.stringify({ adminEmail })
+                        });
+                        toast("❌ Pago rechazado");
+                        loadPayments();
+                    } catch (err) { toast(err.message, "error"); btn.disabled = false; }
+                });
+            });
+
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>❌ ${esc(err.message)}</p>`;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: FACTURA
+    // ─────────────────────────────────────────────────────────────
+
+    function initInvoice() {
+        document.getElementById("loadInvoiceBtn").onclick = loadInvoiceOrder;
+        document.getElementById("clearInvoiceBtn").onclick = clearInvoice;
+        document.getElementById("downloadPdfBtn").onclick  = downloadInvoicePdf;
+        document.getElementById("invoiceOrderId").addEventListener("keydown", e => {
+            if (e.key === "Enter") loadInvoiceOrder();
+        });
+    }
+
+    async function loadInvoiceOrder() {
+        const idInput = document.getElementById("invoiceOrderId");
+        const msg     = document.getElementById("invoiceMsg");
+        const orderId = idInput.value.trim();
+        msg.textContent = "";
+
+        if (!orderId) { msg.textContent = "Ingresa el número de pedido."; return; }
+
+        try {
+            // Cargar pedido enriquecido desde /orders/seller
+            const orders = await apiFetch("/orders/seller");
+            const order  = orders.find(o => String(o.id) === String(orderId));
+
+            if (!order) {
+                msg.textContent = `No se encontró el pedido #${orderId}.`;
+                return;
+            }
+
+            // Cargar estado de pago
+            let payStatus = null;
+            try { payStatus = await apiFetch(`/orders/${orderId}/payment`); } catch { /* opcional */ }
+
+            renderInvoicePreview(order, payStatus);
+        } catch (err) {
+            msg.textContent = "❌ " + err.message;
+        }
+    }
+
+    function renderInvoicePreview(order, payStatus) {
+        const d = order.fecha ? new Date(order.fecha) : new Date();
+
+        document.getElementById("invNumber").textContent =
+            `Factura #${String(order.id).padStart(6, "0")}`;
+        document.getElementById("invDate").textContent =
+            d.toLocaleDateString("es-CO", { day:"2-digit", month:"long", year:"numeric" });
+        document.getElementById("invClientName").textContent  = order.clientName  || "—";
+        document.getElementById("invClientEmail").textContent = order.clientEmail || "—";
+        document.getElementById("invTotal").textContent       = fmtCurrency(order.total);
+
+        // Filas de productos
+        document.getElementById("invItemsBody").innerHTML = (order.items || []).map(item => `
+            <tr style="border-bottom:1px solid var(--line)">
+                <td style="padding:10px 12px">${esc(item.productName || "Producto #" + item.productId)}</td>
+                <td style="padding:10px 12px; text-align:center">${item.cantidad}</td>
+                <td style="padding:10px 12px; text-align:right">${fmtCurrency(item.precioUnitario)}</td>
+                <td style="padding:10px 12px; text-align:right; font-weight:600">${fmtCurrency(item.subtotal)}</td>
+            </tr>`).join("");
+
+        // Estado de pago
+        const status = payStatus?.paymentStatus || "PENDING_PAYMENT";
+        const lbl    = PAYMENT_LABELS[status] || { text: status, color: "#555", bg: "#f5f5f5" };
+        document.getElementById("invPaymentBadge").innerHTML =
+            `Estado de pago: <span style="color:${lbl.color}">${lbl.text}</span>` +
+            (payStatus?.uniqueAmount ? ` · Monto único: <strong>${fmtCurrency(payStatus.uniqueAmount)}</strong>` : "") +
+            (payStatus?.approvedBy   ? ` · Aprobado por: ${esc(payStatus.approvedBy)}` : "");
+
+        document.getElementById("invoicePreview").classList.remove("hidden");
+    }
+
+    function clearInvoice() {
+        document.getElementById("invoicePreview").classList.add("hidden");
+        document.getElementById("invoiceOrderId").value = "";
+        document.getElementById("invoiceMsg").textContent = "";
+    }
+
+    /**
+     * Genera y descarga la factura en PDF usando la API nativa del navegador (print).
+     * No requiere librería externa — abre una ventana de impresión con el contenido
+     * de la factura ya renderizado.
+     */
+    function downloadInvoicePdf() {
+        const doc = document.getElementById("invoiceDocument");
+        if (!doc) return;
+
+        const invNum  = document.getElementById("invNumber").textContent;
+        const content = doc.innerHTML;
+
+        const win = window.open("", "_blank");
+        win.document.write(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <title>${invNum} — PulpApp</title>
+                <style>
+                    body { font-family: 'DM Sans', Arial, sans-serif; margin: 32px; color: #152118; }
+                    table { width: 100%; border-collapse: collapse; }
+                    th, td { padding: 10px 12px; }
+                    hr { border: none; border-top: 1.5px solid #ddd; margin: 16px 0; }
+                    @media print { body { margin: 16px; } }
+                </style>
+            </head>
+            <body>${content}</body>
+            </html>`);
+        win.document.close();
+        win.focus();
+        setTimeout(() => { win.print(); }, 400);
+    }
+
+    /** Expande o colapsa una sección colapsable por su ID */
+    window.toggleSection = function(id) {        const section = document.getElementById(id);
         if (!section) return;
         section.classList.toggle("is-open");
         const toggle = section.querySelector(".rpt-section-toggle");

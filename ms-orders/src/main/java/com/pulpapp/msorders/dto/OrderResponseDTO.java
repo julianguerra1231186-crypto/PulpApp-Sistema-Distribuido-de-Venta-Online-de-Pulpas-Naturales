@@ -16,4 +16,8 @@ public class OrderResponseDTO {
     private Double total;
     private LocalDateTime fecha;
     private List<OrderItemResponseDTO> items;
+
+    // Campos de pago por transferencia
+    private Double uniqueAmount;
+    private String paymentStatus;
 }

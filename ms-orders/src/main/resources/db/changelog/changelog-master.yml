@@ -124,7 +124,54 @@ databaseChangeLog:
             onDelete: CASCADE
 
   # ============================================================
-  # changeSet 4: Indice en order_items.order_id
+  # changeSet 5: Campos de pago por transferencia en orders
+  # unique_amount: total + centavos aleatorios para identificar el pago
+  # payment_status: PENDING_PAYMENT | PENDING_APPROVAL | APPROVED | REJECTED
+  # approved_by: email del admin que aprobó
+  # paid_at: timestamp cuando el cliente marcó "Ya pagué"
+  # approved_at: timestamp cuando el admin aprobó
+  # onFail: MARK_RAN — idempotente
+  # ============================================================
+  - changeSet:
+      id: 5-add-payment-fields-to-orders
+      author: pulpapp-team
+      comment: Agrega campos de pago por transferencia a la tabla orders.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: orders
+            columnName: payment_status
+      changes:
+        - addColumn:
+            tableName: orders
+            columns:
+              - column:
+                  name: unique_amount
+                  type: DOUBLE PRECISION
+                  constraints:
+                    nullable: true
+              - column:
+                  name: payment_status
+                  type: VARCHAR(30)
+                  defaultValue: PENDING_PAYMENT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved_by
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: paid_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: approved_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
   # Optimiza consultas de detalle de pedido.
   # onFail: MARK_RAN — si el indice ya existe, se registra sin error.
   # ============================================================
