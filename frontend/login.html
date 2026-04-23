@@ -114,27 +114,35 @@
         try {
             const data = await window.PulpAppServices.authLogin(email, password);
 
-            // Después del login, consulta los datos completos del usuario por cédula
-            // usando el endpoint público que ya existe y funciona
+            // Enriquecer con datos completos del usuario (cedula, telefono, direccion)
             let fullData = { ...data };
             try {
-                // Busca por email en la lista (solo si es admin) o espera que el carrito lo haga
-                // Por ahora guardamos lo que tenemos y el carrito completará los datos
-                fullData = { ...data };
-            } catch(e) {}
+                const r = await fetch(`http://localhost:8090/users/email?email=${encodeURIComponent(email)}`);
+                if (r.ok) {
+                    const found = await r.json();
+                    fullData = { ...fullData, ...found };
+                }
+            } catch(e) { /* usa datos del token si falla */ }
 
             localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
             localStorage.setItem("user", JSON.stringify(fullData));
             toast("Sesión iniciada ✓");
-            const redirect = localStorage.getItem("pulpapp_redirect") || "dashboard.html";
+            // Redirigir según rol
+            const role = fullData.role?.name || fullData.role || "";
+            let redirect = localStorage.getItem("pulpapp_redirect") || "dashboard.html";
+            if (role === "ROLE_CLIENT") redirect = "mi-cuenta.html";
             localStorage.removeItem("pulpapp_redirect");
             setTimeout(() => { window.location.href = redirect; }, 800);
         } catch (err) {
-            toast(err.message || "Credenciales incorrectas", "error");
+            // Mensaje de ayuda si el usuario fue creado por el flujo antiguo del carrito
+            const msg = err.message || "Credenciales incorrectas";
+            const hint = msg.toLowerCase().includes("unauthorized") || msg.toLowerCase().includes("incorrectos")
+                ? "Email o contraseña incorrectos. Si te registraste desde el carrito, intenta con la contraseña: 123456"
+                : msg;
+            toast(hint, "error");
             btn.disabled = false;
             btn.textContent = "Iniciar sesión";
-        }
-    });
+        }    });
 
     // Enter en el formulario
     document.getElementById("loginForm").addEventListener("keydown", (e) => {

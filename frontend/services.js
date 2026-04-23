@@ -83,9 +83,12 @@
     }
 
     async function createUser(userData) {
+        // Usa la contraseña que viene en userData.
+        // Si no viene (flujo legacy del carrito), asigna "123456" como temporal
+        // y el usuario deberá cambiarla desde su perfil.
         const payload = {
             ...userData,
-            password: "123456"
+            password: userData.password || "123456"
         };
 
         const existingUser = await findUserByCedula(userData.cedula);
