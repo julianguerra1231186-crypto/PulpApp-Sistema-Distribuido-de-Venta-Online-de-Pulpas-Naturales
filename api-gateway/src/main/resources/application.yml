@@ -87,6 +87,20 @@ spring:
             - Path=/products, /products/**, /images/**
 
         # --------------------------------------------
+        # CONFIGURACIÓN DINÁMICA Y NOTIFICACIONES ADMIN (Fase 2)
+        # Rutas /admin/** y /notifications van a ms-users
+        # --------------------------------------------
+        - id: ms-admin-config
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/admin/config, /admin/config/**
+
+        - id: ms-notifications
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/notifications, /notifications/**, /admin/notifications, /admin/notifications/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE PEDIDOS
         # --------------------------------------------
         - id: ms-orders

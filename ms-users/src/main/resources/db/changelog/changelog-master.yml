@@ -245,6 +245,93 @@ databaseChangeLog:
                     nullable: false
 
   # ============================================================
+  # changeSet 8: Tabla app_config
+  # Almacena configuración dinámica del sistema (clave-valor).
+  # Ejemplos: whatsapp_number, recruitment_enabled, delivery_mode.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 8-create-app-config-table
+      author: pulpapp-team
+      comment: Crea la tabla app_config para configuración dinámica del sistema.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: app_config
+      changes:
+        - createTable:
+            tableName: app_config
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: config_key
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: config_value
+                  type: TEXT
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 9: Tabla notifications
+  # Almacena notificaciones creadas por el admin para mostrar
+  # en el frontend (navbar/banner).
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 9-create-notifications-table
+      author: pulpapp-team
+      comment: Crea la tabla notifications para mensajes del administrador.
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: notifications
+      changes:
+        - createTable:
+            tableName: notifications
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: message
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+  # ============================================================
   # changeSet 7: Migrar usuarios ROLE_SELLER registrados públicamente
   # a ROLE_CLIENT. Los vendedores reales creados por el admin
   # conservan ROLE_SELLER. Solo se migran los que NO son ADMIN.

@@ -82,7 +82,7 @@ public class UserServiceImpl
 
     @Override
     public UserResponseDTO findByEmail(String email) {
-        User user = repository.findByEmail(email)
+        User user = repository.findByEmailIgnoreCase(email)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("User not found with email: " + email));
         return mapper.toResponseDto(user);

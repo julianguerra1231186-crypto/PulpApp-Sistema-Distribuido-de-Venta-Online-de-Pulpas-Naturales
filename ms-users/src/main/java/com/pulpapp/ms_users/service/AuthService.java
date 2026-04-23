@@ -49,7 +49,7 @@ public class AuthService {
             throw new BadCredentialsException("Email o contraseña incorrectos");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
+        User user = userRepository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Email o contraseña incorrectos"));
 
         UserPrincipal principal = new UserPrincipal(user);
@@ -76,7 +76,7 @@ public class AuthService {
      * para que pueda operar de inmediato sin necesidad de hacer login aparte.
      */
     public AuthResponseDTO register(RegisterRequestDTO request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(request.getEmail())) {
             throw new IllegalArgumentException("El email ya está registrado");
         }
         if (userRepository.existsByCedula(request.getCedula())) {
