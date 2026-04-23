@@ -371,24 +371,32 @@
     // Sistema de tabs
     // ─────────────────────────────────────────────────────────────
 
-    function buildTabs(isAdmin) {
+    function buildTabs(isAdmin, isSeller) {
         const tabsNav = document.getElementById("dashTabs");
 
+        // Tabs para ROLE_CLIENT — solo perfil y ver sus propios pedidos
         const clientTabs = [
-            { id: "perfil",   label: "👤 Perfil",              first: true },
-            { id: "pedidos",  label: "📦 Pedidos Clientes",
-              link: "seller-orders.html" }
+            { id: "perfil",  label: "👤 Perfil", first: true }
         ];
 
+        // Tabs para ROLE_SELLER — perfil + vista completa de pedidos de clientes
+        const sellerTabs = [
+            { id: "perfil",  label: "👤 Perfil",           first: true },
+            { id: "pedidos", label: "📦 Pedidos Clientes", link: "seller-orders.html" }
+        ];
+
+        // Tabs para ROLE_ADMIN — acceso completo al sistema
         const adminTabs = [
-            { id: "perfil",              label: "👤 Perfil",        first: true },
-            { id: "admin-productos",     label: "📦 Productos",     admin: true },
-            { id: "admin-clientes",      label: "👥 Clientes",      admin: true },
-            { id: "admin-postulaciones", label: "🧑‍💼 Postulaciones", admin: true },
-            { id: "admin-vendedores",    label: "🏷️ Vendedores",    admin: true }
+            { id: "perfil",              label: "👤 Perfil",           first: true },
+            { id: "admin-productos",     label: "📦 Productos",        admin: true },
+            { id: "admin-clientes",      label: "👥 Clientes",         admin: true },
+            { id: "admin-postulaciones", label: "🧑‍💼 Postulaciones",    admin: true },
+            { id: "admin-vendedores",    label: "🏷️ Vendedores",       admin: true },
+            { id: "admin-panel",         label: "⚙️ Panel Admin",      admin: true,
+              link: "admin-dashboard.html" }
         ];
 
-        const allTabs = isAdmin ? adminTabs : clientTabs;
+        const allTabs = isAdmin ? adminTabs : isSeller ? sellerTabs : clientTabs;
 
         tabsNav.innerHTML = allTabs.map(t => `
             <button class="dash-tab${t.first ? " is-active" : ""}${t.admin ? " admin-tab" : ""}"
@@ -424,6 +432,7 @@
         if (tabId === "admin-clientes")        loadAdminUsers();
         if (tabId === "admin-postulaciones")   loadApplications();
         if (tabId === "admin-vendedores")      loadSellers();
+        // tab-admin-panel redirige a admin-dashboard.html — no carga panel local
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -1001,7 +1010,7 @@
         document.getElementById("profileLogoutBtn").addEventListener("click", auth.logout);
 
         // Construir tabs según rol
-        buildTabs(isAdmin);
+        buildTabs(isAdmin, isSeller);
     });
 
     // ─────────────────────────────────────────────────────────────
