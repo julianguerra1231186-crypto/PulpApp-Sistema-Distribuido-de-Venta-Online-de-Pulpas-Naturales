@@ -148,7 +148,8 @@
     <!-- Tabs -->
     <nav class="dash-tabs" aria-label="Secciones">
         <button class="dash-tab is-active" data-tab="perfil">👤 Perfil</button>
-        <button class="dash-tab" data-tab="pedidos">📦 Mis pedidos</button>
+        <button class="dash-tab" data-tab="pedido-actual">📦 Mi pedido</button>
+        <button class="dash-tab" data-tab="historial">🕐 Historial de compras</button>
     </nav>
 
     <!-- TAB: Perfil -->
@@ -185,12 +186,22 @@
         </div>
     </section>
 
-    <!-- TAB: Mis pedidos -->
-    <section id="tab-pedidos" class="dash-panel glass-card hidden">
-        <span class="eyebrow">Historial</span>
-        <h2>Mis pedidos</h2>
+    <!-- TAB: Mi pedido actual (el más reciente) -->
+    <section id="tab-pedido-actual" class="dash-panel glass-card hidden">
+        <span class="eyebrow">Pedido más reciente</span>
+        <h2>Mi pedido</h2>
         <p class="helper-text" style="margin-bottom:20px">
-            Aquí puedes ver el estado de tus pedidos y confirmar tu pago por transferencia.
+            Estado de tu último pedido y opciones de pago.
+        </p>
+        <div id="latestOrderContainer"><p class="helper-text">Cargando...</p></div>
+    </section>
+
+    <!-- TAB: Historial de compras -->
+    <section id="tab-historial" class="dash-panel glass-card hidden">
+        <span class="eyebrow">Historial completo</span>
+        <h2>Historial de compras</h2>
+        <p class="helper-text" style="margin-bottom:20px">
+            Todos tus pedidos anteriores.
         </p>
         <div id="clientOrdersList"><p class="helper-text">Cargando...</p></div>
     </section>
@@ -259,9 +270,98 @@
             document.querySelectorAll(".dash-panel").forEach(p => p.classList.add("hidden"));
             const panel = document.getElementById("tab-" + btn.dataset.tab);
             if (panel) panel.classList.remove("hidden");
-            if (btn.dataset.tab === "pedidos") loadClientOrders();
+            if (btn.dataset.tab === "pedido-actual") loadLatestOrder();
+            if (btn.dataset.tab === "historial")     loadClientOrders();
         });
     });
+
+    // ── Pedido más reciente ───────────────────────────────────────
+
+    async function loadLatestOrder() {
+        const container = document.getElementById("latestOrderContainer");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+
+        const orders = await fetchMyOrders();
+        if (!orders.length) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:32px 16px; color:var(--text-muted)">
+                    <p style="font-size:1.1rem; margin-bottom:12px">📭 Aún no tienes pedidos</p>
+                    <a href="catalog.html" class="btn btn-primary" style="text-decoration:none">Ir al catálogo</a>
+                </div>`;
+            return;
+        }
+
+        // El más reciente es el primero (ordenados por fecha desc)
+        const latest = orders[0];
+        const status = latest.paymentStatus || "PENDING_PAYMENT";
+
+        const d    = latest.fecha ? new Date(latest.fecha) : null;
+        const date = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit",year:"numeric"}) + " · " + d.toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}) : "—";
+
+        const chips = (latest.items || []).map(it =>
+            `<span class="product-chip-client">
+                <strong>${esc(it.productName || "Producto #" + it.productId)}</strong>
+                × ${it.cantidad}
+            </span>`).join("");
+
+        const PAY_LABELS = {
+            PENDING_PAYMENT:  "⏳ Pendiente de pago",
+            PENDING_APPROVAL: "🔍 Verificando pago",
+            APPROVED:         "✅ Pago aprobado",
+            REJECTED:         "❌ Pago rechazado"
+        };
+
+        container.innerHTML = `
+            <div class="order-card-client">
+                <div class="order-card-header">
+                    <div>
+                        <strong style="font-size:1.1rem">Pedido #${latest.id}</strong>
+                        <span style="color:var(--text-muted); font-size:0.85rem; margin-left:10px">${date}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
+                        <span class="pay-badge pay-${status}">${PAY_LABELS[status] || status}</span>
+                        <strong style="color:var(--brand-dark); font-size:1.1rem">${fmtCurrency(latest.total)}</strong>
+                    </div>
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:16px">
+                    ${chips || "<span style='color:var(--text-muted)'>Sin productos</span>"}
+                </div>
+
+                ${status === "PENDING_PAYMENT" ? `
+                    <div style="display:flex; gap:10px; flex-wrap:wrap">
+                        <a href="pedido-confirmado.html?id=${latest.id}" class="btn btn-primary" style="text-decoration:none; min-height:44px">
+                            💳 Elegir método de pago
+                        </a>
+                    </div>` : ""}
+
+                ${status === "PENDING_APPROVAL" ? `
+                    <div style="padding:12px 16px; background:#e3f2fd; border-radius:10px; font-size:0.85rem; color:#1565c0">
+                        🔍 Tu pago está siendo verificado. Te notificaremos pronto.
+                    </div>` : ""}
+
+                ${status === "APPROVED" ? `
+                    <div style="padding:12px 16px; background:#e8f5e9; border-radius:10px; font-size:0.85rem; color:#1b5e20">
+                        ✅ ¡Pago confirmado! Tu pedido está en camino.
+                    </div>` : ""}
+            </div>`;
+    }
+
+    // ── Historial completo ────────────────────────────────────────
+
+    async function fetchMyOrders() {
+        const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+        const userId = user.id;
+
+        try {
+            const res = await fetch(`${BASE}/orders`, { headers: authHeaders() });
+            if (!res.ok) throw new Error(`Error ${res.status}`);
+            const all = await res.json();
+            const mine = userId ? all.filter(o => String(o.userId) === String(userId)) : all;
+            // Ordenar por fecha descendente
+            return mine.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        } catch { return []; }
+    }
 
     // ── Carga de pedidos del cliente ──────────────────────────────
 
@@ -269,146 +369,60 @@
         const container = document.getElementById("clientOrdersList");
         container.innerHTML = "<p class='helper-text'>Cargando...</p>";
 
-        const user = window.PulpAuth?.getSessionUser();
-        if (!user) { container.innerHTML = "<p class='helper-text'>Sin sesión activa.</p>"; return; }
+        const orders = await fetchMyOrders();
 
-        try {
-            // Obtener todos los pedidos y filtrar por userId del usuario actual
-            const storedUser = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
-            const userId = storedUser.id;
-
-            // Cargar pedidos desde /orders (requiere auth)
-            const res = await fetch(`${BASE}/orders`, { headers: authHeaders() });
-            if (!res.ok) throw new Error(`Error ${res.status}`);
-            const allOrders = await res.json();
-
-            // Filtrar por userId si está disponible, sino mostrar todos los del token
-            const myOrders = userId
-                ? allOrders.filter(o => String(o.userId) === String(userId))
-                : allOrders;
-
-            if (!myOrders.length) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:40px 16px; color:var(--text-muted)">
-                        <p style="font-size:1.1rem; margin-bottom:12px">📭 Aún no tienes pedidos</p>
-                        <a href="catalog.html" class="btn btn-primary" style="text-decoration:none">
-                            Ir al catálogo
-                        </a>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = myOrders.map(order => {
-                const d      = order.fecha ? new Date(order.fecha) : null;
-                const date   = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
-                const time   = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
-                const status = order.paymentStatus || "PENDING_PAYMENT";
-                const label  = PAY_LABELS[status] || status;
-
-                // Chips de productos
-                const chips = (order.items || []).map(it =>
-                    `<span class="product-chip-client">
-                        <strong>${esc(it.productName || "Producto #" + it.productId)}</strong>
-                        × ${it.cantidad}
-                    </span>`).join("");
-
-                // Caja de monto único (solo si está pendiente de pago)
-                const uniqueBox = (status === "PENDING_PAYMENT" && order.uniqueAmount) ? `
-                    <div class="unique-amount-box">
-                        <div style="font-size:0.8rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:6px">
-                            💳 Monto exacto a transferir
-                        </div>
-                        <div class="amount">${fmtCurrency(order.uniqueAmount)}</div>
-                        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:6px">
-                            Transfiere exactamente este valor para que podamos identificar tu pago.
-                            Los centavos son únicos para tu pedido.
-                        </div>
-                        <div style="margin-top:14px">
-                            <button class="btn-paid" data-order-id="${order.id}" type="button">
-                                ✅ Ya realicé la transferencia
-                            </button>
-                        </div>
-                    </div>` : "";
-
-                // Mensaje si está en revisión
-                const reviewMsg = status === "PENDING_APPROVAL" ? `
-                    <div style="margin-top:12px; padding:12px 16px; background:#e3f2fd; border-radius:10px; font-size:0.85rem; color:#1565c0">
-                        🔍 Tu pago está siendo verificado por el equipo. Te notificaremos pronto.
-                    </div>` : "";
-
-                // Mensaje si fue aprobado
-                const approvedMsg = status === "APPROVED" ? `
-                    <div style="margin-top:12px; padding:12px 16px; background:#e8f5e9; border-radius:10px; font-size:0.85rem; color:#1b5e20">
-                        ✅ ¡Pago confirmado! Tu pedido está en proceso.
-                    </div>` : "";
-
-                return `
-                    <div class="order-card-client">
-                        <div class="order-card-header">
-                            <div>
-                                <strong style="font-size:1rem">Pedido #${order.id}</strong>
-                                <span style="color:var(--text-muted); font-size:0.85rem; margin-left:10px">${date} · ${time}</span>
-                            </div>
-                            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap">
-                                <span class="pay-badge pay-${status}">${label}</span>
-                                <strong style="color:var(--brand-dark); font-size:1rem">${fmtCurrency(order.total)}</strong>
-                            </div>
-                        </div>
-
-                        <!-- Productos -->
-                        <div>
-                            <button class="products-toggle" data-target="prod-${order.id}" type="button">
-                                📦 Ver productos (${(order.items||[]).length}) ▾
-                            </button>
-                            <div class="products-list" id="prod-${order.id}">
-                                <div style="display:flex; flex-wrap:wrap; gap:4px; padding:4px 0">
-                                    ${chips || "<span style='color:var(--text-muted); font-size:0.85rem'>Sin productos</span>"}
-                                </div>
-                            </div>
-                        </div>
-
-                        ${uniqueBox}
-                        ${reviewMsg}
-                        ${approvedMsg}
-                    </div>`;
-            }).join("");
-
-            // Eventos expand productos
-            container.querySelectorAll(".products-toggle").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const list = document.getElementById(btn.dataset.target);
-                    list.classList.toggle("open");
-                    btn.textContent = list.classList.contains("open")
-                        ? btn.textContent.replace("▾", "▴")
-                        : btn.textContent.replace("▴", "▾");
-                });
-            });
-
-            // Eventos "Ya pagué"
-            container.querySelectorAll(".btn-paid").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    btn.disabled = true;
-                    btn.textContent = "Enviando...";
-                    try {
-                        const r = await fetch(`${BASE}/orders/${btn.dataset.orderId}/pay`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" }
-                        });
-                        if (!r.ok) throw new Error(`Error ${r.status}`);
-                        toast("✅ Confirmación enviada. El equipo verificará tu pago.");
-                        loadClientOrders(); // recargar
-                    } catch (err) {
-                        toast("No se pudo confirmar el pago: " + err.message, "error");
-                        btn.disabled = false;
-                        btn.textContent = "✅ Ya realicé la transferencia";
-                    }
-                });
-            });
-
-        } catch (err) {
-            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>❌ ${esc(err.message)}</p>`;
+        if (!orders.length) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:40px 16px; color:var(--text-muted)">
+                    <p style="font-size:1.1rem; margin-bottom:12px">📭 Aún no tienes pedidos</p>
+                    <a href="catalog.html" class="btn btn-primary" style="text-decoration:none">Ir al catálogo</a>
+                </div>`;
+            return;
         }
-    }
+
+        const PAY_LABELS = {
+            PENDING_PAYMENT:  "⏳ Pendiente de pago",
+            PENDING_APPROVAL: "🔍 Verificando pago",
+            APPROVED:         "✅ Pago aprobado",
+            REJECTED:         "❌ Pago rechazado"
+        };
+
+        container.innerHTML = orders.map(order => {
+            const d      = order.fecha ? new Date(order.fecha) : null;
+            const date   = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
+            const time   = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
+            const status = order.paymentStatus || "PENDING_PAYMENT";
+
+            const chips = (order.items || []).map(it =>
+                `<span class="product-chip-client">
+                    <strong>${esc(it.productName || "Producto #" + it.productId)}</strong>
+                    × ${it.cantidad}
+                </span>`).join("");
+
+            return `
+                <div class="order-card-client">
+                    <div class="order-card-header">
+                        <div>
+                            <strong>Pedido #${order.id}</strong>
+                            <span style="color:var(--text-muted); font-size:0.85rem; margin-left:8px">${date} · ${time}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+                            <span class="pay-badge pay-${status}">${PAY_LABELS[status] || status}</span>
+                            <strong style="color:var(--brand-dark)">${fmtCurrency(order.total)}</strong>
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px">
+                        ${chips || "<span style='color:var(--text-muted); font-size:0.85rem'>Sin productos</span>"}
+                    </div>
+                    ${status === "PENDING_PAYMENT" ? `
+                        <div style="margin-top:12px">
+                            <a href="pedido-confirmado.html?id=${order.id}" class="btn btn-secondary"
+                               style="text-decoration:none; min-height:38px; padding:0 16px; font-size:0.85rem">
+                                💳 Pagar
+                            </a>
+                        </div>` : ""}
+                </div>`;
+        }).join("");
 
     // ── Inicialización ────────────────────────────────────────────
 
@@ -446,6 +460,66 @@
         const logout = () => window.PulpAuth.logout();
         document.getElementById("logoutBtn").addEventListener("click", logout);
         document.getElementById("logoutBtnPerfil").addEventListener("click", logout);
+    });
+
+})();
+</script>
+</body>
+</html>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+                            <span class="pay-badge pay-${status}">${PAY_LABELS[status] || status}</span>
+                            <strong style="color:var(--brand-dark)">${fmtCurrency(order.total)}</strong>
+                        </div>
+                    </div>
+                    <div style="display:flex; flex-wrap:wrap; gap:4px">
+                        ${chips || "<span style='color:var(--text-muted); font-size:0.85rem'>Sin productos</span>"}
+                    </div>
+                    ${status === "PENDING_PAYMENT" ? `
+                        <div style="margin-top:12px">
+                            <a href="pedido-confirmado.html?id=${order.id}" class="btn btn-secondary"
+                               style="text-decoration:none; min-height:38px; padding:0 16px; font-size:0.85rem">
+                                💳 Pagar
+                            </a>
+                        </div>` : ""}
+                </div>`;
+        }).join("");
+    }
+
+    // ── Inicialización ────────────────────────────────────────────
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        if (!window.PulpAuth?.isTokenValid()) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user       = window.PulpAuth.getSessionUser();
+        const storedUser = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+        const fullUser   = { ...user, ...storedUser };
+
+        document.getElementById("clientWelcome").textContent =
+            `Hola, ${fullUser.name || fullUser.email || "Cliente"} 👋`;
+
+        document.getElementById("pName").textContent      = fullUser.name      || "—";
+        document.getElementById("pEmail").textContent     = fullUser.email     || "—";
+        document.getElementById("pCedula").textContent    = fullUser.cedula    || "—";
+        document.getElementById("pTelefono").textContent  = fullUser.telefono  || "—";
+        document.getElementById("pDireccion").textContent = fullUser.direccion || "—";
+
+        try {
+            const cart = JSON.parse(localStorage.getItem("pulpapp_cart") || "[]");
+            const n = cart.reduce((s, i) => s + (i.cantidad || 0), 0);
+            document.getElementById("navCartCount").textContent = String(n);
+        } catch { /* silencioso */ }
+
+        const logout = () => window.PulpAuth.logout();
+        document.getElementById("logoutBtn").addEventListener("click", logout);
+        document.getElementById("logoutBtnPerfil").addEventListener("click", logout);
+
+        // Cargar pedido más reciente al inicio
+        loadLatestOrder();
     });
 
 })();

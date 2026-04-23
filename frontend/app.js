@@ -971,7 +971,8 @@ function buildOrderPayload() {
 }
 
 /*
-    Registra el pedido real en ms-orders y luego conserva la opcion de apoyo por WhatsApp.
+    Registra el pedido real en ms-orders y redirige a la página de confirmación
+    donde el cliente elige el método de pago y se envía el mensaje de WhatsApp.
 */
 async function submitOrder() {
     const checkoutData = getCheckoutFormData();
@@ -994,17 +995,14 @@ async function submitOrder() {
     const payload = buildOrderPayload();
     const createdOrder = await api.createOrder(payload);
 
+    // Limpiar carrito
     state.cart = [];
     persistCart();
     renderCartPage();
 
-    mostrarMensaje("Pedido realizado correctamente", "success");
-
-    const whatsappMessage = encodeURIComponent(
-        `Pedido PulpApp\n\nUsuario: ${state.user?.name || "Cliente"}\nDireccion: ${checkoutData.direccion}\nPedido #${createdOrder?.id || "registrado"}`
-    );
-
-    window.open(`https://wa.me/573103313705?text=${whatsappMessage}`, "_blank");
+    // Redirigir a la página de confirmación con el ID del pedido
+    // La página de confirmación maneja el método de pago y el WhatsApp
+    window.location.href = `pedido-confirmado.html?id=${createdOrder?.id || ""}`;
 
     return createdOrder;
 }
