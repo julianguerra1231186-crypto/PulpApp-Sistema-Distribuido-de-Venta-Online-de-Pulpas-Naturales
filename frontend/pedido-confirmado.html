@@ -270,30 +270,32 @@
         </div>
     </section>
 
-    <!-- Confirmar y enviar WhatsApp -->
+    <!-- Confirmar pedido -->
     <section class="glass-card" style="padding:28px 32px; margin-bottom:24px; text-align:center">
         <span class="eyebrow">Paso 3</span>
         <h2 style="font-family:var(--font-display); font-size:1.3rem; margin:6px 0 12px">
             Confirma tu pedido
         </h2>
         <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.92rem">
-            Al confirmar, te enviaremos un mensaje de WhatsApp con los detalles de tu pedido
-            y recibirás confirmación de nuestro equipo.
+            Al confirmar, el equipo de PulpApp recibirá tu pedido y te contactará para coordinar la entrega.
         </p>
 
-        <a id="whatsappConfirmBtn" href="#" target="_blank" rel="noopener noreferrer"
-           class="btn-whatsapp" style="display:inline-flex; margin-bottom:16px">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            Confirmar pedido por WhatsApp
-        </a>
+        <button id="btnConfirmarPedido" class="btn btn-primary"
+                style="min-height:52px; font-size:1rem; padding:0 32px; margin-bottom:16px">
+            ✅ Confirmar pedido
+        </button>
+
+        <div id="confirmMsg" style="display:none; margin-bottom:16px; padding:14px 18px;
+             background:#e8f5e9; border-radius:12px; color:#1b5e20; font-weight:600; font-size:0.92rem">
+            ✅ ¡Pedido confirmado! El equipo lo revisará pronto.
+        </div>
 
         <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
             <a href="catalog.html" class="btn btn-secondary" style="text-decoration:none; min-height:44px">
                 🛒 Seguir comprando
             </a>
-            <a href="mi-cuenta.html" class="btn btn-secondary" style="text-decoration:none; min-height:44px">
+            <a href="mi-cuenta.html?tab=pedido-actual" class="btn btn-secondary"
+               style="text-decoration:none; min-height:44px">
                 📦 Ver mis pedidos
             </a>
         </div>
@@ -407,7 +409,7 @@
         btn.href = `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`;
     }
 
-    // ── Botón "Ya pagué" ──────────────────────────────────────────
+    // ── Botón "Ya pagué" (transferencia) ─────────────────────────
 
     document.getElementById("btnYaPague").addEventListener("click", async () => {
         if (!currentOrder) return;
@@ -426,6 +428,67 @@
             toast("No se pudo confirmar: " + err.message, "error");
             btn.disabled = false;
             btn.textContent = "✅ Ya realicé la transferencia";
+        }
+    });
+
+    // ── Botón "Confirmar pedido" (Paso 3) ─────────────────────────
+    // 1. Marca el pedido como pagado (PENDING_APPROVAL)
+    // 2. Crea una notificación al admin en tiempo real
+    // 3. Redirige al cliente a mi-cuenta.html
+
+    document.getElementById("btnConfirmarPedido").addEventListener("click", async () => {
+        if (!currentOrder) {
+            toast("No se encontró el pedido. Recarga la página.", "error");
+            return;
+        }
+
+        const btn = document.getElementById("btnConfirmarPedido");
+        btn.disabled = true;
+        btn.textContent = "Confirmando...";
+
+        try {
+            // 1. Marcar pedido como pagado → PENDING_APPROVAL
+            const payRes = await fetch(`${BASE}/orders/${currentOrder.id}/pay`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }
+            });
+            if (!payRes.ok && payRes.status !== 400) {
+                // 400 puede ser que ya estaba en PENDING_APPROVAL — no es error crítico
+                throw new Error(`Error al confirmar: ${payRes.status}`);
+            }
+
+            // 2. Crear notificación al admin
+            const user    = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+            const name    = user.name || user.email || "Un cliente";
+            const method  = { transfer: "Transferencia", nequi: "Nequi", cash: "Efectivo" }[selectedMethod] || "—";
+            const products = (currentOrder.items || [])
+                .map(it => (it.productName || "Prod #" + it.productId) + " x" + it.cantidad)
+                .join(", ");
+
+            await fetch(`${BASE}/admin/notifications`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    title: "🛒 Nuevo pedido confirmado — Pedido #" + currentOrder.id,
+                    message: name + " confirmó su pedido por " + fmtCurrency(currentOrder.total) +
+                             " · Pago: " + method +
+                             " · Productos: " + products +
+                             " · Verifica la transacción en Gestión de pedidos."
+                })
+            }).catch(() => { /* silencioso — la notificación es best-effort */ });
+
+            // 3. Mostrar mensaje de éxito y redirigir
+            btn.style.display = "none";
+            document.getElementById("confirmMsg").style.display = "block";
+
+            setTimeout(() => {
+                window.location.href = "mi-cuenta.html?tab=pedido-actual";
+            }, 2000);
+
+        } catch (err) {
+            toast("No se pudo confirmar el pedido: " + err.message, "error");
+            btn.disabled = false;
+            btn.textContent = "✅ Confirmar pedido";
         }
     });
 

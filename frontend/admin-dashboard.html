@@ -552,6 +552,71 @@
             .rpt-kpi-grid { grid-template-columns: 1fr 1fr; }
             .rpt-bar-row  { grid-template-columns: 34px 1fr 40px; }
         }
+
+        /* ── Gestión de pedidos ── */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+
+        .jornada-btn {
+            min-height: 48px;
+            padding: 0 28px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .jornada-btn.open {
+            background: linear-gradient(135deg, #1b5e20, #2e7d32);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(27,94,32,0.3);
+        }
+
+        .jornada-btn.close {
+            background: linear-gradient(135deg, #b71c1c, #c62828);
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(183,28,28,0.3);
+        }
+
+        .order-mgmt-card {
+            background: #fff;
+            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            transition: box-shadow 0.2s;
+        }
+
+        .order-mgmt-card:hover { box-shadow: 0 4px 16px rgba(13,122,77,0.1); }
+        .order-mgmt-card.new-order { border-color: #f57f17; background: #fffde7; }
+
+        .order-mgmt-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-mgmt-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .order-mgmt-chip {
+            background: var(--brand-soft);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body data-page="admin-dashboard">
@@ -598,6 +663,12 @@
         <button class="dash-tab" data-tab="reports">📊 Reportes</button>
         <button class="dash-tab" data-tab="payments">💳 Pagos</button>
         <button class="dash-tab" data-tab="invoice">🧾 Factura</button>
+        <button class="dash-tab" data-tab="orders-mgmt" id="tabOrdersMgmt">
+            🚦 Gestión de pedidos
+            <span id="ordersBadge" style="display:none; background:#c0392b; color:#fff;
+                border-radius:999px; padding:1px 7px; font-size:0.72rem; font-weight:700;
+                margin-left:6px; animation: pulse 1s infinite;">●</span>
+        </button>
     </nav>
 
     <!-- ══════════════════════════════════ PANEL: CONFIGURACIÓN -->
@@ -946,6 +1017,51 @@
         <p id="invoiceMsg" class="helper-text" style="margin-top:12px"></p>
     </section>
 
+    <!-- ══════════════════════════════════ PANEL: GESTIÓN DE PEDIDOS -->
+    <section id="tab-orders-mgmt" class="dash-panel glass-card hidden">
+        <span class="eyebrow admin-badge">Solo administradores</span>
+
+        <!-- Jornada -->
+        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:28px">
+            <div>
+                <span class="eyebrow">Control de jornada</span>
+                <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">
+                    Gestión de pedidos
+                </h2>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
+                <div id="jornadaStatus" style="font-size:0.88rem; font-weight:600; color:var(--text-muted)">
+                    Estado: cargando...
+                </div>
+                <button id="btnJornada" class="jornada-btn open" type="button">
+                    🟢 Iniciar jornada
+                </button>
+                <button class="btn btn-secondary" id="btnRefreshOrders" type="button"
+                        style="min-height:44px; padding:0 16px; font-size:0.88rem">
+                    🔄 Actualizar
+                </button>
+            </div>
+        </div>
+
+        <!-- KPIs de jornada -->
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px" id="mgmtKpis">
+        </div>
+
+        <!-- Pedidos pendientes de aprobación -->
+        <div class="admin-section">
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap">
+                <h3 style="margin:0; font-family:var(--font-display); font-size:1.1rem">
+                    📋 Pedidos confirmados por clientes
+                </h3>
+                <span id="pendingCount" class="orders-count-badge">—</span>
+                <span style="font-size:0.8rem; color:var(--text-muted)">
+                    Se actualiza cada 15 segundos
+                </span>
+            </div>
+            <div id="ordersMgmtList"><p class="helper-text">Cargando...</p></div>
+        </div>
+    </section>
+
 </main>
 
 <!-- Toast -->
@@ -1021,7 +1137,8 @@
         frequent:      loadFrequentClients,
         reports:       loadReports,
         payments:      loadPayments,
-        invoice:       initInvoice
+        invoice:       initInvoice,
+        "orders-mgmt": initOrdersMgmt
     };
 
     document.getElementById("adminTabs").querySelectorAll(".dash-tab").forEach(btn => {
@@ -1620,6 +1737,275 @@
                 : 'Ver <i class="arrow">▾</i>';
         }
     };
+
+    // ─────────────────────────────────────────────────────────────
+    // MÓDULO: GESTIÓN DE PEDIDOS EN TIEMPO REAL
+    // ─────────────────────────────────────────────────────────────
+
+    var _pollInterval   = null;   // intervalo de polling
+    var _lastOrderCount = 0;      // para detectar pedidos nuevos
+    var _jornadaActiva  = false;  // estado de la jornada
+    var _adminEmail     = "";     // email del admin para auditoría
+
+    /** Inicializa el módulo — se llama al abrir el tab */
+    async function initOrdersMgmt() {
+        _adminEmail = window.PulpAuth?.getSessionUser()?.email || "admin@pulpapp.com";
+
+        // Botón jornada
+        document.getElementById("btnJornada").addEventListener("click", toggleJornada);
+        document.getElementById("btnRefreshOrders").addEventListener("click", refreshOrders);
+
+        // Cargar estado de jornada desde app_config
+        await loadJornadaStatus();
+
+        // Primera carga de pedidos
+        await refreshOrders();
+
+        // Iniciar polling cada 15 segundos
+        if (_pollInterval) clearInterval(_pollInterval);
+        _pollInterval = setInterval(pollOrders, 15000);
+    }
+
+    /** Carga el estado de la jornada desde app_config */
+    async function loadJornadaStatus() {
+        try {
+            const configs = await apiFetch("/admin/config");
+            const cfg = configs.find(c => c.configKey === "jornada_activa");
+            _jornadaActiva = cfg?.configValue === "true";
+        } catch { _jornadaActiva = false; }
+        renderJornadaBtn();
+    }
+
+    /** Renderiza el botón de jornada según el estado */
+    function renderJornadaBtn() {
+        const btn    = document.getElementById("btnJornada");
+        const status = document.getElementById("jornadaStatus");
+        if (_jornadaActiva) {
+            btn.textContent = "🔴 Finalizar jornada";
+            btn.className   = "jornada-btn close";
+            status.textContent = "Jornada activa — recibiendo pedidos";
+            status.style.color = "#1b5e20";
+        } else {
+            btn.textContent = "🟢 Iniciar jornada";
+            btn.className   = "jornada-btn open";
+            status.textContent = "Jornada cerrada — no se reciben pedidos";
+            status.style.color = "var(--text-muted)";
+        }
+    }
+
+    /** Alterna el estado de la jornada */
+    async function toggleJornada() {
+        const btn = document.getElementById("btnJornada");
+        btn.disabled = true;
+        try {
+            const newVal = !_jornadaActiva;
+            await apiFetch("/admin/config", {
+                method: "PUT",
+                body: JSON.stringify({ configKey: "jornada_activa", configValue: String(newVal) })
+            });
+            _jornadaActiva = newVal;
+            renderJornadaBtn();
+
+            // Crear notificación de apertura/cierre
+            const msg = newVal
+                ? "🟢 Jornada iniciada — PulpApp está recibiendo pedidos."
+                : "🔴 Jornada finalizada — PulpApp cerró la recepción de pedidos.";
+            await apiFetch("/admin/notifications", {
+                method: "POST",
+                body: JSON.stringify({ title: newVal ? "Jornada iniciada" : "Jornada finalizada", message: msg })
+            }).catch(() => {});
+
+            toast(newVal ? "✅ Jornada iniciada" : "🔴 Jornada finalizada");
+        } catch (err) {
+            toast("Error al cambiar jornada: " + err.message, "error");
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    /** Polling silencioso — detecta pedidos nuevos y activa badge */
+    async function pollOrders() {
+        try {
+            const pending = await apiFetch("/orders/admin/payments");
+            const count   = pending.length;
+
+            // Si llegaron pedidos nuevos → badge + sonido
+            if (count > _lastOrderCount && _lastOrderCount >= 0) {
+                const badge = document.getElementById("ordersBadge");
+                if (badge) badge.style.display = "inline";
+                playAlert();
+                toast("🛒 " + (count - _lastOrderCount) + " pedido(s) nuevo(s) confirmado(s)");
+            }
+
+            _lastOrderCount = count;
+
+            // Si el tab está abierto, actualizar la lista
+            const panel = document.getElementById("tab-orders-mgmt");
+            if (panel && !panel.classList.contains("hidden")) {
+                renderOrdersMgmt(pending);
+            }
+        } catch { /* silencioso */ }
+    }
+
+    /** Carga y renderiza pedidos pendientes */
+    async function refreshOrders() {
+        const container = document.getElementById("ordersMgmtList");
+        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
+
+        // Ocultar badge al abrir el tab
+        const badge = document.getElementById("ordersBadge");
+        if (badge) badge.style.display = "none";
+
+        try {
+            // Pedidos pendientes de aprobación
+            const pending = await apiFetch("/orders/admin/payments");
+            // Todos los pedidos para KPIs
+            const all     = await apiFetch("/orders/seller");
+
+            _lastOrderCount = pending.length;
+
+            // KPIs de jornada
+            const approved  = all.filter(o => o.paymentStatus === "APPROVED").length;
+            const rejected  = all.filter(o => o.paymentStatus === "REJECTED").length;
+            const revenue   = all.filter(o => o.paymentStatus === "APPROVED")
+                                 .reduce((s, o) => s + Number(o.total || 0), 0);
+
+            document.getElementById("mgmtKpis").innerHTML = [
+                { icon: "⏳", label: "Pendientes",  val: pending.length, color: "#e65100" },
+                { icon: "✅", label: "Aprobados",   val: approved,       color: "#1b5e20" },
+                { icon: "❌", label: "Rechazados",  val: rejected,       color: "#b71c1c" },
+                { icon: "💰", label: "Ingresos",    val: fmtCurrency(revenue), color: "var(--brand-dark)" }
+            ].map(k => `
+                <div class="rpt-kpi-card">
+                    <span class="rpt-kpi-icon">${k.icon}</span>
+                    <span class="rpt-kpi-label">${k.label}</span>
+                    <span class="rpt-kpi-value" style="color:${k.color}">${k.val}</span>
+                </div>`).join("");
+
+            document.getElementById("pendingCount").textContent =
+                pending.length + " pedido" + (pending.length !== 1 ? "s" : "");
+
+            renderOrdersMgmt(pending);
+
+        } catch (err) {
+            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>❌ ${esc(err.message)}</p>`;
+        }
+    }
+
+    /** Renderiza la lista de pedidos pendientes */
+    function renderOrdersMgmt(orders) {
+        const container = document.getElementById("ordersMgmtList");
+
+        if (!orders.length) {
+            container.innerHTML = `
+                <div style="text-align:center; padding:40px 16px; color:var(--text-muted)">
+                    <div style="font-size:2.5rem; margin-bottom:12px">✅</div>
+                    <p style="font-weight:600; font-size:1rem">No hay pedidos pendientes</p>
+                    <p style="font-size:0.88rem; margin-top:4px">Los pedidos confirmados por clientes aparecerán aquí.</p>
+                </div>`;
+            return;
+        }
+
+        container.innerHTML = orders.map(order => {
+            const d    = order.paidAt ? new Date(order.paidAt) : null;
+            const time = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
+            const date = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit"}) : "—";
+
+            return `
+                <div class="order-mgmt-card new-order" id="mgmt-card-${order.orderId}">
+                    <div class="order-mgmt-header">
+                        <div>
+                            <strong style="font-size:1rem">Pedido #${order.orderId}</strong>
+                            <span style="color:var(--text-muted); font-size:0.85rem; margin-left:8px">
+                                Confirmado: ${date} ${time}
+                            </span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
+                            <span style="font-weight:700; color:var(--brand-dark); font-size:1rem">
+                                ${fmtCurrency(order.total)}
+                            </span>
+                            <span style="font-weight:700; color:var(--brand-dark); font-size:0.85rem">
+                                Único: ${fmtCurrency(order.uniqueAmount)}
+                            </span>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap">
+                        <button class="btn btn-primary btn-mgmt-approve" data-id="${order.orderId}"
+                                style="min-height:40px; padding:0 18px; font-size:0.88rem">
+                            ✅ Aprobar pago
+                        </button>
+                        <button class="btn btn-danger btn-mgmt-reject" data-id="${order.orderId}"
+                                style="min-height:40px; padding:0 18px; font-size:0.88rem">
+                            ❌ Rechazar
+                        </button>
+                    </div>
+                </div>`;
+        }).join("");
+
+        // Eventos aprobar
+        container.querySelectorAll(".btn-mgmt-approve").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                btn.disabled = true;
+                try {
+                    await apiFetch("/orders/" + btn.dataset.id + "/approve", {
+                        method: "PUT",
+                        body: JSON.stringify({ adminEmail: _adminEmail })
+                    });
+                    // Crear notificación de confirmación
+                    await apiFetch("/admin/notifications", {
+                        method: "POST",
+                        body: JSON.stringify({
+                            title: "✅ Pago aprobado — Pedido #" + btn.dataset.id,
+                            message: "El administrador aprobó el pago del pedido #" + btn.dataset.id + ". El pedido está en proceso."
+                        })
+                    }).catch(() => {});
+                    toast("✅ Pago aprobado — Pedido #" + btn.dataset.id);
+                    refreshOrders();
+                } catch (err) { toast(err.message, "error"); btn.disabled = false; }
+            });
+        });
+
+        // Eventos rechazar
+        container.querySelectorAll(".btn-mgmt-reject").forEach(btn => {
+            btn.addEventListener("click", async () => {
+                btn.disabled = true;
+                try {
+                    await apiFetch("/orders/" + btn.dataset.id + "/reject", {
+                        method: "PUT",
+                        body: JSON.stringify({ adminEmail: _adminEmail })
+                    });
+                    toast("❌ Pedido #" + btn.dataset.id + " rechazado");
+                    refreshOrders();
+                } catch (err) { toast(err.message, "error"); btn.disabled = false; }
+            });
+        });
+    }
+
+    /** Sonido de alerta para pedidos nuevos (beep con Web Audio API) */
+    function playAlert() {
+        try {
+            const ctx  = new (window.AudioContext || window.webkitAudioContext)();
+            const osc  = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.value = 880;
+            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.4);
+        } catch { /* silencioso si el navegador bloquea audio */ }
+    }
+
+    // Limpiar polling al salir del tab
+    document.getElementById("adminTabs").addEventListener("click", function(e) {
+        const btn = e.target.closest(".dash-tab");
+        if (!btn) return;
+        if (btn.dataset.tab !== "orders-mgmt" && _pollInterval) {
+            clearInterval(_pollInterval);
+            _pollInterval = null;
+        }
+    });
 
     // ─────────────────────────────────────────────────────────────
     // MÓDULO: PAGOS POR TRANSFERENCIA
