@@ -128,6 +128,9 @@ public class OrderService {
         dto.setFecha(order.getFecha());
         dto.setUniqueAmount(order.getUniqueAmount());
         dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setApprovedBy(order.getApprovedBy());
+        dto.setPaidAt(order.getPaidAt());
+        dto.setApprovedAt(order.getApprovedAt());
         dto.setItems(order.getItems().stream().map(this::toItemResponseDto).toList());
         return dto;
     }

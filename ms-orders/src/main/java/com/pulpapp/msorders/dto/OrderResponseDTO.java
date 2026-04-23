@@ -20,4 +20,9 @@ public class OrderResponseDTO {
     // Campos de pago por transferencia
     private Double uniqueAmount;
     private String paymentStatus;
+
+    // Auditoría de aprobación
+    private String approvedBy;
+    private LocalDateTime paidAt;
+    private LocalDateTime approvedAt;
 }
