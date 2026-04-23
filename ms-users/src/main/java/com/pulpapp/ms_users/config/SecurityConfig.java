@@ -84,6 +84,14 @@ public class SecurityConfig {
 
                 // ── Pedidos: el frontend los crea sin token ────────────────
                 .requestMatchers(HttpMethod.POST, "/orders").permitAll()
+                // El cliente marca "Ya pagué" sin token
+                .requestMatchers(HttpMethod.POST, "/orders/*/pay").permitAll()
+                // Consulta estado de pago: autenticado
+                .requestMatchers(HttpMethod.GET,  "/orders/*/payment").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                // Pagos pendientes y aprobación: solo ADMIN
+                .requestMatchers(HttpMethod.GET,  "/orders/admin/payments").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PUT,  "/orders/*/approve").hasAuthority("ROLE_ADMIN")
+                .requestMatchers(HttpMethod.PUT,  "/orders/*/reject").hasAuthority("ROLE_ADMIN")
                 // Vista enriquecida para vendedor y admin (Fase 1 — seller orders)
                 .requestMatchers(HttpMethod.GET,  "/orders/seller").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
                 // Clientes frecuentes: solo ADMIN (Fase 2)

@@ -9,6 +9,8 @@ import com.pulpapp.msorders.dto.ProductResponseDTO;
 import com.pulpapp.msorders.entity.Order;
 import com.pulpapp.msorders.entity.OrderItem;
 import com.pulpapp.msorders.exception.ResourceNotFoundException;
+
+import java.util.Random;
 import com.pulpapp.msorders.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,9 +27,12 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductClient productClient;
+    private final Random random = new Random();
 
     /**
      * Crea un pedido consultando el precio real de cada producto en ms-products.
+     * Asigna automáticamente un uniqueAmount con centavos aleatorios para identificar
+     * la transferencia bancaria del cliente.
      */
     @Transactional
     public OrderResponseDTO createOrder(CreateOrderRequestDTO request) {
@@ -63,8 +68,36 @@ public class OrderService {
 
         order.setTotal(total);
 
+        // Guardar primero para obtener el ID, luego asignar uniqueAmount
         Order savedOrder = orderRepository.save(order);
+        assignUniqueAmount(savedOrder);
+        savedOrder = orderRepository.save(savedOrder);
+
         return toResponseDto(savedOrder);
+    }
+
+    /**
+     * Genera un monto único con centavos aleatorios (0.01–0.99) para identificar
+     * la transferencia del cliente. Evita duplicados con pedidos activos.
+     */
+    private void assignUniqueAmount(Order order) {
+        java.util.List<Double> activeAmounts = orderRepository.findAll().stream()
+                .filter(o -> !o.getId().equals(order.getId()))
+                .filter(o -> "PENDING_PAYMENT".equals(o.getPaymentStatus())
+                          || "PENDING_APPROVAL".equals(o.getPaymentStatus()))
+                .map(Order::getUniqueAmount)
+                .filter(a -> a != null)
+                .toList();
+
+        double candidate;
+        int attempts = 0;
+        do {
+            double cents = (random.nextInt(99) + 1) / 100.0;
+            candidate = Math.round((order.getTotal() + cents) * 100.0) / 100.0;
+            attempts++;
+        } while (activeAmounts.contains(candidate) && attempts < 50);
+
+        order.setUniqueAmount(candidate);
     }
 
     /**
@@ -93,6 +126,8 @@ public class OrderService {
         dto.setUserId(order.getUserId());
         dto.setTotal(order.getTotal());
         dto.setFecha(order.getFecha());
+        dto.setUniqueAmount(order.getUniqueAmount());
+        dto.setPaymentStatus(order.getPaymentStatus());
         dto.setItems(order.getItems().stream().map(this::toItemResponseDto).toList());
         return dto;
     }

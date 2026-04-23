@@ -45,6 +45,12 @@ public class SellerOrderDTO {
     /** Total del pedido en pesos colombianos. */
     private Double total;
 
+    /** Estado del pago (PENDING_PAYMENT, PENDING_APPROVAL, APPROVED, REJECTED). */
+    private String paymentStatus;
+
+    /** Monto único con centavos para identificar la transferencia. */
+    private Double uniqueAmount;
+
     // ── Temporalidad ───────────────────────────────────────────────────────
 
     /**

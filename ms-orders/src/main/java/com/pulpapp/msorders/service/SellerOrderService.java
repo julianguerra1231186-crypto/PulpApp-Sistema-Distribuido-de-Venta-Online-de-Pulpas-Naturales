@@ -66,6 +66,8 @@ public class SellerOrderService {
         dto.setUserId(order.getUserId());
         dto.setTotal(order.getTotal());
         dto.setFecha(order.getFecha());
+        dto.setPaymentStatus(order.getPaymentStatus());
+        dto.setUniqueAmount(order.getUniqueAmount());
 
         // Enriquecer con datos del cliente desde ms-users
         UserSummaryDTO user = userClient.getUserById(order.getUserId());
