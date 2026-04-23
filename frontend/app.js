@@ -1005,8 +1005,9 @@ async function submitOrder() {
     persistCart();
     renderCartPage();
 
-    // Redirigir a pedido-confirmado.html con el ID del pedido creado
-    window.location.href = "pedido-confirmado.html?id=" + (createdOrder?.id || "");
+    // Redirigir a mi-cuenta.html con el tab "Mi pedido" abierto
+    // El cliente continúa el proceso de pago desde ahí
+    window.location.href = "mi-cuenta.html?tab=pedido-actual&id=" + (createdOrder?.id || "");
 
     return createdOrder;
 }
