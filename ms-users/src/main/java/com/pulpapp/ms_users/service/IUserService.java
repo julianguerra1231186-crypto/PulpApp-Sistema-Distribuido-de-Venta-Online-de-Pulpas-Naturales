@@ -23,4 +23,6 @@ public interface IUserService {
     UserResponseDTO findByEmail(String email);
 
     UserResponseDTO toggleActivo(Long id, boolean activo);
+
+    UserResponseDTO resetPassword(Long id, String newPassword);
 }

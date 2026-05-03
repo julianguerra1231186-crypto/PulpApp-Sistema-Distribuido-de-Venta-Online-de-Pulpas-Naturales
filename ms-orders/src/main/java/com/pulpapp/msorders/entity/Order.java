@@ -71,6 +71,13 @@ public class Order {
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
+    /**
+     * Motivo de rechazo del pago, escrito por el admin.
+     * Visible para el cliente en su historial de pedidos.
+     */
+    @Column(name = "rejection_reason", columnDefinition = "TEXT")
+    private String rejectionReason;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items = new ArrayList<>();
 

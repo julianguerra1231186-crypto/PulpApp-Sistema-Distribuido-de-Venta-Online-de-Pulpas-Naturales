@@ -95,4 +95,12 @@ public class UserServiceImpl
         user.setActivo(activo);
         return mapper.toResponseDto(repository.save(user));
     }
+
+    @Override
+    public UserResponseDTO resetPassword(Long id, String newPassword) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        return mapper.toResponseDto(repository.save(user));
+    }
 }

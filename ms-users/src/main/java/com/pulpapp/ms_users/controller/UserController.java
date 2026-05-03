@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.pulpapp.ms_users.dto.UserRequestDTO;
 import com.pulpapp.ms_users.dto.UserResponseDTO;
+import com.pulpapp.ms_users.dto.ResetPasswordRequestDTO;
 import com.pulpapp.ms_users.service.IUserService;
 
 @RestController
@@ -71,6 +72,13 @@ public class UserController {
     public UserResponseDTO toggleActivo(@PathVariable Long id,
                                         @RequestParam boolean activo) {
         return userService.toggleActivo(id, activo);
+    }
+
+    // RESET DE CONTRASEÑA — solo ADMIN (configurado en SecurityConfig)
+    @PatchMapping("/{id}/password")
+    public UserResponseDTO resetPassword(@PathVariable Long id,
+                                         @Valid @RequestBody ResetPasswordRequestDTO dto) {
+        return userService.resetPassword(id, dto.getNewPassword());
     }
 
 }
