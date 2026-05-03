@@ -5,7 +5,9 @@ import com.pulpapp.ms_users.dto.LoginRequestDTO;
 import com.pulpapp.ms_users.dto.RegisterRequestDTO;
 import com.pulpapp.ms_users.entity.Role;
 import com.pulpapp.ms_users.entity.Tenant;
+import com.pulpapp.ms_users.entity.TenantRole;
 import com.pulpapp.ms_users.entity.User;
+import com.pulpapp.ms_users.entity.UserStatus;
 import com.pulpapp.ms_users.exception.BadCredentialsException;
 import com.pulpapp.ms_users.repository.UserRepository;
 import com.pulpapp.ms_users.security.JwtService;
@@ -37,6 +39,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final TenantService tenantService;
+    private final UserTenantRoleService userTenantRoleService;
 
     // ---------------------------------------------------------------
     // Login
@@ -44,10 +47,9 @@ public class AuthService {
 
     /**
      * Autentica al usuario con email + password y devuelve un JWT.
-     * AuthenticationManager delega en DaoAuthenticationProvider,
-     * que usa UserDetailsServiceImpl + BCrypt internamente.
      *
-     * Fase 1: El JWT ahora incluye tenantId si el usuario tiene uno asignado.
+     * Fase 5 RBAC: El rol se resuelve desde UserTenantRole (fuente de verdad).
+     * Si no hay registro en user_tenant_roles, usa el campo legacy User.role.
      */
     public AuthResponseDTO login(LoginRequestDTO request) {
         try {
@@ -64,12 +66,15 @@ public class AuthService {
         User user = userRepository.findByEmailIgnoreCase(request.getEmail())
                 .orElseThrow(() -> new BadCredentialsException("Email o contraseña incorrectos"));
 
+        // Fase 5: resolver rol desde user_tenant_roles
+        String resolvedRole = resolveRole(user);
+
         UserPrincipal principal = new UserPrincipal(user);
-        String token = jwtService.generateToken(principal, user.getRole().name(), user.getTenantId());
+        String token = jwtService.generateToken(principal, resolvedRole, user.getTenantId());
 
-        log.info("Login exitoso: email={}, tenantId={}", user.getEmail(), user.getTenantId());
+        log.info("Login exitoso: email={}, tenantId={}, role={}", user.getEmail(), user.getTenantId(), resolvedRole);
 
-        return buildAuthResponse(token, user);
+        return buildAuthResponse(token, user, resolvedRole);
     }
 
     // ---------------------------------------------------------------
@@ -114,14 +119,29 @@ public class AuthService {
 
         log.info("Registro SaaS: email={}, status=PENDING_PAYMENT", user.getEmail());
 
-        return buildAuthResponse(token, user);
+        return buildAuthResponse(token, user, user.getRole().name());
     }
 
     // ---------------------------------------------------------------
-    // Helper
+    // Helpers
     // ---------------------------------------------------------------
 
-    private AuthResponseDTO buildAuthResponse(String token, User user) {
+    /**
+     * Resuelve el rol del usuario desde user_tenant_roles (fuente de verdad).
+     * Fallback al campo legacy User.role si no hay registro en la tabla RBAC.
+     */
+    private String resolveRole(User user) {
+        if (user.getTenantId() != null) {
+            TenantRole tenantRole = userTenantRoleService.getRoleInTenant(user.getId(), user.getTenantId());
+            if (tenantRole != null) {
+                return "ROLE_" + tenantRole.name();
+            }
+        }
+        // Fallback: campo legacy
+        return user.getRole().name();
+    }
+
+    private AuthResponseDTO buildAuthResponse(String token, User user, String resolvedRole) {
         return AuthResponseDTO.builder()
                 .token(token)
                 .id(user.getId())
@@ -133,6 +153,7 @@ public class AuthService {
                 .role(user.getRole())
                 .tenantId(user.getTenantId())
                 .status(user.getStatus() != null ? user.getStatus().name() : "ACTIVE")
+                .tenantRole(resolvedRole)
                 .build();
     }
 }

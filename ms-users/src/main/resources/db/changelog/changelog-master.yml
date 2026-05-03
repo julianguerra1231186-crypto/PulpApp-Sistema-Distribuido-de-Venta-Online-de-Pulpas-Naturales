@@ -729,3 +729,136 @@ databaseChangeLog:
             columns:
               - column:
                   name: status
+
+  # ============================================================
+  # FASE 5 — RBAC MULTI-TENANT
+  # ============================================================
+
+  # ============================================================
+  # changeSet 21: Tabla user_tenant_roles
+  # Relación usuario-tenant-rol para RBAC multi-tenant.
+  # Un usuario puede tener roles distintos en diferentes tenants.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 21-create-user-tenant-roles-table
+      author: pulpapp-team
+      comment: "Fase 5 RBAC: crea la tabla user_tenant_roles."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: user_tenant_roles
+      changes:
+        - createTable:
+            tableName: user_tenant_roles
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: user_tenant_roles
+            columnNames: user_id, tenant_id
+            constraintName: uk_user_tenant
+
+  # ============================================================
+  # changeSet 22: Índice en user_tenant_roles.user_id
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 22-index-utr-user-id
+      author: pulpapp-team
+      comment: "Fase 5 RBAC: crea indice en user_tenant_roles.user_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_utr_user_id
+      changes:
+        - createIndex:
+            tableName: user_tenant_roles
+            indexName: idx_utr_user_id
+            columns:
+              - column:
+                  name: user_id
+
+  # ============================================================
+  # changeSet 23: Índice en user_tenant_roles.tenant_id
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 23-index-utr-tenant-id
+      author: pulpapp-team
+      comment: "Fase 5 RBAC: crea indice en user_tenant_roles.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_utr_tenant_id
+      changes:
+        - createIndex:
+            tableName: user_tenant_roles
+            indexName: idx_utr_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+
+  # ============================================================
+  # changeSet 24: Migrar usuarios existentes a user_tenant_roles
+  # Para cada usuario con tenant_id NOT NULL, crea un registro
+  # en user_tenant_roles con el rol derivado del campo legacy.
+  # ROLE_ADMIN → ADMIN, ROLE_SELLER → SELLER, ROLE_CLIENT → CLIENT
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 24-migrate-existing-users-to-utr
+      author: pulpapp-team
+      comment: "Fase 5 RBAC: migra usuarios existentes a user_tenant_roles."
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: >
+            SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+            FROM users u
+            WHERE u.tenant_id IS NOT NULL
+            AND NOT EXISTS (SELECT 1 FROM user_tenant_roles utr WHERE utr.user_id = u.id AND utr.tenant_id = u.tenant_id)
+      changes:
+        - sql:
+            sql: >
+              INSERT INTO user_tenant_roles (user_id, tenant_id, role, created_at)
+              SELECT u.id, u.tenant_id,
+                CASE
+                  WHEN u.role = 'ROLE_ADMIN' THEN 'ADMIN'
+                  WHEN u.role = 'ROLE_SELLER' THEN 'SELLER'
+                  ELSE 'CLIENT'
+                END,
+                NOW()
+              FROM users u
+              WHERE u.tenant_id IS NOT NULL
+              AND NOT EXISTS (SELECT 1 FROM user_tenant_roles utr WHERE utr.user_id = u.id AND utr.tenant_id = u.tenant_id)
