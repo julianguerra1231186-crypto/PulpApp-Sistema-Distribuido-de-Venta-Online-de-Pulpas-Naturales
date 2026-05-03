@@ -13,4 +13,10 @@ public class ApprovePaymentRequestDTO {
     /** Email del admin que realiza la acción (para auditoría). */
     @NotBlank(message = "El email del administrador es obligatorio")
     private String adminEmail;
+
+    /**
+     * Motivo de rechazo (solo requerido en PUT /orders/{id}/reject).
+     * El cliente lo verá en su historial de pedidos.
+     */
+    private String rejectionReason;
 }

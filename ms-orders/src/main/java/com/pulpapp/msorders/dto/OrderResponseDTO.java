@@ -25,4 +25,5 @@ public class OrderResponseDTO {
     private String approvedBy;
     private LocalDateTime paidAt;
     private LocalDateTime approvedAt;
+    private String rejectionReason;
 }

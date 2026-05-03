@@ -57,6 +57,9 @@ public class SellerOrderDTO {
     /** Timestamp cuando el admin aprobó o rechazó. */
     private LocalDateTime approvedAt;
 
+    /** Motivo de rechazo escrito por el admin (visible para el cliente). */
+    private String rejectionReason;
+
     // ── Temporalidad ───────────────────────────────────────────────────────
 
     /**

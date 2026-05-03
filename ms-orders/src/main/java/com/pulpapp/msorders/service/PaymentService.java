@@ -104,8 +104,12 @@ public class PaymentService {
         order.setPaymentStatus(REJECTED);
         order.setApprovedBy(request.getAdminEmail());
         order.setApprovedAt(LocalDateTime.now());
+        // Guardar el motivo de rechazo para que el cliente lo vea
+        if (request.getRejectionReason() != null && !request.getRejectionReason().isBlank()) {
+            order.setRejectionReason(request.getRejectionReason());
+        }
 
-        log.info("Pedido #{} rechazado por {}", orderId, request.getAdminEmail());
+        log.info("Pedido #{} rechazado por {} — motivo: {}", orderId, request.getAdminEmail(), request.getRejectionReason());
         return toDTO(orderRepository.save(order));
     }
 
