@@ -47,7 +47,7 @@ Este documento registra el proceso incremental de transformación de PulpApp des
 | Fase 2 | ms-products | ✅ Completada | `feat(multi-tenant): Fase 2 - Aislamiento Multi-Tenant en ms-products` |
 | Fase 3 | ms-orders | ✅ Completada | `feat(multi-tenant): Fase 3 - Aislamiento Multi-Tenant en ms-orders` |
 | Fase 4 | Onboarding SaaS + Branding | ✅ Completada | `feat(saas): Fase 4 - Onboarding SaaS con pago manual, activacion de tenant y branding` |
-| Fase 5 | Admin por tenant | ⏳ Pendiente | — |
+| Fase 5 | RBAC Multi-Tenant | ✅ Completada | `feat(rbac): Fase 5 - RBAC multi-tenant con user-tenant-role mapping` |
 | Fase 6 | Configuración por tenant | ⏳ Pendiente | — |
 
 ---
@@ -424,6 +424,85 @@ PUT /orders/5/approve (ADMIN de tenant 2 intenta aprobar pedido de tenant 1):
 | `18-create-tenant-config-table` | Tabla `tenant_config` |
 | `19-index-payments-user-id` | Índice en `payments.user_id` |
 | `20-index-payments-status` | Índice en `payments.status` |
+
+---
+
+## Fase 5 — RBAC Multi-Tenant (Roles por Tenant)
+
+**Fecha:** Mayo 2026  
+**Rama:** `pruebas-apis`  
+**Objetivo:** Implementar un sistema de roles por tenant donde cada usuario tiene un rol específico dentro de cada tenant al que pertenece, reemplazando el sistema de roles globales.
+
+### Problema Resuelto
+
+| Aspecto | ANTES (Fases 1-4) | AHORA (Fase 5) |
+|---|---|---|
+| Roles | Globales (User.role) | Por tenant (user_tenant_roles) |
+| Fuente de verdad | Campo `role` en `users` | Tabla `user_tenant_roles` |
+| Multi-tenant | Un usuario = un rol fijo | Un usuario puede tener roles distintos en distintos tenants |
+| Gestión | Solo super admin | Admin de cada tenant gestiona sus usuarios |
+
+### Modelo de Datos
+
+```
+users (1) ←→ (N) user_tenant_roles (N) ←→ (1) tenants
+                        │
+                     role: ADMIN | SELLER | CLIENT
+```
+
+### Archivos Nuevos (8)
+
+| Archivo | Descripción |
+|---|---|
+| `entity/UserTenantRole.java` | Relación usuario-tenant-rol con constraint único |
+| `entity/TenantRole.java` | Enum: ADMIN, SELLER, CLIENT (sin prefijo ROLE_) |
+| `repository/UserTenantRoleRepository.java` | Queries por userId, tenantId, combinación |
+| `service/UserTenantRoleService.java` | CRUD de roles + crear usuario en tenant + sincronización legacy |
+| `controller/TenantUserController.java` | API REST /tenant/users (solo ADMIN del tenant) |
+| `dto/UserTenantRoleDTO.java` | DTO de salida con datos enriquecidos |
+| `dto/AssignRoleRequestDTO.java` | DTO para cambiar rol |
+| `dto/AddUserToTenantRequestDTO.java` | DTO para crear usuario dentro del tenant |
+
+### Archivos Modificados (6)
+
+| Archivo | Cambio |
+|---|---|
+| `service/AuthService.java` | Login resuelve rol desde user_tenant_roles con fallback legacy |
+| `service/OnboardingPaymentService.java` | Crea UserTenantRole al aprobar pago |
+| `dto/AuthResponseDTO.java` | +campo `tenantRole` (rol resuelto del tenant) |
+| `config/SecurityConfig.java` | +rutas /tenant/users → ROLE_ADMIN |
+| `changelog-master.yml` | +4 changeSets (tabla, índices, migración) |
+| `api-gateway/application.yml` | +ruta /tenant/users |
+
+### Migraciones Liquibase (4 changeSets)
+
+| ID | Acción |
+|---|---|
+| `21-create-user-tenant-roles-table` | Tabla con constraint único (user_id, tenant_id) |
+| `22-index-utr-user-id` | Índice en user_id |
+| `23-index-utr-tenant-id` | Índice en tenant_id |
+| `24-migrate-existing-users-to-utr` | Migra usuarios existentes derivando rol del campo legacy |
+
+### Endpoints Nuevos
+
+| Endpoint | Acceso | Función |
+|---|---|---|
+| `GET /tenant/users` | ROLE_ADMIN | Listar usuarios del tenant con roles |
+| `POST /tenant/users` | ROLE_ADMIN | Crear usuario dentro del tenant |
+| `PUT /tenant/users/{id}/role` | ROLE_ADMIN | Cambiar rol de un usuario |
+| `DELETE /tenant/users/{id}` | ROLE_ADMIN | Eliminar usuario del tenant |
+
+### Flujo de Resolución de Roles en Login
+
+```
+1. Usuario hace login con email + password
+2. AuthService busca en user_tenant_roles:
+   → findByUserIdAndTenantId(userId, tenantId)
+3. Si encuentra registro → usa TenantRole (ADMIN/SELLER/CLIENT)
+   → Convierte a "ROLE_ADMIN" para el JWT
+4. Si NO encuentra → fallback al campo legacy User.role
+5. JWT se genera con el rol resuelto
+```
 
 ---
 
