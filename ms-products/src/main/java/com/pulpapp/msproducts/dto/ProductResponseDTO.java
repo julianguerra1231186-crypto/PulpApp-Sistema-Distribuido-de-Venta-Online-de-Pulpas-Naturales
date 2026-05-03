@@ -12,4 +12,5 @@ public class ProductResponseDTO {
     private Integer stock;
     private Boolean available;
     private String imageUrl;
+    private Long tenantId;
 }

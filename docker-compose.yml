@@ -76,6 +76,9 @@ services:
       SERVER_PORT: 8082
       APP_BASE_URL: http://localhost:8090
       APP_UPLOAD_DIR: /app/uploads/products
+      # Fase 2 Multi-Tenant: misma clave JWT que ms-users para decodificar tenantId
+      JWT_SECRET: ${JWT_SECRET:-cGVwcGVyTWludFB1bHBBcHBTZWNyZXRLZXkyMDI2IVhZWg==}
+      TENANT_DEFAULT_ID: ${TENANT_DEFAULT_ID:-1}
     volumes:
       - product_images:/app/uploads/products
     networks:
