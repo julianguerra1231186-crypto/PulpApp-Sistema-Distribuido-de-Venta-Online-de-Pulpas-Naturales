@@ -521,3 +521,211 @@ databaseChangeLog:
             columns:
               - column:
                   name: tenant_id
+
+  # ============================================================
+  # FASE 4 — ONBOARDING SAAS
+  # ============================================================
+
+  # ============================================================
+  # changeSet 16: Columna status en users
+  # Estado del ciclo de vida SaaS del usuario.
+  # DEFAULT ACTIVE para compatibilidad con usuarios existentes.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 16-add-status-to-users
+      author: pulpapp-team
+      comment: "Fase 4 SaaS: agrega columna status a users."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: status
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: status
+                  type: VARCHAR(30)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+
+  # ============================================================
+  # changeSet 17: Tabla payments
+  # Comprobantes de pago del onboarding SaaS.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 17-create-payments-table
+      author: pulpapp-team
+      comment: "Fase 4 SaaS: crea la tabla payments para comprobantes de pago."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: payments
+      changes:
+        - createTable:
+            tableName: payments
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: method
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reference
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: proof_url
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: PENDING
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: approved_by
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: approved_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: rejection_reason
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: tenant_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 18: Tabla tenant_config
+  # Configuración visual (branding) por tenant.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 18-create-tenant-config-table
+      author: pulpapp-team
+      comment: "Fase 4 SaaS: crea la tabla tenant_config para branding por tenant."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: tenant_config
+      changes:
+        - createTable:
+            tableName: tenant_config
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: logo_url
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: primary_color
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: secondary_color
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: banner_url
+                  type: TEXT
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 19: Índice en payments.user_id
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 19-index-payments-user-id
+      author: pulpapp-team
+      comment: "Fase 4 SaaS: crea indice en payments.user_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_payments_user_id
+      changes:
+        - createIndex:
+            tableName: payments
+            indexName: idx_payments_user_id
+            columns:
+              - column:
+                  name: user_id
+
+  # ============================================================
+  # changeSet 20: Índice en payments.status
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 20-index-payments-status
+      author: pulpapp-team
+      comment: "Fase 4 SaaS: crea indice en payments.status."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_payments_status
+      changes:
+        - createIndex:
+            tableName: payments
+            indexName: idx_payments_status
+            columns:
+              - column:
+                  name: status

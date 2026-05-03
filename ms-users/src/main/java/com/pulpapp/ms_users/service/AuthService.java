@@ -77,13 +77,13 @@ public class AuthService {
     // ---------------------------------------------------------------
 
     /**
-     * Registra un nuevo usuario, encripta su contraseña y devuelve un JWT
-     * para que pueda operar de inmediato sin necesidad de hacer login aparte.
+     * Registra un nuevo usuario en el flujo SaaS.
      *
-     * Fase 1 Multi-Tenant:
-     *  - El usuario se asigna al tenant por defecto ("PulpApp").
-     *  - Si el tenant no existe, se crea automáticamente.
-     *  - El JWT incluye tenantId desde el primer momento.
+     * Fase 4 — Cambio crítico:
+     *  - El usuario se registra con status = PENDING_PAYMENT
+     *  - tenant_id = NULL (se asigna cuando el admin aprueba el pago)
+     *  - Recibe un JWT limitado para poder subir comprobante de pago
+     *  - NO tiene acceso completo al sistema hasta que sea ACTIVE
      */
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO request) {
@@ -94,9 +94,6 @@ public class AuthService {
             throw new IllegalArgumentException("La cédula ya está registrada");
         }
 
-        // Obtener o crear el tenant por defecto
-        Tenant defaultTenant = tenantService.getOrCreateDefaultTenant();
-
         User user = new User();
         user.setCedula(request.getCedula());
         user.setTelefono(request.getTelefono());
@@ -104,17 +101,18 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setDireccion(request.getDireccion());
-        user.setTenantId(defaultTenant.getId());
-        // El registro público SIEMPRE asigna ROLE_CLIENT
-        // Los vendedores solo los crea el ADMIN desde el panel
+        // Fase 4 SaaS: usuario inicia sin tenant y pendiente de pago
+        user.setTenantId(null);
         user.setRole(Role.ROLE_CLIENT);
+        user.setStatus(UserStatus.PENDING_PAYMENT);
 
         userRepository.save(user);
 
         UserPrincipal principal = new UserPrincipal(user);
+        // JWT sin tenantId (null) — acceso limitado
         String token = jwtService.generateToken(principal, user.getRole().name(), user.getTenantId());
 
-        log.info("Registro exitoso: email={}, tenantId={}", user.getEmail(), user.getTenantId());
+        log.info("Registro SaaS: email={}, status=PENDING_PAYMENT", user.getEmail());
 
         return buildAuthResponse(token, user);
     }
@@ -134,6 +132,7 @@ public class AuthService {
                 .direccion(user.getDireccion())
                 .role(user.getRole())
                 .tenantId(user.getTenantId())
+                .status(user.getStatus() != null ? user.getStatus().name() : "ACTIVE")
                 .build();
     }
 }
