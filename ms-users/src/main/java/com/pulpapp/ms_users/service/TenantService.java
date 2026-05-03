@@ -31,7 +31,7 @@ public class TenantService {
      * Todos los usuarios registrados públicamente se asignan a este tenant
      * hasta que se implemente selección de tenant en el registro.
      */
-    public static final String DEFAULT_TENANT_NAME = "PulpApp";
+    public static final String DEFAULT_TENANT_NAME = "Zentrix";
 
     private final TenantRepository tenantRepository;
 
@@ -100,7 +100,7 @@ public class TenantService {
     /**
      * Obtiene o crea el tenant por defecto.
      *
-     * Estrategia: Si el tenant "PulpApp" no existe, se crea automáticamente.
+     * Estrategia: Si el tenant "Zentrix" no existe, se crea automáticamente.
      * Esto garantiza que el sistema funcione desde el primer arranque sin
      * configuración manual, manteniendo compatibilidad con el flujo existente.
      */

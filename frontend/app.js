@@ -1,5 +1,5 @@
 ﻿/*
-    Archivo principal del frontend de PulpApp.
+    Archivo principal del frontend de Zentrix.
     Su responsabilidad es inicializar cada pagina, conectar la interfaz con services.js
     y mantener la experiencia de compra coherente en toda la navegacion.
 */

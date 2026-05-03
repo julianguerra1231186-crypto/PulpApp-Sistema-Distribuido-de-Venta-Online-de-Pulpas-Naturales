@@ -862,3 +862,25 @@ databaseChangeLog:
               FROM users u
               WHERE u.tenant_id IS NOT NULL
               AND NOT EXISTS (SELECT 1 FROM user_tenant_roles utr WHERE utr.user_id = u.id AND utr.tenant_id = u.tenant_id)
+
+  # ============================================================
+  # REBRANDING — PulpApp → Zentrix
+  # ============================================================
+
+  # ============================================================
+  # changeSet 25: Renombrar tenant por defecto
+  # Actualiza el nombre del tenant de "PulpApp" a "Zentrix".
+  # Idempotente: solo ejecuta si existe un tenant con nombre "PulpApp".
+  # ============================================================
+  - changeSet:
+      id: 25-rebrand-default-tenant
+      author: pulpapp-team
+      comment: "Rebranding: renombra tenant PulpApp a Zentrix."
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM tenants WHERE name = 'PulpApp'
+      changes:
+        - sql:
+            sql: UPDATE tenants SET name = 'Zentrix' WHERE name = 'PulpApp'

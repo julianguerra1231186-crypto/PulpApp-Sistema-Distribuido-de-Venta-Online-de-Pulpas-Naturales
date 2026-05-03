@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PulpApp | Panel Administrativo</title>
+    <title>Zentrix | Panel Administrativo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
@@ -625,8 +625,8 @@
 <header class="site-header">
     <div class="header-inner">
         <div class="brand-block">
-            <img src="img/sinfondologo-removebg-preview.png" alt="Logo PulpApp" class="brand-logo">
-            <div><span class="brand-kicker">PulpApp</span></div>
+            <img src="img/sinfondologo-removebg-preview.png" alt="Logo Zentrix" class="brand-logo">
+            <div><span class="brand-kicker">Zentrix</span></div>
         </div>
         <nav class="site-nav" aria-label="Principal">
             <a href="index.html">Inicio</a>
@@ -954,7 +954,7 @@
                 <!-- Cabecera -->
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px">
                     <div>
-                        <div style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--brand-dark)">🍊 PulpApp</div>
+                        <div style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--brand-dark)">🍊 Zentrix</div>
                         <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px">Pulpas Naturales de Fruta</div>
                     </div>
                     <div style="text-align:right">
@@ -999,7 +999,7 @@
 
                 <!-- Pie -->
                 <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:16px">
-                    Gracias por tu compra · PulpApp · pulpas naturales de fruta
+                    Gracias por tu compra · Zentrix · pulpas naturales de fruta
                 </div>
             </div>
 
@@ -1198,7 +1198,7 @@
         const waConfig = configs.find(c => c.configKey === "whatsapp_number");
         if (waConfig?.configValue) {
             const num = waConfig.configValue.replace(/\D/g, "");
-            const url = `https://wa.me/${num}?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20PulpApp`;
+            const url = `https://wa.me/${num}?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20Zentrix`;
             waLink.href = url;
             waLink.textContent = url;
             waBlock.style.display = "block";
@@ -1808,8 +1808,8 @@
 
             // Crear notificación de apertura/cierre
             const msg = newVal
-                ? "🟢 Jornada iniciada — PulpApp está recibiendo pedidos."
-                : "🔴 Jornada finalizada — PulpApp cerró la recepción de pedidos.";
+                ? "🟢 Jornada iniciada — Zentrix está recibiendo pedidos."
+                : "🔴 Jornada finalizada — Zentrix cerró la recepción de pedidos.";
             await apiFetch("/admin/notifications", {
                 method: "POST",
                 body: JSON.stringify({ title: newVal ? "Jornada iniciada" : "Jornada finalizada", message: msg })
@@ -2225,7 +2225,7 @@
             <html lang="es">
             <head>
                 <meta charset="UTF-8">
-                <title>${invNum} — PulpApp</title>
+                <title>${invNum} — Zentrix</title>
                 <style>
                     body { font-family: 'DM Sans', Arial, sans-serif; margin: 32px; color: #152118; }
                     table { width: 100%; border-collapse: collapse; }
