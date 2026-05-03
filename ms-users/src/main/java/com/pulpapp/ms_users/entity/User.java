@@ -41,6 +41,15 @@ public class User {
     private Boolean activo = true;
 
     /**
+     * Estado del ciclo de vida del usuario en el flujo SaaS.
+     * Fase 4: PENDING_PAYMENT → PENDING_APPROVAL → ACTIVE.
+     * Usuarios existentes se migran a ACTIVE por Liquibase.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private UserStatus status = UserStatus.ACTIVE;
+
+    /**
      * Identificador del tenant al que pertenece este usuario.
      * Fase 1 Multi-Tenant: nullable para compatibilidad con usuarios existentes.
      * La migración Liquibase asigna el tenant por defecto a los registros históricos.

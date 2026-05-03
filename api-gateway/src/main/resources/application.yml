@@ -77,6 +77,30 @@ spring:
             - Path=/tenants, /tenants/**
 
         # --------------------------------------------
+        # PAGOS ONBOARDING SAAS (Fase 4)
+        # --------------------------------------------
+        - id: ms-payments
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/payments, /payments/**
+
+        # --------------------------------------------
+        # ADMIN PAGOS ONBOARDING (Fase 4)
+        # --------------------------------------------
+        - id: ms-admin-payments
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/admin/payments, /admin/payments/**
+
+        # --------------------------------------------
+        # CONFIGURACIÓN VISUAL POR TENANT (Fase 4)
+        # --------------------------------------------
+        - id: ms-tenant-config
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/tenant/config, /tenant/config/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users

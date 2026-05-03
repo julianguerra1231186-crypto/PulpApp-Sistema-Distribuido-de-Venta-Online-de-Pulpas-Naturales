@@ -47,6 +47,18 @@ public class SecurityConfig {
                 // ── Tenants: solo ADMIN puede gestionar tenants ────────────
                 .requestMatchers("/tenants/**").hasAuthority("ROLE_ADMIN")
 
+                // ── Pagos onboarding SaaS (Fase 4) ────────────────────────
+                // Usuario autenticado sube comprobante y consulta sus pagos
+                .requestMatchers(HttpMethod.POST, "/payments").authenticated()
+                .requestMatchers(HttpMethod.GET,  "/payments/my").authenticated()
+                // Admin: gestión de pagos pendientes
+                .requestMatchers("/admin/payments").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/admin/payments/**").hasAuthority("ROLE_ADMIN")
+
+                // ── Configuración visual por tenant (Fase 4) ──────────────
+                .requestMatchers("/tenant/config").authenticated()
+                .requestMatchers("/tenant/config/**").authenticated()
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")
