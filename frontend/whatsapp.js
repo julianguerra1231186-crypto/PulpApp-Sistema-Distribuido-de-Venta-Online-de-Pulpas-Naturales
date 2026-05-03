@@ -15,7 +15,7 @@
 
     const BASE            = "http://localhost:8090";
     const FALLBACK_NUMBER = "573001234567";
-    const WA_MESSAGE      = "Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20PulpApp";
+    const WA_MESSAGE      = "Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20Zentrix";
 
     /**
      * Construye la URL de WhatsApp con el número dado.

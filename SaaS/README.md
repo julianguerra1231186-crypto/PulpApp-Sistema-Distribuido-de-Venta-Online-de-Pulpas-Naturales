@@ -1,4 +1,6 @@
-# 🏢 PulpApp — Transformación SaaS Multi-Tenant
+# 🏢 Zentrix — Plataforma SaaS Multi-Tenant
+
+> Diseñado y desarrollado por **Red Matrix Solutions**
 
 ## Índice
 
@@ -15,7 +17,7 @@
 
 ## Visión General
 
-Este documento registra el proceso incremental de transformación de PulpApp desde un sistema e-commerce **single-tenant** (una sola tienda) hacia una arquitectura **SaaS Multi-Tenant** donde múltiples negocios pueden operar de forma aislada sobre la misma infraestructura.
+Este documento registra el proceso incremental de transformación de Zentrix (anteriormente PulpApp) desde un sistema e-commerce **single-tenant** hacia una arquitectura **SaaS Multi-Tenant** donde múltiples negocios pueden operar de forma aislada sobre la misma infraestructura.
 
 **Principio fundamental:** cada fase se implementa sin romper la funcionalidad existente. El frontend y los endpoints públicos siguen funcionando sin cambios después de cada fase.
 

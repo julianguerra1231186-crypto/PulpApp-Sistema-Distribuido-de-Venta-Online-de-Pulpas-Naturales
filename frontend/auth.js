@@ -1,5 +1,5 @@
 /**
- * auth.js — Gestión de autenticación JWT en el navbar de PulpApp.
+ * auth.js — Gestión de autenticación JWT en el navbar de Zentrix.
  *
  * Responsabilidades:
  *  - Leer/escribir/eliminar el token JWT de localStorage
