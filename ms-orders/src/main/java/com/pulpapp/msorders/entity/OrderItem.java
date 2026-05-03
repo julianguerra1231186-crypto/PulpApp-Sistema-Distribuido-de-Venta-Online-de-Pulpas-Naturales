@@ -40,4 +40,11 @@ public class OrderItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    /**
+     * Identificador del tenant propietario de este item.
+     * Fase 3 Multi-Tenant: hereda el tenantId del pedido padre.
+     */
+    @Column(name = "tenant_id")
+    private Long tenantId;
 }

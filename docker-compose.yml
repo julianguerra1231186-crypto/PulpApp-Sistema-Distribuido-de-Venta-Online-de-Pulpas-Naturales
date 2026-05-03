@@ -103,6 +103,9 @@ services:
       SERVER_PORT: 8083
       MS_PRODUCTS_BASE_URL: http://ms-products:8082
       MS_USERS_BASE_URL: http://ms-users:8081
+      # Fase 3 Multi-Tenant: misma clave JWT que ms-users para decodificar tenantId
+      JWT_SECRET: ${JWT_SECRET:-cGVwcGVyTWludFB1bHBBcHBTZWNyZXRLZXkyMDI2IVhZWg==}
+      TENANT_DEFAULT_ID: ${TENANT_DEFAULT_ID:-1}
     networks:
       - pulpapp-network
 

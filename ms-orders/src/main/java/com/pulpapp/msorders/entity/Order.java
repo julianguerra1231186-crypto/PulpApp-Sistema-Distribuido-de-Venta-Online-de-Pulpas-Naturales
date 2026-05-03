@@ -81,6 +81,15 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> items = new ArrayList<>();
 
+    /**
+     * Identificador del tenant propietario de este pedido.
+     * Fase 3 Multi-Tenant: cada pedido pertenece a un tenant.
+     * Nullable para compatibilidad con pedidos existentes (la migración
+     * Liquibase asigna el tenant por defecto a los registros históricos).
+     */
+    @Column(name = "tenant_id")
+    private Long tenantId;
+
     @PrePersist
     public void prePersist() {
         if (fecha == null) {

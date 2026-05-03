@@ -5,23 +5,18 @@ import com.pulpapp.msorders.dto.FrequentClientDTO;
 import com.pulpapp.msorders.dto.UserSummaryDTO;
 import com.pulpapp.msorders.repository.FrequentClientProjection;
 import com.pulpapp.msorders.repository.OrderRepository;
+import com.pulpapp.msorders.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Servicio de lógica de negocio para la vista de clientes frecuentes.
- *
- * Responsabilidad única: agrupa pedidos por cliente, cuenta frecuencia,
- * suma total gastado y enriquece con nombre/email desde ms-users.
- *
- * Aplica degradación elegante: si ms-users no responde, se usan
- * valores de fallback para no interrumpir la vista del admin.
- *
- * Separación de responsabilidades: independiente de SellerOrderService
- * y OrderService — no modifica contratos existentes.
+ * Servicio de clientes frecuentes con aislamiento Multi-Tenant (Fase 3).
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FrequentClientService {
@@ -29,18 +24,17 @@ public class FrequentClientService {
     private final OrderRepository orderRepository;
     private final UserClient userClient;
 
+    @Value("${tenant.default-id:1}")
+    private Long defaultTenantId;
+
     /**
-     * Retorna la lista de clientes frecuentes ordenada por número de pedidos (DESC).
-     *
-     * Flujo:
-     * 1. Query JPQL agrupa pedidos por userId y calcula orderCount y totalSpent.
-     * 2. Por cada resultado, consulta ms-users para obtener nombre y email.
-     * 3. Mapea a FrequentClientDTO.
-     *
-     * @return lista de clientes frecuentes enriquecidos
+     * Retorna la lista de clientes frecuentes del tenant actual.
      */
     public List<FrequentClientDTO> findFrequentClients() {
-        List<FrequentClientProjection> projections = orderRepository.findFrequentClients();
+        Long tenantId = resolveTenantId();
+        log.debug("findFrequentClients: tenantId={}", tenantId);
+
+        List<FrequentClientProjection> projections = orderRepository.findFrequentClientsByTenantId(tenantId);
 
         return projections.stream()
                 .map(this::toFrequentClientDTO)
@@ -65,5 +59,12 @@ public class FrequentClientService {
         dto.setClientEmail(user.getEmail());
 
         return dto;
+    }
+
+    private Long resolveTenantId() {
+        Long tenantId = TenantContext.getTenantId();
+        if (tenantId != null) return tenantId;
+        log.debug("No hay tenantId en contexto, usando default: {}", defaultTenantId);
+        return defaultTenantId;
     }
 }
