@@ -21,6 +21,7 @@ public class UserMapper {
         dto.setTelefono(user.getTelefono());
         dto.setRole(user.getRole());
         dto.setActivo(user.getActivo());
+        dto.setTenantId(user.getTenantId());
         return dto;
     }
 

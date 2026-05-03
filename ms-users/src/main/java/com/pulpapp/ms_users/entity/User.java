@@ -39,4 +39,22 @@ public class User {
 
     @Column(nullable = false)
     private Boolean activo = true;
+
+    /**
+     * Identificador del tenant al que pertenece este usuario.
+     * Fase 1 Multi-Tenant: nullable para compatibilidad con usuarios existentes.
+     * La migración Liquibase asigna el tenant por defecto a los registros históricos.
+     * Los usuarios nuevos SIEMPRE reciben un tenantId en el registro.
+     */
+    @Column(name = "tenant_id")
+    private Long tenantId;
+
+    /**
+     * Relación ManyToOne hacia Tenant.
+     * insertable/updatable = false porque tenantId se gestiona directamente.
+     * Esto permite leer el tenant sin duplicar la columna en JPA.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenant_id", insertable = false, updatable = false)
+    private Tenant tenant;
 }

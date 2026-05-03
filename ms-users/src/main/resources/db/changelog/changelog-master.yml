@@ -351,3 +351,173 @@ databaseChangeLog:
       changes:
         - sql:
             sql: UPDATE users SET role = 'ROLE_CLIENT' WHERE role = 'ROLE_SELLER'
+
+  # ============================================================
+  # FASE 1 MULTI-TENANT
+  # ============================================================
+
+  # ============================================================
+  # changeSet 10: Tabla tenants
+  # Almacena los inquilinos del sistema SaaS.
+  # Cada tenant agrupa usuarios y, en fases posteriores,
+  # productos, pedidos y configuraciones.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 10-create-tenants-table
+      author: pulpapp-team
+      comment: "Fase 1 Multi-Tenant: crea la tabla tenants."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: tenants
+      changes:
+        - createTable:
+            tableName: tenants
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: ACTIVE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+  # ============================================================
+  # changeSet 11: Tenant por defecto
+  # Inserta el tenant "PulpApp" para que los usuarios existentes
+  # y los nuevos registros tengan un tenant asignado.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 11-seed-default-tenant
+      author: pulpapp-team
+      comment: "Fase 1 Multi-Tenant: inserta el tenant por defecto PulpApp."
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "0"
+          sql: SELECT COUNT(*) FROM tenants WHERE name = 'PulpApp'
+      changes:
+        - insert:
+            tableName: tenants
+            columns:
+              - column:
+                  name: name
+                  value: PulpApp
+              - column:
+                  name: status
+                  value: ACTIVE
+
+  # ============================================================
+  # changeSet 12: Columna tenant_id en users
+  # Asocia cada usuario a un tenant. Nullable inicialmente
+  # para no romper registros existentes.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 12-add-tenant-id-to-users
+      author: pulpapp-team
+      comment: "Fase 1 Multi-Tenant: agrega columna tenant_id a users."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: tenant_id
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 13: Migrar usuarios existentes al tenant por defecto
+  # Asigna tenant_id = (id del tenant PulpApp) a todos los usuarios
+  # que aún no tienen tenant asignado.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 13-migrate-users-to-default-tenant
+      author: pulpapp-team
+      comment: "Fase 1 Multi-Tenant: asigna el tenant por defecto a usuarios existentes."
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM users WHERE tenant_id IS NULL
+      changes:
+        - sql:
+            sql: >
+              UPDATE users
+              SET tenant_id = (SELECT id FROM tenants WHERE name = 'PulpApp' LIMIT 1)
+              WHERE tenant_id IS NULL
+
+  # ============================================================
+  # changeSet 14: FK users -> tenants
+  # Crea la foreign key después de migrar los datos existentes.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 14-add-fk-users-to-tenants
+      author: pulpapp-team
+      comment: "Fase 1 Multi-Tenant: crea FK users.tenant_id hacia tenants.id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          foreignKeyConstraintExists:
+            foreignKeyName: fk_users_tenant
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: users
+            baseColumnNames: tenant_id
+            constraintName: fk_users_tenant
+            referencedTableName: tenants
+            referencedColumnNames: id
+            onDelete: RESTRICT
+
+  # ============================================================
+  # changeSet 15: Índice en users.tenant_id
+  # Optimiza consultas filtradas por tenant (preparación para
+  # aislamiento de datos en fases posteriores).
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 15-index-users-tenant-id
+      author: pulpapp-team
+      comment: "Fase 1 Multi-Tenant: crea indice en users.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_users_tenant_id
+      changes:
+        - createIndex:
+            tableName: users
+            indexName: idx_users_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
