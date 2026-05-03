@@ -59,6 +59,10 @@ public class SecurityConfig {
                 .requestMatchers("/tenant/config").authenticated()
                 .requestMatchers("/tenant/config/**").authenticated()
 
+                // ── Gestión de usuarios por tenant (Fase 5 RBAC) ──────────
+                .requestMatchers("/tenant/users").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/tenant/users/**").hasAuthority("ROLE_ADMIN")
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")

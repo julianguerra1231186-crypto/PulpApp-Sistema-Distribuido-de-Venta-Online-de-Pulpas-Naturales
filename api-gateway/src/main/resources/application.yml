@@ -101,6 +101,14 @@ spring:
             - Path=/tenant/config, /tenant/config/**
 
         # --------------------------------------------
+        # GESTIÓN DE USUARIOS POR TENANT (Fase 5 RBAC)
+        # --------------------------------------------
+        - id: ms-tenant-users
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/tenant/users, /tenant/users/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users

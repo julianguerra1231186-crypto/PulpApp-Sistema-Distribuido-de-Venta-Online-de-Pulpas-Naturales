@@ -9,6 +9,7 @@ import com.pulpapp.ms_users.repository.PaymentRepository;
 import com.pulpapp.ms_users.repository.TenantConfigRepository;
 import com.pulpapp.ms_users.repository.TenantRepository;
 import com.pulpapp.ms_users.repository.UserRepository;
+import com.pulpapp.ms_users.repository.UserTenantRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class OnboardingPaymentService {
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
     private final TenantConfigRepository tenantConfigRepository;
+    private final UserTenantRoleRepository userTenantRoleRepository;
 
     // ---------------------------------------------------------------
     // Subida de comprobante (usuario)
@@ -137,7 +139,16 @@ public class OnboardingPaymentService {
         user.setActivo(true);
         userRepository.save(user);
 
-        // 3. Actualizar payment
+        // 3. Crear registro RBAC en user_tenant_roles (Fase 5)
+        if (!userTenantRoleRepository.existsByUserIdAndTenantId(user.getId(), user.getTenantId())) {
+            UserTenantRole utr = new UserTenantRole();
+            utr.setUserId(user.getId());
+            utr.setTenantId(user.getTenantId());
+            utr.setRole(TenantRole.ADMIN);
+            userTenantRoleRepository.save(utr);
+        }
+
+        // 4. Actualizar payment
         payment.setStatus(PaymentStatus.APPROVED);
         payment.setApprovedBy(adminId);
         payment.setApprovedAt(LocalDateTime.now());

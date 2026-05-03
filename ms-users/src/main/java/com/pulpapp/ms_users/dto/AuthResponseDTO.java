@@ -22,4 +22,5 @@ public class AuthResponseDTO {
     private Role   role;
     private Long   tenantId;
     private String status;
+    private String tenantRole;
 }
