@@ -46,7 +46,7 @@ Este documento registra el proceso incremental de transformación de PulpApp des
 | Fase 1 | ms-users | ✅ Completada | `feat(multi-tenant): Fase 1 - Soporte Multi-Tenant basico en ms-users` |
 | Fase 2 | ms-products | ✅ Completada | `feat(multi-tenant): Fase 2 - Aislamiento Multi-Tenant en ms-products` |
 | Fase 3 | ms-orders | ✅ Completada | `feat(multi-tenant): Fase 3 - Aislamiento Multi-Tenant en ms-orders` |
-| Fase 4 | Frontend (registro con tenant) | ⏳ Pendiente | — |
+| Fase 4 | Onboarding SaaS + Branding | ✅ Completada | `feat(saas): Fase 4 - Onboarding SaaS con pago manual, activacion de tenant y branding` |
 | Fase 5 | Admin por tenant | ⏳ Pendiente | — |
 | Fase 6 | Configuración por tenant | ⏳ Pendiente | — |
 
@@ -331,6 +331,99 @@ PUT /orders/5/approve (ADMIN de tenant 2 intenta aprobar pedido de tenant 1):
 3. **Mismo patrón que Fase 2** — TenantContext + TenantJwtFilter + resolveTenantId() con fallback. Consistencia total entre los 3 microservicios.
 
 4. **Clientes frecuentes por tenant** — La query JPQL ahora incluye `WHERE o.tenantId = :tenantId`. Un admin solo ve los clientes frecuentes de su propio tenant.
+
+---
+
+## Fase 4 — Onboarding SaaS con Pago Manual y Branding
+
+**Fecha:** Mayo 2026  
+**Rama:** `pruebas-apis`  
+**Objetivo:** Implementar el flujo completo de onboarding SaaS donde un usuario se registra, paga manualmente (Nequi, Daviplata, QR, transferencia), un admin valida el pago, y se crea automáticamente un tenant con branding personalizable.
+
+### Cambio Crítico en el Flujo de Registro
+
+| Aspecto | ANTES (Fases 1-3) | AHORA (Fase 4) |
+|---|---|---|
+| Registro | Usuario queda ACTIVE inmediatamente | Usuario queda PENDING_PAYMENT |
+| Tenant | Se asigna tenant por defecto | tenant_id = NULL hasta aprobación |
+| Acceso | Completo desde el primer momento | Limitado: solo puede subir comprobante |
+| Activación | Automática | Manual por admin tras validar pago |
+
+### Flujo Completo de Onboarding
+
+```
+1. REGISTRO
+   POST /auth/register
+   → User creado con status=PENDING_PAYMENT, tenant_id=NULL
+   → JWT emitido (acceso limitado)
+
+2. SUBIDA DE COMPROBANTE
+   POST /payments (con JWT)
+   → Payment creado con status=PENDING
+   → User.status → PENDING_APPROVAL
+
+3. VALIDACIÓN POR ADMIN
+   GET /admin/payments → Lista pagos pendientes
+   
+   PUT /admin/payments/{id}/approve
+   → Crea Tenant (nombre del usuario o personalizado)
+   → Crea TenantConfig (branding inicial)
+   → User.tenant_id = nuevo tenant
+   → User.status = ACTIVE
+   → User.role = ROLE_ADMIN (admin de su tenant)
+   → Payment.status = APPROVED
+
+   PUT /admin/payments/{id}/reject
+   → Payment.status = REJECTED (con motivo)
+   → User.status → PENDING_PAYMENT (puede reintentar)
+
+4. ACCESO COMPLETO
+   Usuario hace login → JWT con tenantId
+   → Acceso completo al sistema como ROLE_ADMIN de su tenant
+```
+
+### Archivos Nuevos (17)
+
+| Archivo | Descripción |
+|---|---|
+| `entity/Payment.java` | Comprobante de pago (amount, method, proofUrl, status) |
+| `entity/PaymentMethod.java` | Enum: NEQUI, DAVIPLATA, TRANSFERENCIA, QR |
+| `entity/PaymentStatus.java` | Enum: PENDING, APPROVED, REJECTED |
+| `entity/UserStatus.java` | Enum: PENDING_PAYMENT, PENDING_APPROVAL, ACTIVE, SUSPENDED |
+| `entity/TenantConfig.java` | Branding por tenant (logo, colores, banner) |
+| `repository/PaymentRepository.java` | Queries por status y userId |
+| `repository/TenantConfigRepository.java` | Query por tenantId |
+| `service/OnboardingPaymentService.java` | Lógica completa: submit, approve, reject |
+| `service/TenantConfigService.java` | CRUD de branding por tenant |
+| `controller/PaymentController.java` | POST /payments, GET /payments/my |
+| `controller/AdminPaymentController.java` | GET/PUT /admin/payments |
+| `controller/TenantConfigController.java` | GET/PUT /tenant/config |
+| `dto/PaymentRequestDTO.java` | DTO de entrada para subir comprobante |
+| `dto/PaymentResponseDTO.java` | DTO de salida con datos del pago + usuario |
+| `dto/AdminPaymentActionDTO.java` | DTO para aprobar/rechazar (rejectionReason) |
+| `dto/TenantConfigRequestDTO.java` | DTO de entrada para branding |
+| `dto/TenantConfigResponseDTO.java` | DTO de salida de branding |
+
+### Archivos Modificados (6)
+
+| Archivo | Cambio |
+|---|---|
+| `entity/User.java` | +campo `status` (UserStatus) |
+| `service/AuthService.java` | Registro SaaS: status=PENDING_PAYMENT, tenant_id=NULL |
+| `dto/AuthResponseDTO.java` | +campo `status` |
+| `config/SecurityConfig.java` | +rutas /payments, /admin/payments, /tenant/config |
+| `changelog-master.yml` | +5 changeSets (status en users, tabla payments, tabla tenant_config, índices) |
+| `api-gateway/application.yml` | +rutas /payments, /admin/payments, /tenant/config |
+
+### Migraciones Liquibase (5 changeSets)
+
+| ID | Acción |
+|---|---|
+| `16-add-status-to-users` | Columna `status` en users (default ACTIVE para existentes) |
+| `17-create-payments-table` | Tabla `payments` completa |
+| `18-create-tenant-config-table` | Tabla `tenant_config` |
+| `19-index-payments-user-id` | Índice en `payments.user_id` |
+| `20-index-payments-status` | Índice en `payments.status` |
 
 ---
 
