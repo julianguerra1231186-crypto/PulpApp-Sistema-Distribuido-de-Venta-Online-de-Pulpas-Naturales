@@ -196,3 +196,145 @@ databaseChangeLog:
             tableName: products
             columnName: image_url
             newDataType: TEXT
+
+  # ============================================================
+  # FASE 2 MULTI-TENANT
+  # ============================================================
+
+  # ============================================================
+  # changeSet 6: Columna tenant_id en products
+  # Asocia cada producto a un tenant. Nullable inicialmente
+  # para no romper registros existentes.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 6-add-tenant-id-to-products
+      author: pulpapp-team
+      comment: "Fase 2 Multi-Tenant: agrega columna tenant_id a products."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: products
+            columnName: tenant_id
+      changes:
+        - addColumn:
+            tableName: products
+            columns:
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 7: Columna tenant_id en category
+  # Asocia cada categoría a un tenant.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 7-add-tenant-id-to-category
+      author: pulpapp-team
+      comment: "Fase 2 Multi-Tenant: agrega columna tenant_id a category."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: category
+            columnName: tenant_id
+      changes:
+        - addColumn:
+            tableName: category
+            columns:
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+
+  # ============================================================
+  # changeSet 8: Migrar productos existentes al tenant por defecto
+  # Asigna tenant_id = (id del tenant PulpApp) a todos los productos
+  # que aún no tienen tenant asignado.
+  # NOTA: La tabla tenants es creada por ms-users (Liquibase Fase 1).
+  # Ambos microservicios comparten la misma BD (pulpapp_db).
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 8-migrate-products-to-default-tenant
+      author: pulpapp-team
+      comment: "Fase 2 Multi-Tenant: asigna el tenant por defecto a productos existentes."
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM products WHERE tenant_id IS NULL
+      changes:
+        - sql:
+            sql: >
+              UPDATE products
+              SET tenant_id = (SELECT id FROM tenants WHERE name = 'PulpApp' LIMIT 1)
+              WHERE tenant_id IS NULL
+
+  # ============================================================
+  # changeSet 9: Migrar categorías existentes al tenant por defecto
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 9-migrate-categories-to-default-tenant
+      author: pulpapp-team
+      comment: "Fase 2 Multi-Tenant: asigna el tenant por defecto a categorias existentes."
+      preConditions:
+        onFail: MARK_RAN
+        sqlCheck:
+          expectedResult: "1"
+          sql: SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM category WHERE tenant_id IS NULL
+      changes:
+        - sql:
+            sql: >
+              UPDATE category
+              SET tenant_id = (SELECT id FROM tenants WHERE name = 'PulpApp' LIMIT 1)
+              WHERE tenant_id IS NULL
+
+  # ============================================================
+  # changeSet 10: Índice en products.tenant_id
+  # Optimiza consultas filtradas por tenant.
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 10-index-products-tenant-id
+      author: pulpapp-team
+      comment: "Fase 2 Multi-Tenant: crea indice en products.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_products_tenant_id
+      changes:
+        - createIndex:
+            tableName: products
+            indexName: idx_products_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+
+  # ============================================================
+  # changeSet 11: Índice en category.tenant_id
+  # onFail: MARK_RAN — idempotente.
+  # ============================================================
+  - changeSet:
+      id: 11-index-category-tenant-id
+      author: pulpapp-team
+      comment: "Fase 2 Multi-Tenant: crea indice en category.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_category_tenant_id
+      changes:
+        - createIndex:
+            tableName: category
+            indexName: idx_category_tenant_id
+            columns:
+              - column:
+                  name: tenant_id

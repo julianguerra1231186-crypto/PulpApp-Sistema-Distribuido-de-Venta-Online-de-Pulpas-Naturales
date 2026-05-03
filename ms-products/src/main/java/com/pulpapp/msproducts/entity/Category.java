@@ -40,4 +40,12 @@ public class Category {
      */
     @OneToMany(mappedBy = "category")
     private List<Product> products = new ArrayList<>();
+
+    /**
+     * Identificador del tenant propietario de esta categoría.
+     * Fase 2 Multi-Tenant: cada categoría pertenece a un tenant.
+     * Nullable para compatibilidad con categorías semilla existentes.
+     */
+    @Column(name = "tenant_id")
+    private Long tenantId;
 }

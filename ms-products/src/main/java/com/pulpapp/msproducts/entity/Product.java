@@ -47,4 +47,13 @@ public class Product {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = true)
     private Category category;
+
+    /**
+     * Identificador del tenant propietario de este producto.
+     * Fase 2 Multi-Tenant: cada producto pertenece a un tenant.
+     * Nullable para compatibilidad con productos existentes (la migración
+     * Liquibase asigna el tenant por defecto a los registros históricos).
+     */
+    @Column(name = "tenant_id")
+    private Long tenantId;
 }
