@@ -1,10 +1,12 @@
 package com.pulpapp.ms_users.security;
 
+import com.pulpapp.ms_users.tenant.TenantContext;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +27,9 @@ import java.io.IOException;
  *  4. Carga el UserDetails desde la base de datos
  *  5. Valida firma y expiración del token
  *  6. Establece el contexto de seguridad de Spring
+ *  7. Extrae tenantId del JWT y lo inyecta en TenantContext (Fase 1 Multi-Tenant)
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -73,6 +77,21 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     // Establece el contexto de seguridad para este request
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                    // ── Fase 1 Multi-Tenant ──────────────────────────────
+                    // Extrae tenantId del JWT y lo inyecta en TenantContext.
+                    // Si el token no tiene tenantId (tokens pre-Fase 1), el contexto queda vacío.
+                    try {
+                        Long tenantId = jwtService.extractTenantId(jwt);
+                        if (tenantId != null) {
+                            TenantContext.setTenantId(tenantId);
+                            log.debug("TenantContext set: tenantId={} for user={}",
+                                    tenantId, email);
+                        }
+                    } catch (Exception tenantEx) {
+                        log.debug("No se pudo extraer tenantId del JWT: {}",
+                                tenantEx.getMessage());
+                    }
                 }
             }
         } catch (Exception ex) {

@@ -44,6 +44,9 @@ public class SecurityConfig {
                 // ── Autenticación JWT ──────────────────────────────────────
                 .requestMatchers("/auth/**").permitAll()
 
+                // ── Tenants: solo ADMIN puede gestionar tenants ────────────
+                .requestMatchers("/tenants/**").hasAuthority("ROLE_ADMIN")
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")
@@ -74,7 +77,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,    "/users").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/users/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(HttpMethod.PATCH,  "/users/**").hasAuthority("ROLE_ADMIN")
-
                 // ── Productos: lectura pública, escritura solo ADMIN ───────
                 .requestMatchers(HttpMethod.GET,    "/products/**").permitAll()
                 .requestMatchers(HttpMethod.GET,    "/products").permitAll()

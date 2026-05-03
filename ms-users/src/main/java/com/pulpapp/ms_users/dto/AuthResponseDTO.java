@@ -20,4 +20,5 @@ public class AuthResponseDTO {
     private String telefono;
     private String direccion;
     private Role   role;
+    private Long   tenantId;
 }

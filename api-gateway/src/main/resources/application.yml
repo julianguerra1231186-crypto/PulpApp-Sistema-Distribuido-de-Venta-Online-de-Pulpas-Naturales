@@ -69,6 +69,14 @@ spring:
             - Path=/auth, /auth/**
 
         # --------------------------------------------
+        # GESTIÓN DE TENANTS — SOLO ADMIN (Fase 1 Multi-Tenant)
+        # --------------------------------------------
+        - id: ms-tenants
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/tenants, /tenants/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users

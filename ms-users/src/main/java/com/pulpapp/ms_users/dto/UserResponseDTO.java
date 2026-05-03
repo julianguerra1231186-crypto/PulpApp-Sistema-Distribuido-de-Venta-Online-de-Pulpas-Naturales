@@ -14,5 +14,6 @@ public class UserResponseDTO {
     private String telefono;
     private Role role;
     private Boolean activo;
+    private Long tenantId;
 
 }
