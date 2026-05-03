@@ -9,18 +9,25 @@ import com.pulpapp.msorders.dto.ProductResponseDTO;
 import com.pulpapp.msorders.entity.Order;
 import com.pulpapp.msorders.entity.OrderItem;
 import com.pulpapp.msorders.exception.ResourceNotFoundException;
-
-import java.util.Random;
 import com.pulpapp.msorders.repository.OrderRepository;
+import com.pulpapp.msorders.tenant.TenantContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 /**
- * Contiene la logica de negocio del microservicio de pedidos.
+ * Lógica de negocio del microservicio de pedidos con aislamiento Multi-Tenant (Fase 3).
+ *
+ * Estrategia de resolución de tenant:
+ *  - Si hay tenantId en TenantContext (JWT presente) → filtra por ese tenant.
+ *  - Si no hay tenantId (request público sin JWT) → usa el tenant por defecto.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -29,16 +36,26 @@ public class OrderService {
     private final ProductClient productClient;
     private final Random random = new Random();
 
+    @Value("${tenant.default-id:1}")
+    private Long defaultTenantId;
+
+    // ---------------------------------------------------------------
+    // Creación
+    // ---------------------------------------------------------------
+
     /**
      * Crea un pedido consultando el precio real de cada producto en ms-products.
-     * Asigna automáticamente un uniqueAmount con centavos aleatorios para identificar
-     * la transferencia bancaria del cliente.
+     * Asigna automáticamente tenantId y uniqueAmount.
      */
     @Transactional
     public OrderResponseDTO createOrder(CreateOrderRequestDTO request) {
+        Long tenantId = resolveTenantId();
+        log.info("createOrder: userId={}, tenantId={}, items={}", request.getUserId(), tenantId, request.getItems().size());
+
         Order order = new Order();
         order.setUserId(request.getUserId());
         order.setTotal(0.0);
+        order.setTenantId(tenantId);
 
         double total = 0.0;
 
@@ -61,6 +78,7 @@ public class OrderService {
             item.setCantidad(itemRequest.getCantidad());
             item.setPrecioUnitario(unitPrice);
             item.setSubtotal(subtotal);
+            item.setTenantId(tenantId);
 
             order.addItem(item);
             total += subtotal;
@@ -68,20 +86,19 @@ public class OrderService {
 
         order.setTotal(total);
 
-        // Guardar primero para obtener el ID, luego asignar uniqueAmount
         Order savedOrder = orderRepository.save(order);
-        assignUniqueAmount(savedOrder);
+        assignUniqueAmount(savedOrder, tenantId);
         savedOrder = orderRepository.save(savedOrder);
 
         return toResponseDto(savedOrder);
     }
 
     /**
-     * Genera un monto único con centavos aleatorios (0.01–0.99) para identificar
-     * la transferencia del cliente. Evita duplicados con pedidos activos.
+     * Genera un monto único con centavos aleatorios para identificar la transferencia.
+     * Solo compara contra pedidos activos del mismo tenant.
      */
-    private void assignUniqueAmount(Order order) {
-        java.util.List<Double> activeAmounts = orderRepository.findAll().stream()
+    private void assignUniqueAmount(Order order, Long tenantId) {
+        List<Double> activeAmounts = orderRepository.findAllByTenantId(tenantId).stream()
                 .filter(o -> !o.getId().equals(order.getId()))
                 .filter(o -> "PENDING_PAYMENT".equals(o.getPaymentStatus())
                           || "PENDING_APPROVAL".equals(o.getPaymentStatus()))
@@ -100,25 +117,46 @@ public class OrderService {
         order.setUniqueAmount(candidate);
     }
 
-    /**
-     * Consulta todos los pedidos registrados.
-     */
+    // ---------------------------------------------------------------
+    // Consultas
+    // ---------------------------------------------------------------
+
     public List<OrderResponseDTO> findAll() {
-        return orderRepository.findAll()
+        Long tenantId = resolveTenantId();
+        log.debug("findAll: tenantId={}", tenantId);
+
+        return orderRepository.findAllByTenantId(tenantId)
                 .stream()
                 .map(this::toResponseDto)
                 .toList();
     }
 
-    /**
-     * Consulta un pedido puntual por su identificador.
-     */
     public OrderResponseDTO findById(Long id) {
-        Order order = orderRepository.findById(id)
+        Long tenantId = resolveTenantId();
+        log.debug("findById: id={}, tenantId={}", id, tenantId);
+
+        Order order = orderRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
 
         return toResponseDto(order);
     }
+
+    // ---------------------------------------------------------------
+    // Resolución de tenant
+    // ---------------------------------------------------------------
+
+    private Long resolveTenantId() {
+        Long tenantId = TenantContext.getTenantId();
+        if (tenantId != null) {
+            return tenantId;
+        }
+        log.debug("No hay tenantId en contexto, usando default: {}", defaultTenantId);
+        return defaultTenantId;
+    }
+
+    // ---------------------------------------------------------------
+    // Mapeo
+    // ---------------------------------------------------------------
 
     private OrderResponseDTO toResponseDto(Order order) {
         OrderResponseDTO dto = new OrderResponseDTO();
@@ -131,6 +169,7 @@ public class OrderService {
         dto.setApprovedBy(order.getApprovedBy());
         dto.setPaidAt(order.getPaidAt());
         dto.setApprovedAt(order.getApprovedAt());
+        dto.setTenantId(order.getTenantId());
         dto.setItems(order.getItems().stream().map(this::toItemResponseDto).toList());
         return dto;
     }

@@ -5,13 +5,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89256da1-e398-401a-a9cd-ae02780b6b6d" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/tenant/TenantContext.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/tenant/TenantJwtFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RequisitosParaElProyecto.txt" beforeDir="false" afterPath="$PROJECT_DIR$/RequisitosParaElProyecto.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/repository/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/security/UserDetailsServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/security/UserDetailsServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/AuthService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/pedido-confirmado.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pedido-confirmado.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/ApprovePaymentRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/ApprovePaymentRequestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/OrderResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/OrderResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/PaymentStatusDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/PaymentStatusDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/SellerOrderDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/SellerOrderDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/entity/Order.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/service/PaymentService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/dto/ProductResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/dto/ProductResponseDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Category.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/CategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/CategoryRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/ProductRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/service/ProductService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,6 +50,10 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -140,6 +160,13 @@
       <workItem from="1776296665655" duration="771000" />
       <workItem from="1776352368388" duration="2258000" />
       <workItem from="1776899313589" duration="8585000" />
+      <workItem from="1776918424268" duration="7988000" />
+      <workItem from="1776957631642" duration="4959000" />
+      <workItem from="1776969361229" duration="1620000" />
+      <workItem from="1777321751830" duration="697000" />
+      <workItem from="1777326451219" duration="1480000" />
+      <workItem from="1777757467355" duration="1707000" />
+      <workItem from="1777815171257" duration="673000" />
     </task>
     <servers />
   </component>

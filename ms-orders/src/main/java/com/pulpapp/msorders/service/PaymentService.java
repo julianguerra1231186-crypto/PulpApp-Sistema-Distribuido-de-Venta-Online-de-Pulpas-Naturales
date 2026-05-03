@@ -5,8 +5,10 @@ import com.pulpapp.msorders.dto.PaymentStatusDTO;
 import com.pulpapp.msorders.entity.Order;
 import com.pulpapp.msorders.exception.ResourceNotFoundException;
 import com.pulpapp.msorders.repository.OrderRepository;
+import com.pulpapp.msorders.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * Servicio de lógica de negocio para pagos por transferencia.
- *
- * Flujo:
- * 1. Al crear el pedido, se asigna un uniqueAmount (total + centavos aleatorios).
- * 2. El cliente transfiere ese monto exacto y presiona "Ya pagué" → PENDING_APPROVAL.
- * 3. El admin valida en su banco y aprueba → APPROVED (o rechaza → REJECTED).
- *
- * Auditoría: se registra quién aprobó y cuándo.
+ * Servicio de pagos por transferencia con aislamiento Multi-Tenant (Fase 3).
  */
 @Slf4j
 @Service
@@ -30,22 +25,17 @@ public class PaymentService {
 
     private final OrderRepository orderRepository;
 
-    // ── Constantes de estado ───────────────────────────────────────
+    @Value("${tenant.default-id:1}")
+    private Long defaultTenantId;
+
     public static final String PENDING_PAYMENT  = "PENDING_PAYMENT";
     public static final String PENDING_APPROVAL = "PENDING_APPROVAL";
     public static final String APPROVED         = "APPROVED";
     public static final String REJECTED         = "REJECTED";
 
-    /**
-     * El cliente marca el pedido como pagado.
-     * Cambia el estado de PENDING_PAYMENT → PENDING_APPROVAL.
-     *
-     * @param orderId ID del pedido
-     * @return DTO con el nuevo estado
-     */
     @Transactional
     public PaymentStatusDTO markAsPaid(Long orderId) {
-        Order order = findOrder(orderId);
+        Order order = findOrderByTenant(orderId);
 
         if (!PENDING_PAYMENT.equals(order.getPaymentStatus())) {
             throw new IllegalStateException(
@@ -58,18 +48,9 @@ public class PaymentService {
         return toDTO(orderRepository.save(order));
     }
 
-    /**
-     * El admin aprueba el pago manualmente.
-     * Cambia el estado de PENDING_APPROVAL → APPROVED.
-     * Registra el email del admin y el timestamp de aprobación (auditoría).
-     *
-     * @param orderId ID del pedido
-     * @param request DTO con el email del admin
-     * @return DTO con el nuevo estado
-     */
     @Transactional
     public PaymentStatusDTO approvePayment(Long orderId, ApprovePaymentRequestDTO request) {
-        Order order = findOrder(orderId);
+        Order order = findOrderByTenant(orderId);
 
         if (!PENDING_APPROVAL.equals(order.getPaymentStatus())) {
             throw new IllegalStateException(
@@ -80,21 +61,13 @@ public class PaymentService {
         order.setApprovedBy(request.getAdminEmail());
         order.setApprovedAt(LocalDateTime.now());
 
-        log.info("Pedido #{} aprobado por {}", orderId, request.getAdminEmail());
+        log.info("Pedido #{} aprobado por {} (tenantId={})", orderId, request.getAdminEmail(), order.getTenantId());
         return toDTO(orderRepository.save(order));
     }
 
-    /**
-     * El admin rechaza el pago.
-     * Cambia el estado de PENDING_APPROVAL → REJECTED.
-     *
-     * @param orderId ID del pedido
-     * @param request DTO con el email del admin
-     * @return DTO con el nuevo estado
-     */
     @Transactional
     public PaymentStatusDTO rejectPayment(Long orderId, ApprovePaymentRequestDTO request) {
-        Order order = findOrder(orderId);
+        Order order = findOrderByTenant(orderId);
 
         if (!PENDING_APPROVAL.equals(order.getPaymentStatus())) {
             throw new IllegalStateException(
@@ -104,42 +77,40 @@ public class PaymentService {
         order.setPaymentStatus(REJECTED);
         order.setApprovedBy(request.getAdminEmail());
         order.setApprovedAt(LocalDateTime.now());
-        // Guardar el motivo de rechazo para que el cliente lo vea
         if (request.getRejectionReason() != null && !request.getRejectionReason().isBlank()) {
             order.setRejectionReason(request.getRejectionReason());
         }
 
-        log.info("Pedido #{} rechazado por {} — motivo: {}", orderId, request.getAdminEmail(), request.getRejectionReason());
+        log.info("Pedido #{} rechazado por {} — motivo: {} (tenantId={})",
+                orderId, request.getAdminEmail(), request.getRejectionReason(), order.getTenantId());
         return toDTO(orderRepository.save(order));
     }
 
-    /**
-     * Retorna todos los pedidos en estado PENDING_APPROVAL para el dashboard admin.
-     *
-     * @return lista de pedidos pendientes de aprobación
-     */
     public List<PaymentStatusDTO> findPendingApproval() {
-        return orderRepository.findAll().stream()
+        Long tenantId = resolveTenantId();
+        return orderRepository.findAllByTenantId(tenantId).stream()
                 .filter(o -> PENDING_APPROVAL.equals(o.getPaymentStatus()))
                 .map(this::toDTO)
                 .toList();
     }
 
-    /**
-     * Retorna el estado de pago de un pedido específico.
-     *
-     * @param orderId ID del pedido
-     * @return DTO con el estado de pago
-     */
     public PaymentStatusDTO getPaymentStatus(Long orderId) {
-        return toDTO(findOrder(orderId));
+        return toDTO(findOrderByTenant(orderId));
     }
 
     // ── Helpers ───────────────────────────────────────────────────
 
-    private Order findOrder(Long id) {
-        return orderRepository.findById(id)
+    private Order findOrderByTenant(Long id) {
+        Long tenantId = resolveTenantId();
+        return orderRepository.findByIdAndTenantId(id, tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found with id: " + id));
+    }
+
+    private Long resolveTenantId() {
+        Long tenantId = TenantContext.getTenantId();
+        if (tenantId != null) return tenantId;
+        log.debug("No hay tenantId en contexto, usando default: {}", defaultTenantId);
+        return defaultTenantId;
     }
 
     private PaymentStatusDTO toDTO(Order order) {
@@ -151,6 +122,7 @@ public class PaymentService {
         dto.setApprovedBy(order.getApprovedBy());
         dto.setPaidAt(order.getPaidAt());
         dto.setApprovedAt(order.getApprovedAt());
+        dto.setRejectionReason(order.getRejectionReason());
         return dto;
     }
 }

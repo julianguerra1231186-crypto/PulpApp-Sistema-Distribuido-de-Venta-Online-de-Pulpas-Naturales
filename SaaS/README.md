@@ -45,7 +45,7 @@ Este documento registra el proceso incremental de transformación de PulpApp des
 |---|---|---|---|
 | Fase 1 | ms-users | ✅ Completada | `feat(multi-tenant): Fase 1 - Soporte Multi-Tenant basico en ms-users` |
 | Fase 2 | ms-products | ✅ Completada | `feat(multi-tenant): Fase 2 - Aislamiento Multi-Tenant en ms-products` |
-| Fase 3 | ms-orders | ⏳ Pendiente | — |
+| Fase 3 | ms-orders | ✅ Completada | `feat(multi-tenant): Fase 3 - Aislamiento Multi-Tenant en ms-orders` |
 | Fase 4 | Frontend (registro con tenant) | ⏳ Pendiente | — |
 | Fase 5 | Admin por tenant | ⏳ Pendiente | — |
 | Fase 6 | Configuración por tenant | ⏳ Pendiente | — |
@@ -246,6 +246,94 @@ GET /products/5 (usuario de tenant 2 intenta acceder a producto de tenant 1):
 
 ---
 
+## Fase 3 — Aislamiento Multi-Tenant en ms-orders
+
+**Fecha:** Mayo 2026  
+**Rama:** `pruebas-apis`  
+**Objetivo:** Que los pedidos y sus items estén aislados por tenant. Un tenant NO puede ver, modificar ni aprobar pedidos de otro tenant.
+
+### Desafío Principal
+
+ms-orders, al igual que ms-products, **no tiene Spring Security**. Además, ms-orders se comunica con ms-products (para validar productos) y con ms-users (para enriquecer datos de clientes). El aislamiento debe garantizar que estas consultas inter-servicio respeten el contexto del tenant.
+
+### Cambios Realizados
+
+#### Archivos Nuevos (2)
+
+| Archivo | Descripción |
+|---|---|
+| `ms-orders/.../tenant/TenantContext.java` | ThreadLocal para almacenar tenantId por request |
+| `ms-orders/.../tenant/TenantJwtFilter.java` | Filtro HTTP que decodifica JWT usando JJWT directamente |
+
+#### Archivos Modificados (10)
+
+| Archivo | Cambio |
+|---|---|
+| `ms-orders/.../entity/Order.java` | +campo `tenantId` (Long) |
+| `ms-orders/.../entity/OrderItem.java` | +campo `tenantId` (Long) — hereda del pedido padre |
+| `ms-orders/.../repository/OrderRepository.java` | +`findAllByTenantId`, `findByIdAndTenantId`, `findFrequentClientsByTenantId` |
+| `ms-orders/.../service/OrderService.java` | Reescrito: create, findAll, findById filtran por tenant |
+| `ms-orders/.../service/PaymentService.java` | Reescrito: markAsPaid, approve, reject, findPending filtran por tenant |
+| `ms-orders/.../service/SellerOrderService.java` | findAllForSeller filtra por tenant |
+| `ms-orders/.../service/FrequentClientService.java` | findFrequentClients filtra por tenant |
+| `ms-orders/.../dto/OrderResponseDTO.java` | +campo `tenantId` |
+| `ms-orders/pom.xml` | +dependencias JJWT |
+| `ms-orders/.../application.properties` | +propiedades `jwt.secret` y `tenant.default-id` |
+| `ms-orders/.../changelog-master.yml` | +6 changeSets para multi-tenant |
+| `docker-compose.yml` | +variables `JWT_SECRET` y `TENANT_DEFAULT_ID` en ms-orders |
+
+#### Migraciones Liquibase (6 changeSets)
+
+| ID | Acción |
+|---|---|
+| `7-add-tenant-id-to-orders` | Agrega columna `tenant_id` a `orders` (nullable) |
+| `8-add-tenant-id-to-order-items` | Agrega columna `tenant_id` a `order_items` (nullable) |
+| `9-migrate-orders-to-default-tenant` | Asigna tenant PulpApp a pedidos existentes |
+| `10-migrate-order-items-to-default-tenant` | Asigna tenant PulpApp a items existentes |
+| `11-index-orders-tenant-id` | Índice en `orders.tenant_id` |
+| `12-index-order-items-tenant-id` | Índice en `order_items.tenant_id` |
+
+### Flujo de Funcionamiento
+
+```
+POST /orders (PÚBLICO — sin JWT):
+  1. TenantJwtFilter: no hay JWT → TenantContext vacío
+  2. OrderService.resolveTenantId() → usa defaultTenantId (1)
+  3. Order y OrderItems se guardan con tenant_id = 1
+  4. Frontend funciona igual que antes ✅
+
+GET /orders (ADMIN/SELLER — con JWT):
+  1. TenantJwtFilter: JWT tiene tenantId=1 → TenantContext.set(1)
+  2. OrderService.findAll() → findAllByTenantId(1)
+  3. Solo pedidos del tenant 1 ✅
+
+PUT /orders/5/approve (ADMIN de tenant 2 intenta aprobar pedido de tenant 1):
+  1. TenantJwtFilter: tenantId = 2
+  2. PaymentService.findOrderByTenant(5) → findByIdAndTenantId(5, 2)
+  3. Pedido 5 es de tenant 1 → 404 Not Found ✅
+```
+
+### Servicios Afectados
+
+| Servicio | Operaciones con tenant |
+|---|---|
+| **OrderService** | `createOrder` (asigna tenant), `findAll` (filtra), `findById` (filtra), `assignUniqueAmount` (solo compara dentro del tenant) |
+| **PaymentService** | `markAsPaid`, `approvePayment`, `rejectPayment`, `findPendingApproval`, `getPaymentStatus` — todos filtran por tenant |
+| **SellerOrderService** | `findAllForSeller` — solo pedidos del tenant actual |
+| **FrequentClientService** | `findFrequentClients` — solo clientes del tenant actual |
+
+### Decisiones de Diseño
+
+1. **OrderItem hereda tenantId del Order** — Cuando se crea un pedido, cada item recibe el mismo tenantId que el pedido padre. Esto permite consultas directas sobre items sin necesidad de hacer JOIN con orders.
+
+2. **uniqueAmount aislado por tenant** — La generación de montos únicos para transferencias ahora solo compara contra pedidos activos del mismo tenant. Dos tenants pueden tener el mismo uniqueAmount sin conflicto.
+
+3. **Mismo patrón que Fase 2** — TenantContext + TenantJwtFilter + resolveTenantId() con fallback. Consistencia total entre los 3 microservicios.
+
+4. **Clientes frecuentes por tenant** — La query JPQL ahora incluye `WHERE o.tenantId = :tenantId`. Un admin solo ve los clientes frecuentes de su propio tenant.
+
+---
+
 ## Fases Futuras
 
 ### Fase 3 — Aislamiento Multi-Tenant en ms-orders (Pendiente)
@@ -295,9 +383,9 @@ GET /products/5 (usuario de tenant 2 intenta acceder a producto de tenant 1):
 │  ms-users   │     │ ms-products │     │  ms-orders  │
 │   :8081     │     │   :8082     │     │   :8083     │
 │             │     │             │     │             │
-│ ✅ Tenant   │     │ ✅ Filtro   │     │ ❌ Pendiente│
-│ ✅ JWT+tid  │     │ ✅ Aislam.  │     │   (Fase 3)  │
-│ ✅ Context  │     │ ✅ Context  │     │             │
+│ ✅ Tenant   │     │ ✅ Filtro   │     │ ✅ Filtro   │
+│ ✅ JWT+tid  │     │ ✅ Aislam.  │     │ ✅ Aislam.  │
+│ ✅ Context  │     │ ✅ Context  │     │ ✅ Context  │
 └──────┬──────┘     └──────┬──────┘     └──────┬──────┘
        │                   │                   │
 ┌──────▼───────────────────▼───────────────────▼──────┐
@@ -305,7 +393,8 @@ GET /products/5 (usuario de tenant 2 intenta acceder a producto de tenant 1):
 │                                                      │
 │  tenants ✅           products.tenant_id ✅           │
 │  users.tenant_id ✅   category.tenant_id ✅           │
-│                       orders.tenant_id ❌ (Fase 3)   │
+│                       orders.tenant_id ✅ (Fase 3)    │
+│                       order_items.tenant_id ✅         │
 └──────────────────────────────────────────────────────┘
 ```
 

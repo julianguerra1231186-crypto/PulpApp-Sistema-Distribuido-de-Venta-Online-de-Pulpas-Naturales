@@ -26,4 +26,7 @@ public class OrderResponseDTO {
     private LocalDateTime paidAt;
     private LocalDateTime approvedAt;
     private String rejectionReason;
+
+    // Multi-Tenant
+    private Long tenantId;
 }

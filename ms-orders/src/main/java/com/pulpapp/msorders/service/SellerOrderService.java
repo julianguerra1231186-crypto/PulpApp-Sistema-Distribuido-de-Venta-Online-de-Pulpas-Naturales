@@ -9,22 +9,16 @@ import com.pulpapp.msorders.dto.UserSummaryDTO;
 import com.pulpapp.msorders.entity.Order;
 import com.pulpapp.msorders.entity.OrderItem;
 import com.pulpapp.msorders.repository.OrderRepository;
+import com.pulpapp.msorders.tenant.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * Servicio de lógica de negocio para la vista de pedidos del vendedor.
- *
- * Responsabilidad única: obtener todos los pedidos y enriquecerlos con
- * datos del cliente (ms-users) y nombres de productos (ms-products).
- *
- * Aplica degradación elegante: si algún microservicio externo no responde,
- * se usan valores de fallback para no interrumpir la vista del vendedor.
- *
- * No modifica ni reutiliza OrderService — cumple con Single Responsibility.
+ * Servicio de pedidos enriquecidos para vendedores con aislamiento Multi-Tenant (Fase 3).
  */
 @Slf4j
 @Service
@@ -35,19 +29,17 @@ public class SellerOrderService {
     private final UserClient userClient;
     private final ProductClient productClient;
 
+    @Value("${tenant.default-id:1}")
+    private Long defaultTenantId;
+
     /**
-     * Retorna todos los pedidos enriquecidos con datos de cliente y productos.
-     *
-     * Flujo:
-     * 1. Carga todos los pedidos desde la base de datos.
-     * 2. Por cada pedido, consulta ms-users para obtener nombre y email del cliente.
-     * 3. Por cada ítem, consulta ms-products para obtener el nombre del producto.
-     * 4. Mapea todo a SellerOrderDTO sin exponer entidades.
-     *
-     * @return lista de pedidos enriquecidos para la vista del vendedor
+     * Retorna todos los pedidos del tenant actual enriquecidos con datos de cliente y productos.
      */
     public List<SellerOrderDTO> findAllForSeller() {
-        List<Order> orders = orderRepository.findAll();
+        Long tenantId = resolveTenantId();
+        log.debug("findAllForSeller: tenantId={}", tenantId);
+
+        List<Order> orders = orderRepository.findAllByTenantId(tenantId);
 
         return orders.stream()
                 .map(this::toSellerOrderDTO)
@@ -116,5 +108,12 @@ public class SellerOrderService {
             log.warn("No se pudo resolver el nombre del producto {}: {}", productId, ex.getMessage());
             return "Producto #" + productId;
         }
+    }
+
+    private Long resolveTenantId() {
+        Long tenantId = TenantContext.getTenantId();
+        if (tenantId != null) return tenantId;
+        log.debug("No hay tenantId en contexto, usando default: {}", defaultTenantId);
+        return defaultTenantId;
     }
 }
