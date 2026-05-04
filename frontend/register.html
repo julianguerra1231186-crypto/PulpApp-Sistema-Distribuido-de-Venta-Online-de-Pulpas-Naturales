@@ -3,147 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix | Registrarse</title>
+    <title>Zentrix | Crear cuenta</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/saas.css">
+    <style>
+        body { background: #fff; }
+        .z-nav { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .z-nav-inner { height: 72px; }
+        .z-logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .z-logo-img { height:40px; width:auto; }
+        .z-logo-text { font-size:1.5rem; font-weight:900; color:var(--z-primary); letter-spacing:-0.03em; }
+
+        .auth-wrapper { min-height:calc(100vh - 72px); display:flex; align-items:center; justify-content:center; padding:48px 24px; background:linear-gradient(180deg, #f8faff 0%, #fff 100%); }
+        .auth-container { display:grid; grid-template-columns:1.1fr 0.9fr; gap:32px; max-width:920px; width:100%; align-items:start; }
+        .auth-form-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:40px 36px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.04); }
+        .auth-form-card h1 { font-size:1.8rem; font-weight:800; margin:0 0 8px; color:#111827; }
+        .auth-form-card .subtitle { color:#6b7280; font-size:0.95rem; margin:0 0 28px; }
+        .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+        .auth-side { padding:32px; background:#f9fafb; border-radius:16px; border:1px solid #f3f4f6; }
+        .auth-side h2 { font-size:1.3rem; font-weight:700; color:#111827; margin:0 0 12px; }
+        .auth-side p { color:#6b7280; font-size:0.92rem; line-height:1.7; margin:0 0 24px; }
+        .auth-side-features { list-style:none; padding:0; margin:0; }
+        .auth-side-features li { padding:10px 0; font-size:0.92rem; color:#6b7280; display:flex; align-items:center; gap:10px; border-bottom:1px solid #e5e7eb; }
+        .auth-side-features li:last-child { border-bottom:none; }
+        .auth-side-features li::before { content:"✓"; color:#6366f1; font-weight:700; }
+        .auth-link { color:#6366f1; font-weight:600; text-decoration:none; }
+        .auth-link:hover { text-decoration:underline; }
+        .z-toast { position:fixed; bottom:24px; right:24px; padding:14px 24px; border-radius:10px; font-size:0.9rem; font-weight:600; color:#fff; background:#111827; box-shadow:0 8px 24px rgba(0,0,0,0.15); opacity:0; transform:translateY(12px); transition:all 0.3s ease; z-index:999; pointer-events:none; }
+        .z-toast.show { opacity:1; transform:translateY(0); }
+        .z-toast.error { background:#ef4444; }
+        @media (max-width:768px) { .auth-container { grid-template-columns:1fr; } .form-row { grid-template-columns:1fr; } }
+    </style>
 </head>
-<body data-page="register">
+<body class="saas-page">
 
-<header class="site-header">
-<div class="header-inner">
-    <div class="brand-block">
-        <img src="img/sinfondologo-removebg-preview.png" alt="Logo Zentrix" class="brand-logo">
-        <div><span class="brand-kicker">Zentrix</span></div>
+<nav class="z-nav">
+    <div class="z-nav-inner">
+        <a href="index.html" class="z-logo-wrap">
+            <img src="img/logoZentrix-sinfondo.png" alt="Zentrix" class="z-logo-img">
+            <span class="z-logo-text">Zentrix</span>
+        </a>
+        <div class="z-nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="pricing.html">Precios</a>
+            <a href="login.html" class="z-btn z-btn-outline" style="padding:10px 24px; font-size:0.9rem">Iniciar sesión</a>
+        </div>
     </div>
-    <nav class="site-nav" aria-label="Principal">
-        <a href="index.html">Inicio</a>
-        <a href="catalog.html">Catalogo</a>
-        <a href="cart.html">Carrito</a>
-        <a href="login.html" data-nav="account">Iniciar sesión</a>
-    </nav>
-    <a href="cart.html" class="cart-chip">
-        <span>Carrito</span>
-        <strong id="navCartCount">0</strong>
-    </a>
-</div>
-</header>
+</nav>
 
-<main class="page-content auth-layout">
-    <section class="glass-card auth-card">
-        <span class="eyebrow">Crear cuenta</span>
-        <h1>Regístrate en Zentrix</h1>
-        <p>Completa tus datos para crear tu cuenta y empezar a comprar.</p>
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-form-card">
+            <h1>Crea tu cuenta</h1>
+            <p class="subtitle">Regístrate para lanzar tu negocio online con Zentrix.</p>
 
-        <form id="registerForm" class="form-grid" novalidate>
-            <label>
-                <span>Cédula</span>
-                <input type="text" id="regCedula" placeholder="Número de documento" required>
-            </label>
-            <label>
-                <span>Teléfono</span>
-                <input type="tel" id="regTelefono" placeholder="Ej. 3001234567" required>
-            </label>
-            <label>
-                <span>Nombre completo</span>
-                <input type="text" id="regNombre" placeholder="Tu nombre" required>
-            </label>
-            <label>
-                <span>Correo electrónico</span>
-                <input type="email" id="regEmail" placeholder="correo@ejemplo.com" required>
-            </label>
-            <label>
-                <span>Contraseña</span>
-                <input type="password" id="regPassword" placeholder="Mínimo 6 caracteres" required>
-            </label>
-            <label>
-                <span>Dirección</span>
-                <input type="text" id="regDireccion" placeholder="Dirección de entrega" required>
-            </label>
-        </form>
+            <form id="registerForm" novalidate>
+                <div class="form-row">
+                    <div class="z-form-group">
+                        <label for="regCedula">Cédula</label>
+                        <input type="text" id="regCedula" class="z-input" placeholder="Número de documento" required>
+                    </div>
+                    <div class="z-form-group">
+                        <label for="regTelefono">Teléfono</label>
+                        <input type="tel" id="regTelefono" class="z-input" placeholder="Ej. 300 123 4567" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="z-form-group">
+                        <label for="regNombre">Nombre completo</label>
+                        <input type="text" id="regNombre" class="z-input" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="z-form-group">
+                        <label for="regEmail">Correo electrónico</label>
+                        <input type="email" id="regEmail" class="z-input" placeholder="tu@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="z-form-group">
+                        <label for="regPassword">Contraseña</label>
+                        <input type="password" id="regPassword" class="z-input" placeholder="Mínimo 6 caracteres" required>
+                    </div>
+                    <div class="z-form-group">
+                        <label for="regDireccion">Dirección</label>
+                        <input type="text" id="regDireccion" class="z-input" placeholder="Tu dirección" required>
+                    </div>
+                </div>
+                <button type="submit" id="registerBtn" class="z-btn z-btn-primary z-btn-block z-btn-lg" style="margin-top:8px">Crear mi cuenta →</button>
+            </form>
 
-        <div class="inline-actions" style="margin-top:24px">
-            <button id="registerBtn" class="btn btn-primary btn-block" type="button">
-                Registrarse
-            </button>
+            <p style="text-align:center; margin-top:24px; color:#6b7280; font-size:0.9rem">
+                ¿Ya tienes cuenta? <a href="login.html" class="auth-link">Inicia sesión</a>
+            </p>
         </div>
 
-        <p style="text-align:center; margin-top:18px; color:var(--text-muted); font-size:0.9rem">
-            ¿Ya tienes cuenta?
-            <a href="login.html" style="color:var(--brand); font-weight:600">Inicia sesión</a>
-        </p>
-    </section>
+        <div class="auth-side">
+            <h2>¿Por qué Zentrix?</h2>
+            <p>Miles de negocios en Colombia ya usan Zentrix para gestionar sus ventas online.</p>
+            <ul class="auth-side-features">
+                <li>Tu tienda lista en minutos</li>
+                <li>Catálogo, pedidos y pagos integrados</li>
+                <li>Equipo con roles personalizados</li>
+                <li>Branding con tu propia marca</li>
+                <li>Datos 100% aislados y seguros</li>
+                <li>Soporte humano real</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-    <aside class="glass-card auth-side-card">
-        <span class="eyebrow">Beneficios</span>
-        <h2>Tu cuenta, tu experiencia</h2>
-        <ul class="bullet-list">
-            <li>Historial de pedidos guardado.</li>
-            <li>Checkout más rápido con datos precargados.</li>
-            <li>Acceso a tu dashboard personal.</li>
-            <li>Soporte directo por WhatsApp.</li>
-        </ul>
-    </aside>
-</main>
+<div id="appToast" class="z-toast" role="status"></div>
 
-<div id="appToast" class="toast" role="status" aria-live="polite"></div>
-
+<script src="js/config.js"></script>
 <script src="services.js"></script>
 <script src="auth.js"></script>
 <script>
 (function() {
-    // Si ya está autenticado, redirige al dashboard
     document.addEventListener("DOMContentLoaded", () => {
-        if (window.PulpAuth?.isTokenValid()) {
-            window.location.href = "dashboard.html";
-            return;
-        }
+        if (window.PulpAuth?.isTokenValid()) { window.location.href = "dashboard.html"; }
     });
 
     function toast(msg, type) {
         const el = document.getElementById("appToast");
-        if (!el) return;
         el.textContent = msg;
-        el.className = "toast show" + (type === "error" ? " error" : "");
-        clearTimeout(window.__toastT);
-        window.__toastT = setTimeout(() => { el.className = "toast"; }, 3000);
+        el.className = "z-toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => { el.className = "z-toast"; }, 3500);
     }
 
-    document.getElementById("registerBtn").addEventListener("click", async () => {
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
         const btn = document.getElementById("registerBtn");
-        const cedula    = document.getElementById("regCedula").value.trim();
-        const telefono  = document.getElementById("regTelefono").value.trim();
-        const name      = document.getElementById("regNombre").value.trim();
-        const email     = document.getElementById("regEmail").value.trim().toLowerCase();
-        const password  = document.getElementById("regPassword").value.trim();
+        const cedula = document.getElementById("regCedula").value.trim();
+        const telefono = document.getElementById("regTelefono").value.trim();
+        const name = document.getElementById("regNombre").value.trim();
+        const email = document.getElementById("regEmail").value.trim().toLowerCase();
+        const password = document.getElementById("regPassword").value.trim();
         const direccion = document.getElementById("regDireccion").value.trim();
 
-        if (!cedula || !telefono || !name || !email || !password || !direccion) {
-            toast("Completa todos los campos", "error"); return;
-        }
-        if (password.length < 6) {
-            toast("La contraseña debe tener mínimo 6 caracteres", "error"); return;
-        }
+        if (!cedula || !telefono || !name || !email || !password || !direccion) { toast("Completa todos los campos", "error"); return; }
+        if (password.length < 6) { toast("La contraseña debe tener mínimo 6 caracteres", "error"); return; }
 
-        btn.disabled = true;
-        btn.textContent = "Registrando...";
+        btn.disabled = true; btn.textContent = "Creando cuenta...";
 
         try {
-            const data = await window.PulpAppServices.authRegister({
-                cedula, telefono, name, email, password, direccion
-            });
-            // Guarda los datos completos incluyendo los que no vienen en el token
+            const data = await window.PulpAppServices.authRegister({ cedula, telefono, name, email, password, direccion });
             const fullData = { ...data, cedula, telefono, direccion, name };
             localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
             localStorage.setItem("user", JSON.stringify(fullData));
-            toast("Cuenta creada. Bienvenido/a 🎉");
+            toast("Cuenta creada ✓");
+
+            // Redirigir según estado SaaS
+            const status = fullData.status || "ACTIVE";
+            if (status === "PENDING_PAYMENT") { setTimeout(() => { window.location.href = "payment.html"; }, 1000); return; }
             setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
         } catch (err) {
             toast(err.message || "No fue posible registrarte", "error");
-            btn.disabled = false;
-            btn.textContent = "Registrarse";
+            btn.disabled = false; btn.textContent = "Crear mi cuenta →";
         }
     });
 })();
