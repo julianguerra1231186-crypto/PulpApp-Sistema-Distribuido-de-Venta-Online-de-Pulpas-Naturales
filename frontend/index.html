@@ -296,6 +296,33 @@
 
         @media (max-width:768px) { .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; } }
 
+        /* ── Card 5: Equipo micro-anim ── */
+        .rc5-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; }
+        .rc5-title { font-size:0.65rem; font-weight:700; color:#9ca3af; margin-bottom:10px; }
+        .rc5-member { display:flex; align-items:center; gap:10px; padding:6px; border-radius:8px; margin-bottom:6px; opacity:0; animation:rc5SlideIn 6s ease infinite; }
+        .rc5-m1 { animation-delay:0s; }
+        .rc5-m2 { animation-delay:0.8s; }
+        .rc5-m3 { animation-delay:1.6s; }
+        @keyframes rc5SlideIn { 0%,10%{opacity:0;transform:translateY(8px)} 20%,75%{opacity:1;transform:translateY(0)} 85%,100%{opacity:0;transform:translateY(-4px)} }
+        .rc5-avatar { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0; }
+        .rc5-info { flex:1; }
+        .rc5-name { height:6px; width:60px; background:#e5e7eb; border-radius:3px; margin-bottom:4px; }
+        .rc5-role { font-size:0.55rem; font-weight:600; color:#6b7280; }
+
+        /* ── Card 6: Pagos micro-anim ── */
+        .rc6-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; }
+        .rc6-title { font-size:0.65rem; font-weight:700; color:#9ca3af; margin-bottom:10px; }
+        .rc6-methods { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
+        .rc6-method { background:#f9fafb; border-radius:8px; padding:8px 6px; text-align:center; font-size:0.55rem; font-weight:600; color:#374151; animation:rc6Pop 8s ease infinite; opacity:0; }
+        .rc6-mt1 { animation-delay:0s; }
+        .rc6-mt2 { animation-delay:0.5s; }
+        .rc6-mt3 { animation-delay:1s; }
+        .rc6-mt4 { animation-delay:1.5s; }
+        @keyframes rc6Pop { 0%,8%{opacity:0;transform:scale(0.8)} 15%,75%{opacity:1;transform:scale(1)} 85%,100%{opacity:0;transform:scale(0.9)} }
+        .rc6-method span { display:block; font-size:1.1rem; margin-bottom:2px; }
+        .rc6-status { text-align:center; font-size:0.6rem; font-weight:600; color:#065f46; background:#d1fae5; padding:4px 10px; border-radius:999px; animation:rc6Check 4s ease infinite; }
+        @keyframes rc6Check { 0%,40%{opacity:0} 50%,90%{opacity:1} 100%{opacity:0} }
+
         /* ── Métricas ── */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
         .metric-value { font-size: 2.8rem; font-weight: 900; color: var(--z-primary); letter-spacing: -0.04em; line-height: 1; }
@@ -576,6 +603,46 @@
                     <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
                     <p class="reason-detail">Reportes claros y métricas de crecimiento. <strong>Toma decisiones con datos reales.</strong></p>
                 </div>
+
+                    <!-- Card 5: Equipo -->
+                    <div class="reason-card">
+                        <div class="reason-img" style="background:linear-gradient(135deg,#e0f2fe,#d1fae5)">
+                            <div class="reason-mockup">
+                                <div class="rc5-window">
+                                    <div class="rc5-title">Equipo</div>
+                                    <div class="rc5-member rc5-m1"><div class="rc5-avatar" style="background:#eef2ff; color:#6366f1">JG</div><div class="rc5-info"><div class="rc5-name"></div><div class="rc5-role">Admin</div></div></div>
+                                    <div class="rc5-member rc5-m2"><div class="rc5-avatar" style="background:#d1fae5; color:#16a34a">ML</div><div class="rc5-info"><div class="rc5-name"></div><div class="rc5-role">Vendedor</div></div></div>
+                                    <div class="rc5-member rc5-m3"><div class="rc5-avatar" style="background:#fef3c7; color:#d97706">CR</div><div class="rc5-info"><div class="rc5-name"></div><div class="rc5-role">Cliente</div></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reason-icons"><span style="background:#e0f2fe; color:#0ea5e9">👥</span><span style="background:#d1fae5; color:#16a34a">🔑</span></div>
+                        <h3>Gestión de equipo y roles</h3>
+                        <p>Invita a tu equipo y asigna roles: Admin, Vendedor o Cliente.</p>
+                        <p class="reason-detail">Cada miembro tiene acceso solo a lo que necesita. <strong>Control granular por tenant.</strong></p>
+                    </div>
+
+                    <!-- Card 6: Pagos -->
+                    <div class="reason-card">
+                        <div class="reason-img" style="background:linear-gradient(135deg,#d1fae5,#fef3c7)">
+                            <div class="reason-mockup">
+                                <div class="rc6-window">
+                                    <div class="rc6-title">Métodos de pago</div>
+                                    <div class="rc6-methods">
+                                        <div class="rc6-method rc6-mt1"><span>📱</span><div>Nequi</div></div>
+                                        <div class="rc6-method rc6-mt2"><span>💳</span><div>Daviplata</div></div>
+                                        <div class="rc6-method rc6-mt3"><span>🏦</span><div>Transferencia</div></div>
+                                        <div class="rc6-method rc6-mt4"><span>📷</span><div>QR</div></div>
+                                    </div>
+                                    <div class="rc6-status">✓ Comprobante recibido</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reason-icons"><span style="background:#d1fae5; color:#16a34a">💰</span><span style="background:#fef3c7; color:#d97706">🧾</span></div>
+                        <h3>Pagos manuales sin pasarela</h3>
+                        <p>Acepta Nequi, Daviplata, transferencia o QR. Sin comisiones de terceros.</p>
+                        <p class="reason-detail">Tu cliente sube el comprobante y tú apruebas. <strong>Simple, directo y sin costos extra.</strong></p>
+                    </div>
 
             </div>
         </div>
