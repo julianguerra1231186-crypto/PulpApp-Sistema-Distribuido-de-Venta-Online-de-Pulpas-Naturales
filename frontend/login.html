@@ -96,7 +96,7 @@
 <script>
 (function() {
     document.addEventListener("DOMContentLoaded", () => {
-        if (window.PulpAuth?.isTokenValid()) { window.location.href = "dashboard.html"; }
+        if (window.PulpAuth?.isTokenValid()) { window.location.href = "admin-dashboard.html"; }
     });
 
     function toast(msg, type) {
@@ -135,7 +135,7 @@
             if (status === "PENDING_APPROVAL") { setTimeout(() => { window.location.href = "pending.html"; }, 800); return; }
 
             const role = fullData.role?.name || fullData.role || "";
-            let redirect = localStorage.getItem("pulpapp_redirect") || "dashboard.html";
+            let redirect = localStorage.getItem("pulpapp_redirect") || "admin-dashboard.html";
             if (role === "ROLE_CLIENT") redirect = "mi-cuenta.html";
             localStorage.removeItem("pulpapp_redirect");
             setTimeout(() => { window.location.href = redirect; }, 800);

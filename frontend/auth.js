@@ -129,7 +129,7 @@
             if (authenticated && user) {
                 const displayName = user.name || user.email || "Mi cuenta";
                 accountLink.textContent = `👤 ${displayName}`;
-                accountLink.href        = "dashboard.html";
+                accountLink.href        = "admin-dashboard.html";
                 accountLink.title       = `Sesión activa — ${user.role || ""}`;
             } else {
                 accountLink.textContent = "Iniciar sesión";
