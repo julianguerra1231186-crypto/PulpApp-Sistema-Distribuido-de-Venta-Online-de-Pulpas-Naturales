@@ -211,27 +211,49 @@
         /* Hover: acelera todas las animaciones */
         .feat-card:hover * { animation-duration:1.5s !important; }
 
-        /* ── Value cards grid ── */
-        .value-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; }
-        .value-card {
+        /* ── Reasons carousel ── */
+        .carousel-arrow {
+            width:40px; height:40px; border-radius:50%; border:1.5px solid #e5e7eb;
+            background:#fff; cursor:pointer; font-size:1rem; color:#111827;
+            display:inline-flex; align-items:center; justify-content:center;
+            transition:all 0.2s ease;
+        }
+        .carousel-arrow:hover { background:#6366f1; color:#fff; border-color:#6366f1; }
+
+        .reasons-track-wrap { overflow:hidden; }
+        .reasons-track {
+            display:flex; gap:24px;
+            transition:transform 0.5s cubic-bezier(0.22,1,0.36,1);
+        }
+        .reason-card {
+            min-width:280px; max-width:280px; flex-shrink:0;
             background:#fff; border:1px solid #e5e7eb; border-radius:16px;
-            padding:32px 24px; text-align:center;
-            transition: all 0.3s ease;
+            overflow:hidden; transition:all 0.3s ease;
         }
-        .value-card:hover {
-            transform:translateY(-6px);
-            box-shadow:0 16px 40px rgba(99,102,241,0.1);
-            border-color:#c7d2fe;
+        .reason-card:hover { border-color:#c7d2fe; box-shadow:0 12px 32px rgba(99,102,241,0.1); transform:translateY(-4px); }
+
+        .reason-img {
+            height:180px; display:flex; align-items:center; justify-content:center;
+            position:relative; overflow:hidden;
         }
-        .value-icon {
-            width:56px; height:56px; border-radius:14px;
-            background:#eef2ff; display:inline-flex; align-items:center; justify-content:center;
-            font-size:1.5rem; margin:0 auto 20px;
+        .reason-mockup { position:relative; z-index:1; }
+
+        .reason-icons { padding:16px 20px 0; display:flex; gap:8px; }
+        .reason-icons span {
+            width:32px; height:32px; border-radius:8px;
+            display:inline-flex; align-items:center; justify-content:center;
+            font-size:0.85rem;
         }
-        .value-card h3 { font-size:1.05rem; font-weight:700; color:#111827; margin:0 0 10px; line-height:1.35; }
-        .value-card p { font-size:0.88rem; color:#6b7280; line-height:1.65; margin:0; }
-        @media (max-width:900px) { .value-grid { grid-template-columns:repeat(2, 1fr); } }
-        @media (max-width:560px) { .value-grid { grid-template-columns:1fr; } }
+
+        .reason-card h3 { font-size:1rem; font-weight:700; color:#111827; margin:12px 20px 8px; line-height:1.35; }
+        .reason-card > p { font-size:0.85rem; color:#6b7280; line-height:1.6; margin:0 20px 8px; }
+        .reason-detail { font-size:0.8rem; color:#9ca3af; line-height:1.6; margin:0 20px 20px !important; }
+        .reason-detail strong { color:#374151; }
+
+        @media (max-width:768px) {
+            .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+            div:has(> .reasons-track-wrap) { grid-template-columns:1fr !important; }
+        }
 
         /* ── Métricas ── */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
@@ -435,33 +457,113 @@
     </div>
 </section>
 
-<!-- ═══════════════════ BENEFICIOS CLAVE ═══════════════════ -->
-<section style="padding:80px 0; background:#f9fafb">
+<!-- ═══════════════════ RAZONES / CARRUSEL ═══════════════════ -->
+<section style="padding:80px 0; background:#fff">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
-        <div class="z-section-header">
-            <h2>Todo lo que necesitas para hacer crecer tu negocio</h2>
-            <p>Zentrix reúne todas las herramientas para que vendas, gestiones y escales sin complicaciones.</p>
-        </div>
-        <div class="value-grid">
-            <div class="value-card">
-                <div class="value-icon">🚀</div>
-                <h3>Empieza tu negocio desde cero</h3>
-                <p>Crea tu tienda en minutos sin conocimientos técnicos y comienza a vender de inmediato.</p>
+        <div style="display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start">
+
+            <!-- Título lateral -->
+            <div>
+                <h2 style="font-size:1.8rem; font-weight:800; color:#111827; line-height:1.25; letter-spacing:-0.02em; margin:0 0 20px">Razones por las que Zentrix es tu mejor opción</h2>
+                <div style="display:flex; gap:10px; margin-top:24px">
+                    <button onclick="scrollCards(-1)" class="carousel-arrow">←</button>
+                    <button onclick="scrollCards(1)" class="carousel-arrow">→</button>
+                </div>
             </div>
-            <div class="value-card">
-                <div class="value-icon">📊</div>
-                <h3>Gestiona productos y pedidos fácilmente</h3>
-                <p>Administra tu catálogo, controla pedidos y gestiona todo desde un solo panel.</p>
-            </div>
-            <div class="value-card">
-                <div class="value-icon">✨</div>
-                <h3>Personaliza tu marca</h3>
-                <p>Configura tu logo, colores y estilo para que tu negocio tenga identidad propia.</p>
-            </div>
-            <div class="value-card">
-                <div class="value-icon">📈</div>
-                <h3>Control total de tu negocio</h3>
-                <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
+
+            <!-- Carrusel de tarjetas -->
+            <div class="reasons-track-wrap">
+                <div class="reasons-track" id="reasonsTrack">
+
+                    <!-- Card 1 -->
+                    <div class="reason-card">
+                        <div class="reason-img" style="background:linear-gradient(135deg,#dbeafe,#ede9fe)">
+                            <div class="reason-mockup">
+                                <div style="background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:140px">
+                                    <div style="height:8px; width:60%; background:#e5e7eb; border-radius:4px; margin-bottom:8px"></div>
+                                    <div style="height:50px; background:#eef2ff; border-radius:6px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; font-size:1.2rem">📦</div>
+                                    <div style="height:6px; width:80%; background:#e5e7eb; border-radius:3px; margin-bottom:4px"></div>
+                                    <div style="height:6px; width:50%; background:#f3f4f6; border-radius:3px"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reason-icons">
+                            <span style="background:#eef2ff; color:#6366f1">🚀</span>
+                            <span style="background:#e0f2fe; color:#0ea5e9">⚡</span>
+                        </div>
+                        <h3>Empieza tu negocio desde cero</h3>
+                        <p>Crea tu tienda en minutos sin conocimientos técnicos y comienza a vender de inmediato.</p>
+                        <p class="reason-detail">Sin código, sin complicaciones. Solo regístrate, elige tu plan y tu tienda estará lista. <strong>Activación en menos de 24 horas.</strong></p>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="reason-card">
+                        <div class="reason-img" style="background:linear-gradient(135deg,#d1fae5,#e0f2fe)">
+                            <div class="reason-mockup">
+                                <div style="background:#fff; border-radius:10px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:160px">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px"><span style="font-size:0.5rem; font-weight:700; color:#6b7280">Pedido</span><span style="font-size:0.5rem; font-weight:700; color:#6b7280">Estado</span></div>
+                                    <div style="background:#d1fae5; border-radius:4px; padding:4px 6px; margin-bottom:4px; font-size:0.5rem; color:#065f46; display:flex; justify-content:space-between"><span>#1042</span><span>✓ Aprobado</span></div>
+                                    <div style="background:#fef3c7; border-radius:4px; padding:4px 6px; margin-bottom:4px; font-size:0.5rem; color:#92400e; display:flex; justify-content:space-between"><span>#1043</span><span>⏳ Pendiente</span></div>
+                                    <div style="background:#d1fae5; border-radius:4px; padding:4px 6px; font-size:0.5rem; color:#065f46; display:flex; justify-content:space-between"><span>#1044</span><span>✓ Aprobado</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reason-icons">
+                            <span style="background:#d1fae5; color:#16a34a">📋</span>
+                            <span style="background:#fef3c7; color:#d97706">📊</span>
+                            <span style="background:#e0f2fe; color:#0ea5e9">🔔</span>
+                        </div>
+                        <h3>Gestiona productos y pedidos fácilmente</h3>
+                        <p>Administra tu catálogo, controla pedidos y gestiona todo desde un solo panel.</p>
+                        <p class="reason-detail">Aprueba pagos manualmente, da seguimiento a cada orden y mantén a tus clientes informados. <strong>Todo en tiempo real.</strong></p>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="reason-card">
+                        <div class="reason-img" style="background:linear-gradient(135deg,#fae8ff,#eef2ff)">
+                            <div class="reason-mockup">
+                                <div style="background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:140px">
+                                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px"><div style="width:20px; height:20px; border-radius:5px; background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div><div style="height:6px; width:50px; background:#e5e7eb; border-radius:3px"></div></div>
+                                    <div style="height:30px; border-radius:6px; background:linear-gradient(135deg,#818cf8,#c4b5fd); opacity:0.4; margin-bottom:8px"></div>
+                                    <div style="display:flex; gap:4px"><div style="flex:1; height:14px; border-radius:3px; background:#6366f1"></div><div style="flex:1; height:14px; border-radius:3px; background:#8b5cf6"></div><div style="flex:1; height:14px; border-radius:3px; background:#c4b5fd"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reason-icons">
+                            <span style="background:#fae8ff; color:#a855f7">🎨</span>
+                            <span style="background:#eef2ff; color:#6366f1">✨</span>
+                        </div>
+                        <h3>Personaliza tu marca</h3>
+                        <p>Configura tu logo, colores y estilo para que tu negocio tenga identidad propia.</p>
+                        <p class="reason-detail">Tu tienda refleja tu marca, no la nuestra. Banner, paleta de colores y logo personalizados. <strong>Branding profesional desde el día uno.</strong></p>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="reason-card">
+                        <div class="reason-img" style="background:linear-gradient(135deg,#fef3c7,#fee2e2)">
+                            <div class="reason-mockup">
+                                <div style="background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:150px">
+                                    <div style="font-size:0.5rem; font-weight:700; color:#6b7280; margin-bottom:6px">Ventas del mes</div>
+                                    <div style="font-size:1.1rem; font-weight:800; color:#111827; margin-bottom:8px">$2.450.000</div>
+                                    <div style="display:flex; align-items:flex-end; gap:3px; height:30px">
+                                        <div style="flex:1; background:#c7d2fe; border-radius:2px; height:40%"></div>
+                                        <div style="flex:1; background:#a5b4fc; border-radius:2px; height:55%"></div>
+                                        <div style="flex:1; background:#818cf8; border-radius:2px; height:70%"></div>
+                                        <div style="flex:1; background:#6366f1; border-radius:2px; height:100%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="reason-icons">
+                            <span style="background:#fef3c7; color:#d97706">📈</span>
+                            <span style="background:#fee2e2; color:#dc2626">🎯</span>
+                        </div>
+                        <h3>Control total de tu negocio</h3>
+                        <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
+                        <p class="reason-detail">Reportes claros, métricas de crecimiento y visibilidad completa de tu operación. <strong>Toma decisiones con datos reales.</strong></p>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -574,43 +676,47 @@
 
 <script src="js/config.js"></script>
 <script>
+/* ── Confetti en CTA ── */
 (function() {
     const btn = document.getElementById("ctaNavBtn");
     if (!btn) return;
-
-    function burst(e) {
+    function burst() {
         const rect = btn.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
+        const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
         const colors = ["#6366f1","#8b5cf6","#f59e0b","#22c55e","#ef4444","#0ea5e9","#f472b6"];
         const emojis = ["🎉","🎊","✨","⭐","🥳","🎈"];
-
         for (let i = 0; i < 18; i++) {
             const el = document.createElement("div");
             const isEmoji = Math.random() > 0.5;
             const angle = (Math.PI * 2 * i) / 18 + (Math.random() - 0.5) * 0.5;
             const dist = 60 + Math.random() * 50;
-            const dx = Math.cos(angle) * dist;
-            const dy = Math.sin(angle) * dist - 30;
-
+            const dx = Math.cos(angle) * dist, dy = Math.sin(angle) * dist - 30;
             if (isEmoji) {
                 el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-                el.style.cssText = `position:fixed; left:${cx}px; top:${cy}px; font-size:${14 + Math.random()*10}px; pointer-events:none; z-index:9999; transition: all 0.7s cubic-bezier(.2,1,.3,1); opacity:1;`;
+                el.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;font-size:${14+Math.random()*10}px;pointer-events:none;z-index:9999;transition:all 0.7s cubic-bezier(.2,1,.3,1);opacity:1;`;
             } else {
-                el.style.cssText = `position:fixed; left:${cx}px; top:${cy}px; width:${6+Math.random()*6}px; height:${6+Math.random()*6}px; border-radius:${Math.random()>0.5?'50%':'2px'}; background:${colors[Math.floor(Math.random()*colors.length)]}; pointer-events:none; z-index:9999; transition: all 0.7s cubic-bezier(.2,1,.3,1); opacity:1;`;
+                el.style.cssText = `position:fixed;left:${cx}px;top:${cy}px;width:${6+Math.random()*6}px;height:${6+Math.random()*6}px;border-radius:${Math.random()>0.5?'50%':'2px'};background:${colors[Math.floor(Math.random()*colors.length)]};pointer-events:none;z-index:9999;transition:all 0.7s cubic-bezier(.2,1,.3,1);opacity:1;`;
             }
-
             document.body.appendChild(el);
-            requestAnimationFrame(() => {
-                el.style.transform = `translate(${dx}px, ${dy}px) rotate(${Math.random()*360}deg) scale(0.3)`;
-                el.style.opacity = "0";
-            });
+            requestAnimationFrame(() => { el.style.transform = `translate(${dx}px,${dy}px) rotate(${Math.random()*360}deg) scale(0.3)`; el.style.opacity = "0"; });
             setTimeout(() => el.remove(), 800);
         }
     }
-
     btn.addEventListener("mouseenter", burst);
 })();
+
+/* ── Carrusel de razones ── */
+let cardIndex = 0;
+function scrollCards(dir) {
+    const track = document.getElementById("reasonsTrack");
+    if (!track) return;
+    const cards = track.querySelectorAll(".reason-card");
+    const cardW = cards[0].offsetWidth + 24;
+    const maxVisible = Math.floor(track.parentElement.offsetWidth / cardW);
+    const maxIndex = Math.max(0, cards.length - maxVisible);
+    cardIndex = Math.max(0, Math.min(maxIndex, cardIndex + dir));
+    track.style.transform = `translateX(-${cardIndex * cardW}px)`;
+}
 </script>
 </body>
 </html>
