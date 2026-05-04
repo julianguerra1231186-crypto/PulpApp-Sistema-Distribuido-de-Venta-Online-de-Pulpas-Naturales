@@ -58,49 +58,69 @@
         .trust-logos { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; align-items: center; }
         .trust-logos span { font-size: 1.1rem; font-weight: 700; color: #d1d5db; letter-spacing: -0.01em; }
 
-        /* ── Feature showcase con mockups ── */
-        .feature-row { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; margin-bottom:80px; }
-        .feature-row.reverse { direction:rtl; }
-        .feature-row.reverse > * { direction:ltr; }
-        .feature-row:last-child { margin-bottom:0; }
-
-        .feature-text h3 { font-size:1.5rem; font-weight:800; color:#111827; margin:0 0 14px; letter-spacing:-0.02em; }
-        .feature-text p { color:#6b7280; font-size:1rem; line-height:1.7; margin:0 0 20px; }
-        .feature-badge { display:inline-block; padding:4px 14px; border-radius:999px; font-size:0.78rem; font-weight:700; background:#eef2ff; color:#4f46e5; margin-bottom:16px; }
-        .feature-list { list-style:none; padding:0; margin:0; }
-        .feature-list li { padding:6px 0; font-size:0.92rem; color:#374151; display:flex; align-items:center; gap:10px; }
-        .feature-list li::before { content:"✓"; color:#6366f1; font-weight:700; font-size:0.85rem; }
+        /* ── Feature grid horizontal con mockups funcionales ── */
+        .feat-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; }
+        .feat-card { border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; background:#fff; transition:all 0.3s ease; }
+        .feat-card:hover { border-color:#c7d2fe; box-shadow:0 12px 32px rgba(99,102,241,0.1); transform:translateY(-4px); }
 
         /* Mockup window */
-        .mockup-window { background:#fff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.08); }
-        .mockup-dots { padding:10px 14px; background:#f9fafb; border-bottom:1px solid #e5e7eb; display:flex; gap:6px; }
-        .mockup-dots span { width:10px; height:10px; border-radius:50%; }
-        .mockup-dots span:nth-child(1) { background:#ef4444; }
-        .mockup-dots span:nth-child(2) { background:#f59e0b; }
-        .mockup-dots span:nth-child(3) { background:#22c55e; }
-        .mockup-content { display:flex; min-height:220px; }
-        .mockup-sidebar { width:52px; background:#f9fafb; border-right:1px solid #f3f4f6; padding:12px 8px; display:flex; flex-direction:column; gap:8px; }
-        .mockup-sidebar-item { height:32px; border-radius:6px; background:#e5e7eb; }
-        .mockup-sidebar-item.active { background:#6366f1; }
-        .mockup-main { flex:1; padding:16px; }
-        .mockup-topbar { height:12px; width:40%; background:#e5e7eb; border-radius:4px; margin-bottom:16px; }
-        .mockup-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
-        .mockup-card-item { height:56px; border-radius:8px; background:linear-gradient(135deg,#f3f4f6,#e5e7eb); }
-        .mockup-table { display:flex; flex-direction:column; gap:6px; }
-        .mockup-table-row { height:28px; border-radius:6px; background:#f3f4f6; }
-        .mockup-table-row.header { background:#e5e7eb; height:24px; }
-        .mockup-table-row.highlight { background:#eef2ff; border:1px solid #c7d2fe; }
+        .feat-mockup { border-bottom:1px solid #f3f4f6; }
+        .fm-bar { padding:8px 12px; background:#f9fafb; border-bottom:1px solid #f3f4f6; display:flex; gap:5px; }
+        .fm-bar span { width:8px; height:8px; border-radius:50%; }
+        .fm-bar span:nth-child(1) { background:#ef4444; }
+        .fm-bar span:nth-child(2) { background:#f59e0b; }
+        .fm-bar span:nth-child(3) { background:#22c55e; }
+        .fm-body { padding:12px; min-height:180px; }
 
-        /* Tenant isolation mockup */
-        .mockup-tenant-box { border:2px solid; border-radius:12px; padding:16px; text-align:center; width:100px; }
-        .mockup-tenant-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; margin:0 auto 10px; }
-        .mockup-tenant-lines div { height:6px; background:#e5e7eb; border-radius:3px; margin-bottom:5px; }
-        .mockup-tenant-lines div:last-child { width:70%; }
+        /* Catálogo mockup */
+        .fm-search { display:flex; align-items:center; gap:6px; padding:6px 10px; background:#f3f4f6; border-radius:6px; margin-bottom:10px; font-size:0.7rem; }
+        .fm-products { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+        .fm-prod { background:#f9fafb; border-radius:8px; padding:8px; text-align:center; }
+        .fm-img { height:36px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:1rem; margin-bottom:6px; }
+        .fm-line { height:7px; background:#e5e7eb; border-radius:3px; }
+        .fm-line.w70 { width:70%; }
+        .fm-line.w60 { width:60%; }
+        .fm-line.w50 { width:50%; }
+        .fm-line.w40 { width:40%; }
+        .fm-price { font-size:0.65rem; font-weight:700; color:#111827; margin-top:4px; }
 
-        @media (max-width:768px) {
-            .feature-row, .feature-row.reverse { grid-template-columns:1fr; direction:ltr; gap:32px; }
-            .feature-row { margin-bottom:48px; }
-        }
+        /* Pedidos mockup */
+        .fm-table-head { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; padding:6px 8px; background:#f3f4f6; border-radius:6px; margin-bottom:6px; }
+        .fm-table-head span { font-size:0.6rem; font-weight:700; color:#6b7280; }
+        .fm-table-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; padding:7px 8px; border-radius:5px; align-items:center; }
+        .fm-table-row span { font-size:0.62rem; color:#374151; }
+        .fm-table-row.active { background:#eef2ff; border:1px solid #c7d2fe; }
+        .fm-st { font-size:0.58rem; font-weight:600; padding:2px 6px; border-radius:999px; white-space:nowrap; }
+        .fm-st.green { background:#d1fae5; color:#065f46; }
+        .fm-st.yellow { background:#fef3c7; color:#92400e; }
+        .fm-st.red { background:#fee2e2; color:#991b1b; }
+
+        /* Tenant mockup */
+        .fm-tenant-body { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; padding:16px 8px; }
+        .fm-tenant-row { display:flex; align-items:center; gap:6px; }
+        .fm-tenant { border:2px solid; border-radius:10px; padding:8px; text-align:center; width:60px; }
+        .fm-tenant-av { width:28px; height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.7rem; margin:0 auto 4px; }
+        .fm-tenant-name { font-size:0.55rem; color:#6b7280; }
+        .fm-lock { font-size:0.7rem; }
+        .fm-shield { font-size:0.6rem; font-weight:600; color:#065f46; background:#d1fae5; padding:4px 12px; border-radius:999px; }
+
+        /* Branding mockup */
+        .fm-brand-body { padding:14px; display:flex; flex-direction:column; gap:8px; }
+        .fm-brand-header { display:flex; align-items:center; gap:8px; }
+        .fm-brand-logo { width:24px; height:24px; border-radius:6px; background:linear-gradient(135deg,#6366f1,#8b5cf6); }
+        .fm-brand-banner { height:36px; border-radius:8px; background:linear-gradient(135deg,#818cf8,#c4b5fd); opacity:0.4; }
+        .fm-brand-colors { display:flex; gap:4px; }
+        .fm-brand-colors div { flex:1; height:18px; border-radius:4px; }
+        .fm-brand-label { font-size:0.58rem; color:#9ca3af; text-align:center; }
+
+        /* Feature info below mockup */
+        .feat-info { padding:20px 18px; }
+        .feat-badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:700; margin-bottom:10px; }
+        .feat-info h3 { font-size:1rem; font-weight:700; color:#111827; margin:0 0 8px; }
+        .feat-info p { font-size:0.85rem; color:#6b7280; line-height:1.6; margin:0; }
+
+        @media (max-width:900px) { .feat-grid { grid-template-columns:repeat(2, 1fr); } }
+        @media (max-width:560px) { .feat-grid { grid-template-columns:1fr; } }
 
         /* ── Steps ── */
         .steps-section { background: #f9fafb; }
@@ -229,155 +249,92 @@
     </div>
 </section>
 
-<!-- ═══════════════════ BENEFICIOS ═══════════════════ -->
+<!-- ═══════════════════ FUNCIONALIDADES ═══════════════════ -->
 <section class="z-section" id="beneficios">
     <div class="z-section-header">
         <h2>Una plataforma. Todas las herramientas.</h2>
         <p>Deja de usar cinco apps distintas. Zentrix centraliza todo lo que tu negocio necesita para operar y crecer.</p>
     </div>
 
-    <!-- Feature 1: Catálogo -->
-    <div class="feature-row">
-        <div class="feature-mockup">
-            <div class="mockup-window">
-                <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <div class="mockup-content">
-                    <div class="mockup-sidebar">
-                        <div class="mockup-sidebar-item active"></div>
-                        <div class="mockup-sidebar-item"></div>
-                        <div class="mockup-sidebar-item"></div>
-                        <div class="mockup-sidebar-item"></div>
-                    </div>
-                    <div class="mockup-main">
-                        <div class="mockup-topbar"></div>
-                        <div class="mockup-grid">
-                            <div class="mockup-card-item"></div>
-                            <div class="mockup-card-item"></div>
-                            <div class="mockup-card-item"></div>
-                            <div class="mockup-card-item"></div>
-                            <div class="mockup-card-item"></div>
-                            <div class="mockup-card-item"></div>
-                        </div>
+    <div class="feat-grid">
+        <!-- 1. Catálogo -->
+        <div class="feat-card">
+            <div class="feat-mockup">
+                <div class="fm-bar"><span></span><span></span><span></span></div>
+                <div class="fm-body">
+                    <div class="fm-search"><span>🔍</span><div class="fm-line w60"></div></div>
+                    <div class="fm-products">
+                        <div class="fm-prod"><div class="fm-img" style="background:#dbeafe">📦</div><div class="fm-line w70"></div><div class="fm-price">$8.500</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#fce7f3">🍓</div><div class="fm-line w70"></div><div class="fm-price">$7.200</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#d1fae5">🥭</div><div class="fm-line w70"></div><div class="fm-price">$9.100</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#fef3c7">🍋</div><div class="fm-line w70"></div><div class="fm-price">$6.800</div></div>
                     </div>
                 </div>
             </div>
+            <div class="feat-info">
+                <div class="feat-badge" style="background:#eef2ff; color:#4f46e5">Catálogo</div>
+                <h3>Gestión de productos</h3>
+                <p>Fotos, precios, stock y categorías. Actualiza en tiempo real desde cualquier dispositivo.</p>
+            </div>
         </div>
-        <div class="feature-text">
-            <div class="feature-badge">Catálogo</div>
-            <h3>Gestiona tu catálogo completo</h3>
-            <p>Publica productos con fotos, precios, stock y categorías. Actualiza todo en tiempo real desde cualquier dispositivo. Tu inventario siempre al día.</p>
-            <ul class="feature-list">
-                <li>Fotos, precios y stock en tiempo real</li>
-                <li>Categorías organizadas</li>
-                <li>Búsqueda y filtros para tus clientes</li>
-            </ul>
-        </div>
-    </div>
 
-    <!-- Feature 2: Pedidos (invertido) -->
-    <div class="feature-row reverse">
-        <div class="feature-mockup">
-            <div class="mockup-window">
-                <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <div class="mockup-content">
-                    <div class="mockup-sidebar">
-                        <div class="mockup-sidebar-item"></div>
-                        <div class="mockup-sidebar-item active"></div>
-                        <div class="mockup-sidebar-item"></div>
-                        <div class="mockup-sidebar-item"></div>
-                    </div>
-                    <div class="mockup-main">
-                        <div class="mockup-topbar"></div>
-                        <div class="mockup-table">
-                            <div class="mockup-table-row header"></div>
-                            <div class="mockup-table-row"></div>
-                            <div class="mockup-table-row highlight"></div>
-                            <div class="mockup-table-row"></div>
-                            <div class="mockup-table-row"></div>
-                        </div>
-                    </div>
+        <!-- 2. Pedidos -->
+        <div class="feat-card">
+            <div class="feat-mockup">
+                <div class="fm-bar"><span></span><span></span><span></span></div>
+                <div class="fm-body">
+                    <div class="fm-table-head"><span>Pedido</span><span>Cliente</span><span>Estado</span></div>
+                    <div class="fm-table-row"><span>#1042</span><span>María L.</span><span class="fm-st green">✓ Aprobado</span></div>
+                    <div class="fm-table-row active"><span>#1043</span><span>Carlos R.</span><span class="fm-st yellow">⏳ Pendiente</span></div>
+                    <div class="fm-table-row"><span>#1044</span><span>Ana P.</span><span class="fm-st green">✓ Aprobado</span></div>
+                    <div class="fm-table-row"><span>#1045</span><span>Luis M.</span><span class="fm-st red">✕ Rechazado</span></div>
                 </div>
             </div>
+            <div class="feat-info">
+                <div class="feat-badge" style="background:#e0f2fe; color:#0369a1">Pedidos</div>
+                <h3>Control de pedidos</h3>
+                <p>Recibe, procesa y aprueba pagos. Seguimiento completo en tiempo real.</p>
+            </div>
         </div>
-        <div class="feature-text">
-            <div class="feature-badge" style="background:#e0f2fe; color:#0369a1">Pedidos</div>
-            <h3>Cada pedido bajo control</h3>
-            <p>Recibe, procesa y da seguimiento a cada orden. Aprueba pagos, gestiona estados y mantén a tus clientes informados en todo momento.</p>
-            <ul class="feature-list">
-                <li>Vista de pedidos en tiempo real</li>
-                <li>Aprobación manual de pagos</li>
-                <li>Historial completo por cliente</li>
-            </ul>
-        </div>
-    </div>
 
-    <!-- Feature 3: Multi-tenant -->
-    <div class="feature-row">
-        <div class="feature-mockup">
-            <div class="mockup-window">
-                <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <div class="mockup-content" style="padding:24px; display:flex; gap:16px; align-items:center; justify-content:center">
-                    <div class="mockup-tenant-box" style="border-color:#6366f1">
-                        <div class="mockup-tenant-icon" style="background:#eef2ff; color:#6366f1">A</div>
-                        <div class="mockup-tenant-lines"><div></div><div></div></div>
+        <!-- 3. Multi-tenant -->
+        <div class="feat-card">
+            <div class="feat-mockup">
+                <div class="fm-bar"><span></span><span></span><span></span></div>
+                <div class="fm-body fm-tenant-body">
+                    <div class="fm-tenant-row">
+                        <div class="fm-tenant" style="border-color:#6366f1"><div class="fm-tenant-av" style="background:#eef2ff; color:#6366f1">A</div><div class="fm-tenant-name">Tienda A</div></div>
+                        <div class="fm-lock">🔒</div>
+                        <div class="fm-tenant" style="border-color:#0ea5e9"><div class="fm-tenant-av" style="background:#e0f2fe; color:#0ea5e9">B</div><div class="fm-tenant-name">Tienda B</div></div>
+                        <div class="fm-lock">🔒</div>
+                        <div class="fm-tenant" style="border-color:#22c55e"><div class="fm-tenant-av" style="background:#d1fae5; color:#16a34a">C</div><div class="fm-tenant-name">Tienda C</div></div>
                     </div>
-                    <div style="font-size:1.5rem; color:#d1d5db">⟷</div>
-                    <div class="mockup-tenant-box" style="border-color:#0ea5e9">
-                        <div class="mockup-tenant-icon" style="background:#e0f2fe; color:#0ea5e9">B</div>
-                        <div class="mockup-tenant-lines"><div></div><div></div></div>
-                    </div>
-                    <div style="font-size:1.5rem; color:#d1d5db">⟷</div>
-                    <div class="mockup-tenant-box" style="border-color:#22c55e">
-                        <div class="mockup-tenant-icon" style="background:#d1fae5; color:#16a34a">C</div>
-                        <div class="mockup-tenant-lines"><div></div><div></div></div>
-                    </div>
+                    <div class="fm-shield">🛡️ Aislamiento activo</div>
                 </div>
             </div>
+            <div class="feat-info">
+                <div class="feat-badge" style="background:#d1fae5; color:#065f46">Seguridad</div>
+                <h3>Aislamiento total</h3>
+                <p>Cada negocio en su espacio seguro. Datos que nunca se mezclan entre tenants.</p>
+            </div>
         </div>
-        <div class="feature-text">
-            <div class="feature-badge" style="background:#d1fae5; color:#065f46">Seguridad</div>
-            <h3>Aislamiento total entre negocios</h3>
-            <p>Cada empresa opera en su propio espacio seguro. Los datos nunca se mezclan entre tenants. Privacidad y seguridad de nivel empresarial.</p>
-            <ul class="feature-list">
-                <li>Datos 100% aislados por tenant</li>
-                <li>Roles y permisos por equipo</li>
-                <li>Sin acceso cruzado entre negocios</li>
-            </ul>
-        </div>
-    </div>
 
-    <!-- Feature 4: Branding (invertido) -->
-    <div class="feature-row reverse">
-        <div class="feature-mockup">
-            <div class="mockup-window">
-                <div class="mockup-dots"><span></span><span></span><span></span></div>
-                <div class="mockup-content" style="padding:20px; display:flex; flex-direction:column; gap:12px">
-                    <div style="display:flex; gap:12px; align-items:center">
-                        <div style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
-                        <div><div style="height:10px; width:80px; background:#e5e7eb; border-radius:4px"></div><div style="height:8px; width:50px; background:#f3f4f6; border-radius:4px; margin-top:6px"></div></div>
-                    </div>
-                    <div style="height:60px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#a78bfa); opacity:0.3"></div>
-                    <div style="display:flex; gap:8px">
-                        <div style="flex:1; height:28px; border-radius:6px; background:#6366f1"></div>
-                        <div style="flex:1; height:28px; border-radius:6px; background:#8b5cf6"></div>
-                        <div style="flex:1; height:28px; border-radius:6px; background:#c4b5fd"></div>
-                    </div>
-                    <div style="display:flex; gap:8px">
-                        <div style="flex:1; height:8px; background:#e5e7eb; border-radius:4px"></div>
-                        <div style="flex:1; height:8px; background:#e5e7eb; border-radius:4px"></div>
-                    </div>
+        <!-- 4. Branding -->
+        <div class="feat-card">
+            <div class="feat-mockup">
+                <div class="fm-bar"><span></span><span></span><span></span></div>
+                <div class="fm-body fm-brand-body">
+                    <div class="fm-brand-header"><div class="fm-brand-logo"></div><div class="fm-line w50"></div></div>
+                    <div class="fm-brand-banner"></div>
+                    <div class="fm-brand-colors"><div style="background:#6366f1"></div><div style="background:#8b5cf6"></div><div style="background:#c4b5fd"></div><div style="background:#e0e7ff"></div></div>
+                    <div class="fm-brand-label">Vista previa de tu marca</div>
                 </div>
             </div>
-        </div>
-        <div class="feature-text">
-            <div class="feature-badge" style="background:#fae8ff; color:#86198f">Branding</div>
-            <h3>Tu marca, tu identidad</h3>
-            <p>Personaliza logo, colores y banner. Tu tienda refleja la identidad de tu negocio, no la nuestra. Cada detalle habla de tu marca.</p>
-            <ul class="feature-list">
-                <li>Logo y colores personalizados</li>
-                <li>Banner propio en tu tienda</li>
-                <li>Experiencia de marca consistente</li>
-            </ul>
+            <div class="feat-info">
+                <div class="feat-badge" style="background:#fae8ff; color:#86198f">Branding</div>
+                <h3>Tu marca propia</h3>
+                <p>Logo, colores y banner personalizados. Tu tienda refleja tu identidad.</p>
+            </div>
         </div>
     </div>
 </section>
