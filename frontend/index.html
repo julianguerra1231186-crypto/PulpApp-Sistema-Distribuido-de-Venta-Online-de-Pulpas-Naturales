@@ -412,11 +412,36 @@
             padding:16px 20px; font-size:0.92rem; font-weight:600; color:#111827;
             display:flex; align-items:center; gap:10px;
             transition:all 0.25s ease; cursor:default;
+            position:relative;
         }
         .commerce-tag:hover {
             border-color:#c7d2fe; background:#fff;
             box-shadow:0 4px 16px rgba(99,102,241,0.08);
             transform:translateY(-2px);
+        }
+        /* Tooltip animado */
+        .commerce-tag::after {
+            content:attr(data-tip);
+            position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(6px);
+            background:#111827; color:#fff; font-size:0.75rem; font-weight:500;
+            padding:10px 14px; border-radius:10px; line-height:1.5;
+            width:220px; text-align:center;
+            opacity:0; pointer-events:none;
+            transition:all 0.3s cubic-bezier(.34,1.56,.64,1);
+            z-index:10; box-shadow:0 8px 24px rgba(0,0,0,0.15);
+        }
+        .commerce-tag::before {
+            content:""; position:absolute; bottom:calc(100% + 4px); left:50%; transform:translateX(-50%);
+            border:6px solid transparent; border-top-color:#111827;
+            opacity:0; pointer-events:none;
+            transition:all 0.3s cubic-bezier(.34,1.56,.64,1);
+            z-index:10;
+        }
+        .commerce-tag:hover::after {
+            opacity:1; transform:translateX(-50%) translateY(0);
+        }
+        .commerce-tag:hover::before {
+            opacity:1;
         }
         @media (max-width:768px) { .commerce-grid { grid-template-columns:repeat(2, 1fr); } }
         @media (max-width:480px) { .commerce-grid { grid-template-columns:1fr; } }
@@ -780,24 +805,24 @@
         </div>
 
         <div class="commerce-grid">
-            <div class="commerce-tag">🐾 Pet Shop</div>
-            <div class="commerce-tag">💅 Belleza</div>
-            <div class="commerce-tag">💻 Tecnología</div>
-            <div class="commerce-tag">🔧 Ferreterías</div>
-            <div class="commerce-tag">🍼 Pañalera</div>
-            <div class="commerce-tag">🍰 Pastelería / Charcutería</div>
-            <div class="commerce-tag">📎 Papelería</div>
-            <div class="commerce-tag">🏪 Tienda de variedades</div>
-            <div class="commerce-tag">🛒 Minimarkets</div>
-            <div class="commerce-tag">👕 Tiendas de ropa</div>
-            <div class="commerce-tag">🚗 Autopartes</div>
-            <div class="commerce-tag">🐶 Veterinaria</div>
-            <div class="commerce-tag">📦 E-commerce</div>
-            <div class="commerce-tag">🧴 Perfumería</div>
-            <div class="commerce-tag">💆 Peluquería / Spa</div>
-            <div class="commerce-tag">🌿 Tiendas Naturistas</div>
-            <div class="commerce-tag">👟 Calzado</div>
-            <div class="commerce-tag">💊 Droguerías</div>
+            <div class="commerce-tag" data-tip="Gestiona inventario de alimentos, accesorios y medicinas para mascotas">🐾 Pet Shop</div>
+            <div class="commerce-tag" data-tip="Agenda citas, vende productos de belleza y controla tu stock">💅 Belleza</div>
+            <div class="commerce-tag" data-tip="Vende equipos, accesorios y repuestos con control de garantías">💻 Tecnología</div>
+            <div class="commerce-tag" data-tip="Administra herramientas, materiales y pedidos al por mayor">🔧 Ferreterías</div>
+            <div class="commerce-tag" data-tip="Controla pañales, fórmulas y productos de bebé por tallas y marcas">🍼 Pañalera</div>
+            <div class="commerce-tag" data-tip="Gestiona pedidos de tortas, tablas y arreglos con fechas de entrega">🍰 Pastelería / Charcutería</div>
+            <div class="commerce-tag" data-tip="Vende útiles escolares, suministros de oficina y más">📎 Papelería</div>
+            <div class="commerce-tag" data-tip="Administra cientos de productos de diferentes categorías en un solo lugar">🏪 Tienda de variedades</div>
+            <div class="commerce-tag" data-tip="Control de inventario, precios y proveedores para tu mini mercado">🛒 Minimarkets</div>
+            <div class="commerce-tag" data-tip="Gestiona tallas, colores, temporadas y catálogo visual de prendas">👕 Tiendas de ropa</div>
+            <div class="commerce-tag" data-tip="Busca repuestos por referencia, marca y modelo de vehículo">🚗 Autopartes</div>
+            <div class="commerce-tag" data-tip="Agenda consultas, vende medicamentos y productos para mascotas">🐶 Veterinaria</div>
+            <div class="commerce-tag" data-tip="Tu tienda online completa con catálogo, carrito y pagos integrados">📦 E-commerce</div>
+            <div class="commerce-tag" data-tip="Gestiona fragancias, cosméticos y sets de regalo con stock en tiempo real">🧴 Perfumería</div>
+            <div class="commerce-tag" data-tip="Agenda servicios, vende productos capilares y gestiona tu equipo">💆 Peluquería / Spa</div>
+            <div class="commerce-tag" data-tip="Vende productos naturales, suplementos y alimentos saludables">🌿 Tiendas Naturistas</div>
+            <div class="commerce-tag" data-tip="Administra calzado por tallas, marcas y temporadas">👟 Calzado</div>
+            <div class="commerce-tag" data-tip="Control de medicamentos, fechas de vencimiento y pedidos de clientes">💊 Droguerías</div>
         </div>
     </div>
 </section>
