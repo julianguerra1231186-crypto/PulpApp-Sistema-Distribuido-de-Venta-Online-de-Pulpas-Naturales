@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentrix | Activar tu cuenta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/saas.css">
+</head>
+<body class="saas-page">
+
+<nav class="z-nav">
+    <div class="z-nav-inner">
+        <a href="index.html" class="z-logo">Zentrix</a>
+        <div class="z-nav-links">
+            <button onclick="handleLogout()" class="z-btn z-btn-ghost" style="font-size:0.88rem">Cerrar sesión</button>
+        </div>
+    </div>
+</nav>
+
+<section class="z-section" style="max-width:560px">
+
+    <div style="text-align:center; margin-bottom:40px">
+        <div class="z-badge z-badge-warning" style="margin-bottom:16px">⏳ Cuenta pendiente de activación</div>
+        <h1 style="font-size:1.6rem; font-weight:700; margin:0 0 12px">Activa tu cuenta</h1>
+        <p style="color:var(--z-text-secondary); margin:0">Realiza el pago y sube tu comprobante para activar tu espacio en Zentrix.</p>
+    </div>
+
+    <div class="z-card">
+        <form id="paymentForm">
+
+            <!-- Nombre del negocio -->
+            <div class="z-form-group">
+                <label for="tenantName">Nombre de tu negocio</label>
+                <input type="text" id="tenantName" class="z-input" placeholder="Ej: Mi Tienda Online" required>
+            </div>
+
+            <!-- Método de pago -->
+            <div class="z-form-group">
+                <label>Método de pago</label>
+                <div class="z-payment-methods" id="paymentMethods">
+                    <div class="z-payment-method" data-method="NEQUI" onclick="selectMethod(this)">
+                        <div class="icon">📱</div>
+                        <div class="name">Nequi</div>
+                    </div>
+                    <div class="z-payment-method" data-method="DAVIPLATA" onclick="selectMethod(this)">
+                        <div class="icon">💳</div>
+                        <div class="name">Daviplata</div>
+                    </div>
+                    <div class="z-payment-method" data-method="TRANSFERENCIA" onclick="selectMethod(this)">
+                        <div class="icon">🏦</div>
+                        <div class="name">Transferencia</div>
+                    </div>
+                    <div class="z-payment-method" data-method="QR" onclick="selectMethod(this)">
+                        <div class="icon">📷</div>
+                        <div class="name">QR</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos bancarios -->
+            <div style="background:var(--z-border-light); border-radius:var(--z-radius-sm); padding:16px; margin-bottom:20px; font-size:0.88rem; color:var(--z-text-secondary)">
+                <strong style="color:var(--z-text)">Datos para el pago:</strong><br>
+                Nequi / Daviplata: <strong>310 331 3705</strong><br>
+                Banco: Bancolombia · Cuenta: 123-456789-00<br>
+                Titular: Zentrix S.A.S
+            </div>
+
+            <!-- Monto -->
+            <div class="z-form-group">
+                <label for="amount">Monto pagado (COP)</label>
+                <input type="number" id="amount" class="z-input" placeholder="99900" min="1" required>
+            </div>
+
+            <!-- Referencia -->
+            <div class="z-form-group">
+                <label for="reference">Número de referencia (opcional)</label>
+                <input type="text" id="reference" class="z-input" placeholder="Ej: 123456789">
+            </div>
+
+            <!-- Comprobante URL -->
+            <div class="z-form-group">
+                <label for="proofUrl">URL del comprobante (imagen)</label>
+                <input type="url" id="proofUrl" class="z-input" placeholder="https://..." required>
+                <small style="color:var(--z-text-muted); font-size:0.8rem; margin-top:4px; display:block">
+                    Sube tu comprobante a un servicio de imágenes y pega el enlace aquí.
+                </small>
+            </div>
+
+            <!-- Mensaje de estado -->
+            <div id="paymentMessage" style="display:none; padding:12px 16px; border-radius:var(--z-radius-sm); margin-bottom:16px; font-size:0.9rem"></div>
+
+            <button type="submit" class="z-btn z-btn-primary z-btn-block z-btn-lg" id="submitBtn">
+                Enviar comprobante
+            </button>
+        </form>
+    </div>
+
+</section>
+
+<footer class="z-footer">
+    <p>© 2026 Zentrix — Diseñado y desarrollado por Red Matrix Solutions</p>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="auth.js"></script>
+<script>
+    const API = "http://localhost:8090";
+    let selectedMethod = null;
+
+    function selectMethod(el) {
+        document.querySelectorAll(".z-payment-method").forEach(m => m.classList.remove("selected"));
+        el.classList.add("selected");
+        selectedMethod = el.dataset.method;
+    }
+
+    function handleLogout() {
+        localStorage.removeItem("pulpapp_jwt");
+        localStorage.removeItem("pulpapp_user");
+        window.location.href = "login.html";
+    }
+
+    document.getElementById("paymentForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msgEl = document.getElementById("paymentMessage");
+        const btn = document.getElementById("submitBtn");
+
+        if (!selectedMethod) {
+            msgEl.style.display = "block";
+            msgEl.style.background = "#fef2f2";
+            msgEl.style.color = "#991b1b";
+            msgEl.textContent = "Selecciona un método de pago";
+            return;
+        }
+
+        btn.disabled = true;
+        btn.textContent = "Enviando...";
+
+        try {
+            const token = localStorage.getItem("pulpapp_jwt");
+            const res = await fetch(`${API}/payments`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    amount: parseFloat(document.getElementById("amount").value),
+                    method: selectedMethod,
+                    reference: document.getElementById("reference").value || null,
+                    proofUrl: document.getElementById("proofUrl").value,
+                    tenantName: document.getElementById("tenantName").value
+                })
+            });
+
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || err.error || "Error al enviar");
+            }
+
+            msgEl.style.display = "block";
+            msgEl.style.background = "#d1fae5";
+            msgEl.style.color = "#065f46";
+            msgEl.textContent = "✓ Comprobante enviado. Tu cuenta será activada cuando el equipo valide el pago.";
+            btn.textContent = "Enviado ✓";
+
+            setTimeout(() => { window.location.href = "pending.html"; }, 2000);
+
+        } catch (err) {
+            msgEl.style.display = "block";
+            msgEl.style.background = "#fef2f2";
+            msgEl.style.color = "#991b1b";
+            msgEl.textContent = err.message;
+            btn.disabled = false;
+            btn.textContent = "Enviar comprobante";
+        }
+    });
+
+    // Redirect si ya está activo
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("pulpapp_jwt");
+        if (!token) { window.location.href = "login.html"; return; }
+        const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+        if (user.status === "ACTIVE") { window.location.href = "dashboard.html"; }
+    });
+</script>
+
+</body>
+</html>
