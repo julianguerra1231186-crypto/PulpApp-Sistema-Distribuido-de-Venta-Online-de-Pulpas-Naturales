@@ -5,148 +5,144 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zentrix | Iniciar sesión</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/saas.css">
+    <style>
+        body { background: #fff; }
+        .z-nav { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .z-nav-inner { height: 72px; }
+        .z-logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; }
+        .z-logo-img { height:40px; width:auto; }
+        .z-logo-text { font-size:1.5rem; font-weight:900; color:var(--z-primary); letter-spacing:-0.03em; }
+
+        .auth-wrapper { min-height: calc(100vh - 72px); display:flex; align-items:center; justify-content:center; padding:48px 24px; background:linear-gradient(180deg, #f8faff 0%, #fff 100%); }
+        .auth-container { display:grid; grid-template-columns:1fr 1fr; gap:32px; max-width:880px; width:100%; align-items:center; }
+        .auth-form-card { background:#fff; border:1px solid #e5e7eb; border-radius:16px; padding:40px 36px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.04); }
+        .auth-form-card h1 { font-size:1.8rem; font-weight:800; margin:0 0 8px; color:#111827; }
+        .auth-form-card .subtitle { color:#6b7280; font-size:0.95rem; margin:0 0 32px; }
+        .auth-side { padding:20px; }
+        .auth-side h2 { font-size:1.4rem; font-weight:700; color:#111827; margin:0 0 16px; }
+        .auth-side p { color:#6b7280; font-size:0.95rem; line-height:1.7; margin:0 0 24px; }
+        .auth-side-features { list-style:none; padding:0; margin:0; }
+        .auth-side-features li { padding:10px 0; font-size:0.92rem; color:#6b7280; display:flex; align-items:center; gap:10px; border-bottom:1px solid #f3f4f6; }
+        .auth-side-features li:last-child { border-bottom:none; }
+        .auth-side-features li::before { content:"✓"; color:#6366f1; font-weight:700; }
+        .auth-link { color:#6366f1; font-weight:600; text-decoration:none; }
+        .auth-link:hover { text-decoration:underline; }
+        .z-toast { position:fixed; bottom:24px; right:24px; padding:14px 24px; border-radius:10px; font-size:0.9rem; font-weight:600; color:#fff; background:#111827; box-shadow:0 8px 24px rgba(0,0,0,0.15); opacity:0; transform:translateY(12px); transition:all 0.3s ease; z-index:999; pointer-events:none; }
+        .z-toast.show { opacity:1; transform:translateY(0); }
+        .z-toast.error { background:#ef4444; }
+        @media (max-width:768px) { .auth-container { grid-template-columns:1fr; } .auth-side { display:none; } }
+    </style>
 </head>
-<body data-page="login">
+<body class="saas-page">
 
-<header class="site-header">
-<div class="header-inner">
-    <div class="brand-block">
-        <img src="img/sinfondologo-removebg-preview.png" alt="Logo Zentrix" class="brand-logo">
-        <div><span class="brand-kicker">Zentrix</span></div>
+<nav class="z-nav">
+    <div class="z-nav-inner">
+        <a href="index.html" class="z-logo-wrap">
+            <img src="img/logoZentrix-sinfondo.png" alt="Zentrix" class="z-logo-img">
+            <span class="z-logo-text">Zentrix</span>
+        </a>
+        <div class="z-nav-links">
+            <a href="index.html">Inicio</a>
+            <a href="pricing.html">Precios</a>
+            <a href="register.html" class="z-btn z-btn-primary" style="padding:10px 24px; font-size:0.9rem">Crear cuenta</a>
+        </div>
     </div>
-    <nav class="site-nav" aria-label="Principal">
-        <a href="index.html">Inicio</a>
-        <a href="catalog.html">Catalogo</a>
-        <a href="cart.html">Carrito</a>
-        <a href="login.html" class="is-active" data-nav="account">Iniciar sesión</a>
-    </nav>
-    <a href="cart.html" class="cart-chip">
-        <span>Carrito</span>
-        <strong id="navCartCount">0</strong>
-    </a>
+</nav>
+
+<div class="auth-wrapper">
+    <div class="auth-container">
+        <div class="auth-form-card">
+            <h1>Bienvenido de nuevo</h1>
+            <p class="subtitle">Ingresa a tu cuenta para gestionar tu negocio.</p>
+
+            <form id="loginForm" novalidate>
+                <div class="z-form-group">
+                    <label for="loginEmail">Correo electrónico</label>
+                    <input type="email" id="loginEmail" class="z-input" placeholder="tu@email.com" required>
+                </div>
+                <div class="z-form-group">
+                    <label for="loginPassword">Contraseña</label>
+                    <input type="password" id="loginPassword" class="z-input" placeholder="Tu contraseña" required>
+                </div>
+                <button type="submit" id="loginBtn" class="z-btn z-btn-primary z-btn-block z-btn-lg" style="margin-top:8px">Iniciar sesión</button>
+            </form>
+
+            <p style="text-align:center; margin-top:24px; color:#6b7280; font-size:0.9rem">
+                ¿No tienes cuenta? <a href="register.html" class="auth-link">Regístrate gratis</a>
+            </p>
+        </div>
+
+        <div class="auth-side">
+            <h2>Gestiona tu negocio desde cualquier lugar</h2>
+            <p>Accede a tu panel de control, revisa pedidos, actualiza productos y administra tu equipo.</p>
+            <ul class="auth-side-features">
+                <li>Panel de control en tiempo real</li>
+                <li>Gestión de productos y pedidos</li>
+                <li>Reportes de ventas</li>
+                <li>Administración de equipo</li>
+                <li>Branding personalizado</li>
+            </ul>
+        </div>
+    </div>
 </div>
-</header>
 
-<main class="page-content auth-layout">
-    <section class="glass-card auth-card">
-        <span class="eyebrow">Acceso</span>
-        <h1>Bienvenido de nuevo</h1>
-        <p>Ingresa con tu email y contraseña para acceder a tu cuenta.</p>
+<div id="appToast" class="z-toast" role="status"></div>
 
-        <form id="loginForm" class="form-grid" novalidate>
-            <label class="full-width">
-                <span>Correo electrónico</span>
-                <input type="email" id="loginEmail" placeholder="correo@ejemplo.com" required>
-            </label>
-            <label class="full-width">
-                <span>Contraseña</span>
-                <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
-            </label>
-        </form>
-
-        <div class="inline-actions" style="margin-top:24px">
-            <button id="loginBtn" class="btn btn-primary btn-block" type="button">
-                Iniciar sesión
-            </button>
-        </div>
-
-        <p style="text-align:center; margin-top:18px; color:var(--text-muted); font-size:0.9rem">
-            ¿No tienes cuenta?
-            <a href="register.html" style="color:var(--brand); font-weight:600">Regístrate</a>
-        </p>
-    </section>
-
-    <aside class="glass-card auth-side-card">
-        <span class="eyebrow">Tu cuenta</span>
-        <h2>Accede a tu experiencia completa</h2>
-        <ul class="bullet-list">
-            <li>Historial de pedidos.</li>
-            <li>Datos precargados en el checkout.</li>
-            <li>Dashboard personal.</li>
-            <li>Soporte por WhatsApp.</li>
-        </ul>
-        <div class="current-user-box">
-            <strong id="loginStatusTitle">Sin sesión activa</strong>
-            <p id="loginStatusText">Ingresa tus credenciales para continuar.</p>
-        </div>
-    </aside>
-</main>
-
-<div id="appToast" class="toast" role="status" aria-live="polite"></div>
-
+<script src="js/config.js"></script>
 <script src="services.js"></script>
 <script src="auth.js"></script>
 <script>
 (function() {
     document.addEventListener("DOMContentLoaded", () => {
-        // Si ya está autenticado, va directo al dashboard
-        if (window.PulpAuth?.isTokenValid()) {
-            window.location.href = "dashboard.html";
-            return;
-        }
+        if (window.PulpAuth?.isTokenValid()) { window.location.href = "dashboard.html"; }
     });
 
     function toast(msg, type) {
         const el = document.getElementById("appToast");
-        if (!el) return;
         el.textContent = msg;
-        el.className = "toast show" + (type === "error" ? " error" : "");
-        clearTimeout(window.__toastT);
-        window.__toastT = setTimeout(() => { el.className = "toast"; }, 3000);
+        el.className = "z-toast show" + (type === "error" ? " error" : "");
+        clearTimeout(window.__t);
+        window.__t = setTimeout(() => { el.className = "z-toast"; }, 3500);
     }
 
-    document.getElementById("loginBtn").addEventListener("click", async () => {
-        const btn      = document.getElementById("loginBtn");
-        const email    = document.getElementById("loginEmail").value.trim().toLowerCase();
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("loginBtn");
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
         const password = document.getElementById("loginPassword").value.trim();
 
-        if (!email || !password) {
-            toast("Completa email y contraseña", "error"); return;
-        }
+        if (!email || !password) { toast("Completa email y contraseña", "error"); return; }
 
-        btn.disabled = true;
-        btn.textContent = "Ingresando...";
+        btn.disabled = true; btn.textContent = "Ingresando...";
 
         try {
             const data = await window.PulpAppServices.authLogin(email, password);
-
-            // Enriquecer con datos completos del usuario (cedula, telefono, direccion)
             let fullData = { ...data };
             try {
                 const r = await fetch(`http://localhost:8090/users/email?email=${encodeURIComponent(email)}`);
-                if (r.ok) {
-                    const found = await r.json();
-                    fullData = { ...fullData, ...found };
-                }
-            } catch(e) { /* usa datos del token si falla */ }
+                if (r.ok) fullData = { ...fullData, ...await r.json() };
+            } catch(e) {}
 
             localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
             localStorage.setItem("user", JSON.stringify(fullData));
             toast("Sesión iniciada ✓");
-            // Redirigir según rol
+
+            // Redirigir según estado SaaS
+            const status = fullData.status || "ACTIVE";
+            if (status === "PENDING_PAYMENT") { setTimeout(() => { window.location.href = "payment.html"; }, 800); return; }
+            if (status === "PENDING_APPROVAL") { setTimeout(() => { window.location.href = "pending.html"; }, 800); return; }
+
             const role = fullData.role?.name || fullData.role || "";
             let redirect = localStorage.getItem("pulpapp_redirect") || "dashboard.html";
             if (role === "ROLE_CLIENT") redirect = "mi-cuenta.html";
             localStorage.removeItem("pulpapp_redirect");
             setTimeout(() => { window.location.href = redirect; }, 800);
         } catch (err) {
-            // Mensaje de ayuda si el usuario fue creado por el flujo antiguo del carrito
-            const msg = err.message || "Credenciales incorrectas";
-            const hint = msg.toLowerCase().includes("unauthorized") || msg.toLowerCase().includes("incorrectos")
-                ? "Email o contraseña incorrectos. Si te registraste desde el carrito, intenta con la contraseña: 123456"
-                : msg;
-            toast(hint, "error");
-            btn.disabled = false;
-            btn.textContent = "Iniciar sesión";
-        }    });
-
-    // Enter en el formulario
-    document.getElementById("loginForm").addEventListener("keydown", (e) => {
-        if (e.key === "Enter") document.getElementById("loginBtn").click();
+            toast(err.message || "Credenciales incorrectas", "error");
+            btn.disabled = false; btn.textContent = "Iniciar sesión";
+        }
     });
 })();
 </script>
