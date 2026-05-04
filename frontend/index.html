@@ -58,10 +58,49 @@
         .trust-logos { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; align-items: center; }
         .trust-logos span { font-size: 1.1rem; font-weight: 700; color: #d1d5db; letter-spacing: -0.01em; }
 
-        /* ── Beneficios ── */
-        .z-benefit-card { background: #fafbfc; border: 1px solid #f3f4f6; text-align: center; }
-        .z-benefit-card:hover { border-color: var(--z-primary); background: #fff; box-shadow: 0 8px 24px rgba(99,102,241,0.08); }
-        .z-benefit-icon { background: var(--z-primary-light); margin: 0 auto 20px; }
+        /* ── Feature showcase con mockups ── */
+        .feature-row { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; margin-bottom:80px; }
+        .feature-row.reverse { direction:rtl; }
+        .feature-row.reverse > * { direction:ltr; }
+        .feature-row:last-child { margin-bottom:0; }
+
+        .feature-text h3 { font-size:1.5rem; font-weight:800; color:#111827; margin:0 0 14px; letter-spacing:-0.02em; }
+        .feature-text p { color:#6b7280; font-size:1rem; line-height:1.7; margin:0 0 20px; }
+        .feature-badge { display:inline-block; padding:4px 14px; border-radius:999px; font-size:0.78rem; font-weight:700; background:#eef2ff; color:#4f46e5; margin-bottom:16px; }
+        .feature-list { list-style:none; padding:0; margin:0; }
+        .feature-list li { padding:6px 0; font-size:0.92rem; color:#374151; display:flex; align-items:center; gap:10px; }
+        .feature-list li::before { content:"✓"; color:#6366f1; font-weight:700; font-size:0.85rem; }
+
+        /* Mockup window */
+        .mockup-window { background:#fff; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.08); }
+        .mockup-dots { padding:10px 14px; background:#f9fafb; border-bottom:1px solid #e5e7eb; display:flex; gap:6px; }
+        .mockup-dots span { width:10px; height:10px; border-radius:50%; }
+        .mockup-dots span:nth-child(1) { background:#ef4444; }
+        .mockup-dots span:nth-child(2) { background:#f59e0b; }
+        .mockup-dots span:nth-child(3) { background:#22c55e; }
+        .mockup-content { display:flex; min-height:220px; }
+        .mockup-sidebar { width:52px; background:#f9fafb; border-right:1px solid #f3f4f6; padding:12px 8px; display:flex; flex-direction:column; gap:8px; }
+        .mockup-sidebar-item { height:32px; border-radius:6px; background:#e5e7eb; }
+        .mockup-sidebar-item.active { background:#6366f1; }
+        .mockup-main { flex:1; padding:16px; }
+        .mockup-topbar { height:12px; width:40%; background:#e5e7eb; border-radius:4px; margin-bottom:16px; }
+        .mockup-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+        .mockup-card-item { height:56px; border-radius:8px; background:linear-gradient(135deg,#f3f4f6,#e5e7eb); }
+        .mockup-table { display:flex; flex-direction:column; gap:6px; }
+        .mockup-table-row { height:28px; border-radius:6px; background:#f3f4f6; }
+        .mockup-table-row.header { background:#e5e7eb; height:24px; }
+        .mockup-table-row.highlight { background:#eef2ff; border:1px solid #c7d2fe; }
+
+        /* Tenant isolation mockup */
+        .mockup-tenant-box { border:2px solid; border-radius:12px; padding:16px; text-align:center; width:100px; }
+        .mockup-tenant-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:0.9rem; margin:0 auto 10px; }
+        .mockup-tenant-lines div { height:6px; background:#e5e7eb; border-radius:3px; margin-bottom:5px; }
+        .mockup-tenant-lines div:last-child { width:70%; }
+
+        @media (max-width:768px) {
+            .feature-row, .feature-row.reverse { grid-template-columns:1fr; direction:ltr; gap:32px; }
+            .feature-row { margin-bottom:48px; }
+        }
 
         /* ── Steps ── */
         .steps-section { background: #f9fafb; }
@@ -197,26 +236,148 @@
         <p>Deja de usar cinco apps distintas. Zentrix centraliza todo lo que tu negocio necesita para operar y crecer.</p>
     </div>
 
-    <div class="z-benefits">
-        <div class="z-benefit-card">
-            <div class="z-benefit-icon">📦</div>
-            <h3>Catálogo inteligente</h3>
-            <p>Publica productos con fotos, precios, stock y categorías. Actualiza en tiempo real desde cualquier dispositivo.</p>
+    <!-- Feature 1: Catálogo -->
+    <div class="feature-row">
+        <div class="feature-mockup">
+            <div class="mockup-window">
+                <div class="mockup-dots"><span></span><span></span><span></span></div>
+                <div class="mockup-content">
+                    <div class="mockup-sidebar">
+                        <div class="mockup-sidebar-item active"></div>
+                        <div class="mockup-sidebar-item"></div>
+                        <div class="mockup-sidebar-item"></div>
+                        <div class="mockup-sidebar-item"></div>
+                    </div>
+                    <div class="mockup-main">
+                        <div class="mockup-topbar"></div>
+                        <div class="mockup-grid">
+                            <div class="mockup-card-item"></div>
+                            <div class="mockup-card-item"></div>
+                            <div class="mockup-card-item"></div>
+                            <div class="mockup-card-item"></div>
+                            <div class="mockup-card-item"></div>
+                            <div class="mockup-card-item"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="z-benefit-card">
-            <div class="z-benefit-icon">📋</div>
-            <h3>Pedidos bajo control</h3>
-            <p>Recibe, procesa y da seguimiento a cada pedido. Notificaciones automáticas para ti y tus clientes.</p>
+        <div class="feature-text">
+            <div class="feature-badge">Catálogo</div>
+            <h3>Gestiona tu catálogo completo</h3>
+            <p>Publica productos con fotos, precios, stock y categorías. Actualiza todo en tiempo real desde cualquier dispositivo. Tu inventario siempre al día.</p>
+            <ul class="feature-list">
+                <li>Fotos, precios y stock en tiempo real</li>
+                <li>Categorías organizadas</li>
+                <li>Búsqueda y filtros para tus clientes</li>
+            </ul>
         </div>
-        <div class="z-benefit-card">
-            <div class="z-benefit-icon">🔐</div>
-            <h3>Aislamiento total</h3>
-            <p>Cada negocio opera en su propio espacio seguro. Tus datos nunca se mezclan con los de otro tenant.</p>
+    </div>
+
+    <!-- Feature 2: Pedidos (invertido) -->
+    <div class="feature-row reverse">
+        <div class="feature-mockup">
+            <div class="mockup-window">
+                <div class="mockup-dots"><span></span><span></span><span></span></div>
+                <div class="mockup-content">
+                    <div class="mockup-sidebar">
+                        <div class="mockup-sidebar-item"></div>
+                        <div class="mockup-sidebar-item active"></div>
+                        <div class="mockup-sidebar-item"></div>
+                        <div class="mockup-sidebar-item"></div>
+                    </div>
+                    <div class="mockup-main">
+                        <div class="mockup-topbar"></div>
+                        <div class="mockup-table">
+                            <div class="mockup-table-row header"></div>
+                            <div class="mockup-table-row"></div>
+                            <div class="mockup-table-row highlight"></div>
+                            <div class="mockup-table-row"></div>
+                            <div class="mockup-table-row"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="z-benefit-card">
-            <div class="z-benefit-icon">🎨</div>
-            <h3>Marca propia</h3>
-            <p>Logo, colores y banner personalizados. Tu tienda refleja la identidad de tu negocio, no la nuestra.</p>
+        <div class="feature-text">
+            <div class="feature-badge" style="background:#e0f2fe; color:#0369a1">Pedidos</div>
+            <h3>Cada pedido bajo control</h3>
+            <p>Recibe, procesa y da seguimiento a cada orden. Aprueba pagos, gestiona estados y mantén a tus clientes informados en todo momento.</p>
+            <ul class="feature-list">
+                <li>Vista de pedidos en tiempo real</li>
+                <li>Aprobación manual de pagos</li>
+                <li>Historial completo por cliente</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Feature 3: Multi-tenant -->
+    <div class="feature-row">
+        <div class="feature-mockup">
+            <div class="mockup-window">
+                <div class="mockup-dots"><span></span><span></span><span></span></div>
+                <div class="mockup-content" style="padding:24px; display:flex; gap:16px; align-items:center; justify-content:center">
+                    <div class="mockup-tenant-box" style="border-color:#6366f1">
+                        <div class="mockup-tenant-icon" style="background:#eef2ff; color:#6366f1">A</div>
+                        <div class="mockup-tenant-lines"><div></div><div></div></div>
+                    </div>
+                    <div style="font-size:1.5rem; color:#d1d5db">⟷</div>
+                    <div class="mockup-tenant-box" style="border-color:#0ea5e9">
+                        <div class="mockup-tenant-icon" style="background:#e0f2fe; color:#0ea5e9">B</div>
+                        <div class="mockup-tenant-lines"><div></div><div></div></div>
+                    </div>
+                    <div style="font-size:1.5rem; color:#d1d5db">⟷</div>
+                    <div class="mockup-tenant-box" style="border-color:#22c55e">
+                        <div class="mockup-tenant-icon" style="background:#d1fae5; color:#16a34a">C</div>
+                        <div class="mockup-tenant-lines"><div></div><div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feature-text">
+            <div class="feature-badge" style="background:#d1fae5; color:#065f46">Seguridad</div>
+            <h3>Aislamiento total entre negocios</h3>
+            <p>Cada empresa opera en su propio espacio seguro. Los datos nunca se mezclan entre tenants. Privacidad y seguridad de nivel empresarial.</p>
+            <ul class="feature-list">
+                <li>Datos 100% aislados por tenant</li>
+                <li>Roles y permisos por equipo</li>
+                <li>Sin acceso cruzado entre negocios</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Feature 4: Branding (invertido) -->
+    <div class="feature-row reverse">
+        <div class="feature-mockup">
+            <div class="mockup-window">
+                <div class="mockup-dots"><span></span><span></span><span></span></div>
+                <div class="mockup-content" style="padding:20px; display:flex; flex-direction:column; gap:12px">
+                    <div style="display:flex; gap:12px; align-items:center">
+                        <div style="width:40px; height:40px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div>
+                        <div><div style="height:10px; width:80px; background:#e5e7eb; border-radius:4px"></div><div style="height:8px; width:50px; background:#f3f4f6; border-radius:4px; margin-top:6px"></div></div>
+                    </div>
+                    <div style="height:60px; border-radius:10px; background:linear-gradient(135deg,#6366f1,#a78bfa); opacity:0.3"></div>
+                    <div style="display:flex; gap:8px">
+                        <div style="flex:1; height:28px; border-radius:6px; background:#6366f1"></div>
+                        <div style="flex:1; height:28px; border-radius:6px; background:#8b5cf6"></div>
+                        <div style="flex:1; height:28px; border-radius:6px; background:#c4b5fd"></div>
+                    </div>
+                    <div style="display:flex; gap:8px">
+                        <div style="flex:1; height:8px; background:#e5e7eb; border-radius:4px"></div>
+                        <div style="flex:1; height:8px; background:#e5e7eb; border-radius:4px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="feature-text">
+            <div class="feature-badge" style="background:#fae8ff; color:#86198f">Branding</div>
+            <h3>Tu marca, tu identidad</h3>
+            <p>Personaliza logo, colores y banner. Tu tienda refleja la identidad de tu negocio, no la nuestra. Cada detalle habla de tu marca.</p>
+            <ul class="feature-list">
+                <li>Logo y colores personalizados</li>
+                <li>Banner propio en tu tienda</li>
+                <li>Experiencia de marca consistente</li>
+            </ul>
         </div>
     </div>
 </section>
