@@ -237,91 +237,156 @@
         .reason-detail { font-size:0.88rem; color:#9ca3af; line-height:1.7; margin:0 24px 24px !important; }
         .reason-detail strong { color:#374151; }
 
-        /* ── Card 1: Catálogo micro-anim ── */
-        .rc1-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; }
+        /* ══════════════════════════════════════════════════
+           MICRO-ANIMACIONES DINÁMICAS — SENSACIÓN DE DEMO
+           ══════════════════════════════════════════════════ */
+
+        /* ── Card 1: Catálogo — productos vuelan y rebotan ── */
+        .rc1-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; animation:windowFloat 6s ease-in-out infinite; }
+        @keyframes windowFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .rc1-search { display:flex; align-items:center; gap:6px; background:#f3f4f6; border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:0.75rem; }
-        .rc1-cursor { width:1px; height:8px; background:#6366f1; animation:blink 1s step-end infinite; }
-        .rc1-product { display:flex; align-items:center; gap:8px; padding:6px; border-radius:8px; margin-bottom:6px; opacity:0; animation:rc1Appear 5s ease infinite; }
+        .rc1-cursor { width:2px; height:10px; background:#6366f1; animation:blink 0.8s step-end infinite; }
+        .rc1-product { display:flex; align-items:center; gap:8px; padding:6px; border-radius:8px; margin-bottom:6px; opacity:0; animation:rc1Fly 4s cubic-bezier(.34,1.56,.64,1) infinite; }
         .rc1-p1 { animation-delay:0s; }
-        .rc1-p2 { animation-delay:0.6s; }
-        .rc1-p3 { animation-delay:1.2s; }
-        @keyframes rc1Appear { 0%,10%{opacity:0;transform:translateX(-8px)} 20%,80%{opacity:1;transform:translateX(0)} 90%,100%{opacity:0;transform:translateX(4px)} }
-        .rc1-thumb { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+        .rc1-p2 { animation-delay:0.5s; }
+        .rc1-p3 { animation-delay:1s; }
+        @keyframes rc1Fly {
+            0% { opacity:0; transform:translateX(-30px) scale(0.5) rotate(-10deg); }
+            20% { opacity:1; transform:translateX(4px) scale(1.08) rotate(2deg); }
+            30% { transform:translateX(0) scale(1) rotate(0deg); }
+            75% { opacity:1; transform:translateX(0) scale(1); }
+            90% { opacity:0; transform:translateX(20px) scale(0.8) rotate(5deg); }
+            100% { opacity:0; transform:translateX(-30px) scale(0.5); }
+        }
+        .rc1-thumb { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; transition:transform 0.3s; }
+        .reason-card:hover .rc1-thumb { animation:thumbBounce 0.5s ease; }
+        @keyframes thumbBounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
         .rc1-line { height:7px; flex:1; background:#e5e7eb; border-radius:4px; }
         .rc1-price { font-size:0.75rem; font-weight:700; color:#111827; white-space:nowrap; }
 
-        /* ── Card 2: Pedidos micro-anim ── */
-        .rc2-window { background:#fff; border-radius:14px; padding:12px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:220px; }
+        /* ── Card 2: Pedidos — filas se iluminan + check animado ── */
+        .rc2-window { background:#fff; border-radius:14px; padding:12px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:220px; animation:windowFloat 6s ease-in-out infinite 1s; }
         .rc2-header { display:flex; justify-content:space-between; padding:4px 6px; margin-bottom:6px; }
         .rc2-header span { font-size:0.6rem; font-weight:700; color:#9ca3af; }
-        .rc2-row { display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:6px; font-size:0.6rem; color:#374151; margin-bottom:4px; animation:rc2Scan 8s ease infinite; background:transparent; }
+        .rc2-row { display:flex; justify-content:space-between; align-items:center; padding:6px 8px; border-radius:6px; font-size:0.6rem; color:#374151; margin-bottom:4px; animation:rc2Flash 6s ease infinite; background:transparent; }
         .rc2-r1 { animation-delay:0s; }
-        .rc2-r2 { animation-delay:2s; }
-        .rc2-r3 { animation-delay:4s; }
-        .rc2-r4 { animation-delay:6s; }
-        @keyframes rc2Scan { 0%,15%{background:transparent} 20%,35%{background:#eef2ff; box-shadow:inset 0 0 0 1px #c7d2fe} 40%,100%{background:transparent; box-shadow:none} }
+        .rc2-r2 { animation-delay:1.5s; }
+        .rc2-r3 { animation-delay:3s; }
+        .rc2-r4 { animation-delay:4.5s; }
+        @keyframes rc2Flash {
+            0%,10% { background:transparent; transform:scaleX(1); }
+            15% { background:#eef2ff; transform:scaleX(1.02); box-shadow:0 0 12px rgba(99,102,241,0.2); }
+            30% { background:#eef2ff; transform:scaleX(1); box-shadow:0 0 0 rgba(99,102,241,0); }
+            40%,100% { background:transparent; }
+        }
         .rc2-st { font-size:0.6rem; font-weight:700; padding:2px 8px; border-radius:999px; }
-        .rc2-st.green { background:#d1fae5; color:#065f46; }
-        .rc2-st.yellow { background:#fef3c7; color:#92400e; animation:rc2StatusChange 8s ease infinite 2s; }
-        @keyframes rc2StatusChange { 0%,40%{background:#fef3c7; color:#92400e} 50%,70%{background:#d1fae5; color:#065f46} 80%,100%{background:#fef3c7; color:#92400e} }
+        .rc2-st.green { background:#d1fae5; color:#065f46; animation:stPop 3s ease infinite; }
+        @keyframes stPop { 0%,80%,100%{transform:scale(1)} 90%{transform:scale(1.2)} }
+        .rc2-st.yellow { background:#fef3c7; color:#92400e; animation:rc2Approve 6s ease infinite 1.5s; }
+        @keyframes rc2Approve {
+            0%,30% { background:#fef3c7; color:#92400e; }
+            40%,60% { background:#d1fae5; color:#065f46; transform:scale(1.15); }
+            70%,100% { background:#fef3c7; color:#92400e; transform:scale(1); }
+        }
         .rc2-st.red { background:#fee2e2; color:#991b1b; }
 
-        /* ── Card 3: Branding micro-anim ── */
-        .rc3-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; }
+        /* ── Card 3: Branding — colores explotan y logo brilla ── */
+        .rc3-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; animation:windowFloat 6s ease-in-out infinite 2s; }
         .rc3-logo-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
-        .rc3-logo { width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,#6366f1,#8b5cf6); animation:rc3LogoSpin 10s linear infinite; }
-        @keyframes rc3LogoSpin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .rc3-logo { width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,#6366f1,#8b5cf6); animation:rc3LogoPulse 3s ease infinite; }
+        @keyframes rc3LogoPulse { 0%,100%{transform:scale(1); box-shadow:0 0 0 rgba(99,102,241,0)} 50%{transform:scale(1.15); box-shadow:0 0 16px rgba(99,102,241,0.4)} }
         .rc3-line { height:8px; width:60px; background:#e5e7eb; border-radius:4px; }
-        .rc3-banner { height:40px; border-radius:8px; background:linear-gradient(135deg,#818cf8,#c4b5fd); margin-bottom:10px; animation:rc3BannerPulse 4s ease infinite; }
-        @keyframes rc3BannerPulse { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
-        .rc3-colors { display:flex; gap:3px; }
-        .rc3-c1,.rc3-c2,.rc3-c3 { flex:1; height:20px; border-radius:5px; animation:rc3ColorShift 6s ease infinite; }
-        .rc3-c1 { background:#6366f1; animation-delay:0s; }
-        .rc3-c2 { background:#8b5cf6; animation-delay:2s; }
-        .rc3-c3 { background:#c4b5fd; animation-delay:4s; }
-        @keyframes rc3ColorShift { 0%,100%{filter:hue-rotate(0deg)} 50%{filter:hue-rotate(45deg)} }
+        .rc3-banner { height:40px; border-radius:8px; margin-bottom:10px; animation:rc3BannerWave 5s ease infinite; background-size:200% 100%; background-image:linear-gradient(90deg,#818cf8,#c4b5fd,#f0abfc,#818cf8); }
+        @keyframes rc3BannerWave { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        .rc3-colors { display:flex; gap:4px; }
+        .rc3-c1,.rc3-c2,.rc3-c3 { flex:1; height:20px; border-radius:5px; }
+        .rc3-c1 { background:#6366f1; animation:rc3Explode 4s ease infinite 0s; }
+        .rc3-c2 { background:#8b5cf6; animation:rc3Explode 4s ease infinite 0.3s; }
+        .rc3-c3 { background:#c4b5fd; animation:rc3Explode 4s ease infinite 0.6s; }
+        @keyframes rc3Explode {
+            0%,10% { transform:scaleY(0.3); opacity:0.3; filter:hue-rotate(0deg); }
+            25% { transform:scaleY(1.2); opacity:1; }
+            35% { transform:scaleY(1); }
+            70% { filter:hue-rotate(60deg); }
+            100% { filter:hue-rotate(0deg); transform:scaleY(0.3); opacity:0.3; }
+        }
 
-        /* ── Card 4: Ventas micro-anim ── */
-        .rc4-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; }
+        /* ── Card 4: Ventas — barras crecen con rebote + número sube ── */
+        .rc4-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; animation:windowFloat 6s ease-in-out infinite 0.5s; }
         .rc4-label { font-size:0.6rem; font-weight:700; color:#9ca3af; margin-bottom:6px; }
-        .rc4-amount { font-size:1.3rem; font-weight:800; color:#111827; margin-bottom:10px; animation:rc4Count 5s ease infinite; }
-        @keyframes rc4Count { 0%,20%{opacity:0.4} 30%,80%{opacity:1} 90%,100%{opacity:0.4} }
+        .rc4-amount { font-size:1.3rem; font-weight:800; color:#111827; margin-bottom:10px; animation:rc4NumPulse 4s ease infinite; }
+        @keyframes rc4NumPulse { 0%,100%{transform:scale(1); color:#111827} 50%{transform:scale(1.08); color:#6366f1} }
         .rc4-bars { display:flex; align-items:flex-end; gap:5px; height:50px; }
-        .rc4-b1,.rc4-b2,.rc4-b3,.rc4-b4 { flex:1; border-radius:3px; animation:rc4Grow 4s ease infinite; }
-        .rc4-b1 { background:#c7d2fe; animation-delay:0s; }
-        .rc4-b2 { background:#a5b4fc; animation-delay:0.3s; }
-        .rc4-b3 { background:#818cf8; animation-delay:0.6s; }
-        .rc4-b4 { background:#6366f1; animation-delay:0.9s; }
-        @keyframes rc4Grow { 0%,10%{height:10%} 30%{height:40%} 50%{height:70%} 70%{height:100%} 85%,100%{height:10%} }
+        .rc4-b1,.rc4-b2,.rc4-b3,.rc4-b4 { flex:1; border-radius:4px; transform-origin:bottom; }
+        .rc4-b1 { background:linear-gradient(180deg,#c7d2fe,#e0e7ff); animation:rc4Bar 3.5s cubic-bezier(.34,1.56,.64,1) infinite 0s; }
+        .rc4-b2 { background:linear-gradient(180deg,#a5b4fc,#c7d2fe); animation:rc4Bar 3.5s cubic-bezier(.34,1.56,.64,1) infinite 0.2s; }
+        .rc4-b3 { background:linear-gradient(180deg,#818cf8,#a5b4fc); animation:rc4Bar 3.5s cubic-bezier(.34,1.56,.64,1) infinite 0.4s; }
+        .rc4-b4 { background:linear-gradient(180deg,#6366f1,#818cf8); animation:rc4Bar 3.5s cubic-bezier(.34,1.56,.64,1) infinite 0.6s; }
+        @keyframes rc4Bar {
+            0% { height:5%; }
+            35% { height:110%; }
+            45% { height:90%; }
+            55% { height:100%; }
+            80% { height:100%; }
+            100% { height:5%; }
+        }
 
         @media (max-width:768px) { .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; } }
 
-        /* ── Card 5: Equipo micro-anim ── */
-        .rc5-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; }
+        /* ── Card 5: Equipo — avatares rebotan al entrar ── */
+        .rc5-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; animation:windowFloat 6s ease-in-out infinite 1.5s; }
         .rc5-title { font-size:0.65rem; font-weight:700; color:#9ca3af; margin-bottom:10px; }
-        .rc5-member { display:flex; align-items:center; gap:10px; padding:6px; border-radius:8px; margin-bottom:6px; opacity:0; animation:rc5SlideIn 6s ease infinite; }
+        .rc5-member { display:flex; align-items:center; gap:10px; padding:6px; border-radius:8px; margin-bottom:6px; opacity:0; animation:rc5Bounce 5s cubic-bezier(.34,1.56,.64,1) infinite; }
         .rc5-m1 { animation-delay:0s; }
-        .rc5-m2 { animation-delay:0.8s; }
-        .rc5-m3 { animation-delay:1.6s; }
-        @keyframes rc5SlideIn { 0%,10%{opacity:0;transform:translateY(8px)} 20%,75%{opacity:1;transform:translateY(0)} 85%,100%{opacity:0;transform:translateY(-4px)} }
+        .rc5-m2 { animation-delay:0.6s; }
+        .rc5-m3 { animation-delay:1.2s; }
+        @keyframes rc5Bounce {
+            0% { opacity:0; transform:translateX(-20px) scale(0.5); }
+            15% { opacity:1; transform:translateX(6px) scale(1.1); }
+            25% { transform:translateX(0) scale(1); }
+            70% { opacity:1; }
+            85% { opacity:0; transform:translateX(15px) scale(0.8); }
+            100% { opacity:0; }
+        }
         .rc5-avatar { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0; }
         .rc5-info { flex:1; }
         .rc5-name { height:6px; width:60px; background:#e5e7eb; border-radius:3px; margin-bottom:4px; }
         .rc5-role { font-size:0.55rem; font-weight:600; color:#6b7280; }
 
-        /* ── Card 6: Pagos micro-anim ── */
-        .rc6-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; }
+        /* ── Card 6: Pagos — métodos explotan desde el centro ── */
+        .rc6-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; animation:windowFloat 6s ease-in-out infinite 2.5s; }
         .rc6-title { font-size:0.65rem; font-weight:700; color:#9ca3af; margin-bottom:10px; }
         .rc6-methods { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
-        .rc6-method { background:#f9fafb; border-radius:8px; padding:8px 6px; text-align:center; font-size:0.55rem; font-weight:600; color:#374151; animation:rc6Pop 8s ease infinite; opacity:0; }
+        .rc6-method { background:#f9fafb; border-radius:8px; padding:8px 6px; text-align:center; font-size:0.55rem; font-weight:600; color:#374151; opacity:0; animation:rc6Explode 5s cubic-bezier(.34,1.56,.64,1) infinite; }
         .rc6-mt1 { animation-delay:0s; }
-        .rc6-mt2 { animation-delay:0.5s; }
-        .rc6-mt3 { animation-delay:1s; }
-        .rc6-mt4 { animation-delay:1.5s; }
-        @keyframes rc6Pop { 0%,8%{opacity:0;transform:scale(0.8)} 15%,75%{opacity:1;transform:scale(1)} 85%,100%{opacity:0;transform:scale(0.9)} }
+        .rc6-mt2 { animation-delay:0.3s; }
+        .rc6-mt3 { animation-delay:0.6s; }
+        .rc6-mt4 { animation-delay:0.9s; }
+        @keyframes rc6Explode {
+            0% { opacity:0; transform:scale(0) rotate(-20deg); }
+            15% { opacity:1; transform:scale(1.15) rotate(3deg); }
+            25% { transform:scale(1) rotate(0deg); }
+            70% { opacity:1; }
+            85% { opacity:0; transform:scale(0.7) rotate(10deg); }
+            100% { opacity:0; }
+        }
         .rc6-method span { display:block; font-size:1.1rem; margin-bottom:2px; }
-        .rc6-status { text-align:center; font-size:0.6rem; font-weight:600; color:#065f46; background:#d1fae5; padding:4px 10px; border-radius:999px; animation:rc6Check 4s ease infinite; }
-        @keyframes rc6Check { 0%,40%{opacity:0} 50%,90%{opacity:1} 100%{opacity:0} }
+        .rc6-status { text-align:center; font-size:0.6rem; font-weight:600; color:#065f46; background:#d1fae5; padding:5px 12px; border-radius:999px; animation:rc6CheckBounce 5s ease infinite 1.5s; opacity:0; }
+        @keyframes rc6CheckBounce {
+            0%,10% { opacity:0; transform:scale(0.5) translateY(8px); }
+            20% { opacity:1; transform:scale(1.2) translateY(-4px); }
+            30% { transform:scale(1) translateY(0); }
+            70% { opacity:1; }
+            85%,100% { opacity:0; transform:scale(0.8); }
+        }
+
+        /* ── Hover: todo se acelera ── */
+        .reason-card:hover .rc1-window,
+        .reason-card:hover .rc2-window,
+        .reason-card:hover .rc3-window,
+        .reason-card:hover .rc4-window,
+        .reason-card:hover .rc5-window,
+        .reason-card:hover .rc6-window { animation-duration:3s !important; }
 
         /* ── Métricas ── */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
