@@ -3,2295 +3,376 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix | Panel Administrativo</title>
+    <title>Zentrix | Panel de Administración</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/saas.css">
     <style>
-        /* ── Estilos específicos del panel admin ── */
-
-        .admin-section { margin-bottom: 32px; }
-
-        .admin-section h2 {
-            font-family: var(--font-display);
-            font-size: clamp(1.2rem, 2vw, 1.6rem);
-            margin: 0 0 16px;
-        }
-
-        /* Formularios */
-        .admin-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr auto;
-            gap: 12px;
-            align-items: end;
-        }
-
-        .admin-form.single-col {
-            grid-template-columns: 1fr;
-        }
-
-        .admin-form label {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            font-size: 0.88rem;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .admin-form input,
-        .admin-form textarea {
-            padding: 10px 14px;
-            border: 1.5px solid var(--line-strong, rgba(0,0,0,0.15));
-            border-radius: var(--radius-md, 10px);
-            font-size: 0.92rem;
-            font-family: inherit;
-            background: #fff;
-            transition: border-color 0.2s;
-        }
-
-        .admin-form input:focus,
-        .admin-form textarea:focus {
-            outline: none;
-            border-color: var(--brand-mid, #1a7a4a);
-        }
-
-        .admin-form textarea { resize: vertical; min-height: 80px; }
-
-        /* Tablas */
-        .admin-table-wrap { overflow-x: auto; }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            margin-top: 12px;
-        }
-
-        .admin-table thead {
-            background: linear-gradient(135deg, var(--brand-mid, #1a7a4a), var(--brand-dark, #0d7a4d));
-            color: #fff;
-        }
-
-        .admin-table th {
-            padding: 12px 14px;
-            text-align: left;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .admin-table tbody tr {
-            border-bottom: 1px solid var(--line, rgba(0,0,0,0.07));
-            transition: background 0.15s;
-        }
-
-        .admin-table tbody tr:hover { background: var(--brand-soft, #f0faf5); }
-
-        .admin-table td {
-            padding: 12px 14px;
-            vertical-align: middle;
-        }
-
-        /* Badges */
-        .badge-active {
-            background: rgba(13,122,77,0.12);
-            color: var(--brand-dark, #0d7a4d);
-            border-radius: 999px;
-            padding: 3px 10px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .badge-inactive {
-            background: rgba(184,50,40,0.1);
-            color: var(--danger, #c0392b);
-            border-radius: 999px;
-            padding: 3px 10px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        /* Config list */
-        .config-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 12px;
-            margin-top: 12px;
-        }
-
-        .config-card {
-            background: var(--surface-2, #f8fffe);
-            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
-            border-radius: var(--radius-md, 10px);
-            padding: 14px 16px;
-        }
-
-        .config-card .config-key {
-            font-size: 0.78rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .config-card .config-value {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text, #1a1a1a);
-            margin-top: 4px;
-            word-break: break-all;
-        }
-
-        /* WhatsApp preview */
-        .whatsapp-preview {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-            padding: 10px 14px;
-            background: #e8f5e9;
-            border-radius: var(--radius-md, 10px);
-            font-size: 0.88rem;
-        }
-
-        .whatsapp-preview a {
-            color: #1b5e20;
-            font-weight: 600;
-            text-decoration: none;
-        }
-
-        /* Frequent clients */
-        .rank-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            background: var(--brand-soft, #e8f5e9);
-            color: var(--brand-dark, #0d7a4d);
-            font-weight: 700;
-            font-size: 0.85rem;
-        }
-
-        .rank-badge.top-1 { background: #fff8e1; color: #f57f17; }
-        .rank-badge.top-2 { background: #f5f5f5; color: #616161; }
-        .rank-badge.top-3 { background: #fbe9e7; color: #bf360c; }
-
-        /* Responsive */
-        @media (max-width: 640px) {
-            .admin-form { grid-template-columns: 1fr; }
-            .admin-table .col-hide { display: none; }
-        }
-
-        /* ══════════════════════════════════════════════════════
-           PANEL REPORTES ADMIN
-        ══════════════════════════════════════════════════════ */
-
-        .rpt-kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-            margin-bottom: 28px;
-        }
-
-        .rpt-kpi-card {
-            background: #fff;
-            border: 1.5px solid rgba(13,122,77,0.12);
-            border-radius: 14px;
-            padding: 18px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .rpt-kpi-icon  { font-size: 1.4rem; line-height: 1; }
-        .rpt-kpi-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-        .rpt-kpi-value { font-family: var(--font-display); font-size: clamp(1.3rem, 2.5vw, 1.7rem); font-weight: 700; color: var(--brand-dark); line-height: 1.1; }
-        .rpt-kpi-sub   { font-size: 0.76rem; color: var(--text-muted); }
-
-        .skeleton-kpi {
-            height: 90px;
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.4s infinite;
-            border-radius: 14px;
-        }
-
-        @keyframes shimmer {
-            0%   { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .rpt-section { margin-bottom: 32px; }
-
-        .rpt-section-title {
-            font-family: var(--font-display);
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 0 0 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Sección colapsable */
-        .rpt-section-collapsible .rpt-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            padding: 14px 18px;
-            background: var(--brand-soft, #f0faf5);
-            border: 1.5px solid rgba(13,122,77,0.15);
-            border-radius: 12px;
-            margin-bottom: 0;
-            transition: all 0.2s;
-        }
-
-        .rpt-section-collapsible .rpt-section-header:hover {
-            background: rgba(13,122,77,0.12);
-            border-color: rgba(13,122,77,0.25);
-        }
-
-        .rpt-section-collapsible .rpt-section-header h3 {
-            margin: 0;
-            font-family: var(--font-display);
-            font-size: 1.05rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .rpt-section-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--brand-dark, #0d7a4d);
-            transition: transform 0.2s;
-        }
-
-        .rpt-section-toggle .arrow {
-            display: inline-block;
-            transition: transform 0.2s;
-            font-style: normal;
-        }
-
-        .rpt-section-collapsible.is-open .rpt-section-toggle .arrow {
-            transform: rotate(180deg);
-        }
-
-        .rpt-section-body {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.4s ease, margin 0.3s;
-        }
-
-        .rpt-section-collapsible.is-open .rpt-section-body {
-            max-height: 2000px;
-            margin-top: 16px;
-        }
-
-        .rpt-table-wrap { overflow-x: auto; border-radius: 14px; }
-
-        .rpt-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        .rpt-table thead {
-            background: linear-gradient(135deg, var(--brand-mid), var(--brand-dark));
-            color: #fff;
-        }
-
-        .rpt-table th {
-            padding: 12px 14px;
-            text-align: left;
-            font-weight: 600;
-            white-space: nowrap;
-        }
-
-        .rpt-table th.text-right,
-        .rpt-table td.text-right { text-align: right; }
-
-        .rpt-table tbody tr {
-            border-bottom: 1px solid var(--line, rgba(0,0,0,0.07));
-            transition: background 0.15s;
-        }
-
-        .rpt-table tbody tr:hover { background: var(--brand-soft, #f0faf5); }
-
-        .rpt-table td { padding: 11px 14px; vertical-align: top; }
-
-        .rpt-table .total-row td {
-            font-weight: 700;
-            background: var(--brand-soft);
-            color: var(--brand-dark);
-        }
-
-        /* Barras por hora */
-        .rpt-bar-chart { display: flex; flex-direction: column; gap: 5px; }
-
-        .rpt-bar-row {
-            display: grid;
-            grid-template-columns: 44px 1fr 52px;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .rpt-bar-label { font-size: 0.76rem; font-weight: 600; color: var(--text-muted); text-align: right; }
-
-        .rpt-bar-track {
-            background: rgba(13,122,77,0.08);
-            border-radius: 999px;
-            height: 20px;
-            overflow: hidden;
-        }
-
-        .rpt-bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--brand-mid), var(--brand-dark));
-            border-radius: 999px;
-            transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-            min-width: 2px;
-        }
-
-        .rpt-bar-count { font-size: 0.78rem; font-weight: 700; color: var(--brand-dark); text-align: right; }
-
-        /* Historial — botón expandir productos */
-        .btn-rpt-expand {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 12px;
-            background: var(--brand-soft);
-            color: var(--brand-dark);
-            border: 1.5px solid rgba(13,122,77,0.2);
-            border-radius: 999px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.18s;
-            white-space: nowrap;
-        }
-
-        .btn-rpt-expand:hover { background: var(--brand-mid); color: #fff; border-color: transparent; }
-        .btn-rpt-expand.is-open { background: var(--brand-dark); color: #fff; border-color: transparent; }
-
-        .rpt-expand-row { background: var(--brand-soft); }
-        .rpt-expand-row td { padding: 0 !important; }
-
-        .rpt-expand-content {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height 0.3s ease, padding 0.2s;
-        }
-
-        .rpt-expand-content.is-open { max-height: 300px; padding: 12px 18px 14px; }
-
-        .rpt-chips { display: flex; flex-wrap: wrap; gap: 7px; }
-
-        .rpt-chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            background: #fff;
-            border: 1.5px solid rgba(13,122,77,0.15);
-            border-radius: 10px;
-            padding: 6px 12px;
-            font-size: 0.82rem;
-        }
-
-        .rpt-chip-name { font-weight: 600; }
-        .rpt-chip-qty  { background: var(--brand-soft); color: var(--brand-dark); border-radius: 999px; padding: 1px 7px; font-size: 0.75rem; font-weight: 700; }
-
-        /* Vendedores */
-        .seller-stat-card {
-            background: #fff;
-            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
-            border-radius: 14px;
-            padding: 18px 20px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .seller-stat-avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--brand-mid), var(--brand-dark));
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-
-        .seller-stat-info { flex: 1; min-width: 0; }
-        .seller-stat-name { font-weight: 700; font-size: 0.97rem; }
-        .seller-stat-email { font-size: 0.82rem; color: var(--text-muted); }
-
-        .seller-stat-meta {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .seller-stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .seller-stat-item strong { font-size: 1.1rem; color: var(--brand-dark); font-weight: 700; }
-        .seller-stat-item span   { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
-
-        .orders-count-badge {
-            background: var(--brand-soft);
-            color: var(--brand-dark);
-            border: 1px solid rgba(13,122,77,0.2);
-            border-radius: 999px;
-            padding: 5px 14px;
-            font-size: 0.82rem;
-            font-weight: 600;
-        }
-
-        .rpt-empty { text-align: center; padding: 32px 16px; color: var(--text-muted); }
-
-        /* ── Tooltip ticket promedio ── */
-        .kpi-tooltip {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 15px;
-            height: 15px;
-            background: var(--brand-soft, #e8f5e9);
-            color: var(--brand-dark, #0d7a4d);
-            border: 1.5px solid rgba(13,122,77,0.3);
-            border-radius: 50%;
-            font-size: 0.62rem;
-            font-weight: 700;
-            cursor: help;
-            vertical-align: middle;
-            margin-left: 5px;
-            flex-shrink: 0;
-        }
-
-        .kpi-tooltip-text {
-            visibility: hidden;
-            opacity: 0;
-            pointer-events: none;
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%) translateY(4px);
-            width: 220px;
-            background: #1a2e1f;
-            color: #fff;
-            font-size: 0.77rem;
-            font-weight: 400;
-            line-height: 1.55;
-            padding: 10px 13px;
-            border-radius: 10px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-            transition: opacity 0.18s ease, transform 0.18s ease;
-            z-index: 200;
-            text-align: left;
-            white-space: normal;
-        }
-
-        .kpi-tooltip-text::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #1a2e1f;
-        }
-
-        .kpi-tooltip:hover .kpi-tooltip-text,
-        .kpi-tooltip:focus .kpi-tooltip-text {
-            visibility: visible;
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* En cabecera de tabla el tooltip abre hacia abajo */
-        thead .kpi-tooltip-text {
-            bottom: auto;
-            top: calc(100% + 8px);
-            transform: translateX(-50%) translateY(-4px);
-        }
-
-        thead .kpi-tooltip-text::after {
-            top: auto;
-            bottom: 100%;
-            border-top-color: transparent;
-            border-bottom-color: #1a2e1f;
-        }
-
-        thead .kpi-tooltip:hover .kpi-tooltip-text,
-        thead .kpi-tooltip:focus .kpi-tooltip-text {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        @media (max-width: 600px) {
-            .rpt-kpi-grid { grid-template-columns: 1fr 1fr; }
-            .rpt-bar-row  { grid-template-columns: 34px 1fr 40px; }
-        }
-
-        /* ── Gestión de pedidos ── */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50%       { opacity: 0.3; }
-        }
-
-        .jornada-btn {
-            min-height: 48px;
-            padding: 0 28px;
-            border-radius: 999px;
-            border: none;
-            font-weight: 700;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .jornada-btn.open {
-            background: linear-gradient(135deg, #1b5e20, #2e7d32);
-            color: #fff;
-            box-shadow: 0 8px 24px rgba(27,94,32,0.3);
-        }
-
-        .jornada-btn.close {
-            background: linear-gradient(135deg, #b71c1c, #c62828);
-            color: #fff;
-            box-shadow: 0 8px 24px rgba(183,28,28,0.3);
-        }
-
-        .order-mgmt-card {
-            background: #fff;
-            border: 1.5px solid var(--line, rgba(0,0,0,0.08));
-            border-radius: 14px;
-            padding: 18px 20px;
-            margin-bottom: 12px;
-            transition: box-shadow 0.2s;
-        }
-
-        .order-mgmt-card:hover { box-shadow: 0 4px 16px rgba(13,122,77,0.1); }
-        .order-mgmt-card.new-order { border-color: #f57f17; background: #fffde7; }
-
-        .order-mgmt-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-
-        .order-mgmt-chips {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-
-        .order-mgmt-chip {
-            background: var(--brand-soft);
-            border-radius: 8px;
-            padding: 4px 10px;
-            font-size: 0.82rem;
-            font-weight: 600;
+        body { background:#f4f5f7; margin:0; font-family:'Inter',system-ui,sans-serif; }
+
+        /* ── Layout ── */
+        .admin-layout { display:flex; min-height:100vh; }
+
+        /* ── Sidebar ── */
+        .admin-sidebar {
+            width:260px; background:#111827; color:#fff; padding:24px 0;
+            display:flex; flex-direction:column; position:fixed; top:0; left:0; bottom:0; z-index:50;
+        }
+        .sidebar-brand { display:flex; align-items:center; gap:10px; padding:0 24px 28px; border-bottom:1px solid rgba(255,255,255,0.08); }
+        .sidebar-brand img { height:32px; }
+        .sidebar-brand span { font-size:1.2rem; font-weight:800; letter-spacing:-0.02em; }
+        .sidebar-label { font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.35); padding:24px 24px 8px; }
+        .sidebar-nav { flex:1; }
+        .sidebar-link {
+            display:flex; align-items:center; gap:12px; padding:10px 24px; font-size:0.88rem; font-weight:500;
+            color:rgba(255,255,255,0.6); text-decoration:none; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer;
+        }
+        .sidebar-link:hover { color:#fff; background:rgba(255,255,255,0.05); }
+        .sidebar-link.active { color:#fff; background:rgba(99,102,241,0.15); border-left-color:#6366f1; }
+        .sidebar-link .icon { font-size:1.1rem; width:20px; text-align:center; }
+        .sidebar-user { padding:16px 24px; border-top:1px solid rgba(255,255,255,0.08); margin-top:auto; }
+        .sidebar-user-name { font-size:0.85rem; font-weight:600; }
+        .sidebar-user-email { font-size:0.72rem; color:rgba(255,255,255,0.4); }
+        .sidebar-logout { margin-top:10px; font-size:0.78rem; color:#ef4444; cursor:pointer; background:none; border:none; font-family:inherit; font-weight:600; padding:0; }
+        .sidebar-logout:hover { text-decoration:underline; }
+
+        /* ── Main content ── */
+        .admin-main { flex:1; margin-left:260px; padding:32px; }
+        .admin-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; }
+        .admin-topbar h1 { font-size:1.5rem; font-weight:800; color:#111827; margin:0; letter-spacing:-0.02em; }
+        .admin-topbar-right { display:flex; align-items:center; gap:12px; }
+
+        /* ── Stats cards ── */
+        .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:32px; }
+        .stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:24px; }
+        .stat-card-label { font-size:0.78rem; font-weight:600; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:8px; }
+        .stat-card-value { font-size:1.8rem; font-weight:800; color:#111827; letter-spacing:-0.03em; }
+        .stat-card-change { font-size:0.75rem; font-weight:600; margin-top:6px; }
+        .stat-card-change.up { color:#16a34a; }
+        .stat-card-change.down { color:#ef4444; }
+
+        /* ── Sections / Panels ── */
+        .admin-panel { background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:24px; margin-bottom:24px; }
+        .admin-panel-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .admin-panel-header h2 { font-size:1.1rem; font-weight:700; color:#111827; margin:0; }
+        .admin-panel.hidden { display:none; }
+
+        /* ── Table ── */
+        .admin-table { width:100%; border-collapse:collapse; }
+        .admin-table th { text-align:left; font-size:0.72rem; font-weight:700; color:#6b7280; text-transform:uppercase; letter-spacing:0.05em; padding:10px 14px; border-bottom:1px solid #e5e7eb; }
+        .admin-table td { padding:12px 14px; font-size:0.88rem; color:#374151; border-bottom:1px solid #f3f4f6; }
+        .admin-table tr:hover td { background:#f9fafb; }
+
+        /* ── Badges ── */
+        .badge { display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600; }
+        .badge-green { background:#d1fae5; color:#065f46; }
+        .badge-yellow { background:#fef3c7; color:#92400e; }
+        .badge-red { background:#fee2e2; color:#991b1b; }
+        .badge-blue { background:#dbeafe; color:#1e40af; }
+        .badge-purple { background:#ede9fe; color:#5b21b6; }
+
+        /* ── Buttons ── */
+        .btn-sm { padding:6px 14px; font-size:0.78rem; font-weight:600; border:none; border-radius:8px; cursor:pointer; transition:all 0.2s; font-family:inherit; }
+        .btn-primary-sm { background:#6366f1; color:#fff; }
+        .btn-primary-sm:hover { background:#4f46e5; }
+        .btn-danger-sm { background:#fee2e2; color:#991b1b; }
+        .btn-danger-sm:hover { background:#fecaca; }
+        .btn-outline-sm { background:#fff; color:#374151; border:1px solid #e5e7eb; }
+        .btn-outline-sm:hover { border-color:#6366f1; color:#6366f1; }
+
+        /* ── Empty state ── */
+        .empty-msg { text-align:center; padding:40px; color:#9ca3af; font-size:0.9rem; }
+
+        /* ── Toast ── */
+        .z-toast { position:fixed; bottom:24px; right:24px; padding:14px 24px; border-radius:10px; font-size:0.88rem; font-weight:600; color:#fff; background:#111827; box-shadow:0 8px 24px rgba(0,0,0,0.15); opacity:0; transform:translateY(12px); transition:all 0.3s; z-index:999; pointer-events:none; }
+        .z-toast.show { opacity:1; transform:translateY(0); }
+        .z-toast.error { background:#ef4444; }
+
+        @media (max-width:900px) {
+            .admin-sidebar { width:64px; padding:16px 0; }
+            .sidebar-brand span, .sidebar-label, .sidebar-link span:not(.icon), .sidebar-user-email { display:none; }
+            .sidebar-link { justify-content:center; padding:12px; }
+            .admin-main { margin-left:64px; }
+            .stats-grid { grid-template-columns:repeat(2,1fr); }
         }
     </style>
 </head>
-<body data-page="admin-dashboard">
+<body>
+<div class="admin-layout">
 
-<!-- ═══════════════════════════════════════════════════════════ NAVBAR -->
-<header class="site-header">
-    <div class="header-inner">
-        <div class="brand-block">
-            <img src="img/sinfondologo-removebg-preview.png" alt="Logo Zentrix" class="brand-logo">
-            <div><span class="brand-kicker">Zentrix</span></div>
-        </div>
-        <nav class="site-nav" aria-label="Principal">
-            <a href="index.html">Inicio</a>
-            <a href="dashboard.html">Dashboard</a>
-            <a href="seller-orders.html">Pedidos</a>
-            <a href="admin-dashboard.html" class="is-active">Panel Admin</a>
-        </nav>
-        <a href="cart.html" class="cart-chip">
-            <span>Carrito</span>
-            <strong id="navCartCount">0</strong>
-        </a>
-    </div>
-</header>
-
-<main class="page-content">
-
-    <!-- ── Banner ── -->
-    <section class="page-banner glass-card dashboard-banner">
-        <div>
-            <span class="eyebrow">⚙️ Administrador</span>
-            <h1>Panel Administrativo</h1>
-            <p style="color:var(--text-muted); margin:0">
-                Configuración del sistema, notificaciones y análisis de clientes.
-            </p>
-        </div>
-        <button id="logoutBtn" class="btn btn-danger" type="button">Cerrar sesión</button>
-    </section>
-
-    <!-- ── Tabs ── -->
-    <nav class="dash-tabs" id="adminTabs" aria-label="Módulos admin">
-        <button class="dash-tab is-active" data-tab="config">⚙️ Configuración</button>
-        <button class="dash-tab" data-tab="notifications">🔔 Notificaciones</button>
-        <button class="dash-tab" data-tab="frequent">👥 Clientes frecuentes</button>
-        <button class="dash-tab" data-tab="reports">📊 Reportes</button>
-        <button class="dash-tab" data-tab="payments">💳 Pagos</button>
-        <button class="dash-tab" data-tab="invoice">🧾 Factura</button>
-        <button class="dash-tab" data-tab="orders-mgmt" id="tabOrdersMgmt">
-            🚦 Gestión de pedidos
-            <span id="ordersBadge" style="display:none; background:#c0392b; color:#fff;
-                border-radius:999px; padding:1px 7px; font-size:0.72rem; font-weight:700;
-                margin-left:6px; animation: pulse 1s infinite;">●</span>
-        </button>
-    </nav>
-
-    <!-- ══════════════════════════════════ PANEL: CONFIGURACIÓN -->
-    <section id="tab-config" class="dash-panel glass-card">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-        <div class="admin-section">
-            <h2>Configuración del sistema</h2>
-
-            <!-- Formulario UPSERT -->
-            <div class="admin-form" id="configForm">
-                <label>
-                    Clave
-                    <input type="text" id="cfgKey" placeholder="ej: whatsapp_number">
-                </label>
-                <label>
-                    Valor
-                    <input type="text" id="cfgValue" placeholder="ej: 573124763922">
-                </label>
-                <button class="btn btn-primary" id="cfgSaveBtn" type="button"
-                        style="min-height:44px; align-self:end">
-                    Guardar
-                </button>
-            </div>
-
-            <!-- Atajos rápidos -->
-            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px">
-                <button class="btn btn-secondary" type="button"
-                        onclick="quickConfig('whatsapp_number')"
-                        style="font-size:0.82rem; min-height:36px; padding:0 14px">
-                    📱 WhatsApp
-                </button>
-                <button class="btn btn-secondary" type="button"
-                        onclick="quickConfig('recruitment_enabled')"
-                        style="font-size:0.82rem; min-height:36px; padding:0 14px">
-                    💼 Reclutamiento
-                </button>
-                <button class="btn btn-secondary" type="button"
-                        onclick="quickConfig('delivery_mode')"
-                        style="font-size:0.82rem; min-height:36px; padding:0 14px">
-                    🚚 Modo domicilio
-                </button>
-            </div>
-
-            <p id="cfgMsg" class="helper-text" style="margin-top:10px"></p>
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-brand">
+            <img src="img/logoZentrix-sinfondo.png" alt="Zentrix">
+            <span>Zentrix</span>
         </div>
 
-        <!-- Lista de configuraciones actuales -->
-        <div class="admin-section">
-            <h2>Configuración actual</h2>
-            <div id="configList"><p class="helper-text">Cargando...</p></div>
-        </div>
-
-        <!-- Preview WhatsApp -->
-        <div class="admin-section" id="whatsappPreviewBlock" style="display:none">
-            <h2>Vista previa — Botón WhatsApp</h2>
-            <div class="whatsapp-preview">
-                <span>🔗 Enlace generado:</span>
-                <a id="whatsappPreviewLink" href="#" target="_blank" rel="noopener">—</a>
-            </div>
-            <p class="helper-text" style="margin-top:8px">
-                El botón flotante del sitio usará este número automáticamente tras recargar la página.
-            </p>
-        </div>
-    </section>
-
-    <!-- ══════════════════════════════════ PANEL: NOTIFICACIONES -->
-    <section id="tab-notifications" class="dash-panel glass-card hidden">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-        <div class="admin-section">
-            <h2>Crear notificación</h2>
-            <div class="admin-form single-col">
-                <label>
-                    Título
-                    <input type="text" id="notifTitle" placeholder="ej: ¡Nuevos productos disponibles!">
-                </label>
-                <label>
-                    Mensaje
-                    <textarea id="notifMessage" placeholder="Escribe el mensaje para los usuarios..."></textarea>
-                </label>
-                <button class="btn btn-primary" id="notifSaveBtn" type="button">
-                    Publicar notificación
-                </button>
-            </div>
-            <p id="notifMsg" class="helper-text" style="margin-top:10px"></p>
-        </div>
-
-        <!-- Lista de notificaciones -->
-        <div class="admin-section">
-            <h2>Notificaciones publicadas</h2>
-            <div id="notifList"><p class="helper-text">Cargando...</p></div>
-        </div>
-    </section>
-
-    <!-- ══════════════════════════════════ PANEL: CLIENTES FRECUENTES -->
-    <section id="tab-frequent" class="dash-panel glass-card hidden">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-        <div class="admin-section">
-            <h2>Clientes frecuentes</h2>
-            <p class="helper-text" style="margin-bottom:16px">
-                Clientes ordenados por número de pedidos realizados.
-            </p>
-            <div id="frequentList"><p class="helper-text">Cargando...</p></div>
-        </div>
-    </section>
-
-    <!-- ══════════════════════════════════ PANEL: REPORTES ADMIN -->
-    <section id="tab-reports" class="dash-panel glass-card hidden">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-
-        <!-- Sub-tabs de reportes -->
-        <nav class="dash-tabs" id="reportSubTabs" style="margin-bottom:24px" aria-label="Secciones de reportes">
-            <button class="dash-tab is-active" data-subtab="summary">📈 Resumen general</button>
-            <button class="dash-tab" data-subtab="history">📋 Historial clientes</button>
-            <button class="dash-tab" data-subtab="sellers">🏷️ Vendedores</button>
+        <div class="sidebar-label">Principal</div>
+        <nav class="sidebar-nav">
+            <a class="sidebar-link active" onclick="showSection('overview')"><span class="icon">📊</span><span>Dashboard</span></a>
+            <a class="sidebar-link" onclick="showSection('tenants')"><span class="icon">🏢</span><span>Tenants</span></a>
+            <a class="sidebar-link" onclick="showSection('payments')"><span class="icon">💰</span><span>Pagos Pendientes</span></a>
+            <a class="sidebar-link" onclick="showSection('users')"><span class="icon">👥</span><span>Usuarios</span></a>
+            <a class="sidebar-link" onclick="showSection('products')"><span class="icon">📦</span><span>Productos</span></a>
+            <a class="sidebar-link" onclick="showSection('orders')"><span class="icon">🛒</span><span>Pedidos</span></a>
         </nav>
 
-        <!-- ── SUB-TAB: Resumen general ── -->
-        <div id="subtab-summary">
+        <div class="sidebar-user">
+            <div class="sidebar-user-name" id="sidebarUserName">Admin</div>
+            <div class="sidebar-user-email" id="sidebarUserEmail">admin@zentrix.app</div>
+            <button class="sidebar-logout" onclick="handleLogout()">Cerrar sesión</button>
+        </div>
+    </aside>
 
-            <!-- KPIs -->
-            <div id="rptKpiGrid" class="rpt-kpi-grid" aria-label="Indicadores clave">
-                <div class="skeleton-kpi"></div>
-                <div class="skeleton-kpi"></div>
-                <div class="skeleton-kpi"></div>
-                <div class="skeleton-kpi"></div>
+    <!-- ═══════════ MAIN CONTENT ═══════════ -->
+    <main class="admin-main">
+
+        <!-- Topbar -->
+        <div class="admin-topbar">
+            <h1 id="sectionTitle">Dashboard</h1>
+            <div class="admin-topbar-right">
+                <span class="badge badge-purple" id="topbarRole">ADMIN</span>
             </div>
+        </div>
 
-            <!-- Ventas por día -->
-            <div class="rpt-section rpt-section-collapsible" id="sectionDaily">
-                <div class="rpt-section-header" onclick="toggleSection('sectionDaily')">
-                    <h3>📅 Ventas por día</h3>
-                    <span class="rpt-section-toggle">
-                        Ver <i class="arrow">▾</i>
-                    </span>
+        <!-- ═══════════ OVERVIEW ═══════════ -->
+        <div id="sec-overview">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-card-label">Tenants activos</div>
+                    <div class="stat-card-value" id="statTenants">—</div>
+                    <div class="stat-card-change up">Negocios registrados</div>
                 </div>
-                <div class="rpt-section-body">
-                    <div class="rpt-table-wrap">
-                        <table class="rpt-table">
-                            <thead>
-                                <tr>
-                                    <th>Fecha</th>
-                                    <th class="text-right">Pedidos</th>
-                                    <th class="text-right">Ingresos</th>
-                                    <th class="text-right">
-                                        Ticket promedio
-                                        <span class="kpi-tooltip" aria-label="¿Qué es el ticket promedio?">
-                                            ?
-                                            <span class="kpi-tooltip-text">
-                                                Ingresos del día ÷ pedidos del día.
-                                                Cuánto gastó en promedio cada cliente ese día.
-                                            </span>
-                                        </span>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="rptDailyBody">
-                                <tr><td colspan="4" class="rpt-empty">Cargando...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Pagos pendientes</div>
+                    <div class="stat-card-value" id="statPayments">—</div>
+                    <div class="stat-card-change">Por aprobar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Usuarios totales</div>
+                    <div class="stat-card-value" id="statUsers">—</div>
+                    <div class="stat-card-change up">En la plataforma</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-card-label">Pedidos hoy</div>
+                    <div class="stat-card-value" id="statOrders">—</div>
+                    <div class="stat-card-change">Últimas 24h</div>
                 </div>
             </div>
 
-            <!-- Pedidos por hora -->
-            <div class="rpt-section rpt-section-collapsible" id="sectionHourly">
-                <div class="rpt-section-header" onclick="toggleSection('sectionHourly')">
-                    <h3>🕐 Pedidos por hora del día</h3>
-                    <span class="rpt-section-toggle">
-                        Ver <i class="arrow">▾</i>
-                    </span>
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>Últimos pagos pendientes</h2>
+                    <button class="btn-sm btn-outline-sm" onclick="showSection('payments')">Ver todos →</button>
                 </div>
-                <div class="rpt-section-body">
-                    <div id="rptHourlyChart" class="rpt-bar-chart" aria-label="Distribución por hora">
-                        <p class="rpt-empty">Cargando...</p>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- ── SUB-TAB: Historial clientes ── -->
-        <div id="subtab-history" class="hidden">
-            <div class="rpt-section">
-                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:16px">
-                    <h3 class="rpt-section-title" style="margin:0">📋 Historial completo de pedidos</h3>
-                    <span id="rptHistoryCount" class="orders-count-badge">—</span>
-                </div>
-                <div class="rpt-table-wrap">
-                    <table class="rpt-table" id="rptHistoryTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Cliente</th>
-                                <th>Email</th>
-                                <th>Productos</th>
-                                <th>Fecha</th>
-                                <th class="text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="rptHistoryBody">
-                            <tr><td colspan="6" class="rpt-empty">Cargando...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div id="overviewPayments"><div class="empty-msg">Cargando...</div></div>
             </div>
         </div>
 
-        <!-- ── SUB-TAB: Vendedores ── -->
-        <div id="subtab-sellers" class="hidden">
-            <div class="rpt-section">
-                <h3 class="rpt-section-title">🏷️ Resumen de vendedores activos</h3>
-                <p class="helper-text" style="margin-bottom:16px">
-                    Vendedores registrados en el sistema con su estado y métricas de actividad.
-                </p>
-                <div id="rptSellersContent"><p class="rpt-empty">Cargando...</p></div>
+        <!-- ═══════════ TENANTS ═══════════ -->
+        <div id="sec-tenants" class="admin-panel hidden">
+            <div class="admin-panel-header">
+                <h2>🏢 Gestión de Tenants</h2>
             </div>
+            <div id="tenantsTable"><div class="empty-msg">Cargando tenants...</div></div>
+        </div>
 
-            <!-- Nota arquitectónica -->
-            <div style="margin-top:20px; padding:14px 18px; background:rgba(232,137,46,0.08); border:1.5px solid rgba(232,137,46,0.2); border-radius:12px; font-size:0.85rem; color:var(--text-muted)">
-                💡 <strong>Nota:</strong> Los pedidos se registran con el ID del cliente que compró.
-                Para asociar pedidos a un vendedor específico, se requiere agregar un campo
-                <code>vendedorId</code> al modelo de pedidos en una fase futura.
+        <!-- ═══════════ PAYMENTS ═══════════ -->
+        <div id="sec-payments" class="admin-panel hidden">
+            <div class="admin-panel-header">
+                <h2>💰 Pagos Pendientes de Aprobación</h2>
             </div>
+            <div id="paymentsTable"><div class="empty-msg">Cargando pagos...</div></div>
         </div>
 
-    </section>
-
-    <!-- ══════════════════════════════════ PANEL: PAGOS POR TRANSFERENCIA -->
-    <section id="tab-payments" class="dash-panel glass-card hidden">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px">
-            <div>
-                <span class="eyebrow">Validación manual</span>
-                <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">Pagos por transferencia</h2>
+        <!-- ═══════════ USERS ═══════════ -->
+        <div id="sec-users" class="admin-panel hidden">
+            <div class="admin-panel-header">
+                <h2>👥 Usuarios del Sistema</h2>
             </div>
-            <button class="btn btn-secondary" id="refreshPaymentsBtn" type="button"
-                    style="min-height:40px; padding:0 16px; font-size:0.88rem">
-                🔄 Actualizar
-            </button>
+            <div id="usersTable"><div class="empty-msg">Cargando usuarios...</div></div>
         </div>
 
-        <!-- KPIs de pagos -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px" id="paymentKpis">
-        </div>
-
-        <!-- Tabla de pagos pendientes -->
-        <div class="admin-section">
-            <h3 class="rpt-section-title">⏳ Pendientes de aprobación</h3>
-            <div id="pendingPaymentsList"><p class="helper-text">Cargando...</p></div>
-        </div>
-    </section>
-
-    <!-- ══════════════════════════════════ PANEL: FACTURA -->
-    <section id="tab-invoice" class="dash-panel glass-card hidden">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-
-        <div style="margin-bottom:20px">
-            <span class="eyebrow">Generación de documentos</span>
-            <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">Factura electrónica</h2>
-            <p class="helper-text" style="margin-top:8px">
-                Selecciona un pedido para generar y descargar la factura en PDF.
-            </p>
-        </div>
-
-        <!-- Selector de pedido -->
-        <div style="display:grid; grid-template-columns:1fr auto; gap:12px; align-items:end; margin-bottom:24px; max-width:500px">
-            <label style="display:flex; flex-direction:column; gap:6px; font-size:0.88rem; font-weight:600; color:var(--text-muted)">
-                Número de pedido
-                <input type="number" id="invoiceOrderId" placeholder="Ej: 1" min="1"
-                       style="padding:10px 14px; border:1.5px solid var(--line-strong); border-radius:10px; font:inherit; font-size:0.92rem">
-            </label>
-            <button class="btn btn-secondary" id="loadInvoiceBtn" type="button"
-                    style="min-height:44px; padding:0 18px; font-size:0.88rem">
-                Cargar pedido
-            </button>
-        </div>
-
-        <!-- Vista previa de la factura -->
-        <div id="invoicePreview" class="hidden">
-            <div style="background:#fff; border:1.5px solid var(--line); border-radius:16px; padding:28px 32px; max-width:680px; margin-bottom:20px" id="invoiceDocument">
-
-                <!-- Cabecera -->
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; flex-wrap:wrap; gap:12px">
-                    <div>
-                        <div style="font-family:var(--font-display); font-size:1.6rem; font-weight:700; color:var(--brand-dark)">🍊 Zentrix</div>
-                        <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px">Pulpas Naturales de Fruta</div>
-                    </div>
-                    <div style="text-align:right">
-                        <div style="font-size:1.1rem; font-weight:700; color:var(--brand-dark)">FACTURA</div>
-                        <div style="font-size:0.88rem; color:var(--text-muted)" id="invNumber">—</div>
-                        <div style="font-size:0.82rem; color:var(--text-muted)" id="invDate">—</div>
-                    </div>
-                </div>
-
-                <hr style="border:none; border-top:1.5px solid var(--line); margin-bottom:20px">
-
-                <!-- Datos del cliente -->
-                <div style="margin-bottom:20px">
-                    <div style="font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-muted); margin-bottom:8px">Cliente</div>
-                    <div style="font-weight:700; font-size:1rem" id="invClientName">—</div>
-                    <div style="font-size:0.88rem; color:var(--text-muted)" id="invClientEmail">—</div>
-                </div>
-
-                <!-- Tabla de productos -->
-                <table style="width:100%; border-collapse:collapse; font-size:0.88rem; margin-bottom:20px">
-                    <thead>
-                        <tr style="background:var(--brand-soft); border-radius:8px">
-                            <th style="padding:10px 12px; text-align:left; font-weight:700; color:var(--brand-dark)">Producto</th>
-                            <th style="padding:10px 12px; text-align:center; font-weight:700; color:var(--brand-dark)">Cant.</th>
-                            <th style="padding:10px 12px; text-align:right; font-weight:700; color:var(--brand-dark)">Precio unit.</th>
-                            <th style="padding:10px 12px; text-align:right; font-weight:700; color:var(--brand-dark)">Subtotal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="invItemsBody"></tbody>
-                    <tfoot>
-                        <tr style="border-top:2px solid var(--brand-soft)">
-                            <td colspan="3" style="padding:12px; text-align:right; font-weight:700; font-size:1rem">TOTAL</td>
-                            <td style="padding:12px; text-align:right; font-weight:700; font-size:1.1rem; color:var(--brand-dark)" id="invTotal">—</td>
-                        </tr>
-                    </tfoot>
-                </table>
-
-                <!-- Estado de pago -->
-                <div style="display:flex; align-items:center; gap:10px; padding:12px 16px; border-radius:10px; background:var(--brand-soft); margin-bottom:16px">
-                    <span id="invPaymentBadge" style="font-weight:700; font-size:0.88rem">—</span>
-                </div>
-
-                <!-- Pie -->
-                <div style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:16px">
-                    Gracias por tu compra · Zentrix · pulpas naturales de fruta
-                </div>
+        <!-- ═══════════ PRODUCTS ═══════════ -->
+        <div id="sec-products" class="admin-panel hidden">
+            <div class="admin-panel-header">
+                <h2>📦 Productos</h2>
             </div>
-
-            <!-- Botones de acción -->
-            <div style="display:flex; gap:12px; flex-wrap:wrap">
-                <button class="btn btn-primary" id="downloadPdfBtn" type="button">
-                    ⬇️ Descargar PDF
-                </button>
-                <button class="btn btn-secondary" id="clearInvoiceBtn" type="button">
-                    ✕ Limpiar
-                </button>
-            </div>
+            <div id="productsTable"><div class="empty-msg">Cargando productos...</div></div>
         </div>
 
-        <p id="invoiceMsg" class="helper-text" style="margin-top:12px"></p>
-    </section>
-
-    <!-- ══════════════════════════════════ PANEL: GESTIÓN DE PEDIDOS -->
-    <section id="tab-orders-mgmt" class="dash-panel glass-card hidden">
-        <span class="eyebrow admin-badge">Solo administradores</span>
-
-        <!-- Jornada -->
-        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:28px">
-            <div>
-                <span class="eyebrow">Control de jornada</span>
-                <h2 style="margin:4px 0 0; font-family:var(--font-display); font-size:1.4rem">
-                    Gestión de pedidos
-                </h2>
+        <!-- ═══════════ ORDERS ═══════════ -->
+        <div id="sec-orders" class="admin-panel hidden">
+            <div class="admin-panel-header">
+                <h2>🛒 Pedidos</h2>
             </div>
-            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap">
-                <div id="jornadaStatus" style="font-size:0.88rem; font-weight:600; color:var(--text-muted)">
-                    Estado: cargando...
-                </div>
-                <button id="btnJornada" class="jornada-btn open" type="button">
-                    🟢 Iniciar jornada
-                </button>
-                <button class="btn btn-secondary" id="btnRefreshOrders" type="button"
-                        style="min-height:44px; padding:0 16px; font-size:0.88rem">
-                    🔄 Actualizar
-                </button>
-            </div>
+            <div id="ordersTable"><div class="empty-msg">Cargando pedidos...</div></div>
         </div>
 
-        <!-- KPIs de jornada -->
-        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px" id="mgmtKpis">
-        </div>
+    </main>
+</div>
 
-        <!-- Pedidos pendientes de aprobación -->
-        <div class="admin-section">
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px; flex-wrap:wrap">
-                <h3 style="margin:0; font-family:var(--font-display); font-size:1.1rem">
-                    📋 Pedidos confirmados por clientes
-                </h3>
-                <span id="pendingCount" class="orders-count-badge">—</span>
-                <span style="font-size:0.8rem; color:var(--text-muted)">
-                    Se actualiza cada 15 segundos
-                </span>
-            </div>
-            <div id="ordersMgmtList"><p class="helper-text">Cargando...</p></div>
-        </div>
-    </section>
+<div id="appToast" class="z-toast"></div>
 
-</main>
-
-<!-- Toast -->
-<div id="appToast" class="toast" role="status" aria-live="polite"></div>
-
+<script src="js/config.js"></script>
 <script src="auth.js"></script>
 <script>
-(function () {
-    "use strict";
+const API = "http://localhost:8090";
+const token = () => localStorage.getItem("pulpapp_jwt");
+const headers = () => ({ "Content-Type":"application/json", "Authorization":`Bearer ${token()}` });
 
-    const BASE = "http://localhost:8090";
+function toast(msg, type) {
+    const el = document.getElementById("appToast");
+    el.textContent = msg;
+    el.className = "z-toast show" + (type === "error" ? " error" : "");
+    clearTimeout(window.__t);
+    window.__t = setTimeout(() => el.className = "z-toast", 3500);
+}
 
-    // ─────────────────────────────────────────────────────────────
-    // Utilidades
-    // ─────────────────────────────────────────────────────────────
+function handleLogout() {
+    localStorage.removeItem("pulpapp_jwt");
+    localStorage.removeItem("pulpapp_user");
+    window.location.href = "login.html";
+}
 
-    function toast(msg, type) {
-        const el = document.getElementById("appToast");
-        if (!el) return;
-        el.textContent = msg;
-        el.className = "toast show" + (type === "error" ? " error" : "");
-        clearTimeout(window.__toastTimer);
-        window.__toastTimer = setTimeout(() => { el.className = "toast"; }, 3200);
-    }
+// ── Navigation ──
+function showSection(name) {
+    const titles = { overview:"Dashboard", tenants:"Tenants", payments:"Pagos Pendientes", users:"Usuarios", products:"Productos", orders:"Pedidos" };
+    document.querySelectorAll("[id^='sec-']").forEach(el => el.classList.add("hidden"));
+    document.getElementById("sec-" + name)?.classList.remove("hidden");
+    document.getElementById("sectionTitle").textContent = titles[name] || name;
+    document.querySelectorAll(".sidebar-link").forEach(l => l.classList.remove("active"));
+    event?.target?.closest?.(".sidebar-link")?.classList.add("active");
 
-    function authHeaders() {
-        return {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${window.PulpAuth?.getToken() || ""}`
-        };
-    }
+    if (name === "overview") loadOverview();
+    if (name === "tenants") loadTenants();
+    if (name === "payments") loadPayments();
+    if (name === "users") loadUsers();
+    if (name === "products") loadProducts();
+    if (name === "orders") loadOrders();
+}
 
-    function formatCurrency(v) {
-        return "$ " + new Intl.NumberFormat("es-CO").format(Number(v || 0));
-    }
+// ── API helpers ──
+async function apiFetch(url) {
+    const res = await fetch(API + url, { headers: headers() });
+    if (!res.ok) throw new Error(`Error ${res.status}`);
+    const text = await res.text();
+    return text ? JSON.parse(text) : [];
+}
 
-    function formatDate(iso) {
-        if (!iso) return "—";
-        return new Date(iso).toLocaleDateString("es-CO", {
-            day: "2-digit", month: "2-digit", year: "numeric",
-            hour: "2-digit", minute: "2-digit"
-        });
-    }
+async function apiAction(url, method, body) {
+    const res = await fetch(API + url, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || e.error || "Error"); }
+    const text = await res.text();
+    return text ? JSON.parse(text) : {};
+}
 
-    function escapeHtml(str) {
-        const d = document.createElement("div");
-        d.appendChild(document.createTextNode(String(str || "")));
-        return d.innerHTML;
-    }
+// ── Load Overview ──
+async function loadOverview() {
+    try {
+        const [tenants, payments, users] = await Promise.all([
+            apiFetch("/tenants").catch(() => []),
+            apiFetch("/admin/payments").catch(() => []),
+            apiFetch("/users").catch(() => [])
+        ]);
+        document.getElementById("statTenants").textContent = tenants.length || 0;
+        document.getElementById("statPayments").textContent = payments.length || 0;
+        document.getElementById("statUsers").textContent = users.length || 0;
+        document.getElementById("statOrders").textContent = "—";
 
-    async function apiFetch(path, options = {}) {
-        const res = await fetch(BASE + path, { headers: authHeaders(), ...options });
-        if (res.status === 401 || res.status === 403) {
-            toast("Sin permisos o sesión expirada.", "error");
-            setTimeout(() => { window.location.href = "login.html"; }, 1800);
-            throw new Error("Unauthorized");
-        }
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.message || `Error ${res.status}`);
-        }
-        const text = await res.text();
-        return text ? JSON.parse(text) : null;
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // Sistema de tabs
-    // ─────────────────────────────────────────────────────────────
-
-    const TAB_LOADERS = {
-        config:        loadConfig,
-        notifications: loadNotifications,
-        frequent:      loadFrequentClients,
-        reports:       loadReports,
-        payments:      loadPayments,
-        invoice:       initInvoice,
-        "orders-mgmt": initOrdersMgmt
-    };
-
-    document.getElementById("adminTabs").querySelectorAll(".dash-tab").forEach(btn => {
-        btn.addEventListener("click", () => {
-            document.querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
-            btn.classList.add("is-active");
-            document.querySelectorAll(".dash-panel").forEach(p => p.classList.add("hidden"));
-            const panel = document.getElementById("tab-" + btn.dataset.tab);
-            if (panel) panel.classList.remove("hidden");
-            TAB_LOADERS[btn.dataset.tab]?.();
-        });
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: CONFIGURACIÓN
-    // ─────────────────────────────────────────────────────────────
-
-    /** Rellena el campo clave con un atajo rápido. */
-    window.quickConfig = function(key) {
-        document.getElementById("cfgKey").value = key;
-        document.getElementById("cfgValue").focus();
-    };
-
-    async function loadConfig() {
-        const container = document.getElementById("configList");
-        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
-        try {
-            const configs = await apiFetch("/admin/config");
-            renderConfigList(configs);
-        } catch (err) {
-            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>
-                ❌ ${escapeHtml(err.message)}</p>`;
-        }
-    }
-
-    function renderConfigList(configs) {
-        const container = document.getElementById("configList");
-        const waBlock   = document.getElementById("whatsappPreviewBlock");
-        const waLink    = document.getElementById("whatsappPreviewLink");
-
-        if (!configs.length) {
-            container.innerHTML = "<p class='helper-text'>No hay configuraciones guardadas aún.</p>";
-            waBlock.style.display = "none";
-            return;
-        }
-
-        container.innerHTML = `<div class="config-list">
-            ${configs.map(c => `
-                <div class="config-card">
-                    <div class="config-key">${escapeHtml(c.configKey)}</div>
-                    <div class="config-value">${escapeHtml(c.configValue || "—")}</div>
-                </div>
-            `).join("")}
-        </div>`;
-
-        // Preview WhatsApp si existe el número
-        const waConfig = configs.find(c => c.configKey === "whatsapp_number");
-        if (waConfig?.configValue) {
-            const num = waConfig.configValue.replace(/\D/g, "");
-            const url = `https://wa.me/${num}?text=Hola%2C%20necesito%20ayuda%20con%20mi%20pedido%20en%20Zentrix`;
-            waLink.href = url;
-            waLink.textContent = url;
-            waBlock.style.display = "block";
+        if (payments.length === 0) {
+            document.getElementById("overviewPayments").innerHTML = '<div class="empty-msg">No hay pagos pendientes 🎉</div>';
         } else {
-            waBlock.style.display = "none";
+            document.getElementById("overviewPayments").innerHTML = renderPaymentsTable(payments.slice(0, 5));
         }
-    }
-
-    document.getElementById("cfgSaveBtn").addEventListener("click", async () => {
-        const btn   = document.getElementById("cfgSaveBtn");
-        const msg   = document.getElementById("cfgMsg");
-        const key   = document.getElementById("cfgKey").value.trim();
-        const value = document.getElementById("cfgValue").value.trim();
-
-        if (!key) { msg.textContent = "La clave es obligatoria."; msg.style.color = "var(--danger)"; return; }
-
-        btn.disabled = true;
-        btn.textContent = "Guardando...";
-        msg.textContent = "";
-
-        try {
-            await apiFetch("/admin/config", {
-                method: "PUT",
-                body: JSON.stringify({ configKey: key, configValue: value })
-            });
-            msg.textContent = "✅ Configuración guardada.";
-            msg.style.color = "var(--brand-dark)";
-            document.getElementById("cfgKey").value   = "";
-            document.getElementById("cfgValue").value = "";
-            loadConfig();
-            toast("Configuración actualizada");
-        } catch (err) {
-            msg.textContent = "❌ " + err.message;
-            msg.style.color = "var(--danger)";
-        } finally {
-            btn.disabled = false;
-            btn.textContent = "Guardar";
-        }
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: NOTIFICACIONES
-    // ─────────────────────────────────────────────────────────────
-
-    async function loadNotifications() {
-        const container = document.getElementById("notifList");
-        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
-        try {
-            const notifs = await apiFetch("/admin/notifications");
-            renderNotifications(notifs, container);
-        } catch (err) {
-            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>
-                ❌ ${escapeHtml(err.message)}</p>`;
-        }
-    }
-
-    function renderNotifications(notifs, container) {
-        if (!notifs.length) {
-            container.innerHTML = "<p class='helper-text'>No hay notificaciones publicadas.</p>";
-            return;
-        }
-        container.innerHTML = `
-            <div class="admin-table-wrap">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Título</th>
-                            <th class="col-hide">Mensaje</th>
-                            <th>Estado</th>
-                            <th>Fecha</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${notifs.map(n => `
-                            <tr>
-                                <td>${n.id}</td>
-                                <td><strong>${escapeHtml(n.title)}</strong></td>
-                                <td class="col-hide" style="color:var(--text-muted); font-size:0.85rem; max-width:260px">
-                                    ${escapeHtml(n.message)}
-                                </td>
-                                <td>
-                                    <span class="${n.active ? 'badge-active' : 'badge-inactive'}">
-                                        ${n.active ? "✅ Activa" : "❌ Inactiva"}
-                                    </span>
-                                </td>
-                                <td style="white-space:nowrap; font-size:0.85rem">
-                                    ${formatDate(n.createdAt)}
-                                </td>
-                                <td>
-                                    ${n.active
-                                        ? `<button class="btn-table-edit btn-deactivate-notif"
-                                                   data-id="${n.id}"
-                                                   style="font-size:0.82rem">
-                                               Desactivar
-                                           </button>`
-                                        : `<span style="color:var(--text-muted); font-size:0.82rem">—</span>`
-                                    }
-                                </td>
-                            </tr>
-                        `).join("")}
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-        // Eventos desactivar
-        container.querySelectorAll(".btn-deactivate-notif").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                try {
-                    await apiFetch(`/admin/notifications/${btn.dataset.id}`, { method: "DELETE" });
-                    toast("Notificación desactivada");
-                    loadNotifications();
-                } catch (err) {
-                    toast(err.message, "error");
-                }
-            });
-        });
-    }
-
-    document.getElementById("notifSaveBtn").addEventListener("click", async () => {
-        const btn     = document.getElementById("notifSaveBtn");
-        const msg     = document.getElementById("notifMsg");
-        const title   = document.getElementById("notifTitle").value.trim();
-        const message = document.getElementById("notifMessage").value.trim();
-
-        if (!title)   { msg.textContent = "El título es obligatorio.";   msg.style.color = "var(--danger)"; return; }
-        if (!message) { msg.textContent = "El mensaje es obligatorio.";  msg.style.color = "var(--danger)"; return; }
-
-        btn.disabled = true;
-        btn.textContent = "Publicando...";
-        msg.textContent = "";
-
-        try {
-            await apiFetch("/admin/notifications", {
-                method: "POST",
-                body: JSON.stringify({ title, message })
-            });
-            msg.textContent = "✅ Notificación publicada.";
-            msg.style.color = "var(--brand-dark)";
-            document.getElementById("notifTitle").value   = "";
-            document.getElementById("notifMessage").value = "";
-            loadNotifications();
-            toast("Notificación publicada");
-        } catch (err) {
-            msg.textContent = "❌ " + err.message;
-            msg.style.color = "var(--danger)";
-        } finally {
-            btn.disabled = false;
-            btn.textContent = "Publicar notificación";
-        }
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: CLIENTES FRECUENTES
-    // ─────────────────────────────────────────────────────────────
-
-    async function loadFrequentClients() {
-        const container = document.getElementById("frequentList");
-        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
-        try {
-            const clients = await apiFetch("/orders/admin/frequent-clients");
-            renderFrequentClients(clients, container);
-        } catch (err) {
-            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>
-                ❌ ${escapeHtml(err.message)}</p>`;
-        }
-    }
-
-    function renderFrequentClients(clients, container) {
-        if (!clients.length) {
-            container.innerHTML = "<p class='helper-text'>No hay pedidos registrados aún.</p>";
-            return;
-        }
-        container.innerHTML = `
-            <div class="admin-table-wrap">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Cliente</th>
-                            <th class="col-hide">Email</th>
-                            <th>Pedidos</th>
-                            <th>Total gastado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${clients.map((c, i) => {
-                            const rankClass = i === 0 ? "top-1" : i === 1 ? "top-2" : i === 2 ? "top-3" : "";
-                            return `
-                                <tr>
-                                    <td>
-                                        <span class="rank-badge ${rankClass}">${i + 1}</span>
-                                    </td>
-                                    <td><strong>${escapeHtml(c.clientName || "—")}</strong></td>
-                                    <td class="col-hide" style="color:var(--text-muted); font-size:0.87rem">
-                                        ${escapeHtml(c.clientEmail || "—")}
-                                    </td>
-                                    <td>
-                                        <strong style="color:var(--brand-dark)">${c.orderCount}</strong>
-                                        pedido${c.orderCount !== 1 ? "s" : ""}
-                                    </td>
-                                    <td style="font-weight:700; color:var(--brand-dark)">
-                                        ${formatCurrency(c.totalSpent)}
-                                    </td>
-                                </tr>
-                            `;
-                        }).join("")}
-                    </tbody>
-                </table>
-            </div>
-        `;
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: REPORTES ADMIN
-    // ─────────────────────────────────────────────────────────────
-
-    let _ordersCache  = null; // cache para no repetir fetch al cambiar sub-tab
-    let _sellersCache = null;
-
-    /** Carga inicial del módulo de reportes */
-    async function loadReports() {
-        // Activar sub-tabs
-        document.getElementById("reportSubTabs").querySelectorAll(".dash-tab").forEach(btn => {
-            btn.addEventListener("click", () => {
-                document.getElementById("reportSubTabs")
-                    .querySelectorAll(".dash-tab").forEach(b => b.classList.remove("is-active"));
-                btn.classList.add("is-active");
-                ["summary","history","sellers"].forEach(id => {
-                    document.getElementById("subtab-" + id).classList.add("hidden");
-                });
-                document.getElementById("subtab-" + btn.dataset.subtab).classList.remove("hidden");
-                if (btn.dataset.subtab === "summary")  renderSummary();
-                if (btn.dataset.subtab === "history")  renderHistory();
-                if (btn.dataset.subtab === "sellers")  renderSellers();
-            });
-        });
-
-        // Cargar datos y mostrar resumen por defecto
-        await fetchOrdersData();
-        renderSummary();
-    }
-
-    /** Obtiene pedidos desde /orders/seller y los cachea */
-    async function fetchOrdersData() {
-        if (_ordersCache) return;
-        try {
-            _ordersCache = await apiFetch("/orders/seller");
-        } catch (err) {
-            _ordersCache = [];
-            toast("No se pudieron cargar los pedidos: " + err.message, "error");
-        }
-    }
-
-    // ── Utilidades de procesamiento ──────────────────────────────
-
-    function fmtCurrency(v) {
-        return "$ " + new Intl.NumberFormat("es-CO").format(Math.round(Number(v || 0)));
-    }
-
-    function toDateKey(iso) {
-        const d = new Date(iso);
-        return String(d.getDate()).padStart(2,"0") + "/" +
-               String(d.getMonth()+1).padStart(2,"0") + "/" + d.getFullYear();
-    }
-
-    function toHour(iso) { return new Date(iso).getHours(); }
-
-    function esc(str) {
-        const d = document.createElement("div");
-        d.appendChild(document.createTextNode(String(str || "")));
-        return d.innerHTML;
-    }
-
-    // ── SUB-TAB: Resumen general ─────────────────────────────────
-
-    function renderSummary() {
-        const orders = _ordersCache || [];
-
-        // KPIs
-        const total    = orders.length;
-        const revenue  = orders.reduce((s,o) => s + Number(o.total||0), 0);
-        const unique   = new Set(orders.map(o => o.clientEmail || o.clientName)).size;
-        const avg      = total > 0 ? revenue / total : 0;
-
-        document.getElementById("rptKpiGrid").innerHTML = `
-            <div class="rpt-kpi-card">
-                <span class="rpt-kpi-icon">📦</span>
-                <span class="rpt-kpi-label">Total pedidos</span>
-                <span class="rpt-kpi-value">${total}</span>
-                <span class="rpt-kpi-sub">pedidos registrados</span>
-            </div>
-            <div class="rpt-kpi-card">
-                <span class="rpt-kpi-icon">💰</span>
-                <span class="rpt-kpi-label">Ingresos totales</span>
-                <span class="rpt-kpi-value">${fmtCurrency(revenue)}</span>
-                <span class="rpt-kpi-sub">suma de todos los pedidos</span>
-            </div>
-            <div class="rpt-kpi-card">
-                <span class="rpt-kpi-icon">👥</span>
-                <span class="rpt-kpi-label">Clientes únicos</span>
-                <span class="rpt-kpi-value">${unique}</span>
-                <span class="rpt-kpi-sub">emails distintos</span>
-            </div>
-            <div class="rpt-kpi-card">
-                <span class="rpt-kpi-icon">🎯</span>
-                <span class="rpt-kpi-label">
-                    Ticket promedio
-                    <span class="kpi-tooltip" aria-label="¿Qué es el ticket promedio?">
-                        ?
-                        <span class="kpi-tooltip-text">
-                            Ingresos totales ÷ número de pedidos.<br>
-                            Indica cuánto gasta en promedio un cliente por pedido.
-                            Si sube, los clientes compran más. Si baja, conviene incentivar compras más grandes.
-                        </span>
-                    </span>
-                </span>
-                <span class="rpt-kpi-value">${fmtCurrency(avg)}</span>
-                <span class="rpt-kpi-sub">ingresos ÷ pedidos</span>
-            </div>
-        `;
-
-        // Ventas por día
-        const dayMap = new Map();
-        orders.forEach(o => {
-            if (!o.fecha) return;
-            const k = toDateKey(o.fecha);
-            if (!dayMap.has(k)) dayMap.set(k, { date: k, count: 0, revenue: 0, _raw: o.fecha });
-            const e = dayMap.get(k);
-            e.count++;
-            e.revenue += Number(o.total || 0);
-        });
-        const days = Array.from(dayMap.values()).sort((a,b) => new Date(a._raw) - new Date(b._raw));
-
-        const totalCount   = days.reduce((s,r) => s + r.count, 0);
-        const totalRevenue = days.reduce((s,r) => s + r.revenue, 0);
-
-        document.getElementById("rptDailyBody").innerHTML = days.length ? [
-            ...days.map(r => `
-                <tr>
-                    <td>${esc(r.date)}</td>
-                    <td class="text-right">${r.count}</td>
-                    <td class="text-right">${fmtCurrency(r.revenue)}</td>
-                    <td class="text-right">${fmtCurrency(r.count > 0 ? r.revenue/r.count : 0)}</td>
-                </tr>`),
-            `<tr class="total-row">
-                <td><strong>Total</strong></td>
-                <td class="text-right"><strong>${totalCount}</strong></td>
-                <td class="text-right"><strong>${fmtCurrency(totalRevenue)}</strong></td>
-                <td class="text-right"><strong>${fmtCurrency(totalCount > 0 ? totalRevenue/totalCount : 0)}</strong></td>
-            </tr>`
-        ].join("") : `<tr><td colspan="4" class="rpt-empty">Sin datos de ventas.</td></tr>`;
-
-        // Pedidos por hora
-        const counts = new Array(24).fill(0);
-        orders.forEach(o => { if (o.fecha) counts[toHour(o.fecha)]++; });
-        const maxC = Math.max(...counts, 1);
-
-        const chart = document.getElementById("rptHourlyChart");
-        chart.innerHTML = counts.map((c, h) => `
-            <div class="rpt-bar-row">
-                <span class="rpt-bar-label">${String(h).padStart(2,"0")}h</span>
-                <div class="rpt-bar-track">
-                    <div class="rpt-bar-fill" style="width:${c > 0 ? Math.max(Math.round(c/maxC*100),2) : 0}%; opacity:${c===0?0.15:1}"></div>
-                </div>
-                <span class="rpt-bar-count" style="opacity:${c===0?0.35:1}">${c}</span>
-            </div>`).join("");
-
-        // Animar barras
-        requestAnimationFrame(() => {
-            chart.querySelectorAll(".rpt-bar-fill").forEach((bar, i) => {
-                const w = bar.style.width;
-                bar.style.width = "0";
-                setTimeout(() => { bar.style.width = w; }, i * 15);
-            });
-        });
-    }
-
-    // ── SUB-TAB: Historial clientes ──────────────────────────────
-
-    function renderHistory() {
-        const orders = _ordersCache || [];
-        const badge  = document.getElementById("rptHistoryCount");
-        if (badge) badge.textContent = `${orders.length} pedido${orders.length !== 1 ? "s" : ""}`;
-
-        const tbody = document.getElementById("rptHistoryBody");
-
-        if (!orders.length) {
-            tbody.innerHTML = `<tr><td colspan="6" class="rpt-empty">No hay pedidos registrados.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = orders.map(order => {
-            const d    = order.fecha ? new Date(order.fecha) : null;
-            const date = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit",year:"numeric"}) : "—";
-            const time = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
-            const itemCount = (order.items || []).length;
-
-            const chips = (order.items || []).map(it => `
-                <div class="rpt-chip">
-                    <span class="rpt-chip-name">${esc(it.productName || "Producto #" + it.productId)}</span>
-                    <span class="rpt-chip-qty">× ${it.cantidad}</span>
-                </div>`).join("");
-
-            return `
-                <tr>
-                    <td><strong>#${order.id}</strong></td>
-                    <td><strong>${esc(order.clientName || "—")}</strong></td>
-                    <td style="color:var(--text-muted);font-size:0.85rem">${esc(order.clientEmail || "—")}</td>
-                    <td>
-                        <button class="btn-rpt-expand" data-target="rpt-exp-${order.id}" type="button">
-                            📦 Ver (${itemCount}) <span style="font-style:normal;transition:transform 0.2s">▾</span>
-                        </button>
-                    </td>
-                    <td style="white-space:nowrap;font-size:0.87rem">${date}<br><span style="color:var(--text-muted);font-size:0.8rem">${time}</span></td>
-                    <td class="text-right" style="font-weight:700;color:var(--brand-dark)">${fmtCurrency(order.total)}</td>
-                </tr>
-                <tr class="rpt-expand-row">
-                    <td colspan="6">
-                        <div class="rpt-expand-content" id="rpt-exp-${order.id}">
-                            <div class="rpt-chips">${chips || "<span style='color:var(--text-muted)'>Sin productos</span>"}</div>
-                        </div>
-                    </td>
-                </tr>`;
-        }).join("");
-
-        // Expand/collapse
-        tbody.querySelectorAll(".btn-rpt-expand").forEach(btn => {
-            btn.addEventListener("click", () => {
-                const content = document.getElementById(btn.dataset.target);
-                const isOpen  = content.classList.contains("is-open");
-                tbody.querySelectorAll(".rpt-expand-content.is-open").forEach(el => el.classList.remove("is-open"));
-                tbody.querySelectorAll(".btn-rpt-expand.is-open").forEach(el => el.classList.remove("is-open"));
-                if (!isOpen) { content.classList.add("is-open"); btn.classList.add("is-open"); }
-            });
-        });
-    }
-
-    // ── SUB-TAB: Vendedores ──────────────────────────────────────
-
-    async function renderSellers() {
-        const container = document.getElementById("rptSellersContent");
-        container.innerHTML = "<p class='rpt-empty'>Cargando vendedores...</p>";
-
-        try {
-            // Obtener lista de vendedores (ROLE_SELLER) desde /users
-            if (!_sellersCache) {
-                const users = await apiFetch("/users");
-                _sellersCache = users.filter(u => u.role === "ROLE_SELLER");
-            }
-
-            const sellers = _sellersCache;
-            const orders  = _ordersCache || [];
-
-            if (!sellers.length) {
-                container.innerHTML = "<p class='rpt-empty'>No hay vendedores registrados.</p>";
-                return;
-            }
-
-            // Métricas globales del sistema para contexto
-            const totalOrders  = orders.length;
-            const totalRevenue = orders.reduce((s,o) => s + Number(o.total||0), 0);
-
-            container.innerHTML = `
-                <!-- Resumen global del sistema -->
-                <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:24px">
-                    <div class="rpt-kpi-card">
-                        <span class="rpt-kpi-icon">🏷️</span>
-                        <span class="rpt-kpi-label">Vendedores activos</span>
-                        <span class="rpt-kpi-value">${sellers.filter(s => s.activo !== false).length}</span>
-                        <span class="rpt-kpi-sub">de ${sellers.length} registrados</span>
-                    </div>
-                    <div class="rpt-kpi-card">
-                        <span class="rpt-kpi-icon">📦</span>
-                        <span class="rpt-kpi-label">Pedidos totales</span>
-                        <span class="rpt-kpi-value">${totalOrders}</span>
-                        <span class="rpt-kpi-sub">gestionados en el sistema</span>
-                    </div>
-                    <div class="rpt-kpi-card">
-                        <span class="rpt-kpi-icon">💰</span>
-                        <span class="rpt-kpi-label">Ingresos totales</span>
-                        <span class="rpt-kpi-value">${fmtCurrency(totalRevenue)}</span>
-                        <span class="rpt-kpi-sub">suma de todos los pedidos</span>
-                    </div>
-                </div>
-
-                <!-- Tarjetas de vendedores -->
-                <div style="display:flex; flex-direction:column; gap:12px">
-                    ${sellers.map(s => {
-                        const initials = (s.name || "?").split(" ").map(w => w[0]).join("").slice(0,2).toUpperCase();
-                        const estado   = s.activo !== false;
-                        return `
-                            <div class="seller-stat-card">
-                                <div class="seller-stat-avatar">${esc(initials)}</div>
-                                <div class="seller-stat-info">
-                                    <div class="seller-stat-name">${esc(s.name || "—")}</div>
-                                    <div class="seller-stat-email">${esc(s.email || "—")}</div>
-                                    <div style="margin-top:4px">
-                                        <span style="font-size:0.75rem; padding:2px 8px; border-radius:999px;
-                                            background:${estado ? "rgba(13,122,77,0.1)" : "rgba(184,50,40,0.1)"};
-                                            color:${estado ? "var(--brand-dark)" : "var(--danger)"}; font-weight:700">
-                                            ${estado ? "✅ Activo" : "❌ Inactivo"}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="seller-stat-meta">
-                                    <div class="seller-stat-item">
-                                        <strong>${esc(s.cedula || "—")}</strong>
-                                        <span>Cédula</span>
-                                    </div>
-                                    <div class="seller-stat-item">
-                                        <strong>${esc(s.telefono || "—")}</strong>
-                                        <span>Teléfono</span>
-                                    </div>
-                                </div>
-                            </div>`;
-                    }).join("")}
-                </div>
-            `;
-        } catch (err) {
-            container.innerHTML = `<p class="rpt-empty" style="color:var(--danger)">❌ ${esc(err.message)}</p>`;
-        }
-    }
-
-    /** Expande o colapsa una sección colapsable por su ID */
-    window.toggleSection = function(id) {
-        const section = document.getElementById(id);
-        if (!section) return;
-        section.classList.toggle("is-open");
-        const toggle = section.querySelector(".rpt-section-toggle");
-        if (toggle) {
-            toggle.innerHTML = section.classList.contains("is-open")
-                ? 'Ocultar <i class="arrow" style="transform:rotate(180deg)">▾</i>'
-                : 'Ver <i class="arrow">▾</i>';
-        }
-    };
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: GESTIÓN DE PEDIDOS EN TIEMPO REAL
-    // ─────────────────────────────────────────────────────────────
-
-    var _pollInterval   = null;   // intervalo de polling
-    var _lastOrderCount = 0;      // para detectar pedidos nuevos
-    var _jornadaActiva  = false;  // estado de la jornada
-    var _adminEmail     = "";     // email del admin para auditoría
-
-    /** Inicializa el módulo — se llama al abrir el tab */
-    async function initOrdersMgmt() {
-        _adminEmail = window.PulpAuth?.getSessionUser()?.email || "admin@pulpapp.com";
-
-        // Botón jornada
-        document.getElementById("btnJornada").addEventListener("click", toggleJornada);
-        document.getElementById("btnRefreshOrders").addEventListener("click", refreshOrders);
-
-        // Cargar estado de jornada desde app_config
-        await loadJornadaStatus();
-
-        // Primera carga de pedidos
-        await refreshOrders();
-
-        // Iniciar polling cada 15 segundos
-        if (_pollInterval) clearInterval(_pollInterval);
-        _pollInterval = setInterval(pollOrders, 15000);
-    }
-
-    /** Carga el estado de la jornada desde app_config */
-    async function loadJornadaStatus() {
-        try {
-            const configs = await apiFetch("/admin/config");
-            const cfg = configs.find(c => c.configKey === "jornada_activa");
-            _jornadaActiva = cfg?.configValue === "true";
-        } catch { _jornadaActiva = false; }
-        renderJornadaBtn();
-    }
-
-    /** Renderiza el botón de jornada según el estado */
-    function renderJornadaBtn() {
-        const btn    = document.getElementById("btnJornada");
-        const status = document.getElementById("jornadaStatus");
-        if (_jornadaActiva) {
-            btn.textContent = "🔴 Finalizar jornada";
-            btn.className   = "jornada-btn close";
-            status.textContent = "Jornada activa — recibiendo pedidos";
-            status.style.color = "#1b5e20";
-        } else {
-            btn.textContent = "🟢 Iniciar jornada";
-            btn.className   = "jornada-btn open";
-            status.textContent = "Jornada cerrada — no se reciben pedidos";
-            status.style.color = "var(--text-muted)";
-        }
-    }
-
-    /** Alterna el estado de la jornada */
-    async function toggleJornada() {
-        const btn = document.getElementById("btnJornada");
-        btn.disabled = true;
-        try {
-            const newVal = !_jornadaActiva;
-            await apiFetch("/admin/config", {
-                method: "PUT",
-                body: JSON.stringify({ configKey: "jornada_activa", configValue: String(newVal) })
-            });
-            _jornadaActiva = newVal;
-            renderJornadaBtn();
-
-            // Crear notificación de apertura/cierre
-            const msg = newVal
-                ? "🟢 Jornada iniciada — Zentrix está recibiendo pedidos."
-                : "🔴 Jornada finalizada — Zentrix cerró la recepción de pedidos.";
-            await apiFetch("/admin/notifications", {
-                method: "POST",
-                body: JSON.stringify({ title: newVal ? "Jornada iniciada" : "Jornada finalizada", message: msg })
-            }).catch(() => {});
-
-            toast(newVal ? "✅ Jornada iniciada" : "🔴 Jornada finalizada");
-        } catch (err) {
-            toast("Error al cambiar jornada: " + err.message, "error");
-        } finally {
-            btn.disabled = false;
-        }
-    }
-
-    /** Polling silencioso — detecta pedidos nuevos y activa badge */
-    async function pollOrders() {
-        try {
-            const pending = await apiFetch("/orders/admin/payments");
-            const count   = pending.length;
-
-            // Si llegaron pedidos nuevos → badge + sonido
-            if (count > _lastOrderCount && _lastOrderCount >= 0) {
-                const badge = document.getElementById("ordersBadge");
-                if (badge) badge.style.display = "inline";
-                playAlert();
-                toast("🛒 " + (count - _lastOrderCount) + " pedido(s) nuevo(s) confirmado(s)");
-            }
-
-            _lastOrderCount = count;
-
-            // Si el tab está abierto, actualizar la lista
-            const panel = document.getElementById("tab-orders-mgmt");
-            if (panel && !panel.classList.contains("hidden")) {
-                renderOrdersMgmt(pending);
-            }
-        } catch { /* silencioso */ }
-    }
-
-    /** Carga y renderiza pedidos pendientes */
-    async function refreshOrders() {
-        const container = document.getElementById("ordersMgmtList");
-        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
-
-        // Ocultar badge al abrir el tab
-        const badge = document.getElementById("ordersBadge");
-        if (badge) badge.style.display = "none";
-
-        try {
-            // Pedidos pendientes de aprobación
-            const pending = await apiFetch("/orders/admin/payments");
-            // Todos los pedidos para KPIs
-            const all     = await apiFetch("/orders/seller");
-
-            _lastOrderCount = pending.length;
-
-            // KPIs de jornada
-            const approved  = all.filter(o => o.paymentStatus === "APPROVED").length;
-            const rejected  = all.filter(o => o.paymentStatus === "REJECTED").length;
-            const revenue   = all.filter(o => o.paymentStatus === "APPROVED")
-                                 .reduce((s, o) => s + Number(o.total || 0), 0);
-
-            document.getElementById("mgmtKpis").innerHTML = [
-                { icon: "⏳", label: "Pendientes",  val: pending.length, color: "#e65100" },
-                { icon: "✅", label: "Aprobados",   val: approved,       color: "#1b5e20" },
-                { icon: "❌", label: "Rechazados",  val: rejected,       color: "#b71c1c" },
-                { icon: "💰", label: "Ingresos",    val: fmtCurrency(revenue), color: "var(--brand-dark)" }
-            ].map(k => `
-                <div class="rpt-kpi-card">
-                    <span class="rpt-kpi-icon">${k.icon}</span>
-                    <span class="rpt-kpi-label">${k.label}</span>
-                    <span class="rpt-kpi-value" style="color:${k.color}">${k.val}</span>
-                </div>`).join("");
-
-            document.getElementById("pendingCount").textContent =
-                pending.length + " pedido" + (pending.length !== 1 ? "s" : "");
-
-            renderOrdersMgmt(pending);
-
-        } catch (err) {
-            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>❌ ${esc(err.message)}</p>`;
-        }
-    }
-
-    /** Renderiza la lista de pedidos pendientes */
-    function renderOrdersMgmt(orders) {
-        const container = document.getElementById("ordersMgmtList");
-
-        if (!orders.length) {
-            container.innerHTML = `
-                <div style="text-align:center; padding:40px 16px; color:var(--text-muted)">
-                    <div style="font-size:2.5rem; margin-bottom:12px">✅</div>
-                    <p style="font-weight:600; font-size:1rem">No hay pedidos pendientes</p>
-                    <p style="font-size:0.88rem; margin-top:4px">Los pedidos confirmados por clientes aparecerán aquí.</p>
-                </div>`;
-            return;
-        }
-
-        container.innerHTML = orders.map(order => {
-            const d    = order.paidAt ? new Date(order.paidAt) : null;
-            const time = d ? d.toLocaleTimeString("es-CO", {hour:"2-digit",minute:"2-digit"}) : "—";
-            const date = d ? d.toLocaleDateString("es-CO", {day:"2-digit",month:"2-digit"}) : "—";
-
-            return `
-                <div class="order-mgmt-card new-order" id="mgmt-card-${order.orderId}">
-                    <div class="order-mgmt-header">
-                        <div>
-                            <strong style="font-size:1rem">Pedido #${order.orderId}</strong>
-                            <span style="color:var(--text-muted); font-size:0.85rem; margin-left:8px">
-                                Confirmado: ${date} ${time}
-                            </span>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap">
-                            <span style="font-weight:700; color:var(--brand-dark); font-size:1rem">
-                                ${fmtCurrency(order.total)}
-                            </span>
-                            <span style="font-weight:700; color:var(--brand-dark); font-size:0.85rem">
-                                Único: ${fmtCurrency(order.uniqueAmount)}
-                            </span>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap">
-                        <button class="btn btn-primary btn-mgmt-approve" data-id="${order.orderId}"
-                                style="min-height:40px; padding:0 18px; font-size:0.88rem">
-                            ✅ Aprobar pago
-                        </button>
-                        <button class="btn btn-danger btn-mgmt-reject" data-id="${order.orderId}"
-                                style="min-height:40px; padding:0 18px; font-size:0.88rem">
-                            ❌ Rechazar
-                        </button>
-                    </div>
-                </div>`;
-        }).join("");
-
-        // Eventos aprobar
-        container.querySelectorAll(".btn-mgmt-approve").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                btn.disabled = true;
-                try {
-                    await apiFetch("/orders/" + btn.dataset.id + "/approve", {
-                        method: "PUT",
-                        body: JSON.stringify({ adminEmail: _adminEmail })
-                    });
-                    // Crear notificación de confirmación
-                    await apiFetch("/admin/notifications", {
-                        method: "POST",
-                        body: JSON.stringify({
-                            title: "✅ Pago aprobado — Pedido #" + btn.dataset.id,
-                            message: "El administrador aprobó el pago del pedido #" + btn.dataset.id + ". El pedido está en proceso."
-                        })
-                    }).catch(() => {});
-                    toast("✅ Pago aprobado — Pedido #" + btn.dataset.id);
-                    refreshOrders();
-                } catch (err) { toast(err.message, "error"); btn.disabled = false; }
-            });
-        });
-
-        // Eventos rechazar
-        container.querySelectorAll(".btn-mgmt-reject").forEach(btn => {
-            btn.addEventListener("click", async () => {
-                btn.disabled = true;
-                try {
-                    await apiFetch("/orders/" + btn.dataset.id + "/reject", {
-                        method: "PUT",
-                        body: JSON.stringify({ adminEmail: _adminEmail })
-                    });
-                    toast("❌ Pedido #" + btn.dataset.id + " rechazado");
-                    refreshOrders();
-                } catch (err) { toast(err.message, "error"); btn.disabled = false; }
-            });
-        });
-    }
-
-    /** Sonido de alerta para pedidos nuevos (beep con Web Audio API) */
-    function playAlert() {
-        try {
-            const ctx  = new (window.AudioContext || window.webkitAudioContext)();
-            const osc  = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-            osc.frequency.value = 880;
-            gain.gain.setValueAtTime(0.3, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-            osc.start(ctx.currentTime);
-            osc.stop(ctx.currentTime + 0.4);
-        } catch { /* silencioso si el navegador bloquea audio */ }
-    }
-
-    // Limpiar polling al salir del tab
-    document.getElementById("adminTabs").addEventListener("click", function(e) {
-        const btn = e.target.closest(".dash-tab");
-        if (!btn) return;
-        if (btn.dataset.tab !== "orders-mgmt" && _pollInterval) {
-            clearInterval(_pollInterval);
-            _pollInterval = null;
-        }
-    });
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: PAGOS POR TRANSFERENCIA
-    // ─────────────────────────────────────────────────────────────
-
-    const PAYMENT_LABELS = {
-        PENDING_PAYMENT:  { text: "⏳ Pendiente de pago",     color: "#e65100", bg: "#fff3e0" },
-        PENDING_APPROVAL: { text: "🔍 Pendiente de aprobación", color: "#1565c0", bg: "#e3f2fd" },
-        APPROVED:         { text: "✅ Aprobado",               color: "#1b5e20", bg: "#e8f5e9" },
-        REJECTED:         { text: "❌ Rechazado",              color: "#b71c1c", bg: "#ffebee" }
-    };
-
-    function paymentBadge(status) {
-        const s = PAYMENT_LABELS[status] || { text: status, color: "#555", bg: "#f5f5f5" };
-        return `<span style="padding:3px 10px; border-radius:999px; font-size:0.8rem; font-weight:700;
-                    background:${s.bg}; color:${s.color}">${s.text}</span>`;
-    }
-
-    async function loadPayments() {
-        document.getElementById("refreshPaymentsBtn").onclick = loadPayments;
-
-        const container = document.getElementById("pendingPaymentsList");
-        const kpisEl    = document.getElementById("paymentKpis");
-        container.innerHTML = "<p class='helper-text'>Cargando...</p>";
-
-        try {
-            // Cargar todos los pedidos para KPIs globales
-            const allOrders = await apiFetch("/orders/seller");
-            const byStatus  = { PENDING_PAYMENT: 0, PENDING_APPROVAL: 0, APPROVED: 0, REJECTED: 0 };
-            allOrders.forEach(o => { if (byStatus[o.paymentStatus] !== undefined) byStatus[o.paymentStatus]++; });
-
-            kpisEl.innerHTML = Object.entries(PAYMENT_LABELS).map(([key, lbl]) => `
-                <div class="rpt-kpi-card">
-                    <span class="rpt-kpi-label" style="color:${lbl.color}">${lbl.text}</span>
-                    <span class="rpt-kpi-value" style="color:${lbl.color}">${byStatus[key] || 0}</span>
-                    <span class="rpt-kpi-sub">pedidos</span>
-                </div>`).join("");
-
-            // Pedidos pendientes de aprobación
-            const pending = await apiFetch("/orders/admin/payments");
-
-            if (!pending.length) {
-                container.innerHTML = "<p class='helper-text'>✅ No hay pagos pendientes de aprobación.</p>";
-                return;
-            }
-
-            container.innerHTML = `
-                <div class="admin-table-wrap">
-                    <table class="admin-table">
-                        <thead>
-                            <tr>
-                                <th>Pedido</th>
-                                <th>Total</th>
-                                <th>Monto único</th>
-                                <th>Cliente marcó "Ya pagué"</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${pending.map(p => `
-                                <tr id="pay-row-${p.orderId}">
-                                    <td><strong>#${p.orderId}</strong></td>
-                                    <td>${fmtCurrency(p.total)}</td>
-                                    <td style="font-weight:700; color:var(--brand-dark)">${fmtCurrency(p.uniqueAmount)}</td>
-                                    <td style="font-size:0.85rem; color:var(--text-muted)">
-                                        ${p.paidAt ? new Date(p.paidAt).toLocaleString("es-CO") : "—"}
-                                    </td>
-                                    <td>${paymentBadge(p.paymentStatus)}</td>
-                                    <td>
-                                        <div style="display:flex; gap:8px; flex-wrap:wrap">
-                                            <button class="btn btn-primary btn-approve-pay"
-                                                    data-id="${p.orderId}"
-                                                    style="min-height:36px; padding:0 14px; font-size:0.82rem">
-                                                ✅ Aprobar
-                                            </button>
-                                            <button class="btn btn-danger btn-reject-pay"
-                                                    data-id="${p.orderId}"
-                                                    style="min-height:36px; padding:0 14px; font-size:0.82rem">
-                                                ❌ Rechazar
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>`).join("")}
-                        </tbody>
-                    </table>
-                </div>`;
-
-            const adminEmail = window.PulpAuth?.getSessionUser()?.email || "admin@pulpapp.com";
-
-            container.querySelectorAll(".btn-approve-pay").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    btn.disabled = true;
-                    try {
-                        await apiFetch(`/orders/${btn.dataset.id}/approve`, {
-                            method: "PUT",
-                            body: JSON.stringify({ adminEmail })
-                        });
-                        toast("✅ Pago aprobado");
-                        loadPayments();
-                    } catch (err) { toast(err.message, "error"); btn.disabled = false; }
-                });
-            });
-
-            container.querySelectorAll(".btn-reject-pay").forEach(btn => {
-                btn.addEventListener("click", async () => {
-                    btn.disabled = true;
-                    try {
-                        await apiFetch(`/orders/${btn.dataset.id}/reject`, {
-                            method: "PUT",
-                            body: JSON.stringify({ adminEmail })
-                        });
-                        toast("❌ Pago rechazado");
-                        loadPayments();
-                    } catch (err) { toast(err.message, "error"); btn.disabled = false; }
-                });
-            });
-
-        } catch (err) {
-            container.innerHTML = `<p class='helper-text' style='color:var(--danger)'>❌ ${esc(err.message)}</p>`;
-        }
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // MÓDULO: FACTURA
-    // ─────────────────────────────────────────────────────────────
-
-    function initInvoice() {
-        document.getElementById("loadInvoiceBtn").onclick = loadInvoiceOrder;
-        document.getElementById("clearInvoiceBtn").onclick = clearInvoice;
-        document.getElementById("downloadPdfBtn").onclick  = downloadInvoicePdf;
-        document.getElementById("invoiceOrderId").addEventListener("keydown", e => {
-            if (e.key === "Enter") loadInvoiceOrder();
-        });
-    }
-
-    async function loadInvoiceOrder() {
-        const idInput = document.getElementById("invoiceOrderId");
-        const msg     = document.getElementById("invoiceMsg");
-        const orderId = idInput.value.trim();
-        msg.textContent = "";
-
-        if (!orderId) { msg.textContent = "Ingresa el número de pedido."; return; }
-
-        try {
-            // Cargar pedido enriquecido desde /orders/seller
-            const orders = await apiFetch("/orders/seller");
-            const order  = orders.find(o => String(o.id) === String(orderId));
-
-            if (!order) {
-                msg.textContent = `No se encontró el pedido #${orderId}.`;
-                return;
-            }
-
-            // Cargar estado de pago
-            let payStatus = null;
-            try { payStatus = await apiFetch(`/orders/${orderId}/payment`); } catch { /* opcional */ }
-
-            renderInvoicePreview(order, payStatus);
-        } catch (err) {
-            msg.textContent = "❌ " + err.message;
-        }
-    }
-
-    function renderInvoicePreview(order, payStatus) {
-        const d = order.fecha ? new Date(order.fecha) : new Date();
-
-        document.getElementById("invNumber").textContent =
-            `Factura #${String(order.id).padStart(6, "0")}`;
-        document.getElementById("invDate").textContent =
-            d.toLocaleDateString("es-CO", { day:"2-digit", month:"long", year:"numeric" });
-        document.getElementById("invClientName").textContent  = order.clientName  || "—";
-        document.getElementById("invClientEmail").textContent = order.clientEmail || "—";
-        document.getElementById("invTotal").textContent       = fmtCurrency(order.total);
-
-        // Filas de productos
-        document.getElementById("invItemsBody").innerHTML = (order.items || []).map(item => `
-            <tr style="border-bottom:1px solid var(--line)">
-                <td style="padding:10px 12px">${esc(item.productName || "Producto #" + item.productId)}</td>
-                <td style="padding:10px 12px; text-align:center">${item.cantidad}</td>
-                <td style="padding:10px 12px; text-align:right">${fmtCurrency(item.precioUnitario)}</td>
-                <td style="padding:10px 12px; text-align:right; font-weight:600">${fmtCurrency(item.subtotal)}</td>
-            </tr>`).join("");
-
-        // Estado de pago
-        const status = payStatus?.paymentStatus || "PENDING_PAYMENT";
-        const lbl    = PAYMENT_LABELS[status] || { text: status, color: "#555", bg: "#f5f5f5" };
-        document.getElementById("invPaymentBadge").innerHTML =
-            `Estado de pago: <span style="color:${lbl.color}">${lbl.text}</span>` +
-            (payStatus?.uniqueAmount ? ` · Monto único: <strong>${fmtCurrency(payStatus.uniqueAmount)}</strong>` : "") +
-            (payStatus?.approvedBy   ? ` · Aprobado por: ${esc(payStatus.approvedBy)}` : "");
-
-        document.getElementById("invoicePreview").classList.remove("hidden");
-    }
-
-    function clearInvoice() {
-        document.getElementById("invoicePreview").classList.add("hidden");
-        document.getElementById("invoiceOrderId").value = "";
-        document.getElementById("invoiceMsg").textContent = "";
-    }
-
-    /**
-     * Genera y descarga la factura en PDF usando la API nativa del navegador (print).
-     * No requiere librería externa — abre una ventana de impresión con el contenido
-     * de la factura ya renderizado.
-     */
-    function downloadInvoicePdf() {
-        const doc = document.getElementById("invoiceDocument");
-        if (!doc) return;
-
-        const invNum  = document.getElementById("invNumber").textContent;
-        const content = doc.innerHTML;
-
-        const win = window.open("", "_blank");
-        win.document.write(`
-            <!DOCTYPE html>
-            <html lang="es">
-            <head>
-                <meta charset="UTF-8">
-                <title>${invNum} — Zentrix</title>
-                <style>
-                    body { font-family: 'DM Sans', Arial, sans-serif; margin: 32px; color: #152118; }
-                    table { width: 100%; border-collapse: collapse; }
-                    th, td { padding: 10px 12px; }
-                    hr { border: none; border-top: 1.5px solid #ddd; margin: 16px 0; }
-                    @media print { body { margin: 16px; } }
-                </style>
-            </head>
-            <body>${content}</body>
-            </html>`);
-        win.document.close();
-        win.focus();
-        setTimeout(() => { win.print(); }, 400);
-    }
-
-    /** Expande o colapsa una sección colapsable por su ID */
-    window.toggleSection = function(id) {        const section = document.getElementById(id);
-        if (!section) return;
-        section.classList.toggle("is-open");
-        const toggle = section.querySelector(".rpt-section-toggle");
-        if (toggle) {
-            toggle.innerHTML = section.classList.contains("is-open")
-                ? 'Ocultar <i class="arrow" style="transform:rotate(180deg)">▾</i>'
-                : 'Ver <i class="arrow">▾</i>';
-        }
-    };
-
-    // ─────────────────────────────────────────────────────────────
-    // INICIALIZACIÓN
-    // ─────────────────────────────────────────────────────────────
-
-    document.addEventListener("DOMContentLoaded", () => {
-
-        // Guard: sin sesión válida → login
-        if (!window.PulpAuth?.isTokenValid()) {
-            window.location.href = "login.html";
-            return;
-        }
-
-        const user = window.PulpAuth.getSessionUser();
-
-        // Guard: solo ADMIN puede acceder
-        if (user?.role !== "ROLE_ADMIN") {
-            toast("Acceso restringido a administradores.", "error");
-            setTimeout(() => { window.location.href = "dashboard.html"; }, 1800);
-            return;
-        }
-
-        // Contador carrito en navbar
-        try {
-            const cart = JSON.parse(localStorage.getItem("pulpapp_cart") || "[]");
-            const total = cart.reduce((s, i) => s + (i.cantidad || 0), 0);
-            const navCount = document.getElementById("navCartCount");
-            if (navCount) navCount.textContent = String(total);
-        } catch { /* silencioso */ }
-
-        // Logout
-        document.getElementById("logoutBtn")?.addEventListener("click", () => {
-            window.PulpAuth.logout();
-        });
-
-        // Cargar módulo inicial
-        loadConfig();
-    });
-
-})();
+    } catch (e) { console.error(e); }
+}
+
+// ── Tenants ──
+async function loadTenants() {
+    try {
+        const data = await apiFetch("/tenants");
+        if (!data.length) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">No hay tenants registrados</div>'; return; }
+        document.getElementById("tenantsTable").innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Estado</th><th>Creado</th></tr></thead><tbody>${data.map(t => `<tr><td>${t.id}</td><td><strong>${t.name}</strong></td><td><span class="badge ${t.status==='ACTIVE'?'badge-green':'badge-red'}">${t.status}</span></td><td>${new Date(t.createdAt).toLocaleDateString('es-CO')}</td></tr>`).join("")}</tbody></table>`;
+    } catch (e) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">Error al cargar tenants</div>'; }
+}
+
+// ── Payments ──
+function renderPaymentsTable(data) {
+    return `<table class="admin-table"><thead><tr><th>ID</th><th>Usuario</th><th>Monto</th><th>Método</th><th>Tenant</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${data.map(p => `<tr>
+        <td>${p.id}</td><td>${p.userName || '—'}<br><small style="color:#9ca3af">${p.userEmail || ''}</small></td>
+        <td><strong>$${Number(p.amount).toLocaleString('es-CO')}</strong></td><td>${p.method}</td><td>${p.tenantName || '—'}</td>
+        <td><span class="badge ${p.status==='PENDING'?'badge-yellow':p.status==='APPROVED'?'badge-green':'badge-red'}">${p.status}</span></td>
+        <td>${p.status==='PENDING'?`<button class="btn-sm btn-primary-sm" onclick="approvePayment(${p.id})">✓ Aprobar</button> <button class="btn-sm btn-danger-sm" onclick="rejectPayment(${p.id})">✕ Rechazar</button>`:''}</td>
+    </tr>`).join("")}</tbody></table>`;
+}
+
+async function loadPayments() {
+    try {
+        const data = await apiFetch("/admin/payments");
+        if (!data.length) { document.getElementById("paymentsTable").innerHTML = '<div class="empty-msg">No hay pagos pendientes 🎉</div>'; return; }
+        document.getElementById("paymentsTable").innerHTML = renderPaymentsTable(data);
+    } catch (e) { document.getElementById("paymentsTable").innerHTML = '<div class="empty-msg">Error al cargar pagos</div>'; }
+}
+
+async function approvePayment(id) {
+    try { await apiAction(`/admin/payments/${id}/approve`, "PUT"); toast("Pago aprobado ✓ — Tenant creado"); loadPayments(); loadOverview(); } catch (e) { toast(e.message, "error"); }
+}
+
+async function rejectPayment(id) {
+    const reason = prompt("Motivo del rechazo:");
+    try { await apiAction(`/admin/payments/${id}/reject`, "PUT", { rejectionReason: reason }); toast("Pago rechazado"); loadPayments(); } catch (e) { toast(e.message, "error"); }
+}
+
+// ── Users ──
+async function loadUsers() {
+    try {
+        const data = await apiFetch("/users");
+        if (!data.length) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">No hay usuarios</div>'; return; }
+        document.getElementById("usersTable").innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Tenant</th><th>Estado</th></tr></thead><tbody>${data.map(u => `<tr>
+            <td>${u.id}</td><td><strong>${u.name}</strong></td><td>${u.email}</td>
+            <td><span class="badge badge-blue">${u.role || '—'}</span></td>
+            <td>${u.tenantId || '—'}</td>
+            <td><span class="badge ${u.activo?'badge-green':'badge-red'}">${u.activo?'Activo':'Inactivo'}</span></td>
+        </tr>`).join("")}</tbody></table>`;
+    } catch (e) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">Error al cargar usuarios</div>'; }
+}
+
+// ── Products ──
+async function loadProducts() {
+    try {
+        const data = await apiFetch("/products");
+        if (!data.length) { document.getElementById("productsTable").innerHTML = '<div class="empty-msg">No hay productos</div>'; return; }
+        document.getElementById("productsTable").innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Disponible</th></tr></thead><tbody>${data.map(p => `<tr>
+            <td>${p.id}</td><td><strong>${p.name}</strong></td>
+            <td>$${Number(p.price).toLocaleString('es-CO')}</td><td>${p.stock}</td>
+            <td><span class="badge ${p.available?'badge-green':'badge-red'}">${p.available?'Sí':'No'}</span></td>
+        </tr>`).join("")}</tbody></table>`;
+    } catch (e) { document.getElementById("productsTable").innerHTML = '<div class="empty-msg">Error al cargar productos</div>'; }
+}
+
+// ── Orders ──
+async function loadOrders() {
+    try {
+        const data = await apiFetch("/orders");
+        if (!data.length) { document.getElementById("ordersTable").innerHTML = '<div class="empty-msg">No hay pedidos</div>'; return; }
+        document.getElementById("ordersTable").innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Usuario</th><th>Total</th><th>Estado Pago</th><th>Fecha</th></tr></thead><tbody>${data.map(o => `<tr>
+            <td>#${o.id}</td><td>${o.userId}</td>
+            <td><strong>$${Number(o.total).toLocaleString('es-CO')}</strong></td>
+            <td><span class="badge ${o.paymentStatus==='APPROVED'?'badge-green':o.paymentStatus==='PENDING_PAYMENT'?'badge-yellow':'badge-blue'}">${o.paymentStatus}</span></td>
+            <td>${new Date(o.fecha).toLocaleDateString('es-CO')}</td>
+        </tr>`).join("")}</tbody></table>`;
+    } catch (e) { document.getElementById("ordersTable").innerHTML = '<div class="empty-msg">Error al cargar pedidos</div>'; }
+}
+
+// ── Init ──
+document.addEventListener("DOMContentLoaded", () => {
+    if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
+    const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+    document.getElementById("sidebarUserName").textContent = user.name || "Admin";
+    document.getElementById("sidebarUserEmail").textContent = user.email || "";
+    loadOverview();
+});
 </script>
 </body>
 </html>
