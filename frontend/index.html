@@ -3,422 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix — Pulpas naturales en línea</title>
+    <title>Zentrix — Crea y gestiona tu negocio online</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/index.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/saas.css">
 </head>
-<body data-page="home">
-<header class="site-header">
-<div class="header-inner">
-    <div class="brand-block">
-        <img src="img/sinfondologo-removebg-preview.png" alt="Logo Zentrix" class="brand-logo">
-        <div>
-            <span class="brand-kicker">Zentrix</span>
+<body class="saas-page">
+
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<nav class="z-nav">
+    <div class="z-nav-inner">
+        <a href="index.html" class="z-logo">⚡ Zentrix</a>
+        <div class="z-nav-links">
+            <a href="#beneficios">Beneficios</a>
+            <a href="#como-funciona">Cómo funciona</a>
+            <a href="pricing.html">Planes</a>
+            <a href="login.html">Iniciar sesión</a>
+            <a href="register.html" class="z-btn z-btn-primary" style="padding:8px 20px; font-size:0.88rem">Empezar gratis</a>
         </div>
     </div>
+</nav>
 
-    <nav class="site-nav" aria-label="Principal">
-        <a href="index.html" class="is-active">Inicio</a>
-        <a href="catalog.html">Catalogo</a>
-        <a href="cart.html">Carrito</a>
-        <a href="login.html" data-nav="account">Mi cuenta</a>
-    </nav>
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<section class="z-hero">
+    <div class="z-hero-badge">🚀 Plataforma SaaS Multi-Tenant</div>
+    <h1>Crea y gestiona tu <span>negocio online</span> en minutos</h1>
+    <p>Zentrix te da todo lo que necesitas para vender en línea: catálogo de productos, gestión de pedidos, equipo de trabajo y tu propia marca. Sin código, sin complicaciones.</p>
+    <div class="z-hero-actions">
+        <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Empezar ahora →</a>
+        <a href="pricing.html" class="z-btn z-btn-outline z-btn-lg">Ver planes</a>
+    </div>
+</section>
 
-    <a href="cart.html" class="cart-chip">
-        <span>Carrito</span>
-        <strong id="navCartCount">0</strong>
-    </a>
+<!-- ═══════════════════ LOGOS / SOCIAL PROOF ═══════════════════ -->
+<div style="text-align:center; padding:0 24px 48px; color:var(--z-text-muted); font-size:0.88rem">
+    <p style="margin:0 0 16px">Empresas que ya confían en Zentrix</p>
+    <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; opacity:0.4; font-size:1.4rem; font-weight:700; color:var(--z-text-secondary)">
+        <span>Frutos & Sabores</span>
+        <span>NaturalPulp</span>
+        <span>FreshCo</span>
+        <span>TropiFruit</span>
+    </div>
 </div>
-</header>
 
-<main>
-    <!-- ══════════════════════ HERO SLIDER ══════════════════════ -->
-    <section class="hero-slider" aria-label="Slider principal Zentrix">
-
-        <!-- Pista de slides -->
-        <div class="slider-track" id="sliderTrack">
-            <div class="slide" style="background-image:url('img/slider1.png')" role="img" aria-label="Slide 1"></div>
-            <div class="slide" style="background-image:url('img/slider2.png')" role="img" aria-label="Slide 2"></div>
-            <div class="slide" style="background-image:url('img/slider3.png')" role="img" aria-label="Slide 3"></div>
-            <div class="slide" style="background-image:url('img/slider4.png')" role="img" aria-label="Slide 4"></div>
-            <div class="slide" style="background-image:url('img/slider5.png')" role="img" aria-label="Slide 5"></div>
-        </div>
-
-        <!-- Overlay con contenido -->
-        <div class="slider-overlay">
-            <div class="slider-content">
-                <span class="eyebrow" style="color:rgba(255,255,255,0.85)">Fruta natural en tu hogar</span>
-                <h1 class="slider-title">Pulpas naturales frescas y listas para disfrutar</h1>
-                <p class="slider-subtitle">Calidad, frescura y sabor en cada producto. Lleva lo mejor de la fruta a tu mesa en segundos.</p>
-                <a href="catalog.html" class="btn btn-primary slider-cta">Comprar ahora</a>
-            </div>
-        </div>
-
-        <!-- Flecha izquierda -->
-        <button class="slider-arrow slider-arrow--prev" id="sliderPrev" aria-label="Slide anterior">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                <polyline points="15 18 9 12 15 6"/>
-            </svg>
-        </button>
-
-        <!-- Flecha derecha -->
-        <button class="slider-arrow slider-arrow--next" id="sliderNext" aria-label="Siguiente slide">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                <polyline points="9 18 15 12 9 6"/>
-            </svg>
-        </button>
-
-        <!-- Dots -->
-        <div class="slider-dots" id="sliderDots" role="tablist" aria-label="Navegación del slider"></div>
-
-    </section>
-
-    <!-- ══════════════════════ FRANJA BENEFICIOS ══════════════════════ -->
-    <div class="benefits-bar" aria-label="Beneficios de compra">
-        <div class="benefit-item">
-            <span class="benefit-icon">🔒</span>
-            <span class="benefit-text">Pago 100% seguro</span>
-        </div>
-        <div class="benefit-divider"></div>
-        <div class="benefit-item">
-            <span class="benefit-icon">🚚</span>
-            <span class="benefit-text">Envío rápido garantizado</span>
-        </div>
-        <div class="benefit-divider"></div>
-        <div class="benefit-item">
-            <span class="benefit-icon">🏠</span>
-            <span class="benefit-text">Para tu negocio o hogar</span>
-        </div>
-        <div class="benefit-divider"></div>
-        <div class="benefit-item">
-            <span class="benefit-icon">🎁</span>
-            <span class="benefit-text">Envío <strong>GRATIS</strong> desde $99.900</span>
-        </div>
+<!-- ═══════════════════ BENEFICIOS ═══════════════════ -->
+<section class="z-section" id="beneficios">
+    <div class="z-section-header">
+        <h2>Todo lo que necesitas en un solo lugar</h2>
+        <p>Herramientas diseñadas para que te enfoques en vender, no en la tecnología.</p>
     </div>
 
-    <!-- ══════════════════════ CARRUSEL PRODUCTOS ══════════════════════ -->
-    <section class="featured-section" aria-labelledby="featured-heading">
-        <div class="featured-header">
-            <span class="eyebrow">Lo más pedido</span>
-            <h2 id="featured-heading">Productos más vendidos</h2>
+    <div class="z-benefits">
+        <div class="z-benefit-card">
+            <div class="z-benefit-icon">📦</div>
+            <h3>Gestión de productos</h3>
+            <p>Crea tu catálogo con fotos, precios, stock y categorías. Actualiza todo en tiempo real.</p>
         </div>
 
-        <div class="coverflow-wrapper">
-            <button class="coverflow-arrow coverflow-arrow--prev" id="cfPrev" aria-label="Anterior">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-            </button>
+        <div class="z-benefit-card">
+            <div class="z-benefit-icon">🛒</div>
+            <h3>Control de pedidos</h3>
+            <p>Recibe, gestiona y da seguimiento a cada pedido. Tus clientes siempre informados.</p>
+        </div>
 
-            <div class="coverflow-track" id="cfTrack">
-                <article class="cf-card" data-index="0">
-                    <div class="cf-img-wrap">
-                        <img src="img/mango1.png" alt="Pulpa de Mango">
-                    </div>
-                    <div class="cf-body">
-                        <h3>Pulpa de Mango</h3>
-                        <p class="cf-price">$8.500</p>
-                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
-                    </div>
-                </article>
+        <div class="z-benefit-card">
+            <div class="z-benefit-icon">🏢</div>
+            <h3>Multi-empresa</h3>
+            <p>Cada negocio tiene su propio espacio aislado. Datos seguros, sin mezclas entre tenants.</p>
+        </div>
 
-                <article class="cf-card" data-index="1">
-                    <div class="cf-img-wrap">
-                        <img src="img/mora1.png" alt="Pulpa de Mora">
-                    </div>
-                    <div class="cf-body">
-                        <h3>Pulpa de Mora</h3>
-                        <p class="cf-price">$7.900</p>
-                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
-                    </div>
-                </article>
+        <div class="z-benefit-card">
+            <div class="z-benefit-icon">🎨</div>
+            <h3>Tu marca, tu estilo</h3>
+            <p>Personaliza colores, logo y banner. Tu tienda se ve como TU negocio, no como una plantilla.</p>
+        </div>
+    </div>
+</section>
 
-                <article class="cf-card" data-index="2">
-                    <div class="cf-img-wrap">
-                        <img src="img/guanabana1.png" alt="Pulpa de Guanábana">
-                    </div>
-                    <div class="cf-body">
-                        <h3>Pulpa de Guanábana</h3>
-                        <p class="cf-price">$9.200</p>
-                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
-                    </div>
-                </article>
+<!-- ═══════════════════ CÓMO FUNCIONA ═══════════════════ -->
+<section class="z-section" id="como-funciona" style="background:var(--z-border-light); border-radius:0; max-width:100%; padding-left:0; padding-right:0">
+    <div style="max-width:1120px; margin:0 auto; padding:0 24px">
+        <div class="z-section-header">
+            <h2>Empieza en 3 pasos</h2>
+            <p>De la idea a tu tienda online en menos de lo que piensas.</p>
+        </div>
 
-                <article class="cf-card" data-index="3">
-                    <div class="cf-img-wrap">
-                        <img src="img/limon1.png" alt="Pulpa de Limón">
-                    </div>
-                    <div class="cf-body">
-                        <h3>Pulpa de Limón</h3>
-                        <p class="cf-price">$6.800</p>
-                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
-                    </div>
-                </article>
-
-                <article class="cf-card" data-index="4">
-                    <div class="cf-img-wrap">
-                        <img src="img/mora.png" alt="Pulpa de Mora Premium">
-                    </div>
-                    <div class="cf-body">
-                        <h3>Mora Premium</h3>
-                        <p class="cf-price">$8.100</p>
-                        <a href="catalog.html" class="btn btn-primary cf-btn">Agregar al carrito</a>
-                    </div>
-                </article>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:32px">
+            <div style="text-align:center">
+                <div style="width:56px; height:56px; border-radius:50%; background:var(--z-primary); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; margin-bottom:16px">1</div>
+                <h3 style="font-size:1.1rem; margin:0 0 8px">Regístrate</h3>
+                <p style="color:var(--z-text-secondary); font-size:0.92rem; margin:0">Crea tu cuenta en 30 segundos. Solo necesitas tu email y una contraseña.</p>
             </div>
 
-            <button class="coverflow-arrow coverflow-arrow--next" id="cfNext" aria-label="Siguiente">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
-                    <polyline points="9 18 15 12 9 6"/>
-                </svg>
-            </button>
-        </div>
+            <div style="text-align:center">
+                <div style="width:56px; height:56px; border-radius:50%; background:var(--z-primary); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; margin-bottom:16px">2</div>
+                <h3 style="font-size:1.1rem; margin:0 0 8px">Activa tu plan</h3>
+                <p style="color:var(--z-text-secondary); font-size:0.92rem; margin:0">Elige tu plan y paga con Nequi, Daviplata o transferencia. Activación en horas.</p>
+            </div>
 
-        <!-- Dots -->
-        <div class="cf-dots" id="cfDots"></div>
-    </section>
-
-    <!-- ══════════════════════ QUIÉNES SOMOS ══════════════════════ -->
-    <section class="about-section" aria-labelledby="about-heading">
-        <div class="about-image-wrap">
-            <img src="img/quienessomos.png" alt="Equipo Frutos y Sabores en el campo" class="about-img">
-        </div>
-        <div class="about-content">
-            <span class="eyebrow">Nuestra historia</span>
-            <h2 id="about-heading">¿Quiénes somos?</h2>
-            <p>En <strong>Frutos &amp; Sabores</strong> somos una empresa comprometida con llevar lo mejor del campo a tu mesa. Nacemos del trabajo y dedicación de familias campesinas que cultivan con amor cada fruta, garantizando productos frescos, naturales y de la más alta calidad.</p>
-            <p>Nos especializamos en la producción de pulpas de fruta 100% naturales, elaboradas sin conservantes ni aditivos artificiales, conservando el sabor, aroma y propiedades nutritivas de cada cosecha. Nuestro proceso inicia desde la selección cuidadosa de la fruta en su punto óptimo de maduración, hasta su transformación en pulpas listas para el consumo.</p>
-            <p>Trabajamos de la mano con agricultores locales, apoyando el desarrollo del campo y promoviendo prácticas sostenibles que respetan el medio ambiente. Creemos en el valor de lo natural, en el esfuerzo de nuestra gente y en ofrecer productos que aporten bienestar a nuestros clientes.</p>
-            <p class="about-closing">En <strong>Frutos &amp; Sabores</strong>, más que pulpas, entregamos frescura, tradición y calidad en cada empaque.</p>
-            <a href="catalog.html" class="btn btn-primary" style="margin-top:8px">Ver nuestros productos</a>
-        </div>
-    </section>
-
-    <!-- ══════════════════════ CTA TRABAJA CON NOSOTROS ══════════════════════ -->
-    <section class="jobs-cta-section">
-        <div class="jobs-cta-inner">
-            <span class="eyebrow">Únete al equipo</span>
-            <h2>¿Te apasiona el campo y los productos naturales?</h2>
-            <p>Somos una empresa en crecimiento que valora el talento humano. Aquí encontrarás un ambiente de trabajo cálido, oportunidades reales y el orgullo de trabajar con lo mejor de la naturaleza colombiana.</p>
-            <div class="jobs-cta-btn-wrap">
-                <a href="trabaja-con-nosotros.html" class="btn btn-primary jobs-cta-btn" id="jobsCtaBtn">
-                    🌿 Trabaja con nosotros
-                </a>
-                <canvas id="confettiCanvas" aria-hidden="true"></canvas>
+            <div style="text-align:center">
+                <div style="width:56px; height:56px; border-radius:50%; background:var(--z-primary); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; margin-bottom:16px">3</div>
+                <h3 style="font-size:1.1rem; margin:0 0 8px">Empieza a vender</h3>
+                <p style="color:var(--z-text-secondary); font-size:0.92rem; margin:0">Sube tus productos, personaliza tu tienda y recibe pedidos desde el día uno.</p>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</section>
 
-<div id="appToast" class="toast" role="status" aria-live="polite"></div>
+<!-- ═══════════════════ MÉTRICAS ═══════════════════ -->
+<section class="z-section" style="padding-top:64px; padding-bottom:64px">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:32px; text-align:center">
+        <div>
+            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">99.9%</div>
+            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Uptime garantizado</div>
+        </div>
+        <div>
+            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">+500</div>
+            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Negocios activos</div>
+        </div>
+        <div>
+            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">24h</div>
+            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Activación máxima</div>
+        </div>
+        <div>
+            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">$0</div>
+            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Costo de setup</div>
+        </div>
+    </div>
+</section>
 
-<a href="https://wa.me/573001234567?text=Hola%2C%20necesito%20ayuda%20con%20Zentrix"
-   target="_blank" rel="noopener noreferrer"
-   class="whatsapp-fab" aria-label="Contactar por WhatsApp">
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-    </svg>
-    <span>¿Necesitas ayuda?</span>
-</a>
+<!-- ═══════════════════ TESTIMONIOS ═══════════════════ -->
+<section class="z-section" style="padding-top:0">
+    <div class="z-section-header">
+        <h2>Lo que dicen nuestros clientes</h2>
+    </div>
 
-<link rel="stylesheet" href="css/dashboard.css">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px">
+        <div class="z-card" style="border-left:3px solid var(--z-primary)">
+            <p style="color:var(--z-text-secondary); font-size:0.95rem; line-height:1.7; margin:0 0 16px">"Zentrix nos permitió digitalizar nuestro negocio de pulpas en una semana. Ahora recibimos pedidos las 24 horas."</p>
+            <div style="display:flex; align-items:center; gap:12px">
+                <div style="width:40px; height:40px; border-radius:50%; background:var(--z-primary-light); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--z-primary)">FS</div>
+                <div>
+                    <div style="font-weight:600; font-size:0.9rem">Frutos & Sabores</div>
+                    <div style="color:var(--z-text-muted); font-size:0.82rem">Bogotá, Colombia</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="z-card" style="border-left:3px solid var(--z-accent)">
+            <p style="color:var(--z-text-secondary); font-size:0.95rem; line-height:1.7; margin:0 0 16px">"La gestión de pedidos y el panel de vendedor son increíbles. Mis empleados lo aprendieron en un día."</p>
+            <div style="display:flex; align-items:center; gap:12px">
+                <div style="width:40px; height:40px; border-radius:50%; background:var(--z-accent-light); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--z-accent)">NP</div>
+                <div>
+                    <div style="font-weight:600; font-size:0.9rem">NaturalPulp</div>
+                    <div style="color:var(--z-text-muted); font-size:0.82rem">Medellín, Colombia</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════ CTA FINAL ═══════════════════ -->
+<section class="z-cta" style="padding-bottom:80px">
+    <h2>Empieza hoy sin complicaciones</h2>
+    <p>Crea tu tienda online en minutos. Sin código, sin contratos, sin riesgo.</p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
+        <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Crear mi tienda gratis →</a>
+        <a href="pricing.html" class="z-btn z-btn-outline z-btn-lg">Ver planes y precios</a>
+    </div>
+</section>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer class="z-footer">
+    <div style="max-width:1120px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; padding:0 24px">
+        <div>
+            <span style="font-weight:700; color:var(--z-text)">⚡ Zentrix</span>
+            <span style="margin-left:8px">© 2026 Red Matrix Solutions</span>
+        </div>
+        <div style="display:flex; gap:24px">
+            <a href="pricing.html" style="color:var(--z-text-muted); text-decoration:none; font-size:0.85rem">Planes</a>
+            <a href="login.html" style="color:var(--z-text-muted); text-decoration:none; font-size:0.85rem">Iniciar sesión</a>
+            <a href="register.html" style="color:var(--z-text-muted); text-decoration:none; font-size:0.85rem">Registrarse</a>
+        </div>
+    </div>
+</footer>
+
 <script src="js/config.js"></script>
-<script src="services.js"></script>
-<script src="auth.js"></script>
-<script src="app.js"></script>
-<script src="whatsapp.js"></script>
-<script>
-/* ── Confeti botón trabaja con nosotros ── */
-(function initConfetti() {
-    const btn    = document.getElementById("jobsCtaBtn");
-    const canvas = document.getElementById("confettiCanvas");
-    if (!btn || !canvas) return;
-
-    const ctx    = canvas.getContext("2d");
-    const COLORS = ["#0d7a4d","#15995f","#e8892e","#fff","#4ade80","#fbbf24"];
-    let particles = [];
-    let raf = null;
-    let running = false;
-
-    function resize() {
-        const rect = btn.getBoundingClientRect();
-        canvas.width  = rect.width;
-        canvas.height = rect.height;
-    }
-
-    function spawn() {
-        resize();
-        particles = [];
-        for (let i = 0; i < 55; i++) {
-            particles.push({
-                x:  Math.random() * canvas.width,
-                y:  canvas.height * 0.6,
-                vx: (Math.random() - 0.5) * 5,
-                vy: -(Math.random() * 5 + 3),
-                size: Math.random() * 6 + 3,
-                color: COLORS[Math.floor(Math.random() * COLORS.length)],
-                alpha: 1,
-                rot: Math.random() * 360,
-                rotV: (Math.random() - 0.5) * 8
-            });
-        }
-    }
-
-    function tick() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        let alive = false;
-        particles.forEach(p => {
-            p.x  += p.vx;
-            p.y  += p.vy;
-            p.vy += 0.18;          // gravedad
-            p.alpha -= 0.018;
-            p.rot   += p.rotV;
-            if (p.alpha > 0) {
-                alive = true;
-                ctx.save();
-                ctx.globalAlpha = Math.max(0, p.alpha);
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.rot * Math.PI / 180);
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.5);
-                ctx.restore();
-            }
-        });
-        if (alive) { raf = requestAnimationFrame(tick); }
-        else        { running = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
-    }
-
-    btn.addEventListener("mouseenter", () => {
-        if (running) return;
-        running = true;
-        spawn();
-        raf = requestAnimationFrame(tick);
-    });
-
-    btn.addEventListener("mouseleave", () => {
-        cancelAnimationFrame(raf);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        running = false;
-    });
-})();
-/* ── Coverflow productos ── */
-(function initCoverflow() {
-    const cards  = Array.from(document.querySelectorAll(".cf-card"));
-    const total  = cards.length;
-    const dots   = document.getElementById("cfDots");
-    let current  = Math.floor(total / 2); // arranca en el centro
-
-    // Crear dots
-    cards.forEach((_, i) => {
-        const d = document.createElement("button");
-        d.className = "cf-dot";
-        d.setAttribute("aria-label", `Producto ${i + 1}`);
-        d.addEventListener("click", () => goTo(i));
-        dots.appendChild(d);
-    });
-
-    function goTo(index) {
-        current = (index + total) % total;
-        cards.forEach((card, i) => {
-            const offset = i - current;
-            const abs    = Math.abs(offset);
-
-            // Escala y opacidad según distancia al centro
-            const scale   = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.68;
-            const opacity = abs === 0 ? 1 : abs === 1 ? 0.7  : 0.45;
-            const tx      = offset * 72; // desplazamiento horizontal en %
-            const zIndex  = total - abs;
-
-            card.style.transform  = `translateX(${tx}%) scale(${scale})`;
-            card.style.opacity    = opacity;
-            card.style.zIndex     = zIndex;
-            card.classList.toggle("is-active", i === current);
-        });
-
-        // Dots
-        dots.querySelectorAll(".cf-dot").forEach((d, i) => {
-            d.classList.toggle("is-active", i === current);
-        });
-    }
-
-    document.getElementById("cfPrev").addEventListener("click", () => goTo(current - 1));
-    document.getElementById("cfNext").addEventListener("click", () => goTo(current + 1));
-
-    // Swipe táctil
-    const track = document.getElementById("cfTrack");
-    let tx0 = 0;
-    track.addEventListener("touchstart", e => { tx0 = e.touches[0].clientX; }, { passive: true });
-    track.addEventListener("touchend",   e => {
-        const diff = tx0 - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
-    });
-
-    goTo(current);
-})();
-(function initSlider() {
-    const TOTAL    = 5;
-    const INTERVAL = 4000;
-
-    let current  = 0;
-    let timer    = null;
-    let paused   = false;
-
-    const track  = document.getElementById("sliderTrack");
-    const dots   = document.getElementById("sliderDots");
-    const prev   = document.getElementById("sliderPrev");
-    const next   = document.getElementById("sliderNext");
-
-    // Crear dots
-    for (let i = 0; i < TOTAL; i++) {
-        const dot = document.createElement("button");
-        dot.className   = "slider-dot" + (i === 0 ? " is-active" : "");
-        dot.setAttribute("role", "tab");
-        dot.setAttribute("aria-label", `Ir al slide ${i + 1}`);
-        dot.dataset.index = i;
-        dot.addEventListener("click", () => goTo(Number(dot.dataset.index)));
-        dots.appendChild(dot);
-    }
-
-    function goTo(index) {
-        current = (index + TOTAL) % TOTAL;
-        track.style.transform = `translateX(-${current * 100}%)`;
-        dots.querySelectorAll(".slider-dot").forEach((d, i) => {
-            d.classList.toggle("is-active", i === current);
-        });
-    }
-
-    function startAuto() {
-        clearInterval(timer);
-        timer = setInterval(() => {
-            if (!paused) goTo(current + 1);
-        }, INTERVAL);
-    }
-
-    prev.addEventListener("click", () => { goTo(current - 1); startAuto(); });
-    next.addEventListener("click", () => { goTo(current + 1); startAuto(); });
-
-    // Pausa al hover
-    const hero = document.querySelector(".hero-slider");
-    hero.addEventListener("mouseenter", () => { paused = true; });
-    hero.addEventListener("mouseleave", () => { paused = false; });
-
-    // Swipe táctil
-    let touchStartX = 0;
-    hero.addEventListener("touchstart", e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-    hero.addEventListener("touchend", e => {
-        const diff = touchStartX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 50) {
-            goTo(diff > 0 ? current + 1 : current - 1);
-            startAuto();
-        }
-    });
-
-    goTo(0);
-    startAuto();
-})();
-</script>
 </body>
 </html>
