@@ -59,7 +59,7 @@
         .trust-logos span { font-size: 1.1rem; font-weight: 700; color: #d1d5db; letter-spacing: -0.01em; }
 
         /* ── Feature grid horizontal con mockups funcionales ── */
-        .feat-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; }
+        .feat-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:20px; }
         .feat-card { border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; background:#fff; transition:all 0.3s ease; }
         .feat-card:hover { border-color:#c7d2fe; box-shadow:0 12px 32px rgba(99,102,241,0.1); transform:translateY(-4px); }
 
@@ -121,6 +121,18 @@
 
         @media (max-width:900px) { .feat-grid { grid-template-columns:repeat(2, 1fr); } }
         @media (max-width:560px) { .feat-grid { grid-template-columns:1fr; } }
+
+        /* Report mockup */
+        .fm-report-stat { flex:1; text-align:center; background:#f9fafb; border-radius:6px; padding:6px 4px; }
+        .fm-report-num { font-size:0.7rem; font-weight:800; animation:reportPulse 3s ease infinite; }
+        @keyframes reportPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+        .fm-report-bars { display:flex; flex-direction:column; gap:4px; }
+        .fm-rb { height:6px; border-radius:3px; animation:barGrow 4s ease infinite; transform-origin:left; }
+        .fm-rb:nth-child(1) { animation-delay:0s; }
+        .fm-rb:nth-child(2) { animation-delay:0.3s; }
+        .fm-rb:nth-child(3) { animation-delay:0.6s; }
+        .fm-rb:nth-child(4) { animation-delay:0.9s; }
+        @keyframes barGrow { 0%{transform:scaleX(0)} 30%{transform:scaleX(1.05)} 40%{transform:scaleX(1)} 80%{transform:scaleX(1)} 100%{transform:scaleX(0)} }
 
         /* ── Micro-animaciones de demo en cada tarjeta ── */
 
@@ -590,6 +602,33 @@
                 <p>Logo, colores y banner personalizados. Tu tienda refleja tu identidad.</p>
             </div>
         </div>
+
+        <!-- 5. Reportes -->
+        <div class="feat-card">
+            <div class="feat-mockup">
+                <div class="fm-bar"><span></span><span></span><span></span></div>
+                <div class="fm-body" style="padding:12px; display:flex; flex-direction:column; gap:8px">
+                    <div style="font-size:0.55rem; font-weight:700; color:#9ca3af">Reporte operativo</div>
+                    <div style="display:flex; gap:8px">
+                        <div class="fm-report-stat"><div class="fm-report-num" style="color:#6366f1">127</div><div style="font-size:0.45rem; color:#9ca3af">Pedidos</div></div>
+                        <div class="fm-report-stat"><div class="fm-report-num" style="color:#22c55e">$4.2M</div><div style="font-size:0.45rem; color:#9ca3af">Ventas</div></div>
+                        <div class="fm-report-stat"><div class="fm-report-num" style="color:#f59e0b">89%</div><div style="font-size:0.45rem; color:#9ca3af">Aprobados</div></div>
+                    </div>
+                    <div class="fm-report-bars">
+                        <div class="fm-rb" style="width:85%; background:#6366f1"></div>
+                        <div class="fm-rb" style="width:65%; background:#a5b4fc"></div>
+                        <div class="fm-rb" style="width:92%; background:#22c55e"></div>
+                        <div class="fm-rb" style="width:45%; background:#f59e0b"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="feat-info">
+                <div class="feat-badge" style="background:#fef3c7; color:#92400e">Reportes</div>
+                <h3>Reportes operativos en tiempo real</h3>
+                <p>Pedidos, ventas y métricas de tu negocio actualizados al instante.</p>
+            </div>
+        </div>
+
     </div>
 </section>
 
