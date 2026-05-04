@@ -211,19 +211,27 @@
         /* Hover: acelera todas las animaciones */
         .feat-card:hover * { animation-duration:1.5s !important; }
 
-        /* ── Steps ── */
-        .steps-section { background: #f9fafb; }
-        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
-        .step { text-align: center; }
-        .step-number {
-            width: 60px; height: 60px; border-radius: 16px;
-            background: linear-gradient(135deg, var(--z-primary), var(--z-primary-dark));
-            color: white; display: inline-flex; align-items: center; justify-content: center;
-            font-size: 1.4rem; font-weight: 800; margin-bottom: 20px;
-            box-shadow: 0 8px 24px var(--z-primary-glow);
+        /* ── Value cards grid ── */
+        .value-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:24px; }
+        .value-card {
+            background:#fff; border:1px solid #e5e7eb; border-radius:16px;
+            padding:32px 24px; text-align:center;
+            transition: all 0.3s ease;
         }
-        .step h3 { font-size: 1.15rem; margin: 0 0 10px; color: #111827; }
-        .step p { color: #6b7280; font-size: 0.95rem; margin: 0; line-height: 1.65; max-width: 320px; margin-inline: auto; }
+        .value-card:hover {
+            transform:translateY(-6px);
+            box-shadow:0 16px 40px rgba(99,102,241,0.1);
+            border-color:#c7d2fe;
+        }
+        .value-icon {
+            width:56px; height:56px; border-radius:14px;
+            background:#eef2ff; display:inline-flex; align-items:center; justify-content:center;
+            font-size:1.5rem; margin:0 auto 20px;
+        }
+        .value-card h3 { font-size:1.05rem; font-weight:700; color:#111827; margin:0 0 10px; line-height:1.35; }
+        .value-card p { font-size:0.88rem; color:#6b7280; line-height:1.65; margin:0; }
+        @media (max-width:900px) { .value-grid { grid-template-columns:repeat(2, 1fr); } }
+        @media (max-width:560px) { .value-grid { grid-template-columns:1fr; } }
 
         /* ── Métricas ── */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
@@ -316,7 +324,6 @@
         </a>
         <div class="z-nav-links">
             <a href="#beneficios">Producto</a>
-            <a href="#como-funciona">Cómo funciona</a>
             <a href="pricing.html">Precios</a>
             <a href="login.html">Acceder</a>
             <a href="register.html" class="z-btn z-btn-primary" style="padding:10px 24px; font-size:0.9rem; position:relative; overflow:visible" id="ctaNavBtn">Comenzar gratis</a>
@@ -341,8 +348,8 @@
 <!-- ═══════════════════ FUNCIONALIDADES ═══════════════════ -->
 <section class="z-section" id="beneficios">
     <div class="z-section-header">
-        <h2>Una plataforma. Todas las herramientas.</h2>
-        <p>Deja de usar cinco apps distintas. Zentrix centraliza todo lo que tu negocio necesita para operar y crecer.</p>
+        <h2>Una plataforma. Todo tu negocio en un solo lugar.</h2>
+        <p>Deja atrás las múltiples apps. Zentrix centraliza todo lo que necesitas para operar, vender y crecer sin complicaciones.</p>
     </div>
 
     <div class="feat-grid">
@@ -428,28 +435,33 @@
     </div>
 </section>
 
-<!-- ═══════════════════ CÓMO FUNCIONA ═══════════════════ -->
-<section class="steps-section" id="como-funciona" style="padding:80px 0; border-radius:0">
+<!-- ═══════════════════ BENEFICIOS CLAVE ═══════════════════ -->
+<section style="padding:80px 0; background:#f9fafb">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
         <div class="z-section-header">
-            <h2>Operativo en tres pasos</h2>
-            <p>De cero a tu primera venta en menos tiempo del que imaginas.</p>
+            <h2>Todo lo que necesitas para hacer crecer tu negocio</h2>
+            <p>Zentrix reúne todas las herramientas para que vendas, gestiones y escales sin complicaciones.</p>
         </div>
-        <div class="steps-grid">
-            <div class="step">
-                <div class="step-number">1</div>
-                <h3>Crea tu cuenta</h3>
-                <p>Regístrate con tu email en 30 segundos. Sin formularios largos, sin verificaciones complicadas.</p>
+        <div class="value-grid">
+            <div class="value-card">
+                <div class="value-icon">🚀</div>
+                <h3>Empieza tu negocio desde cero</h3>
+                <p>Crea tu tienda en minutos sin conocimientos técnicos y comienza a vender de inmediato.</p>
             </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <h3>Activa tu espacio</h3>
-                <p>Elige un plan y paga con Nequi, Daviplata o transferencia bancaria. Tu cuenta se activa en horas.</p>
+            <div class="value-card">
+                <div class="value-icon">📊</div>
+                <h3>Gestiona productos y pedidos fácilmente</h3>
+                <p>Administra tu catálogo, controla pedidos y gestiona todo desde un solo panel.</p>
             </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <h3>Vende desde el día uno</h3>
-                <p>Sube tu catálogo, personaliza tu marca y comparte tu tienda. Los pedidos empiezan a llegar.</p>
+            <div class="value-card">
+                <div class="value-icon">✨</div>
+                <h3>Personaliza tu marca</h3>
+                <p>Configura tu logo, colores y estilo para que tu negocio tenga identidad propia.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">📈</div>
+                <h3>Control total de tu negocio</h3>
+                <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
             </div>
         </div>
     </div>
@@ -539,8 +551,7 @@
         </div>
         <div class="z-footer-col">
             <h4>Producto</h4>
-            <a href="#beneficios">Beneficios</a>
-            <a href="#como-funciona">Cómo funciona</a>
+            <a href="#beneficios">Funcionalidades</a>
             <a href="pricing.html">Precios</a>
         </div>
         <div class="z-footer-col">
