@@ -331,7 +331,10 @@
             100% { height:5%; }
         }
 
-        @media (max-width:768px) { .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; } }
+        @media (max-width:768px) {
+            .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+            div:has(> .reasons-track-wrap) { grid-template-columns:1fr !important; }
+        }
 
         /* ── Card 5: Equipo — avatares rebotan al entrar ── */
         .rc5-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; animation:windowFloat 6s ease-in-out infinite 1.5s; }
@@ -593,10 +596,21 @@
 <!-- ═══════════════════ RAZONES / CARRUSEL ═══════════════════ -->
 <section style="padding:80px 0; background:#fff">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
+        <div style="display:grid; grid-template-columns:260px 1fr; gap:40px; align-items:start">
 
-        <!-- Carrusel de tarjetas -->
-        <div class="reasons-track-wrap">
-            <div class="reasons-track" id="reasonsTrack">
+            <!-- Título + flechas a la izquierda -->
+            <div style="position:sticky; top:120px">
+                <h2 style="font-size:1.7rem; font-weight:800; color:#111827; line-height:1.25; letter-spacing:-0.02em; margin:0 0 12px">Razones por las que Zentrix es tu mejor opción</h2>
+                <p style="color:#6b7280; font-size:0.92rem; line-height:1.6; margin:0 0 28px">Todo lo que necesitas para hacer crecer tu negocio, en un solo lugar.</p>
+                <div style="display:flex; gap:10px">
+                    <button onclick="scrollCards(-1)" class="carousel-arrow">←</button>
+                    <button onclick="scrollCards(1)" class="carousel-arrow">→</button>
+                </div>
+            </div>
+
+            <!-- Carrusel a la derecha -->
+            <div class="reasons-track-wrap">
+                <div class="reasons-track" id="reasonsTrack">
 
                 <!-- Card 1 -->
                 <div class="reason-card">
@@ -712,16 +726,7 @@
             </div>
         </div>
 
-        <!-- Título + flechas centrados debajo -->
-        <div style="text-align:center; margin-top:48px">
-            <h2 style="font-size:1.6rem; font-weight:800; color:#111827; margin:0 0 8px; letter-spacing:-0.02em">Razones por las que Zentrix es tu mejor opción</h2>
-            <p style="color:#6b7280; font-size:0.95rem; margin:0 0 20px">Todo lo que necesitas para hacer crecer tu negocio, en un solo lugar.</p>
-            <div style="display:flex; gap:10px; justify-content:center">
-                <button onclick="scrollCards(-1)" class="carousel-arrow">←</button>
-                <button onclick="scrollCards(1)" class="carousel-arrow">→</button>
-            </div>
         </div>
-
     </div>
 </section>
 
