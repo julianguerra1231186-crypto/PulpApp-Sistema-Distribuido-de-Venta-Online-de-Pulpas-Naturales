@@ -221,39 +221,80 @@
         .carousel-arrow:hover { background:#6366f1; color:#fff; border-color:#6366f1; }
 
         .reasons-track-wrap { overflow:hidden; }
-        .reasons-track {
-            display:flex; gap:24px;
-            transition:transform 0.5s cubic-bezier(0.22,1,0.36,1);
-        }
+        .reasons-track { display:flex; gap:24px; transition:transform 0.5s cubic-bezier(0.22,1,0.36,1); }
         .reason-card {
-            min-width:280px; max-width:280px; flex-shrink:0;
+            min-width:270px; max-width:270px; flex-shrink:0;
             background:#fff; border:1px solid #e5e7eb; border-radius:16px;
             overflow:hidden; transition:all 0.3s ease;
         }
         .reason-card:hover { border-color:#c7d2fe; box-shadow:0 12px 32px rgba(99,102,241,0.1); transform:translateY(-4px); }
-
-        .reason-img {
-            height:180px; display:flex; align-items:center; justify-content:center;
-            position:relative; overflow:hidden;
-        }
+        .reason-img { height:170px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
         .reason-mockup { position:relative; z-index:1; }
-
         .reason-icons { padding:16px 20px 0; display:flex; gap:8px; }
-        .reason-icons span {
-            width:32px; height:32px; border-radius:8px;
-            display:inline-flex; align-items:center; justify-content:center;
-            font-size:0.85rem;
-        }
-
-        .reason-card h3 { font-size:1rem; font-weight:700; color:#111827; margin:12px 20px 8px; line-height:1.35; }
-        .reason-card > p { font-size:0.85rem; color:#6b7280; line-height:1.6; margin:0 20px 8px; }
-        .reason-detail { font-size:0.8rem; color:#9ca3af; line-height:1.6; margin:0 20px 20px !important; }
+        .reason-icons span { width:32px; height:32px; border-radius:8px; display:inline-flex; align-items:center; justify-content:center; font-size:0.85rem; }
+        .reason-card h3 { font-size:0.95rem; font-weight:700; color:#111827; margin:12px 20px 8px; line-height:1.35; }
+        .reason-card > p { font-size:0.82rem; color:#6b7280; line-height:1.6; margin:0 20px 8px; }
+        .reason-detail { font-size:0.78rem; color:#9ca3af; line-height:1.6; margin:0 20px 20px !important; }
         .reason-detail strong { color:#374151; }
 
-        @media (max-width:768px) {
-            .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
-            div:has(> .reasons-track-wrap) { grid-template-columns:1fr !important; }
-        }
+        /* ── Card 1: Catálogo micro-anim ── */
+        .rc1-window { background:#fff; border-radius:10px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:150px; }
+        .rc1-search { display:flex; align-items:center; gap:4px; background:#f3f4f6; border-radius:5px; padding:4px 8px; margin-bottom:8px; font-size:0.6rem; }
+        .rc1-cursor { width:1px; height:8px; background:#6366f1; animation:blink 1s step-end infinite; }
+        .rc1-product { display:flex; align-items:center; gap:6px; padding:4px; border-radius:5px; margin-bottom:4px; opacity:0; animation:rc1Appear 5s ease infinite; }
+        .rc1-p1 { animation-delay:0s; }
+        .rc1-p2 { animation-delay:0.6s; }
+        .rc1-p3 { animation-delay:1.2s; }
+        @keyframes rc1Appear { 0%,10%{opacity:0;transform:translateX(-8px)} 20%,80%{opacity:1;transform:translateX(0)} 90%,100%{opacity:0;transform:translateX(4px)} }
+        .rc1-thumb { width:24px; height:24px; border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; flex-shrink:0; }
+        .rc1-line { height:5px; flex:1; background:#e5e7eb; border-radius:3px; }
+        .rc1-price { font-size:0.55rem; font-weight:700; color:#111827; white-space:nowrap; }
+
+        /* ── Card 2: Pedidos micro-anim ── */
+        .rc2-window { background:#fff; border-radius:10px; padding:8px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:170px; }
+        .rc2-header { display:flex; justify-content:space-between; padding:3px 4px; margin-bottom:4px; }
+        .rc2-header span { font-size:0.5rem; font-weight:700; color:#9ca3af; }
+        .rc2-row { display:flex; justify-content:space-between; align-items:center; padding:4px 6px; border-radius:4px; font-size:0.5rem; color:#374151; margin-bottom:3px; animation:rc2Scan 8s ease infinite; background:transparent; }
+        .rc2-r1 { animation-delay:0s; }
+        .rc2-r2 { animation-delay:2s; }
+        .rc2-r3 { animation-delay:4s; }
+        .rc2-r4 { animation-delay:6s; }
+        @keyframes rc2Scan { 0%,15%{background:transparent} 20%,35%{background:#eef2ff; box-shadow:inset 0 0 0 1px #c7d2fe} 40%,100%{background:transparent; box-shadow:none} }
+        .rc2-st { font-size:0.5rem; font-weight:700; padding:1px 5px; border-radius:999px; }
+        .rc2-st.green { background:#d1fae5; color:#065f46; }
+        .rc2-st.yellow { background:#fef3c7; color:#92400e; animation:rc2StatusChange 8s ease infinite 2s; }
+        @keyframes rc2StatusChange { 0%,40%{background:#fef3c7; color:#92400e} 50%,70%{background:#d1fae5; color:#065f46} 80%,100%{background:#fef3c7; color:#92400e} }
+        .rc2-st.red { background:#fee2e2; color:#991b1b; }
+
+        /* ── Card 3: Branding micro-anim ── */
+        .rc3-window { background:#fff; border-radius:10px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:140px; }
+        .rc3-logo-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
+        .rc3-logo { width:20px; height:20px; border-radius:5px; background:linear-gradient(135deg,#6366f1,#8b5cf6); animation:rc3LogoSpin 10s linear infinite; }
+        @keyframes rc3LogoSpin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+        .rc3-line { height:6px; width:50px; background:#e5e7eb; border-radius:3px; }
+        .rc3-banner { height:28px; border-radius:6px; background:linear-gradient(135deg,#818cf8,#c4b5fd); margin-bottom:8px; animation:rc3BannerPulse 4s ease infinite; }
+        @keyframes rc3BannerPulse { 0%,100%{opacity:0.3} 50%{opacity:0.7} }
+        .rc3-colors { display:flex; gap:3px; }
+        .rc3-c1,.rc3-c2,.rc3-c3 { flex:1; height:14px; border-radius:3px; animation:rc3ColorShift 6s ease infinite; }
+        .rc3-c1 { background:#6366f1; animation-delay:0s; }
+        .rc3-c2 { background:#8b5cf6; animation-delay:2s; }
+        .rc3-c3 { background:#c4b5fd; animation-delay:4s; }
+        @keyframes rc3ColorShift { 0%,100%{filter:hue-rotate(0deg)} 50%{filter:hue-rotate(45deg)} }
+
+        /* ── Card 4: Ventas micro-anim ── */
+        .rc4-window { background:#fff; border-radius:10px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:150px; }
+        .rc4-label { font-size:0.5rem; font-weight:700; color:#9ca3af; margin-bottom:4px; }
+        .rc4-amount { font-size:1rem; font-weight:800; color:#111827; margin-bottom:8px; animation:rc4Count 5s ease infinite; }
+        @keyframes rc4Count { 0%,20%{opacity:0.4} 30%,80%{opacity:1} 90%,100%{opacity:0.4} }
+        .rc4-bars { display:flex; align-items:flex-end; gap:4px; height:36px; }
+        .rc4-b1,.rc4-b2,.rc4-b3,.rc4-b4 { flex:1; border-radius:3px; animation:rc4Grow 4s ease infinite; }
+        .rc4-b1 { background:#c7d2fe; animation-delay:0s; }
+        .rc4-b2 { background:#a5b4fc; animation-delay:0.3s; }
+        .rc4-b3 { background:#818cf8; animation-delay:0.6s; }
+        .rc4-b4 { background:#6366f1; animation-delay:0.9s; }
+        @keyframes rc4Grow { 0%,10%{height:10%} 30%{height:40%} 50%{height:70%} 70%{height:100%} 85%,100%{height:10%} }
+
+        @media (max-width:768px) { .reasons-track-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; } }
 
         /* ── Métricas ── */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
@@ -460,112 +501,95 @@
 <!-- ═══════════════════ RAZONES / CARRUSEL ═══════════════════ -->
 <section style="padding:80px 0; background:#fff">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
-        <div style="display:grid; grid-template-columns:280px 1fr; gap:48px; align-items:start">
 
-            <!-- Título lateral -->
-            <div>
-                <h2 style="font-size:1.8rem; font-weight:800; color:#111827; line-height:1.25; letter-spacing:-0.02em; margin:0 0 20px">Razones por las que Zentrix es tu mejor opción</h2>
-                <div style="display:flex; gap:10px; margin-top:24px">
-                    <button onclick="scrollCards(-1)" class="carousel-arrow">←</button>
-                    <button onclick="scrollCards(1)" class="carousel-arrow">→</button>
+        <!-- Carrusel de tarjetas -->
+        <div class="reasons-track-wrap">
+            <div class="reasons-track" id="reasonsTrack">
+
+                <!-- Card 1 -->
+                <div class="reason-card">
+                    <div class="reason-img" style="background:linear-gradient(135deg,#dbeafe,#ede9fe)">
+                        <div class="reason-mockup rc-mock-1">
+                            <div class="rc1-window">
+                                <div class="rc1-search"><span>🔍</span><div class="rc1-cursor"></div></div>
+                                <div class="rc1-product rc1-p1"><div class="rc1-thumb" style="background:#dbeafe">📦</div><div class="rc1-line"></div><div class="rc1-price">$8.500</div></div>
+                                <div class="rc1-product rc1-p2"><div class="rc1-thumb" style="background:#fce7f3">🍓</div><div class="rc1-line"></div><div class="rc1-price">$7.200</div></div>
+                                <div class="rc1-product rc1-p3"><div class="rc1-thumb" style="background:#d1fae5">🥭</div><div class="rc1-line"></div><div class="rc1-price">$9.100</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reason-icons"><span style="background:#eef2ff; color:#6366f1">🚀</span><span style="background:#e0f2fe; color:#0ea5e9">⚡</span></div>
+                    <h3>Empieza tu negocio desde cero</h3>
+                    <p>Crea tu tienda en minutos sin conocimientos técnicos y comienza a vender de inmediato.</p>
+                    <p class="reason-detail">Sin código, sin complicaciones. Solo regístrate, elige tu plan y tu tienda estará lista. <strong>Activación en menos de 24 horas.</strong></p>
                 </div>
-            </div>
 
-            <!-- Carrusel de tarjetas -->
-            <div class="reasons-track-wrap">
-                <div class="reasons-track" id="reasonsTrack">
-
-                    <!-- Card 1 -->
-                    <div class="reason-card">
-                        <div class="reason-img" style="background:linear-gradient(135deg,#dbeafe,#ede9fe)">
-                            <div class="reason-mockup">
-                                <div style="background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:140px">
-                                    <div style="height:8px; width:60%; background:#e5e7eb; border-radius:4px; margin-bottom:8px"></div>
-                                    <div style="height:50px; background:#eef2ff; border-radius:6px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; font-size:1.2rem">📦</div>
-                                    <div style="height:6px; width:80%; background:#e5e7eb; border-radius:3px; margin-bottom:4px"></div>
-                                    <div style="height:6px; width:50%; background:#f3f4f6; border-radius:3px"></div>
-                                </div>
+                <!-- Card 2 -->
+                <div class="reason-card">
+                    <div class="reason-img" style="background:linear-gradient(135deg,#d1fae5,#e0f2fe)">
+                        <div class="reason-mockup rc-mock-2">
+                            <div class="rc2-window">
+                                <div class="rc2-header"><span>Pedido</span><span>Cliente</span><span>Estado</span></div>
+                                <div class="rc2-row rc2-r1"><span>#1042</span><span>María L.</span><span class="rc2-st green">✓</span></div>
+                                <div class="rc2-row rc2-r2"><span>#1043</span><span>Carlos R.</span><span class="rc2-st yellow">⏳</span></div>
+                                <div class="rc2-row rc2-r3"><span>#1044</span><span>Ana P.</span><span class="rc2-st green">✓</span></div>
+                                <div class="rc2-row rc2-r4"><span>#1045</span><span>Luis M.</span><span class="rc2-st red">✕</span></div>
                             </div>
                         </div>
-                        <div class="reason-icons">
-                            <span style="background:#eef2ff; color:#6366f1">🚀</span>
-                            <span style="background:#e0f2fe; color:#0ea5e9">⚡</span>
-                        </div>
-                        <h3>Empieza tu negocio desde cero</h3>
-                        <p>Crea tu tienda en minutos sin conocimientos técnicos y comienza a vender de inmediato.</p>
-                        <p class="reason-detail">Sin código, sin complicaciones. Solo regístrate, elige tu plan y tu tienda estará lista. <strong>Activación en menos de 24 horas.</strong></p>
                     </div>
-
-                    <!-- Card 2 -->
-                    <div class="reason-card">
-                        <div class="reason-img" style="background:linear-gradient(135deg,#d1fae5,#e0f2fe)">
-                            <div class="reason-mockup">
-                                <div style="background:#fff; border-radius:10px; padding:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:160px">
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:6px"><span style="font-size:0.5rem; font-weight:700; color:#6b7280">Pedido</span><span style="font-size:0.5rem; font-weight:700; color:#6b7280">Estado</span></div>
-                                    <div style="background:#d1fae5; border-radius:4px; padding:4px 6px; margin-bottom:4px; font-size:0.5rem; color:#065f46; display:flex; justify-content:space-between"><span>#1042</span><span>✓ Aprobado</span></div>
-                                    <div style="background:#fef3c7; border-radius:4px; padding:4px 6px; margin-bottom:4px; font-size:0.5rem; color:#92400e; display:flex; justify-content:space-between"><span>#1043</span><span>⏳ Pendiente</span></div>
-                                    <div style="background:#d1fae5; border-radius:4px; padding:4px 6px; font-size:0.5rem; color:#065f46; display:flex; justify-content:space-between"><span>#1044</span><span>✓ Aprobado</span></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="reason-icons">
-                            <span style="background:#d1fae5; color:#16a34a">📋</span>
-                            <span style="background:#fef3c7; color:#d97706">📊</span>
-                            <span style="background:#e0f2fe; color:#0ea5e9">🔔</span>
-                        </div>
-                        <h3>Gestiona productos y pedidos fácilmente</h3>
-                        <p>Administra tu catálogo, controla pedidos y gestiona todo desde un solo panel.</p>
-                        <p class="reason-detail">Aprueba pagos manualmente, da seguimiento a cada orden y mantén a tus clientes informados. <strong>Todo en tiempo real.</strong></p>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="reason-card">
-                        <div class="reason-img" style="background:linear-gradient(135deg,#fae8ff,#eef2ff)">
-                            <div class="reason-mockup">
-                                <div style="background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:140px">
-                                    <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px"><div style="width:20px; height:20px; border-radius:5px; background:linear-gradient(135deg,#6366f1,#8b5cf6)"></div><div style="height:6px; width:50px; background:#e5e7eb; border-radius:3px"></div></div>
-                                    <div style="height:30px; border-radius:6px; background:linear-gradient(135deg,#818cf8,#c4b5fd); opacity:0.4; margin-bottom:8px"></div>
-                                    <div style="display:flex; gap:4px"><div style="flex:1; height:14px; border-radius:3px; background:#6366f1"></div><div style="flex:1; height:14px; border-radius:3px; background:#8b5cf6"></div><div style="flex:1; height:14px; border-radius:3px; background:#c4b5fd"></div></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="reason-icons">
-                            <span style="background:#fae8ff; color:#a855f7">🎨</span>
-                            <span style="background:#eef2ff; color:#6366f1">✨</span>
-                        </div>
-                        <h3>Personaliza tu marca</h3>
-                        <p>Configura tu logo, colores y estilo para que tu negocio tenga identidad propia.</p>
-                        <p class="reason-detail">Tu tienda refleja tu marca, no la nuestra. Banner, paleta de colores y logo personalizados. <strong>Branding profesional desde el día uno.</strong></p>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div class="reason-card">
-                        <div class="reason-img" style="background:linear-gradient(135deg,#fef3c7,#fee2e2)">
-                            <div class="reason-mockup">
-                                <div style="background:#fff; border-radius:10px; padding:12px; box-shadow:0 4px 12px rgba(0,0,0,0.08); width:150px">
-                                    <div style="font-size:0.5rem; font-weight:700; color:#6b7280; margin-bottom:6px">Ventas del mes</div>
-                                    <div style="font-size:1.1rem; font-weight:800; color:#111827; margin-bottom:8px">$2.450.000</div>
-                                    <div style="display:flex; align-items:flex-end; gap:3px; height:30px">
-                                        <div style="flex:1; background:#c7d2fe; border-radius:2px; height:40%"></div>
-                                        <div style="flex:1; background:#a5b4fc; border-radius:2px; height:55%"></div>
-                                        <div style="flex:1; background:#818cf8; border-radius:2px; height:70%"></div>
-                                        <div style="flex:1; background:#6366f1; border-radius:2px; height:100%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="reason-icons">
-                            <span style="background:#fef3c7; color:#d97706">📈</span>
-                            <span style="background:#fee2e2; color:#dc2626">🎯</span>
-                        </div>
-                        <h3>Control total de tu negocio</h3>
-                        <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
-                        <p class="reason-detail">Reportes claros, métricas de crecimiento y visibilidad completa de tu operación. <strong>Toma decisiones con datos reales.</strong></p>
-                    </div>
-
+                    <div class="reason-icons"><span style="background:#d1fae5; color:#16a34a">📋</span><span style="background:#fef3c7; color:#d97706">📊</span><span style="background:#e0f2fe; color:#0ea5e9">🔔</span></div>
+                    <h3>Gestiona productos y pedidos fácilmente</h3>
+                    <p>Administra tu catálogo, controla pedidos y gestiona todo desde un solo panel.</p>
+                    <p class="reason-detail">Aprueba pagos manualmente, da seguimiento a cada orden. <strong>Todo en tiempo real.</strong></p>
                 </div>
+
+                <!-- Card 3 -->
+                <div class="reason-card">
+                    <div class="reason-img" style="background:linear-gradient(135deg,#fae8ff,#eef2ff)">
+                        <div class="reason-mockup rc-mock-3">
+                            <div class="rc3-window">
+                                <div class="rc3-logo-row"><div class="rc3-logo"></div><div class="rc3-line"></div></div>
+                                <div class="rc3-banner"></div>
+                                <div class="rc3-colors"><div class="rc3-c1"></div><div class="rc3-c2"></div><div class="rc3-c3"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reason-icons"><span style="background:#fae8ff; color:#a855f7">🎨</span><span style="background:#eef2ff; color:#6366f1">✨</span></div>
+                    <h3>Personaliza tu marca</h3>
+                    <p>Configura tu logo, colores y estilo para que tu negocio tenga identidad propia.</p>
+                    <p class="reason-detail">Tu tienda refleja tu marca, no la nuestra. <strong>Branding profesional desde el día uno.</strong></p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="reason-card">
+                    <div class="reason-img" style="background:linear-gradient(135deg,#fef3c7,#fee2e2)">
+                        <div class="reason-mockup rc-mock-4">
+                            <div class="rc4-window">
+                                <div class="rc4-label">Ventas del mes</div>
+                                <div class="rc4-amount">$2.450.000</div>
+                                <div class="rc4-bars"><div class="rc4-b1"></div><div class="rc4-b2"></div><div class="rc4-b3"></div><div class="rc4-b4"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reason-icons"><span style="background:#fef3c7; color:#d97706">📈</span><span style="background:#fee2e2; color:#dc2626">🎯</span></div>
+                    <h3>Control total de tu negocio</h3>
+                    <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
+                    <p class="reason-detail">Reportes claros y métricas de crecimiento. <strong>Toma decisiones con datos reales.</strong></p>
+                </div>
+
             </div>
         </div>
+
+        <!-- Título + flechas centrados debajo -->
+        <div style="text-align:center; margin-top:48px">
+            <h2 style="font-size:1.6rem; font-weight:800; color:#111827; margin:0 0 8px; letter-spacing:-0.02em">Razones por las que Zentrix es tu mejor opción</h2>
+            <p style="color:#6b7280; font-size:0.95rem; margin:0 0 20px">Todo lo que necesitas para hacer crecer tu negocio, en un solo lugar.</p>
+            <div style="display:flex; gap:10px; justify-content:center">
+                <button onclick="scrollCards(-1)" class="carousel-arrow">←</button>
+                <button onclick="scrollCards(1)" class="carousel-arrow">→</button>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -705,8 +729,9 @@
     btn.addEventListener("mouseenter", burst);
 })();
 
-/* ── Carrusel de razones ── */
+/* ── Carrusel de razones con auto-play ── */
 let cardIndex = 0;
+let autoPlayTimer = null;
 function scrollCards(dir) {
     const track = document.getElementById("reasonsTrack");
     if (!track) return;
@@ -715,8 +740,26 @@ function scrollCards(dir) {
     const maxVisible = Math.floor(track.parentElement.offsetWidth / cardW);
     const maxIndex = Math.max(0, cards.length - maxVisible);
     cardIndex = Math.max(0, Math.min(maxIndex, cardIndex + dir));
+    if (cardIndex > maxIndex) cardIndex = 0;
+    track.style.transform = `translateX(-${cardIndex * cardW}px)`;
+    resetAutoPlay();
+}
+function autoPlay() {
+    const track = document.getElementById("reasonsTrack");
+    if (!track) return;
+    const cards = track.querySelectorAll(".reason-card");
+    const cardW = cards[0].offsetWidth + 24;
+    const maxVisible = Math.floor(track.parentElement.offsetWidth / cardW);
+    const maxIndex = Math.max(0, cards.length - maxVisible);
+    cardIndex++;
+    if (cardIndex > maxIndex) cardIndex = 0;
     track.style.transform = `translateX(-${cardIndex * cardW}px)`;
 }
+function resetAutoPlay() {
+    clearInterval(autoPlayTimer);
+    autoPlayTimer = setInterval(autoPlay, 4000);
+}
+resetAutoPlay();
 </script>
 </body>
 </html>
