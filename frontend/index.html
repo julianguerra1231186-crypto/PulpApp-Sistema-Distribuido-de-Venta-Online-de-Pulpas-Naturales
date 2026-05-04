@@ -122,6 +122,95 @@
         @media (max-width:900px) { .feat-grid { grid-template-columns:repeat(2, 1fr); } }
         @media (max-width:560px) { .feat-grid { grid-template-columns:1fr; } }
 
+        /* ── Micro-animaciones de demo en cada tarjeta ── */
+
+        /* Catálogo: productos aparecen uno a uno en loop */
+        .fm-prod {
+            opacity:0; transform:translateY(8px) scale(0.95);
+            animation: prodAppear 4s ease infinite;
+        }
+        .fm-prod:nth-child(1) { animation-delay:0s; }
+        .fm-prod:nth-child(2) { animation-delay:0.4s; }
+        .fm-prod:nth-child(3) { animation-delay:0.8s; }
+        .fm-prod:nth-child(4) { animation-delay:1.2s; }
+        @keyframes prodAppear {
+            0%,15% { opacity:0; transform:translateY(8px) scale(0.95); }
+            25%,85% { opacity:1; transform:translateY(0) scale(1); }
+            95%,100% { opacity:0; transform:translateY(-4px) scale(0.98); }
+        }
+        /* Barra de búsqueda: cursor parpadeante */
+        .fm-search::after {
+            content:""; display:inline-block; width:1px; height:10px;
+            background:#6366f1; margin-left:2px;
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink { 0%,50% { opacity:1; } 51%,100% { opacity:0; } }
+
+        /* Pedidos: fila activa se mueve entre filas */
+        .fm-table-row { transition: all 0.4s ease; }
+        .feat-card:nth-child(2) .fm-table-row {
+            animation: rowScan 6s ease infinite;
+        }
+        .feat-card:nth-child(2) .fm-table-row:nth-child(2) { animation-delay:0s; }
+        .feat-card:nth-child(2) .fm-table-row:nth-child(3) { animation-delay:1.5s; }
+        .feat-card:nth-child(2) .fm-table-row:nth-child(4) { animation-delay:3s; }
+        .feat-card:nth-child(2) .fm-table-row:nth-child(5) { animation-delay:4.5s; }
+        @keyframes rowScan {
+            0%,20% { background:transparent; border-color:transparent; }
+            25%,45% { background:#eef2ff; border:1px solid #c7d2fe; }
+            50%,100% { background:transparent; border-color:transparent; }
+        }
+
+        /* Tenant: candados pulsan y escudos brillan */
+        .fm-lock { animation: lockPulse 3s ease infinite; }
+        .fm-tenant:nth-child(1) .fm-lock { animation-delay:0s; }
+        .fm-tenant:nth-child(3) .fm-lock { animation-delay:1s; }
+        .fm-tenant:nth-child(5) .fm-lock { animation-delay:2s; }
+        @keyframes lockPulse {
+            0%,70%,100% { transform:scale(1); }
+            35% { transform:scale(1.3); }
+        }
+        .fm-shield { animation: shieldGlow 2.5s ease infinite; }
+        @keyframes shieldGlow {
+            0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0); }
+            50% { box-shadow:0 0 12px 4px rgba(16,185,129,0.2); }
+        }
+        /* Tenants flotan suavemente */
+        .fm-tenant { animation: tenantFloat 4s ease-in-out infinite; }
+        .fm-tenant:nth-child(1) { animation-delay:0s; }
+        .fm-tenant:nth-child(3) { animation-delay:0.6s; }
+        .fm-tenant:nth-child(5) { animation-delay:1.2s; }
+        @keyframes tenantFloat {
+            0%,100% { transform:translateY(0); }
+            50% { transform:translateY(-4px); }
+        }
+
+        /* Branding: colores rotan de tono */
+        .fm-brand-colors div { animation: colorShift 6s ease infinite; }
+        .fm-brand-colors div:nth-child(1) { animation-delay:0s; }
+        .fm-brand-colors div:nth-child(2) { animation-delay:1.5s; }
+        .fm-brand-colors div:nth-child(3) { animation-delay:3s; }
+        .fm-brand-colors div:nth-child(4) { animation-delay:4.5s; }
+        @keyframes colorShift {
+            0%,100% { filter:hue-rotate(0deg); }
+            50% { filter:hue-rotate(40deg); }
+        }
+        /* Banner pulsa opacidad */
+        .fm-brand-banner { animation: bannerPulse 4s ease infinite; }
+        @keyframes bannerPulse {
+            0%,100% { opacity:0.3; }
+            50% { opacity:0.6; }
+        }
+        /* Logo rota suavemente */
+        .fm-brand-logo { animation: logoSpin 8s linear infinite; }
+        @keyframes logoSpin {
+            0% { transform:rotate(0deg); }
+            100% { transform:rotate(360deg); }
+        }
+
+        /* Hover: acelera todas las animaciones */
+        .feat-card:hover * { animation-duration:1.5s !important; }
+
         /* ── Steps ── */
         .steps-section { background: #f9fafb; }
         .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
