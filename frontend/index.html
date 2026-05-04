@@ -403,21 +403,23 @@
         .reason-card:hover .rc5-window,
         .reason-card:hover .rc6-window { animation-duration:3s !important; }
 
-        /* ── Métricas ── */
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
-        .metric-value { font-size: 2.8rem; font-weight: 900; color: var(--z-primary); letter-spacing: -0.04em; line-height: 1; }
-        .metric-label { color: #6b7280; font-size: 0.92rem; margin-top: 8px; font-weight: 500; }
-
-        /* ── Testimonios ── */
-        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-        .testimonial { padding: 32px; border-left: 4px solid var(--z-primary); background: #fff; }
-        .testimonial:nth-child(2) { border-left-color: var(--z-accent); }
-        .testimonial:nth-child(3) { border-left-color: var(--z-success); }
-        .testimonial blockquote { font-size: 1rem; line-height: 1.75; color: #6b7280; margin: 0 0 20px; font-style: italic; }
-        .testimonial-author { display: flex; align-items: center; gap: 12px; }
-        .testimonial-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
-        .testimonial-name { font-weight: 600; font-size: 0.92rem; color: #111827; }
-        .testimonial-role { color: #9ca3af; font-size: 0.82rem; }
+        /* ── Commerce grid ── */
+        .commerce-grid {
+            display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;
+        }
+        .commerce-tag {
+            background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px;
+            padding:16px 20px; font-size:0.92rem; font-weight:600; color:#111827;
+            display:flex; align-items:center; gap:10px;
+            transition:all 0.25s ease; cursor:default;
+        }
+        .commerce-tag:hover {
+            border-color:#c7d2fe; background:#fff;
+            box-shadow:0 4px 16px rgba(99,102,241,0.08);
+            transform:translateY(-2px);
+        }
+        @media (max-width:768px) { .commerce-grid { grid-template-columns:repeat(2, 1fr); } }
+        @media (max-width:480px) { .commerce-grid { grid-template-columns:1fr; } }
 
         /* ── CTA final ── */
         .z-cta-section {
@@ -769,64 +771,33 @@
     </div>
 </section>
 
-<!-- ═══════════════════ MÉTRICAS ═══════════════════ -->
-<section class="z-section" style="padding-top:72px; padding-bottom:72px; background:#fff">
-    <div class="metrics-grid">
-        <div>
-            <div class="metric-value">99.9%</div>
-            <div class="metric-label">Disponibilidad garantizada</div>
+<!-- ═══════════════════ TIPOS DE COMERCIO ═══════════════════ -->
+<section style="padding:80px 0; background:#fff">
+    <div style="max-width:1120px; margin:0 auto; padding:0 24px">
+        <div style="text-align:center; margin-bottom:40px">
+            <h2 style="font-size:1.8rem; font-weight:800; color:#111827; letter-spacing:-0.02em; margin:0 0 12px">Un software para diferentes tipos de comercio</h2>
+            <p style="color:#6b7280; font-size:0.95rem; margin:0; max-width:640px; margin-inline:auto; line-height:1.6">Zentrix se adapta a negocios como papelerías, tiendas de belleza, ferreterías, minimarkets, pet shops, droguerías y más.</p>
         </div>
-        <div>
-            <div class="metric-value">+500</div>
-            <div class="metric-label">Negocios operando</div>
-        </div>
-        <div>
-            <div class="metric-value">&lt;24h</div>
-            <div class="metric-label">Tiempo de activación</div>
-        </div>
-        <div>
-            <div class="metric-value">$0</div>
-            <div class="metric-label">Costo de implementación</div>
-        </div>
-    </div>
-</section>
 
-<!-- ═══════════════════ TESTIMONIOS ═══════════════════ -->
-<section class="z-section" style="padding-top:48px; background:#fff">
-    <div class="z-section-header">
-        <h2>Negocios reales. Resultados reales.</h2>
-        <p>Esto es lo que dicen quienes ya usan Zentrix para operar su negocio.</p>
-    </div>
-    <div class="testimonial-grid">
-        <div class="z-card testimonial">
-            <blockquote>"Digitalizamos nuestra operación de pulpas en una semana. Hoy recibimos pedidos las 24 horas sin depender de WhatsApp."</blockquote>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar" style="background:#eef2ff; color:#6366f1">FS</div>
-                <div>
-                    <div class="testimonial-name">Frutos & Sabores</div>
-                    <div class="testimonial-role">Bogotá, Colombia</div>
-                </div>
-            </div>
-        </div>
-        <div class="z-card testimonial">
-            <blockquote>"El panel de vendedor es tan intuitivo que mi equipo lo dominó en un día. La gestión de pagos nos ahorró horas de trabajo manual."</blockquote>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar" style="background:#e0f2fe; color:#0ea5e9">NP</div>
-                <div>
-                    <div class="testimonial-name">NaturalPulp</div>
-                    <div class="testimonial-role">Medellín, Colombia</div>
-                </div>
-            </div>
-        </div>
-        <div class="z-card testimonial">
-            <blockquote>"Pasamos de una hoja de Excel a un sistema profesional. Nuestros clientes notan la diferencia y nosotros también."</blockquote>
-            <div class="testimonial-author">
-                <div class="testimonial-avatar" style="background:#d1fae5; color:#16a34a">CV</div>
-                <div>
-                    <div class="testimonial-name">Campo Vivo</div>
-                    <div class="testimonial-role">Cali, Colombia</div>
-                </div>
-            </div>
+        <div class="commerce-grid">
+            <div class="commerce-tag">🐾 Pet Shop</div>
+            <div class="commerce-tag">💅 Belleza</div>
+            <div class="commerce-tag">💻 Tecnología</div>
+            <div class="commerce-tag">🔧 Ferreterías</div>
+            <div class="commerce-tag">🍼 Pañalera</div>
+            <div class="commerce-tag">🍰 Pastelería / Charcutería</div>
+            <div class="commerce-tag">📎 Papelería</div>
+            <div class="commerce-tag">🏪 Tienda de variedades</div>
+            <div class="commerce-tag">🛒 Minimarkets</div>
+            <div class="commerce-tag">👕 Tiendas de ropa</div>
+            <div class="commerce-tag">🚗 Autopartes</div>
+            <div class="commerce-tag">🐶 Veterinaria</div>
+            <div class="commerce-tag">📦 E-commerce</div>
+            <div class="commerce-tag">🧴 Perfumería</div>
+            <div class="commerce-tag">💆 Peluquería / Spa</div>
+            <div class="commerce-tag">🌿 Tiendas Naturistas</div>
+            <div class="commerce-tag">👟 Calzado</div>
+            <div class="commerce-tag">💊 Droguerías</div>
         </div>
     </div>
 </section>
