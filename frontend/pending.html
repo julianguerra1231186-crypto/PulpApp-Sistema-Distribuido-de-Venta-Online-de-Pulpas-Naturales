@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zentrix | Verificando tu pago</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/saas.css">
+</head>
+<body class="saas-page">
+
+<nav class="z-nav">
+    <div class="z-nav-inner">
+        <a href="index.html" class="z-logo">Zentrix</a>
+        <div class="z-nav-links">
+            <button onclick="handleLogout()" class="z-btn z-btn-ghost" style="font-size:0.88rem">Cerrar sesión</button>
+        </div>
+    </div>
+</nav>
+
+<div class="z-pending">
+    <div class="z-pending-card z-card">
+        <div class="z-pending-icon">⏳</div>
+        <h1>Estamos verificando tu pago</h1>
+        <p>
+            Tu comprobante fue recibido correctamente. Nuestro equipo lo revisará
+            en las próximas horas y activará tu cuenta.
+        </p>
+        <p style="color:var(--z-text-muted); font-size:0.88rem; margin-bottom:32px">
+            Te notificaremos por email cuando tu espacio esté listo.
+        </p>
+        <div class="z-badge z-badge-info" style="margin-bottom:24px">Estado: Pendiente de aprobación</div>
+        <br><br>
+        <a href="login.html" class="z-btn z-btn-outline">Volver al inicio de sesión</a>
+    </div>
+</div>
+
+<footer class="z-footer">
+    <p>© 2026 Zentrix — Diseñado y desarrollado por Red Matrix Solutions</p>
+</footer>
+
+<script>
+    function handleLogout() {
+        localStorage.removeItem("pulpapp_jwt");
+        localStorage.removeItem("pulpapp_user");
+        window.location.href = "login.html";
+    }
+</script>
+
+</body>
+</html>

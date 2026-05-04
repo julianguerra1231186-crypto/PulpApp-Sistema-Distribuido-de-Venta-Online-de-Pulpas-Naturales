@@ -1,0 +1,553 @@
+/* ═══════════════════════════════════════════════════════════
+   Zentrix SaaS — Conversion-focused design system
+   Diseñado por Red Matrix Solutions
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+    --z-primary: #4f46e5;
+    --z-primary-dark: #3730a3;
+    --z-primary-light: #e0e7ff;
+    --z-primary-glow: rgba(79, 70, 229, 0.18);
+    --z-accent: #06b6d4;
+    --z-accent-light: #cffafe;
+    --z-success: #10b981;
+    --z-warning: #f59e0b;
+    --z-danger: #ef4444;
+    --z-bg: #fafbfc;
+    --z-surface: #ffffff;
+    --z-text: #111827;
+    --z-text-secondary: #6b7280;
+    --z-text-muted: #9ca3af;
+    --z-border: #e5e7eb;
+    --z-border-light: #f3f4f6;
+    --z-shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --z-shadow-md: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+    --z-shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+    --z-shadow-xl: 0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+    --z-radius-sm: 8px;
+    --z-radius-md: 12px;
+    --z-radius-lg: 16px;
+    --z-radius-xl: 24px;
+    --z-font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Reset para páginas SaaS ── */
+.saas-page {
+    margin: 0;
+    font-family: var(--z-font);
+    color: var(--z-text);
+    background: var(--z-bg);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.saas-page *, .saas-page *::before, .saas-page *::after {
+    box-sizing: border-box;
+}
+
+/* ── Navbar SaaS ── */
+.z-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--z-border);
+}
+
+.z-nav-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.z-logo {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--z-primary);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+}
+
+.z-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.z-nav-links a {
+    text-decoration: none;
+    color: var(--z-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: var(--z-radius-sm);
+    transition: all 0.2s ease;
+}
+
+.z-nav-links a:hover {
+    color: var(--z-text);
+    background: var(--z-border-light);
+}
+
+/* ── Botones SaaS ── */
+.z-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--z-radius-sm);
+    font-family: var(--z-font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.z-btn-primary {
+    background: var(--z-primary);
+    color: white;
+    box-shadow: 0 1px 2px rgba(79,70,229,0.3);
+}
+
+.z-btn-primary:hover {
+    background: var(--z-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--z-primary-glow);
+}
+
+.z-btn-outline {
+    background: transparent;
+    color: var(--z-primary);
+    border: 1.5px solid var(--z-primary);
+}
+
+.z-btn-outline:hover {
+    background: var(--z-primary-light);
+}
+
+.z-btn-ghost {
+    background: transparent;
+    color: var(--z-text-secondary);
+}
+
+.z-btn-ghost:hover {
+    background: var(--z-border-light);
+    color: var(--z-text);
+}
+
+.z-btn-lg {
+    padding: 16px 32px;
+    font-size: 1.05rem;
+    border-radius: var(--z-radius-md);
+}
+
+.z-btn-block {
+    width: 100%;
+}
+
+.z-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ── Hero ── */
+.z-hero {
+    padding: 80px 24px 60px;
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.z-hero-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background: var(--z-primary-light);
+    color: var(--z-primary);
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 999px;
+    margin-bottom: 24px;
+}
+
+.z-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    color: var(--z-text);
+    margin: 0 0 20px;
+}
+
+.z-hero h1 span {
+    color: var(--z-primary);
+}
+
+.z-hero p {
+    font-size: 1.15rem;
+    color: var(--z-text-secondary);
+    max-width: 540px;
+    margin: 0 auto 36px;
+    line-height: 1.7;
+}
+
+.z-hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ── Sección genérica ── */
+.z-section {
+    padding: 80px 24px;
+    max-width: 1120px;
+    margin: 0 auto;
+}
+
+.z-section-header {
+    text-align: center;
+    margin-bottom: 48px;
+}
+
+.z-section-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+}
+
+.z-section-header p {
+    color: var(--z-text-secondary);
+    font-size: 1.05rem;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+/* ── Grid de beneficios ── */
+.z-benefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+}
+
+.z-benefit-card {
+    background: var(--z-surface);
+    border: 1px solid var(--z-border);
+    border-radius: var(--z-radius-lg);
+    padding: 32px 28px;
+    transition: all 0.25s ease;
+}
+
+.z-benefit-card:hover {
+    border-color: var(--z-primary);
+    box-shadow: var(--z-shadow-lg);
+    transform: translateY(-2px);
+}
+
+.z-benefit-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--z-radius-md);
+    background: var(--z-primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+}
+
+.z-benefit-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.z-benefit-card p {
+    color: var(--z-text-secondary);
+    font-size: 0.92rem;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ── CTA final ── */
+.z-cta {
+    text-align: center;
+    padding: 64px 24px;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
+.z-cta h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 16px;
+}
+
+.z-cta p {
+    color: var(--z-text-secondary);
+    margin: 0 0 32px;
+    font-size: 1.05rem;
+}
+
+/* ── Pricing ── */
+.z-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+}
+
+.z-price-card {
+    background: var(--z-surface);
+    border: 1.5px solid var(--z-border);
+    border-radius: var(--z-radius-xl);
+    padding: 36px 28px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s ease;
+}
+
+.z-price-card.featured {
+    border-color: var(--z-primary);
+    box-shadow: var(--z-shadow-xl);
+    position: relative;
+}
+
+.z-price-card.featured::before {
+    content: "Popular";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--z-primary);
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 4px 16px;
+    border-radius: 999px;
+}
+
+.z-price-card h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.z-price-amount {
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 8px 0 4px;
+}
+
+.z-price-amount span {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--z-text-muted);
+}
+
+.z-price-desc {
+    color: var(--z-text-secondary);
+    font-size: 0.88rem;
+    margin: 0 0 24px;
+}
+
+.z-price-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    flex: 1;
+}
+
+.z-price-features li {
+    padding: 8px 0;
+    font-size: 0.92rem;
+    color: var(--z-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.z-price-features li::before {
+    content: "✓";
+    color: var(--z-success);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* ── Cards / Formularios SaaS ── */
+.z-card {
+    background: var(--z-surface);
+    border: 1px solid var(--z-border);
+    border-radius: var(--z-radius-lg);
+    padding: 36px 32px;
+    box-shadow: var(--z-shadow-sm);
+}
+
+.z-form-group {
+    margin-bottom: 20px;
+}
+
+.z-form-group label {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--z-text);
+    margin-bottom: 6px;
+}
+
+.z-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--z-border);
+    border-radius: var(--z-radius-sm);
+    font-family: var(--z-font);
+    font-size: 0.95rem;
+    color: var(--z-text);
+    background: var(--z-surface);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.z-input:focus {
+    border-color: var(--z-primary);
+    box-shadow: 0 0 0 3px var(--z-primary-glow);
+}
+
+.z-input::placeholder {
+    color: var(--z-text-muted);
+}
+
+select.z-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+}
+
+/* ── Payment methods ── */
+.z-payment-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.z-payment-method {
+    padding: 16px;
+    border: 1.5px solid var(--z-border);
+    border-radius: var(--z-radius-md);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--z-surface);
+}
+
+.z-payment-method:hover {
+    border-color: var(--z-primary);
+}
+
+.z-payment-method.selected {
+    border-color: var(--z-primary);
+    background: var(--z-primary-light);
+    box-shadow: 0 0 0 3px var(--z-primary-glow);
+}
+
+.z-payment-method .icon {
+    font-size: 1.6rem;
+    margin-bottom: 6px;
+}
+
+.z-payment-method .name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--z-text);
+}
+
+/* ── Status badges ── */
+.z-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+.z-badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.z-badge-success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.z-badge-info {
+    background: var(--z-primary-light);
+    color: var(--z-primary-dark);
+}
+
+/* ── Pending screen ── */
+.z-pending {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.z-pending-card {
+    text-align: center;
+    max-width: 440px;
+}
+
+.z-pending-icon {
+    font-size: 3.5rem;
+    margin-bottom: 24px;
+}
+
+.z-pending-card h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 12px;
+}
+
+.z-pending-card p {
+    color: var(--z-text-secondary);
+    margin: 0 0 32px;
+    line-height: 1.7;
+}
+
+/* ── Footer SaaS ── */
+.z-footer {
+    text-align: center;
+    padding: 40px 24px;
+    border-top: 1px solid var(--z-border);
+    color: var(--z-text-muted);
+    font-size: 0.85rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+    .z-hero { padding: 48px 20px 40px; }
+    .z-hero h1 { font-size: 1.8rem; }
+    .z-section { padding: 48px 20px; }
+    .z-nav-links { gap: 4px; }
+    .z-nav-links a { padding: 8px 10px; font-size: 0.82rem; }
+    .z-pricing-grid { grid-template-columns: 1fr; }
+    .z-card { padding: 24px 20px; }
+}

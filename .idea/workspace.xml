@@ -5,30 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="89256da1-e398-401a-a9cd-ae02780b6b6d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/tenant/TenantContext.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/tenant/TenantJwtFilter.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/pedido-confirmado.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/pedido-confirmado.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/ApprovePaymentRequestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/ApprovePaymentRequestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/OrderResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/OrderResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/PaymentStatusDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/PaymentStatusDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/SellerOrderDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/dto/SellerOrderDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/entity/Order.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/entity/Order.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/service/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/java/com/pulpapp/msorders/service/PaymentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-orders/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-orders/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/dto/ProductResponseDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/dto/ProductResponseDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Category.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/entity/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/CategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/CategoryRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/java/com/pulpapp/msproducts/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-products/src/main/resources/db/changelog/changelog-master.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/IUserService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/java/com/pulpapp/ms_users/service/UserServiceImpl.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -166,12 +143,24 @@
       <workItem from="1777321751830" duration="697000" />
       <workItem from="1777326451219" duration="1480000" />
       <workItem from="1777757467355" duration="1707000" />
-      <workItem from="1777815171257" duration="673000" />
+      <workItem from="1777815171257" duration="1719000" />
+      <workItem from="1777850491473" duration="645000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
