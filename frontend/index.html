@@ -3,79 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix — Crea y gestiona tu negocio online</title>
+    <title>Zentrix — La plataforma para lanzar tu negocio online</title>
+    <meta name="description" content="Zentrix es la plataforma SaaS que te permite crear, gestionar y escalar tu tienda online con productos, pedidos, equipo y tu propia marca. Sin código.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/saas.css">
+    <style>
+        /* ── Mejoras específicas del landing ── */
+        .z-nav { box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .z-nav-inner { height: 72px; }
+        .z-logo { font-size: 1.5rem; font-weight: 900; letter-spacing: -0.03em; }
+
+        .z-hero { padding: 100px 24px 72px; max-width: 780px; }
+        .z-hero h1 { font-size: clamp(2.2rem, 5.5vw, 3.6rem); line-height: 1.1; margin-bottom: 24px; }
+        .z-hero p { font-size: 1.2rem; line-height: 1.75; margin-bottom: 40px; }
+
+        .z-hero-gradient {
+            background: linear-gradient(135deg, #f5f3ff 0%, #eef2ff 30%, #fafbfc 70%);
+        }
+
+        .trust-bar {
+            padding: 32px 24px 56px;
+            text-align: center;
+        }
+        .trust-bar p { color: var(--z-text-muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; margin: 0 0 20px; }
+        .trust-logos { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; align-items: center; }
+        .trust-logos span { font-size: 1.15rem; font-weight: 700; color: var(--z-text-secondary); opacity: 0.3; letter-spacing: -0.01em; }
+
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; }
+        .step { text-align: center; }
+        .step-number {
+            width: 60px; height: 60px; border-radius: 16px;
+            background: linear-gradient(135deg, var(--z-primary), var(--z-primary-dark));
+            color: white; display: inline-flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; font-weight: 800; margin-bottom: 20px;
+            box-shadow: 0 8px 24px var(--z-primary-glow);
+        }
+        .step h3 { font-size: 1.15rem; margin: 0 0 10px; }
+        .step p { color: var(--z-text-secondary); font-size: 0.95rem; margin: 0; line-height: 1.65; max-width: 320px; margin-inline: auto; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; text-align: center; }
+        .metric-value { font-size: 2.8rem; font-weight: 900; color: var(--z-primary); letter-spacing: -0.04em; line-height: 1; }
+        .metric-label { color: var(--z-text-secondary); font-size: 0.92rem; margin-top: 8px; font-weight: 500; }
+
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .testimonial { padding: 32px; border-left: 4px solid var(--z-primary); }
+        .testimonial:nth-child(2) { border-left-color: var(--z-accent); }
+        .testimonial:nth-child(3) { border-left-color: var(--z-success); }
+        .testimonial blockquote { font-size: 1rem; line-height: 1.75; color: var(--z-text-secondary); margin: 0 0 20px; font-style: italic; }
+        .testimonial-author { display: flex; align-items: center; gap: 12px; }
+        .testimonial-avatar {
+            width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 0.85rem;
+        }
+        .testimonial-name { font-weight: 600; font-size: 0.92rem; }
+        .testimonial-role { color: var(--z-text-muted); font-size: 0.82rem; }
+
+        .z-cta-section {
+            background: linear-gradient(135deg, var(--z-primary), var(--z-primary-dark));
+            padding: 80px 24px;
+            text-align: center;
+            margin: 0;
+            max-width: 100%;
+            border-radius: 0;
+        }
+        .z-cta-section h2 { color: white; font-size: 2rem; font-weight: 800; margin: 0 0 16px; }
+        .z-cta-section p { color: rgba(255,255,255,0.8); font-size: 1.1rem; margin: 0 auto 36px; max-width: 520px; }
+        .z-cta-section .z-btn-white {
+            background: white; color: var(--z-primary-dark); font-weight: 700;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .z-cta-section .z-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        .z-cta-section .z-btn-ghost-white { color: rgba(255,255,255,0.9); border: 1.5px solid rgba(255,255,255,0.3); }
+        .z-cta-section .z-btn-ghost-white:hover { background: rgba(255,255,255,0.1); }
+
+        .z-footer-pro {
+            padding: 48px 24px;
+            border-top: 1px solid var(--z-border);
+            background: var(--z-surface);
+        }
+        .z-footer-inner {
+            max-width: 1120px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+        }
+        .z-footer-brand { font-size: 1.3rem; font-weight: 800; color: var(--z-primary); margin-bottom: 12px; }
+        .z-footer-desc { color: var(--z-text-muted); font-size: 0.88rem; line-height: 1.6; margin: 0; }
+        .z-footer-col h4 { font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--z-text-secondary); font-weight: 700; margin: 0 0 16px; }
+        .z-footer-col a { display: block; color: var(--z-text-muted); text-decoration: none; font-size: 0.88rem; padding: 4px 0; transition: color 0.2s; }
+        .z-footer-col a:hover { color: var(--z-primary); }
+        .z-footer-bottom { max-width: 1120px; margin: 24px auto 0; padding-top: 24px; border-top: 1px solid var(--z-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+        .z-footer-bottom span { color: var(--z-text-muted); font-size: 0.82rem; }
+
+        @media (max-width: 768px) {
+            .z-footer-inner { grid-template-columns: 1fr; gap: 32px; }
+            .trust-logos { gap: 24px; }
+            .z-hero { padding: 64px 20px 48px; }
+        }
+    </style>
 </head>
-<body class="saas-page">
+<body class="saas-page z-hero-gradient">
 
 <!-- ═══════════════════ NAVBAR ═══════════════════ -->
 <nav class="z-nav">
     <div class="z-nav-inner">
         <a href="index.html" class="z-logo">⚡ Zentrix</a>
         <div class="z-nav-links">
-            <a href="#beneficios">Beneficios</a>
+            <a href="#beneficios">Producto</a>
             <a href="#como-funciona">Cómo funciona</a>
-            <a href="pricing.html">Planes</a>
-            <a href="login.html">Iniciar sesión</a>
-            <a href="register.html" class="z-btn z-btn-primary" style="padding:8px 20px; font-size:0.88rem">Empezar gratis</a>
+            <a href="pricing.html">Precios</a>
+            <a href="login.html">Acceder</a>
+            <a href="register.html" class="z-btn z-btn-primary" style="padding:10px 24px; font-size:0.9rem">Comenzar gratis</a>
         </div>
     </div>
 </nav>
 
 <!-- ═══════════════════ HERO ═══════════════════ -->
 <section class="z-hero">
-    <div class="z-hero-badge">🚀 Plataforma SaaS Multi-Tenant</div>
-    <h1>Crea y gestiona tu <span>negocio online</span> en minutos</h1>
-    <p>Zentrix te da todo lo que necesitas para vender en línea: catálogo de productos, gestión de pedidos, equipo de trabajo y tu propia marca. Sin código, sin complicaciones.</p>
+    <div class="z-hero-badge">✨ La plataforma que impulsa negocios en Colombia</div>
+    <h1>Lanza tu tienda online.<br><span>Sin código. Sin límites.</span></h1>
+    <p>Zentrix reúne catálogo, pedidos, pagos y equipo en una sola plataforma. Configura tu negocio en minutos y empieza a vender desde el primer día.</p>
     <div class="z-hero-actions">
-        <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Empezar ahora →</a>
-        <a href="pricing.html" class="z-btn z-btn-outline z-btn-lg">Ver planes</a>
+        <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Crear mi tienda →</a>
+        <a href="pricing.html" class="z-btn z-btn-outline z-btn-lg">Ver precios</a>
     </div>
+    <p style="color:var(--z-text-muted); font-size:0.82rem; margin-top:16px">Activación en menos de 24 horas · Sin tarjeta de crédito · Cancela cuando quieras</p>
 </section>
 
-<!-- ═══════════════════ LOGOS / SOCIAL PROOF ═══════════════════ -->
-<div style="text-align:center; padding:0 24px 48px; color:var(--z-text-muted); font-size:0.88rem">
-    <p style="margin:0 0 16px">Empresas que ya confían en Zentrix</p>
-    <div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap; opacity:0.4; font-size:1.4rem; font-weight:700; color:var(--z-text-secondary)">
+<!-- ═══════════════════ SOCIAL PROOF ═══════════════════ -->
+<div class="trust-bar">
+    <p>Confían en nosotros</p>
+    <div class="trust-logos">
         <span>Frutos & Sabores</span>
         <span>NaturalPulp</span>
         <span>FreshCo</span>
         <span>TropiFruit</span>
+        <span>Campo Vivo</span>
     </div>
 </div>
 
 <!-- ═══════════════════ BENEFICIOS ═══════════════════ -->
 <section class="z-section" id="beneficios">
     <div class="z-section-header">
-        <h2>Todo lo que necesitas en un solo lugar</h2>
-        <p>Herramientas diseñadas para que te enfoques en vender, no en la tecnología.</p>
+        <h2>Una plataforma. Todas las herramientas.</h2>
+        <p>Deja de usar cinco apps distintas. Zentrix centraliza todo lo que tu negocio necesita para operar y crecer.</p>
     </div>
 
     <div class="z-benefits">
         <div class="z-benefit-card">
             <div class="z-benefit-icon">📦</div>
-            <h3>Gestión de productos</h3>
-            <p>Crea tu catálogo con fotos, precios, stock y categorías. Actualiza todo en tiempo real.</p>
+            <h3>Catálogo inteligente</h3>
+            <p>Publica productos con fotos, precios, stock y categorías. Actualiza en tiempo real desde cualquier dispositivo.</p>
         </div>
 
         <div class="z-benefit-card">
-            <div class="z-benefit-icon">🛒</div>
-            <h3>Control de pedidos</h3>
-            <p>Recibe, gestiona y da seguimiento a cada pedido. Tus clientes siempre informados.</p>
+            <div class="z-benefit-icon">📋</div>
+            <h3>Pedidos bajo control</h3>
+            <p>Recibe, procesa y da seguimiento a cada pedido. Notificaciones automáticas para ti y tus clientes.</p>
         </div>
 
         <div class="z-benefit-card">
-            <div class="z-benefit-icon">🏢</div>
-            <h3>Multi-empresa</h3>
-            <p>Cada negocio tiene su propio espacio aislado. Datos seguros, sin mezclas entre tenants.</p>
+            <div class="z-benefit-icon">🔐</div>
+            <h3>Aislamiento total</h3>
+            <p>Cada negocio opera en su propio espacio seguro. Tus datos nunca se mezclan con los de otro tenant.</p>
         </div>
 
         <div class="z-benefit-card">
             <div class="z-benefit-icon">🎨</div>
-            <h3>Tu marca, tu estilo</h3>
-            <p>Personaliza colores, logo y banner. Tu tienda se ve como TU negocio, no como una plantilla.</p>
+            <h3>Marca propia</h3>
+            <p>Logo, colores y banner personalizados. Tu tienda refleja la identidad de tu negocio, no la nuestra.</p>
         </div>
     </div>
 </section>
@@ -84,50 +180,48 @@
 <section class="z-section" id="como-funciona" style="background:var(--z-border-light); border-radius:0; max-width:100%; padding-left:0; padding-right:0">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
         <div class="z-section-header">
-            <h2>Empieza en 3 pasos</h2>
-            <p>De la idea a tu tienda online en menos de lo que piensas.</p>
+            <h2>Operativo en tres pasos</h2>
+            <p>De cero a tu primera venta en menos tiempo del que imaginas.</p>
         </div>
 
-        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:32px">
-            <div style="text-align:center">
-                <div style="width:56px; height:56px; border-radius:50%; background:var(--z-primary); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; margin-bottom:16px">1</div>
-                <h3 style="font-size:1.1rem; margin:0 0 8px">Regístrate</h3>
-                <p style="color:var(--z-text-secondary); font-size:0.92rem; margin:0">Crea tu cuenta en 30 segundos. Solo necesitas tu email y una contraseña.</p>
+        <div class="steps-grid">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Crea tu cuenta</h3>
+                <p>Regístrate con tu email en 30 segundos. Sin formularios largos, sin verificaciones complicadas.</p>
             </div>
-
-            <div style="text-align:center">
-                <div style="width:56px; height:56px; border-radius:50%; background:var(--z-primary); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; margin-bottom:16px">2</div>
-                <h3 style="font-size:1.1rem; margin:0 0 8px">Activa tu plan</h3>
-                <p style="color:var(--z-text-secondary); font-size:0.92rem; margin:0">Elige tu plan y paga con Nequi, Daviplata o transferencia. Activación en horas.</p>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Activa tu espacio</h3>
+                <p>Elige un plan y paga con Nequi, Daviplata o transferencia bancaria. Tu cuenta se activa en horas.</p>
             </div>
-
-            <div style="text-align:center">
-                <div style="width:56px; height:56px; border-radius:50%; background:var(--z-primary); color:white; display:inline-flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800; margin-bottom:16px">3</div>
-                <h3 style="font-size:1.1rem; margin:0 0 8px">Empieza a vender</h3>
-                <p style="color:var(--z-text-secondary); font-size:0.92rem; margin:0">Sube tus productos, personaliza tu tienda y recibe pedidos desde el día uno.</p>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Vende desde el día uno</h3>
+                <p>Sube tu catálogo, personaliza tu marca y comparte tu tienda. Los pedidos empiezan a llegar.</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ═══════════════════ MÉTRICAS ═══════════════════ -->
-<section class="z-section" style="padding-top:64px; padding-bottom:64px">
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:32px; text-align:center">
+<section class="z-section" style="padding-top:72px; padding-bottom:72px">
+    <div class="metrics-grid">
         <div>
-            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">99.9%</div>
-            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Uptime garantizado</div>
+            <div class="metric-value">99.9%</div>
+            <div class="metric-label">Disponibilidad garantizada</div>
         </div>
         <div>
-            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">+500</div>
-            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Negocios activos</div>
+            <div class="metric-value">+500</div>
+            <div class="metric-label">Negocios operando</div>
         </div>
         <div>
-            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">24h</div>
-            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Activación máxima</div>
+            <div class="metric-value">&lt;24h</div>
+            <div class="metric-label">Tiempo de activación</div>
         </div>
         <div>
-            <div style="font-size:2.4rem; font-weight:800; color:var(--z-primary); letter-spacing:-0.03em">$0</div>
-            <div style="color:var(--z-text-secondary); font-size:0.9rem; margin-top:4px">Costo de setup</div>
+            <div class="metric-value">$0</div>
+            <div class="metric-label">Costo de implementación</div>
         </div>
     </div>
 </section>
@@ -135,28 +229,40 @@
 <!-- ═══════════════════ TESTIMONIOS ═══════════════════ -->
 <section class="z-section" style="padding-top:0">
     <div class="z-section-header">
-        <h2>Lo que dicen nuestros clientes</h2>
+        <h2>Negocios reales. Resultados reales.</h2>
+        <p>Esto es lo que dicen quienes ya usan Zentrix para operar su negocio.</p>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:24px">
-        <div class="z-card" style="border-left:3px solid var(--z-primary)">
-            <p style="color:var(--z-text-secondary); font-size:0.95rem; line-height:1.7; margin:0 0 16px">"Zentrix nos permitió digitalizar nuestro negocio de pulpas en una semana. Ahora recibimos pedidos las 24 horas."</p>
-            <div style="display:flex; align-items:center; gap:12px">
-                <div style="width:40px; height:40px; border-radius:50%; background:var(--z-primary-light); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--z-primary)">FS</div>
+    <div class="testimonial-grid">
+        <div class="z-card testimonial">
+            <blockquote>"Digitalizamos nuestra operación de pulpas en una semana. Hoy recibimos pedidos las 24 horas sin depender de WhatsApp."</blockquote>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background:var(--z-primary-light); color:var(--z-primary)">FS</div>
                 <div>
-                    <div style="font-weight:600; font-size:0.9rem">Frutos & Sabores</div>
-                    <div style="color:var(--z-text-muted); font-size:0.82rem">Bogotá, Colombia</div>
+                    <div class="testimonial-name">Frutos & Sabores</div>
+                    <div class="testimonial-role">Bogotá, Colombia</div>
                 </div>
             </div>
         </div>
 
-        <div class="z-card" style="border-left:3px solid var(--z-accent)">
-            <p style="color:var(--z-text-secondary); font-size:0.95rem; line-height:1.7; margin:0 0 16px">"La gestión de pedidos y el panel de vendedor son increíbles. Mis empleados lo aprendieron en un día."</p>
-            <div style="display:flex; align-items:center; gap:12px">
-                <div style="width:40px; height:40px; border-radius:50%; background:var(--z-accent-light); display:flex; align-items:center; justify-content:center; font-weight:700; color:var(--z-accent)">NP</div>
+        <div class="z-card testimonial">
+            <blockquote>"El panel de vendedor es tan intuitivo que mi equipo lo dominó en un día. La gestión de pagos nos ahorró horas de trabajo manual."</blockquote>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background:var(--z-accent-light); color:var(--z-accent)">NP</div>
                 <div>
-                    <div style="font-weight:600; font-size:0.9rem">NaturalPulp</div>
-                    <div style="color:var(--z-text-muted); font-size:0.82rem">Medellín, Colombia</div>
+                    <div class="testimonial-name">NaturalPulp</div>
+                    <div class="testimonial-role">Medellín, Colombia</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="z-card testimonial">
+            <blockquote>"Pasamos de una hoja de Excel a un sistema profesional. Nuestros clientes notan la diferencia y nosotros también."</blockquote>
+            <div class="testimonial-author">
+                <div class="testimonial-avatar" style="background:#d1fae5; color:#065f46">CV</div>
+                <div>
+                    <div class="testimonial-name">Campo Vivo</div>
+                    <div class="testimonial-role">Cali, Colombia</div>
                 </div>
             </div>
         </div>
@@ -164,27 +270,44 @@
 </section>
 
 <!-- ═══════════════════ CTA FINAL ═══════════════════ -->
-<section class="z-cta" style="padding-bottom:80px">
-    <h2>Empieza hoy sin complicaciones</h2>
-    <p>Crea tu tienda online en minutos. Sin código, sin contratos, sin riesgo.</p>
-    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap">
-        <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Crear mi tienda gratis →</a>
-        <a href="pricing.html" class="z-btn z-btn-outline z-btn-lg">Ver planes y precios</a>
+<section class="z-cta-section">
+    <h2>Tu negocio merece una plataforma profesional</h2>
+    <p>Únete a cientos de empresas que ya gestionan sus ventas con Zentrix. Empieza hoy, escala mañana.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap">
+        <a href="register.html" class="z-btn z-btn-lg z-btn-white">Crear mi tienda gratis →</a>
+        <a href="pricing.html" class="z-btn z-btn-lg z-btn-ghost-white">Comparar planes</a>
     </div>
 </section>
 
 <!-- ═══════════════════ FOOTER ═══════════════════ -->
-<footer class="z-footer">
-    <div style="max-width:1120px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; padding:0 24px">
+<footer class="z-footer-pro">
+    <div class="z-footer-inner">
         <div>
-            <span style="font-weight:700; color:var(--z-text)">⚡ Zentrix</span>
-            <span style="margin-left:8px">© 2026 Red Matrix Solutions</span>
+            <div class="z-footer-brand">⚡ Zentrix</div>
+            <p class="z-footer-desc">La plataforma SaaS que impulsa negocios en Colombia. Productos, pedidos, equipo y marca en un solo lugar.</p>
         </div>
-        <div style="display:flex; gap:24px">
-            <a href="pricing.html" style="color:var(--z-text-muted); text-decoration:none; font-size:0.85rem">Planes</a>
-            <a href="login.html" style="color:var(--z-text-muted); text-decoration:none; font-size:0.85rem">Iniciar sesión</a>
-            <a href="register.html" style="color:var(--z-text-muted); text-decoration:none; font-size:0.85rem">Registrarse</a>
+        <div class="z-footer-col">
+            <h4>Producto</h4>
+            <a href="#beneficios">Beneficios</a>
+            <a href="#como-funciona">Cómo funciona</a>
+            <a href="pricing.html">Precios</a>
         </div>
+        <div class="z-footer-col">
+            <h4>Cuenta</h4>
+            <a href="register.html">Crear cuenta</a>
+            <a href="login.html">Iniciar sesión</a>
+            <a href="payment.html">Activar plan</a>
+        </div>
+        <div class="z-footer-col">
+            <h4>Empresa</h4>
+            <a href="#">Sobre nosotros</a>
+            <a href="#">Contacto</a>
+            <a href="#">Términos</a>
+        </div>
+    </div>
+    <div class="z-footer-bottom">
+        <span>© 2026 Zentrix · Una empresa de <strong>Red Matrix Solutions</strong></span>
+        <span>Hecho con ❤️ en Colombia</span>
     </div>
 </footer>
 
