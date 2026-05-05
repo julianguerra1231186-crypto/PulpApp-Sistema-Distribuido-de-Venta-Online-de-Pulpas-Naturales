@@ -435,8 +435,8 @@
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px">
                     <div>
-                        <h2 style="margin:0">🏘️ Propiedades en Administración</h2>
-                        <p style="color:#6b7280; font-size:0.8rem; margin:4px 0 0">Selecciona un inmueble para asignar o ver el inquilino actual.</p>
+                        <h2 style="margin:0">🏘️ Propiedades Disponibles para Administración</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:4px 0 0">Pasa el cursor sobre la dirección para ver los datos del propietario. Click en "Asignar" para registrar un inquilino.</p>
                     </div>
                     <input type="text" id="invSearch" placeholder="Buscar propiedad..." style="padding:8px 14px; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; width:220px; font-family:inherit">
                 </div>
@@ -466,6 +466,7 @@
 
                 <!-- Formulario inquilino -->
                 <form id="tenantForm" onsubmit="saveTenant(event)">
+                    <!-- Datos del inquilino -->
                     <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
                         <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:12px">📝 Datos del Inquilino</div>
                         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
@@ -473,10 +474,54 @@
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cédula *</label><input type="text" id="tf_cedula" required placeholder="Ej: 1.007.123.456" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono *</label><input type="text" id="tf_phone" required placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Email</label><input type="email" id="tf_email" placeholder="correo@ejemplo.com" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fecha Inicio Contrato</label><input type="date" id="tf_fecha_inicio" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ocupación</label><input type="text" id="tf_ocupacion" placeholder="Ej: Ingeniero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Observaciones</label><input type="text" id="tf_obs" placeholder="Notas adicionales" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
                         </div>
                     </div>
+
+                    <!-- Contrato -->
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#1e40af; margin-bottom:12px">📅 Contrato de Arriendo</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fecha Inicio *</label>
+                                <input type="date" id="tf_fecha_inicio" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" onchange="calcFechaFin()">
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Duración *</label>
+                                <select id="tf_duracion" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff" onchange="calcFechaFin()">
+                                    <option value="">Seleccione...</option>
+                                    <option value="6">6 meses</option>
+                                    <option value="12">12 meses</option>
+                                    <option value="18">18 meses</option>
+                                    <option value="24">24 meses</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fecha Finalización</label>
+                                <div id="tf_fecha_fin" style="width:100%; padding:10px 14px; border:2px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:800; color:#1e40af; background:#fff; min-height:20px">Selecciona fecha y duración</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Codeudor -->
+                    <div style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+                            <div style="font-size:0.82rem; font-weight:700; color:#854d0e">🤝 Datos del Codeudor</div>
+                            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer">
+                                <input type="checkbox" id="tf_has_codeudor" onchange="toggleCodeudor()" style="cursor:pointer"> Sin codeudor
+                            </label>
+                        </div>
+                        <div id="codeudorFields" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre Completo</label><input type="text" id="tf_cod_name" placeholder="Nombre del codeudor" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cédula</label><input type="text" id="tf_cod_cedula" placeholder="Ej: 1.007.123.456" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono</label><input type="text" id="tf_cod_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección</label><input type="text" id="tf_cod_direccion" placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Relación con inquilino</label><select id="tf_cod_relacion" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="Familiar">Familiar</option><option value="Amigo">Amigo</option><option value="Pareja">Pareja</option><option value="Socio">Socio</option><option value="Otro">Otro</option></select></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ocupación</label><input type="text" id="tf_cod_ocupacion" placeholder="Ej: Comerciante" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
                     <div style="display:flex; gap:10px; justify-content:flex-end">
                         <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Inquilino</button>
                         <button type="button" onclick="hideTenantForm()" style="padding:10px 22px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button>
@@ -783,25 +828,27 @@ function renderInventoryTable(items) {
         <thead><tr style="background:#1e293b; color:#fff">
             <th style="padding:10px 12px; text-align:left">Inmueble</th>
             <th style="padding:10px 12px; text-align:left">Dirección</th>
-            <th style="padding:10px 12px; text-align:left">Propietario/a</th>
-            <th style="padding:10px 12px; text-align:right">Arriendo</th>
-            <th style="padding:10px 12px; text-align:right">Comisión</th>
             <th style="padding:10px 12px; text-align:center">Estado</th>
             <th style="padding:10px 12px; text-align:center">Acciones</th>
         </tr></thead><tbody>`;
     items.forEach(i => {
         const rent = Number(i.rentValue || 0);
         const comision = Math.round(rent * 0.11);
+        const supData = i.supplier || '';
+        const cedulaMatch = supData.match(/CC:([^\|]+)/);
+        const cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+        const phone = supData.replace(/CC:[^\|]+\|?\s*/, '').trim() || '—';
+        const tooltipContent = `👤 ${i.ownerName || '—'}&#10;📞 ${phone}&#10;🆔 CC ${cedula}&#10;💵 Arriendo: $${rent.toLocaleString('es-CO')}&#10;💼 Comisión (11%): $${comision.toLocaleString('es-CO')}`;
         const st = i.active ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>' : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
         html += `<tr style="border-bottom:1px solid #f3f4f6" onmouseover="this.style.background='#f9fafb'" onmouseout="this.style.background='#fff'">
             <td style="padding:10px 12px; font-weight:600">${i.name}</td>
-            <td style="padding:10px 12px">${i.propertyAddress || '—'}</td>
-            <td style="padding:10px 12px; color:#1e40af; font-weight:600">${i.ownerName || '—'}</td>
-            <td style="padding:10px 12px; text-align:right; font-weight:700">$${rent.toLocaleString('es-CO')}</td>
-            <td style="padding:10px 12px; text-align:right; color:#6366f1; font-weight:600">$${comision.toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; position:relative; cursor:help" title="${tooltipContent}">
+                📍 ${i.propertyAddress || '—'}
+                <span style="font-size:0.68rem; color:#6366f1; margin-left:6px; font-weight:600">ℹ️</span>
+            </td>
             <td style="padding:10px 12px; text-align:center">${st}</td>
             <td style="padding:10px 12px; text-align:center">
-                <button onclick="showTenantForm(${i.id})" style="padding:5px 12px; background:#6366f1; color:#fff; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">👤 Inquilino</button>
+                <button onclick="showTenantForm(${i.id})" style="padding:6px 16px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; box-shadow:0 2px 6px rgba(99,102,241,0.25)">👤 Asignar</button>
             </td>
         </tr>`;
     });
@@ -852,13 +899,74 @@ function showTenantForm(propertyId) {
 
 function hideTenantForm() { document.getElementById("tenantFormPanel").style.display = "none"; selectedAdminProperty = null; }
 
+function calcFechaFin() {
+    const fechaInicio = document.getElementById("tf_fecha_inicio").value;
+    const duracion = document.getElementById("tf_duracion").value;
+    const display = document.getElementById("tf_fecha_fin");
+    if (!fechaInicio || !duracion) { display.textContent = "Selecciona fecha y duración"; display.style.color = "#9ca3af"; return; }
+    const inicio = new Date(fechaInicio);
+    const fin = new Date(inicio);
+    fin.setMonth(fin.getMonth() + Number(duracion));
+    const finStr = fin.toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+    display.textContent = finStr;
+    display.style.color = "#1e40af";
+    // Efecto
+    display.style.transform = "scale(1.03)";
+    setTimeout(() => display.style.transform = "scale(1)", 200);
+}
+
+function toggleCodeudor() {
+    const checkbox = document.getElementById("tf_has_codeudor");
+    const fields = document.getElementById("codeudorFields");
+    if (checkbox.checked) {
+        fields.style.opacity = "0.4";
+        fields.style.pointerEvents = "none";
+        // Limpiar campos
+        ['tf_cod_name','tf_cod_cedula','tf_cod_phone','tf_cod_direccion','tf_cod_relacion','tf_cod_ocupacion'].forEach(id => {
+            const el = document.getElementById(id); if (el) el.value = "";
+        });
+    } else {
+        fields.style.opacity = "1";
+        fields.style.pointerEvents = "auto";
+    }
+}
+
 async function saveTenant(e) {
     e.preventDefault();
     const name = document.getElementById("tf_name").value;
     const cedula = document.getElementById("tf_cedula").value;
     const phone = document.getElementById("tf_phone").value;
     const email = document.getElementById("tf_email").value;
+    const ocupacion = document.getElementById("tf_ocupacion").value;
     const fechaInicio = document.getElementById("tf_fecha_inicio").value;
+    const duracion = document.getElementById("tf_duracion").value;
+    const obs = document.getElementById("tf_obs").value;
+    const sinCodeudor = document.getElementById("tf_has_codeudor").checked;
+    const codName = document.getElementById("tf_cod_name").value;
+    const codCedula = document.getElementById("tf_cod_cedula").value;
+    const codPhone = document.getElementById("tf_cod_phone").value;
+    const codDir = document.getElementById("tf_cod_direccion").value;
+    const codRel = document.getElementById("tf_cod_relacion").value;
+    const codOcu = document.getElementById("tf_cod_ocupacion").value;
+
+    // Calcular fecha fin
+    let fechaFin = "";
+    if (fechaInicio && duracion) {
+        const inicio = new Date(fechaInicio);
+        const fin = new Date(inicio);
+        fin.setMonth(fin.getMonth() + Number(duracion));
+        fechaFin = fin.toISOString().split('T')[0];
+    }
+
+    // Construir observaciones completas
+    let obsCompleta = [];
+    if (ocupacion) obsCompleta.push("Ocupación: " + ocupacion);
+    if (fechaInicio) obsCompleta.push("Inicio: " + fechaInicio);
+    if (fechaFin) obsCompleta.push("Fin: " + fechaFin + " (" + duracion + " meses)");
+    if (!sinCodeudor && codName) {
+        obsCompleta.push("Codeudor: " + codName + " CC " + codCedula + " Tel " + codPhone + (codRel ? " (" + codRel + ")" : ""));
+    }
+    if (obs) obsCompleta.push("Notas: " + obs);
 
     const clientBody = {
         name: name + " (Inquilino)",
@@ -873,22 +981,29 @@ async function saveTenant(e) {
     try {
         const res = await fetch(API + "/clients", { method:"POST", headers: authHeaders(), body: JSON.stringify(clientBody) });
         if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
-        hideTenantForm();
-        alert("✓ Inquilino '" + name + "' registrado como cliente\n\nPropiedad: " + (selectedAdminProperty?.name || '') + "\nInicio contrato: " + (fechaInicio || 'No especificado'));
-    } catch (e) { alert("Error: " + e.message); }
-}
 
-// ── Proveedores ──
-async function loadSuppliers() {
-    try {
-        const res = await fetch(API + "/inventory", { headers: authHeaders() });
-        if (!res.ok) throw new Error("Error " + res.status);
-        const items = await res.json();
-        renderInventoryTable(items);
-        renderInvStats(items);
-    } catch (e) {
-        document.getElementById("inventoryTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>';
-    }
+        // Guardar codeudor también como cliente si existe
+        if (!sinCodeudor && codName && codCedula) {
+            const codBody = {
+                name: codName + " (Codeudor de " + name + ")",
+                documentType: "CC",
+                document: codCedula,
+                phone: codPhone,
+                city: "",
+                address: codDir || "",
+                email: "",
+                creditLimit: 0
+            };
+            try { await fetch(API + "/clients", { method:"POST", headers: authHeaders(), body: JSON.stringify(codBody) }); } catch(e) {}
+        }
+
+        hideTenantForm();
+        let msg = "✓ Inquilino '" + name + "' registrado como cliente\n\n";
+        msg += "🏠 Propiedad: " + (selectedAdminProperty?.name || '') + "\n";
+        msg += "📅 Contrato: " + fechaInicio + " al " + fechaFin + " (" + duracion + " meses)";
+        if (!sinCodeudor && codName) msg += "\n🤝 Codeudor: " + codName;
+        alert(msg);
+    } catch (e) { alert("Error: " + e.message); }
 }
 
 // ── Proveedores ──
