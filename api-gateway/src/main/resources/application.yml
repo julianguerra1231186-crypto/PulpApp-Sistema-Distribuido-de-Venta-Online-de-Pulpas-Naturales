@@ -109,6 +109,14 @@ spring:
             - Path=/tenant/users, /tenant/users/**
 
         # --------------------------------------------
+        # CLIENTES DEL NEGOCIO (ERP Fase A)
+        # --------------------------------------------
+        - id: ms-clients
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/clients, /clients/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users

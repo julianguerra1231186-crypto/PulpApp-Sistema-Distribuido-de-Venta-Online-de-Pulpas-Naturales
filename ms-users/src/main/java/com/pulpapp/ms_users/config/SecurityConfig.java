@@ -63,6 +63,10 @@ public class SecurityConfig {
                 .requestMatchers("/tenant/users").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/tenant/users/**").hasAuthority("ROLE_ADMIN")
 
+                // ── Clientes del negocio (ERP) ────────────────────────────
+                .requestMatchers("/clients").authenticated()
+                .requestMatchers("/clients/**").authenticated()
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")

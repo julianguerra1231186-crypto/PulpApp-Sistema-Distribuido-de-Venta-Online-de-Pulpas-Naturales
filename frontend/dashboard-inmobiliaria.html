@@ -178,7 +178,45 @@
         </div>
 
         <!-- Clients -->
-        <div id="tab-clients" style="display:none"><div class="panel"><h2>👤 Clientes</h2><div class="empty-msg">Los clientes que consulten tus propiedades aparecerán aquí.</div></div></div>
+        <div id="tab-clients" style="display:none">
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px">
+                    <h2 style="margin:0">👤 Listado de Clientes</h2>
+                    <div style="display:flex; gap:10px; align-items:center">
+                        <input type="text" id="clientSearch" placeholder="Buscar cliente..." style="padding:8px 14px; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; width:200px; font-family:inherit">
+                        <button onclick="loadClients()" style="padding:8px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; cursor:pointer; font-family:inherit">🔄 Limpiar</button>
+                        <button onclick="showNewClientForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nuevo Cliente</button>
+                    </div>
+                </div>
+                <p style="color:#6b7280; font-size:0.85rem; margin:0 0 16px">Consulta, filtra y administra el estado operativo de los clientes registrados.</p>
+                <div id="clientsTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando clientes...</div></div>
+                <!-- Stats -->
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:20px" id="clientStats"></div>
+            </div>
+
+            <!-- Formulario nuevo cliente (oculto) -->
+            <div id="newClientForm" style="display:none" class="panel">
+                <h2 style="margin:0 0 16px">📝 Crear Nuevo Cliente</h2>
+                <p style="color:#6b7280; font-size:0.85rem; margin:0 0 20px">Registra la información base del cliente para facturación, cotizaciones y cartera.</p>
+                <form id="clientForm" onsubmit="saveClient(event)">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Tipo de Documento *</label><select id="cf_docType" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"><option value="">Seleccione...</option><option value="CC">Cédula de Ciudadanía</option><option value="CE">Cédula de Extranjería</option><option value="NIT">NIT</option><option value="Pasaporte">Pasaporte</option></select></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Número de Documento *</label><input type="text" id="cf_document" required placeholder="Ej: 1007123767" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Nombre *</label><input type="text" id="cf_name" required placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Teléfono *</label><input type="text" id="cf_phone" required placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Dirección</label><input type="text" id="cf_address" placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Ciudad</label><input type="text" id="cf_city" placeholder="Ej: Bogotá" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Email</label><input type="email" id="cf_email" placeholder="Ej: correo@dominio.com" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Límite Crédito</label><input type="number" id="cf_creditLimit" placeholder="$0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                    </div>
+                    <p style="color:#9ca3af; font-size:0.78rem; margin:16px 0 0">Los campos marcados con * son obligatorios</p>
+                    <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end">
+                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Cliente</button>
+                        <button type="button" onclick="hideNewClientForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Contracts -->
         <div id="tab-contracts" style="display:none"><div class="panel"><h2>📝 Contratos</h2><div class="empty-msg">Gestiona contratos de arriendo y venta desde aquí.</div></div></div>
@@ -231,7 +269,134 @@ function showTab(name) {
     event?.target?.closest?.(".sb-link")?.classList.add("active");
     const titles = { overview:"Inicio", properties:"Propiedades", clients:"Clientes", contracts:"Contratos", visits:"Visitas", invoices:"Facturación", quotes:"Cotizaciones", purchases:"Compras", payments:"Pagos", inventory:"Inventario", suppliers:"Proveedores", cashbox:"Caja", movements:"Movimientos", reports:"Reportes", audit:"Auditoría", settings:"Configuración" };
     document.getElementById("pageTitle").textContent = titles[name] || name;
+    if (name === "clients") loadClients();
 }
+
+// ── Clientes API ──
+const API = "http://localhost:8090";
+const getToken = () => localStorage.getItem("pulpapp_jwt");
+const authHeaders = () => ({ "Content-Type":"application/json", "Authorization":"Bearer " + getToken() });
+
+async function loadClients() {
+    try {
+        const res = await fetch(API + "/clients", { headers: authHeaders() });
+        if (!res.ok) throw new Error("Error " + res.status);
+        const clients = await res.json();
+        renderClientsTable(clients);
+        renderClientStats(clients);
+    } catch (e) {
+        document.getElementById("clientsTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error al cargar clientes: ' + e.message + '</div>';
+    }
+}
+
+function renderClientsTable(clients) {
+    if (!clients.length) {
+        document.getElementById("clientsTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay clientes registrados. ¡Crea el primero!</div>';
+        return;
+    }
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
+        <thead><tr style="background:#1e293b; color:#fff">
+            <th style="padding:10px 12px; text-align:left">Nombre</th>
+            <th style="padding:10px 12px; text-align:left">Tipo Doc</th>
+            <th style="padding:10px 12px; text-align:left">Documento</th>
+            <th style="padding:10px 12px; text-align:left">Teléfono</th>
+            <th style="padding:10px 12px; text-align:left">Ciudad</th>
+            <th style="padding:10px 12px; text-align:left">Límite Crédito</th>
+            <th style="padding:10px 12px; text-align:center">Estado</th>
+            <th style="padding:10px 12px; text-align:center">Acciones</th>
+        </tr></thead><tbody>`;
+    clients.forEach(c => {
+        const statusBadge = c.active
+            ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>'
+            : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
+        const actionBtn = c.active
+            ? `<button onclick="toggleClient(${c.id}, false)" style="padding:4px 12px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Inactivar</button>`
+            : `<button onclick="toggleClient(${c.id}, true)" style="padding:4px 12px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Activar</button>`;
+        html += `<tr style="border-bottom:1px solid #f3f4f6">
+            <td style="padding:10px 12px; font-weight:600">${c.name}</td>
+            <td style="padding:10px 12px">${c.documentType}</td>
+            <td style="padding:10px 12px">${c.document}</td>
+            <td style="padding:10px 12px">${c.phone || '—'}</td>
+            <td style="padding:10px 12px">${c.city || '—'}</td>
+            <td style="padding:10px 12px">$${Number(c.creditLimit || 0).toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; text-align:center">${statusBadge}</td>
+            <td style="padding:10px 12px; text-align:center">${actionBtn}</td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    html += `<div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ${clients.length} clientes</div>`;
+    document.getElementById("clientsTableContainer").innerHTML = html;
+}
+
+function renderClientStats(clients) {
+    const total = clients.length;
+    const active = clients.filter(c => c.active).length;
+    const withCredit = clients.filter(c => c.creditLimit > 0).length;
+    const avgCredit = total > 0 ? clients.reduce((s, c) => s + Number(c.creditLimit || 0), 0) / total : 0;
+    document.getElementById("clientStats").innerHTML = `
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Total Clientes</div>
+            <div style="font-size:1.6rem; font-weight:800; color:#111827">${total}</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Clientes Activos</div>
+            <div style="font-size:1.6rem; font-weight:800; color:#16a34a">${active}</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Con Crédito</div>
+            <div style="font-size:1.6rem; font-weight:800; color:#0ea5e9">${withCredit}</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Promedio Crédito</div>
+            <div style="font-size:1.2rem; font-weight:800; color:#111827">$${Math.round(avgCredit).toLocaleString('es-CO')}</div>
+        </div>`;
+}
+
+async function toggleClient(id, active) {
+    try {
+        await fetch(API + `/clients/${id}/active?active=${active}`, { method:"PATCH", headers: authHeaders() });
+        loadClients();
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+function showNewClientForm() { document.getElementById("newClientForm").style.display = "block"; }
+function hideNewClientForm() { document.getElementById("newClientForm").style.display = "none"; document.getElementById("clientForm").reset(); }
+
+async function saveClient(e) {
+    e.preventDefault();
+    const body = {
+        name: document.getElementById("cf_name").value,
+        documentType: document.getElementById("cf_docType").value,
+        document: document.getElementById("cf_document").value,
+        phone: document.getElementById("cf_phone").value,
+        city: document.getElementById("cf_city").value,
+        address: document.getElementById("cf_address").value,
+        email: document.getElementById("cf_email").value,
+        creditLimit: Number(document.getElementById("cf_creditLimit").value) || 0
+    };
+    try {
+        const res = await fetch(API + "/clients", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
+        hideNewClientForm();
+        loadClients();
+        alert("✓ Cliente creado exitosamente");
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+// Búsqueda en tiempo real
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("clientSearch");
+    if (searchInput) {
+        searchInput.addEventListener("input", async () => {
+            const q = searchInput.value.trim();
+            if (q.length < 2) { loadClients(); return; }
+            try {
+                const res = await fetch(API + "/clients/search?q=" + encodeURIComponent(q), { headers: authHeaders() });
+                if (res.ok) { const data = await res.json(); renderClientsTable(data); }
+            } catch (e) {}
+        });
+    }
+});
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
