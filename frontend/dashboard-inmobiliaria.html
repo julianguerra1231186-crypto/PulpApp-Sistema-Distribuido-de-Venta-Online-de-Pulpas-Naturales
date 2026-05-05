@@ -955,13 +955,21 @@ function setClientType(type) {
     invoiceClientType = type;
     const btnInq = document.getElementById("btn_tipo_inquilino");
     const btnProp = document.getElementById("btn_tipo_propietario");
+    const searchInput = document.getElementById("inv_search_client");
     if (type === "inquilino") {
         btnInq.style.background = "#6366f1"; btnInq.style.color = "#fff"; btnInq.style.borderColor = "#6366f1";
         btnProp.style.background = "#fff"; btnProp.style.color = "#374151"; btnProp.style.borderColor = "#e5e7eb";
+        searchInput.placeholder = "Buscar inquilino por nombre o cédula...";
     } else {
         btnProp.style.background = "#6366f1"; btnProp.style.color = "#fff"; btnProp.style.borderColor = "#6366f1";
         btnInq.style.background = "#fff"; btnInq.style.color = "#374151"; btnInq.style.borderColor = "#e5e7eb";
+        searchInput.placeholder = "Buscar propietario por nombre, cédula o teléfono...";
     }
+    // Limpiar búsqueda anterior
+    searchInput.value = "";
+    document.getElementById("inv_client_results").innerHTML = "";
+    document.getElementById("inv_client_info").style.display = "none";
+    selectedClientData = null;
     const label = document.getElementById("inv_ci_type_label");
     if (label) label.textContent = "Tipo: " + (type === "inquilino" ? "Inquilino" : "Propietario");
 }
@@ -1013,17 +1021,62 @@ function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.d
 
 async function searchClientForInvoice(query) {
     if (query.length < 2) { document.getElementById("inv_client_results").innerHTML = ""; return; }
+    
+    if (invoiceClientType === "propietario") {
+        // Buscar en propiedades por nombre propietario, cédula o teléfono
+        const q = query.toLowerCase();
+        const matches = propertiesList.filter(p => {
+            const ownerName = (p.ownerName || '').toLowerCase();
+            const supplier = (p.supplier || '').toLowerCase(); // contiene CC y teléfono
+            return ownerName.includes(q) || supplier.includes(q);
+        });
+        if (!matches.length) { document.getElementById("inv_client_results").innerHTML = '<div style="font-size:0.78rem; color:#9ca3af">No se encontraron propietarios con ese dato</div>'; return; }
+        let html = '<div style="display:flex; flex-direction:column; gap:4px">';
+        matches.forEach(p => {
+            const supData = p.supplier || '';
+            const cedulaMatch = supData.match(/CC:([^\|]+)/);
+            const cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+            const phone = supData.replace(/CC:[^\|]+\|?\s*/, '').trim();
+            html += `<div onclick="selectOwnerForInvoice(${p.id})" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; transition:background 0.2s" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#fff'"><strong>${p.ownerName}</strong> — CC ${cedula} — 📍 ${p.propertyAddress || p.name}</div>`;
+        });
+        html += '</div>';
+        document.getElementById("inv_client_results").innerHTML = html;
+        return;
+    }
+
+    // Buscar en clientes (inquilino)
     try {
         const res = await fetch(API + "/clients/search?q=" + encodeURIComponent(query), { headers: authHeaders() });
         const clients = await res.json();
         if (!clients.length) { document.getElementById("inv_client_results").innerHTML = '<div style="font-size:0.78rem; color:#9ca3af">No se encontraron resultados</div>'; return; }
         let html = '<div style="display:flex; flex-direction:column; gap:4px">';
         clients.forEach(c => {
-            html += `<div onclick="selectClientForInvoice(${c.id}, '${c.name}', '${c.document}', '${c.phone||""}')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; transition:background 0.2s" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#fff'"><strong>${c.name}</strong> — ${c.documentType} ${c.document}</div>`;
+            html += `<div onclick="selectClientForInvoice(${c.id}, '${c.name.replace(/'/g,"\\'")}', '${c.document}', '${(c.phone||"").replace(/'/g,"\\'")}')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; transition:background 0.2s" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#fff'"><strong>${c.name}</strong> — ${c.documentType} ${c.document}</div>`;
         });
         html += '</div>';
         document.getElementById("inv_client_results").innerHTML = html;
     } catch (e) {}
+}
+
+function selectOwnerForInvoice(propertyId) {
+    const p = propertiesList.find(prop => prop.id === propertyId);
+    if (!p) return;
+    const supData = p.supplier || '';
+    const cedulaMatch = supData.match(/CC:([^\|]+)/);
+    const cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+    const phone = supData.replace(/CC:[^\|]+\|?\s*/, '').trim();
+
+    selectedClientData = { id: null, name: p.ownerName, document: cedula, phone: phone };
+    document.getElementById("inv_search_client").value = p.ownerName;
+    document.getElementById("inv_client_results").innerHTML = "";
+    document.getElementById("inv_client_info").style.display = "block";
+    document.getElementById("inv_ci_name").textContent = p.ownerName;
+    document.getElementById("inv_ci_doc").textContent = cedula;
+    document.getElementById("inv_ci_phone").textContent = phone || "—";
+
+    // Auto-seleccionar la propiedad en el dropdown
+    document.getElementById("inv_property").value = p.id;
+    selectProperty();
 }
 
 function selectClientForInvoice(id, name, doc, phone) {
