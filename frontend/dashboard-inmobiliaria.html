@@ -466,7 +466,7 @@
 
                 <!-- Formulario inquilino -->
                 <form id="tenantForm" onsubmit="saveTenant(event)">
-                    <!-- Datos del inquilino -->
+                    <!-- Datos personales del inquilino -->
                     <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
                         <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:12px">📝 Datos del Inquilino</div>
                         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
@@ -474,8 +474,53 @@
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cédula *</label><input type="text" id="tf_cedula" required placeholder="Ej: 1.007.123.456" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono *</label><input type="text" id="tf_phone" required placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
                             <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Email</label><input type="email" id="tf_email" placeholder="correo@ejemplo.com" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ocupación</label><input type="text" id="tf_ocupacion" placeholder="Ej: Ingeniero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Observaciones</label><input type="text" id="tf_obs" placeholder="Notas adicionales" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección Residencia Actual</label><input type="text" id="tf_direccion" placeholder="Ej: Calle 50 #15-20" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Estado Civil</label><select id="tf_estado_civil" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="Soltero/a">Soltero/a</option><option value="Casado/a">Casado/a</option><option value="Union libre">Unión libre</option><option value="Divorciado/a">Divorciado/a</option><option value="Viudo/a">Viudo/a</option></select></div>
+                        </div>
+                    </div>
+
+                    <!-- Información Laboral y Financiera -->
+                    <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:12px">💼 Información Laboral y Financiera</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Empresa donde trabaja</label><input type="text" id="tf_empresa" placeholder="Ej: Coca-Cola FEMSA" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cargo / Ocupación</label><input type="text" id="tf_ocupacion" placeholder="Ej: Ingeniero de Sistemas" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Tipo de Contrato</label><select id="tf_tipo_contrato" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="Indefinido">Indefinido</option><option value="Fijo">Término Fijo</option><option value="Obra">Obra o Labor</option><option value="Prestacion">Prestación Servicios</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option></select></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección Empresa</label><input type="text" id="tf_empresa_direccion" placeholder="Ej: Av. Caracas #45-12" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono Empresa</label><input type="text" id="tf_empresa_tel" placeholder="Ej: 601 234 5678" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Antigüedad Laboral</label><input type="text" id="tf_antiguedad" placeholder="Ej: 3 años" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ingresos Mensuales</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#6b7280; font-weight:600">$</span>
+                                    <input type="text" id="tf_ingresos" placeholder="3.500.000" style="width:100%; padding:10px 10px 10px 22px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700" oninput="formatCurrency(this)">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Otros Ingresos (opcional)</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#6b7280; font-weight:600">$</span>
+                                    <input type="text" id="tf_otros_ingresos" placeholder="0" style="width:100%; padding:10px 10px 10px 22px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700" oninput="formatCurrency(this)">
+                                </div>
+                            </div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fuente de Otros Ingresos</label><input type="text" id="tf_otros_fuente" placeholder="Ej: Alquiler, freelance" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Referencias -->
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#92400e; margin-bottom:12px">📞 Referencias Personales y Familiares</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. Personal #1 - Nombre</label><input type="text" id="tf_ref1_name" placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #1 - Teléfono</label><input type="text" id="tf_ref1_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #1 - Relación</label><input type="text" id="tf_ref1_rel" placeholder="Ej: Hermano, Amigo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. Personal #2 - Nombre</label><input type="text" id="tf_ref2_name" placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #2 - Teléfono</label><input type="text" id="tf_ref2_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #2 - Relación</label><input type="text" id="tf_ref2_rel" placeholder="Ej: Tío, Compañero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                        <div style="margin-top:10px">
+                            <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#92400e">Observaciones / Notas adicionales</label>
+                            <input type="text" id="tf_obs" placeholder="Ej: Tiene mascota, requiere parqueadero, etc." style="width:100%; padding:10px; border:1px solid #fde68a; border-radius:8px; font-family:inherit; font-size:0.85rem">
                         </div>
                     </div>
 
