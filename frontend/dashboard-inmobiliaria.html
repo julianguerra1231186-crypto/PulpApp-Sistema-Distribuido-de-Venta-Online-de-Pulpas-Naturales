@@ -167,63 +167,102 @@
 
             <!-- Formulario nueva propiedad -->
             <div id="propertyFormPanel" style="display:none" class="panel">
-                <h2 style="margin:0 0 6px">🏠 Registrar Nueva Propiedad</h2>
-                <p style="color:#6b7280; font-size:0.82rem; margin:0 0 20px">Completa los datos del inmueble para administración, venta o ambos.</p>
+                <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px">
+                    <div style="width:42px; height:42px; background:linear-gradient(135deg,#6366f1,#4f46e5); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.2rem">🏠</div>
+                    <div>
+                        <h2 style="margin:0; font-size:1.1rem; font-weight:800; color:#111827">Registrar Nueva Propiedad</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:0">Completa los datos del inmueble para administración, venta o ambos.</p>
+                    </div>
+                </div>
 
-                <!-- Tipo de propiedad -->
-                <div style="margin-bottom:20px">
-                    <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">Tipo de gestión *</label>
+                <!-- Tipo de gestión -->
+                <div style="margin:20px 0; padding:16px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px">
+                    <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:10px">Tipo de gestión *</label>
                     <div style="display:flex; gap:8px">
-                        <button type="button" id="pt_admin" onclick="setPropType('administrar')" style="padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #6366f1; background:#6366f1; color:#fff">🏘️ Administrar</button>
-                        <button type="button" id="pt_venta" onclick="setPropType('venta')" style="padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151">💰 Venta</button>
-                        <button type="button" id="pt_ambas" onclick="setPropType('ambas')" style="padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151">🏘️💰 Ambas</button>
+                        <button type="button" id="pt_admin" onclick="setPropType('administrar')" style="padding:10px 20px; border-radius:10px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #6366f1; background:#6366f1; color:#fff; transition:all 0.2s">🏘️ Administrar</button>
+                        <button type="button" id="pt_venta" onclick="setPropType('venta')" style="padding:10px 20px; border-radius:10px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151; transition:all 0.2s">💰 Venta</button>
+                        <button type="button" id="pt_ambas" onclick="setPropType('ambas')" style="padding:10px 20px; border-radius:10px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151; transition:all 0.2s">🏘️💰 Ambas</button>
                     </div>
                 </div>
 
                 <form id="propertyForm" onsubmit="saveProperty(event)">
                     <!-- Datos del inmueble -->
-                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:12px">📍 Datos del Inmueble</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre/Referencia *</label><input type="text" id="pp_name" required placeholder="Ej: Apartamento 301 Torres del Parque" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Código</label><input type="text" id="pp_code" placeholder="Ej: PROP-001" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección *</label><input type="text" id="pp_address" required placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Barrio *</label><input type="text" id="pp_barrio" required placeholder="Ej: Chapinero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div style="grid-column:1/-1"><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Descripción</label><input type="text" id="pp_desc" placeholder="Ej: 3 hab, 2 baños, 150m², parqueadero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:16px">
+                        <div style="font-size:0.88rem; font-weight:700; color:#111827; margin-bottom:14px; display:flex; align-items:center; gap:8px"><span style="background:#eef2ff; padding:4px 8px; border-radius:6px">📍</span> Datos del Inmueble</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Nombre/Referencia *</label><input type="text" id="pp_name" required placeholder="Ej: Apartamento 301 Torres del Parque" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Tipo de Inmueble *</label><select id="pp_tipo_inmueble" required style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"><option value="">Seleccione...</option><option value="Casa">🏡 Casa</option><option value="Apartamento">🏢 Apartamento</option><option value="Local Comercial">🏪 Local Comercial</option><option value="Bodega">📦 Bodega</option><option value="Lote">🌳 Lote</option><option value="Oficina">🏛️ Oficina</option></select></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Clasificación *</label><select id="pp_clasificacion" required style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"><option value="">Seleccione...</option><option value="Propiedad Horizontal">🏢 Propiedad Horizontal</option><option value="Barrio">🏘️ Barrio (No P.H.)</option></select></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Dirección *</label><input type="text" id="pp_address" required placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Barrio *</label><input type="text" id="pp_barrio" required placeholder="Ej: Chapinero" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Estrato</label><select id="pp_estrato" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></div>
+                            <div style="grid-column:1/-1"><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Descripción</label><input type="text" id="pp_desc" placeholder="Ej: 3 hab, 2 baños, 150m², parqueadero, piscina" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
                         </div>
                     </div>
 
                     <!-- Datos del propietario -->
-                    <div style="background:#f0f7ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#1e40af; margin-bottom:12px">👤 Datos del Propietario/a</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre Propietario/a *</label><input type="text" id="pp_owner" required placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono Propietario/a</label><input type="text" id="pp_owner_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                    <div style="background:#f0f7ff; border:1px solid #bfdbfe; border-radius:12px; padding:20px; margin-bottom:16px">
+                        <div style="font-size:0.88rem; font-weight:700; color:#1e40af; margin-bottom:14px; display:flex; align-items:center; gap:8px"><span style="background:#dbeafe; padding:4px 8px; border-radius:6px">👤</span> Datos del Propietario/a</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Nombre Propietario/a *</label><input type="text" id="pp_owner" required placeholder="Nombre completo" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Cédula Propietario/a *</label><input type="text" id="pp_owner_cedula" required placeholder="Ej: 1.007.123.456" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Teléfono Propietario/a</label><input type="text" id="pp_owner_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; transition:border 0.2s" onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e5e7eb'"></div>
                         </div>
                     </div>
 
                     <!-- Valores (arriendo) -->
-                    <div id="pp_section_arriendo" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:12px">💵 Valores de Arriendo</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Valor Arriendo Mensual *</label><input type="number" id="pp_rent" required min="0" placeholder="$0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" oninput="calcAdminValue()"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Comisión (%)</label><input type="number" id="pp_comision" value="11" min="0" max="100" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" oninput="calcAdminValue()"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Valor Administración</label><input type="text" id="pp_admin_value" disabled style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#f9fafb; font-weight:700; color:#16a34a"></div>
+                    <div id="pp_section_arriendo" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:20px; margin-bottom:16px">
+                        <div style="font-size:0.88rem; font-weight:700; color:#065f46; margin-bottom:14px; display:flex; align-items:center; gap:8px"><span style="background:#dcfce7; padding:4px 8px; border-radius:6px">💵</span> Valores de Arriendo</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px">
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Valor Arriendo Mensual *</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#6b7280; font-weight:600">$</span>
+                                    <input type="text" id="pp_rent" required placeholder="850.000" style="width:100%; padding:11px 14px 11px 24px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.9rem; font-weight:700; transition:border 0.2s" onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#e5e7eb'" oninput="formatCurrency(this); calcAdminValue()">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Comisión (%)</label>
+                                <input type="number" id="pp_comision" value="11" min="0" max="100" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; text-align:center; font-weight:700; transition:border 0.2s" onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#e5e7eb'" oninput="calcAdminValue()">
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Valor Administración</label>
+                                <div style="width:100%; padding:11px 14px; border:2px solid #bbf7d0; border-radius:8px; font-size:0.95rem; font-weight:800; color:#16a34a; background:#f0fdf4; min-height:20px" id="pp_admin_value">$0</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px; padding:8px 12px; background:#dcfce7; border-radius:8px; font-size:0.75rem; color:#065f46; font-weight:500">
+                            💡 El valor de administración se calcula automáticamente: Arriendo × Comisión%
                         </div>
                     </div>
 
                     <!-- Valores (venta) -->
-                    <div id="pp_section_venta" style="display:none; background:#fef3c7; border:1px solid #fde68a; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#92400e; margin-bottom:12px">💰 Valores de Venta</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Valor de Venta</label><input type="number" id="pp_sale_price" min="0" placeholder="$0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Comisión Venta (%)</label><input type="number" id="pp_sale_comision" value="3" min="0" max="100" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                    <div id="pp_section_venta" style="display:none; background:#fffbeb; border:1px solid #fde68a; border-radius:12px; padding:20px; margin-bottom:16px">
+                        <div style="font-size:0.88rem; font-weight:700; color:#92400e; margin-bottom:14px; display:flex; align-items:center; gap:8px"><span style="background:#fef3c7; padding:4px 8px; border-radius:6px">💰</span> Valores de Venta</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px">
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Valor de Venta *</label>
+                                <div style="position:relative">
+                                    <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#6b7280; font-weight:600">$</span>
+                                    <input type="text" id="pp_sale_price" placeholder="250.000.000" style="width:100%; padding:11px 14px 11px 24px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.9rem; font-weight:700; transition:border 0.2s" onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#e5e7eb'" oninput="formatCurrency(this); calcSaleComision()">
+                                </div>
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Comisión Venta (%)</label>
+                                <input type="number" id="pp_sale_comision" value="3" min="0" max="100" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; text-align:center; font-weight:700; transition:border 0.2s" onfocus="this.style.borderColor='#d97706'" onblur="this.style.borderColor='#e5e7eb'" oninput="calcSaleComision()">
+                            </div>
+                            <div>
+                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Comisión por Venta</label>
+                                <div style="width:100%; padding:11px 14px; border:2px solid #fde68a; border-radius:8px; font-size:0.95rem; font-weight:800; color:#d97706; background:#fffbeb; min-height:20px" id="pp_sale_admin_value">$0</div>
+                            </div>
+                        </div>
+                        <div style="margin-top:10px; padding:8px 12px; background:#fef3c7; border-radius:8px; font-size:0.75rem; color:#92400e; font-weight:500">
+                            💡 La comisión de venta se calcula automáticamente: Valor Venta × Comisión%
                         </div>
                     </div>
 
-                    <div style="display:flex; gap:10px; justify-content:flex-end">
-                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Propiedad</button>
-                        <button type="button" onclick="hidePropertyForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                    <div style="display:flex; gap:10px; justify-content:flex-end; padding-top:8px; border-top:1px solid #e5e7eb">
+                        <button type="button" onclick="hidePropertyForm()" style="padding:12px 24px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.2s">✕ Cancelar</button>
+                        <button type="submit" style="padding:12px 28px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(22,163,74,0.3); transition:all 0.2s">✓ Guardar Propiedad</button>
                     </div>
                 </form>
             </div>
@@ -1215,11 +1254,31 @@ function setPropType(type) {
     document.getElementById("pp_section_venta").style.display = (type === "venta" || type === "ambas") ? "block" : "none";
 }
 
+// Formatea un input como moneda colombiana (puntos como separador de miles)
+function formatCurrency(input) {
+    let val = input.value.replace(/[^\d]/g, '');
+    if (val === '') { input.value = ''; return; }
+    input.value = Number(val).toLocaleString('es-CO');
+}
+
+// Obtiene el valor numérico de un input formateado con puntos
+function getCurrencyValue(inputId) {
+    const val = document.getElementById(inputId)?.value || '';
+    return Number(val.replace(/[^\d]/g, '')) || 0;
+}
+
 function calcAdminValue() {
-    const rent = Number(document.getElementById("pp_rent").value) || 0;
+    const rent = getCurrencyValue("pp_rent");
     const pct = Number(document.getElementById("pp_comision").value) || 11;
     const admin = Math.round(rent * (pct / 100));
-    document.getElementById("pp_admin_value").value = "$" + admin.toLocaleString('es-CO');
+    document.getElementById("pp_admin_value").textContent = "$" + admin.toLocaleString('es-CO');
+}
+
+function calcSaleComision() {
+    const salePrice = getCurrencyValue("pp_sale_price");
+    const pct = Number(document.getElementById("pp_sale_comision").value) || 3;
+    const comision = Math.round(salePrice * (pct / 100));
+    document.getElementById("pp_sale_admin_value").textContent = "$" + comision.toLocaleString('es-CO');
 }
 
 function showPropertyForm() { document.getElementById("propertyFormPanel").style.display = "block"; setPropType("administrar"); }
@@ -1236,11 +1295,18 @@ async function loadProperties() {
             const isSale = p.salePrice > 0 && !isRent;
             const badge = isRent ? '<span class="prop-badge badge-rent">Arriendo</span>' : '<span class="prop-badge badge-sale">Venta</span>';
             const price = isRent ? "$" + Number(p.rentValue).toLocaleString('es-CO') + "/mes" : "$" + Number(p.salePrice).toLocaleString('es-CO');
+            // Extraer tipo de inmueble de la descripción
+            const desc = p.description || '';
+            const tipoMatch = desc.match(/^(Casa|Apartamento|Local Comercial|Bodega|Lote|Oficina)/);
+            const tipoIcon = tipoMatch ? (tipoMatch[1] === 'Casa' ? '🏡' : tipoMatch[1] === 'Apartamento' ? '🏢' : tipoMatch[1] === 'Local Comercial' ? '🏪' : '🏠') : (isRent ? '🏢' : '🏡');
             html += `<div class="prop-card">
-                <div class="prop-img">${isRent ? '🏢' : '🏡'}</div>
+                <div class="prop-img" style="position:relative">
+                    <span style="font-size:2.5rem">${tipoIcon}</span>
+                    <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-weight:600">${tipoMatch ? tipoMatch[1] : 'Inmueble'}</span>
+                </div>
                 <div class="prop-body">
                     <h3>${p.name}</h3>
-                    <p>${p.propertyAddress || p.description || '—'}</p>
+                    <p style="display:flex; align-items:center; gap:4px">📍 ${p.propertyAddress || '—'}</p>
                     <p style="font-size:0.72rem; color:#6b7280; margin:2px 0">👤 ${p.ownerName || '—'}</p>
                     ${badge}
                     <div class="prop-price" style="margin-top:8px">${price}</div>
@@ -1253,16 +1319,21 @@ async function loadProperties() {
 
 async function saveProperty(e) {
     e.preventDefault();
-    const rent = Number(document.getElementById("pp_rent").value) || 0;
-    const salePrice = Number(document.getElementById("pp_sale_price")?.value) || rent;
+    const rent = getCurrencyValue("pp_rent");
+    const salePrice = getCurrencyValue("pp_sale_price");
+    const tipoInmueble = document.getElementById("pp_tipo_inmueble").value;
+    const clasificacion = document.getElementById("pp_clasificacion").value;
+    const estrato = document.getElementById("pp_estrato")?.value || "";
+    const cedulaPropietario = document.getElementById("pp_owner_cedula").value;
+
     const body = {
-        code: document.getElementById("pp_code").value || "PROP-" + Date.now().toString().slice(-5),
+        code: "PROP-" + Date.now().toString().slice(-6),
         name: document.getElementById("pp_name").value,
-        description: document.getElementById("pp_desc").value + " | Barrio: " + document.getElementById("pp_barrio").value,
+        description: (tipoInmueble ? tipoInmueble + " | " : "") + (clasificacion ? clasificacion + " | " : "") + (estrato ? "Estrato " + estrato + " | " : "") + (document.getElementById("pp_desc").value || "") + " | Barrio: " + document.getElementById("pp_barrio").value,
         stock: 1,
         costPrice: 0,
         salePrice: salePrice || rent,
-        supplier: document.getElementById("pp_owner_phone").value || "",
+        supplier: (cedulaPropietario ? "CC:" + cedulaPropietario + " | " : "") + (document.getElementById("pp_owner_phone").value || ""),
         ownerName: document.getElementById("pp_owner").value,
         propertyAddress: document.getElementById("pp_address").value + ", " + document.getElementById("pp_barrio").value,
         rentValue: rent
