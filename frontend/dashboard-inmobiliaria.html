@@ -504,22 +504,30 @@
                         </div>
                     </div>
 
-                    <!-- Codeudor -->
+                    <!-- Codeudores (múltiples) -->
                     <div style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:16px; margin-bottom:16px">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-                            <div style="font-size:0.82rem; font-weight:700; color:#854d0e">🤝 Datos del Codeudor</div>
-                            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer">
-                                <input type="checkbox" id="tf_has_codeudor" onchange="toggleCodeudor()" style="cursor:pointer"> Sin codeudor
-                            </label>
+                            <div style="font-size:0.82rem; font-weight:700; color:#854d0e">🤝 Datos del Codeudor(es)</div>
+                            <div style="display:flex; gap:10px; align-items:center">
+                                <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer">
+                                    <input type="checkbox" id="tf_has_codeudor" onchange="toggleCodeudor()" style="cursor:pointer"> Sin codeudor
+                                </label>
+                                <button type="button" id="btnAddCodeudor" onclick="addCodeudor()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir otro codeudor</button>
+                            </div>
                         </div>
-                        <div id="codeudorFields" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre Completo</label><input type="text" id="tf_cod_name" placeholder="Nombre del codeudor" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cédula</label><input type="text" id="tf_cod_cedula" placeholder="Ej: 1.007.123.456" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono</label><input type="text" id="tf_cod_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección</label><input type="text" id="tf_cod_direccion" placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Relación con inquilino</label><select id="tf_cod_relacion" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="Familiar">Familiar</option><option value="Amigo">Amigo</option><option value="Pareja">Pareja</option><option value="Socio">Socio</option><option value="Otro">Otro</option></select></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ocupación</label><input type="text" id="tf_cod_ocupacion" placeholder="Ej: Comerciante" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        <div id="codeudoresContainer"></div>
+                    </div>
+
+                    <!-- Campos adicionales personalizados -->
+                    <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+                            <div>
+                                <div style="font-size:0.82rem; font-weight:700; color:#5b21b6">📋 Datos Adicionales del Inquilino</div>
+                                <p style="font-size:0.72rem; color:#7c3aed; margin:2px 0 0">Agrega cualquier dato que tu inmobiliaria necesite (empresa, referencias, etc.)</p>
+                            </div>
+                            <button type="button" onclick="addCustomField()" style="padding:5px 12px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir dato</button>
                         </div>
+                        <div id="customFieldsContainer"></div>
                     </div>
 
                     <div style="display:flex; gap:10px; justify-content:flex-end">
@@ -830,6 +838,7 @@ function renderInventoryTable(items) {
             <th style="padding:10px 12px; text-align:left">Dirección</th>
             <th style="padding:10px 12px; text-align:center">Estado</th>
             <th style="padding:10px 12px; text-align:center">Acciones</th>
+            <th style="padding:10px 12px; text-align:center">Eliminar</th>
         </tr></thead><tbody>`;
     items.forEach(i => {
         const rent = Number(i.rentValue || 0);
@@ -850,11 +859,31 @@ function renderInventoryTable(items) {
             <td style="padding:10px 12px; text-align:center">
                 <button onclick="showTenantForm(${i.id})" style="padding:6px 16px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; box-shadow:0 2px 6px rgba(99,102,241,0.25)">👤 Asignar</button>
             </td>
+            <td style="padding:10px 12px; text-align:center">
+                <button onclick="deleteProperty(${i.id}, '${(i.name || '').replace(/'/g, "\\'")}')" title="Eliminar propiedad" style="padding:6px 10px; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; font-size:0.82rem; cursor:pointer; transition:all 0.2s" onmouseover="this.style.background='#dc2626'; this.style.color='#fff'" onmouseout="this.style.background='#fef2f2'; this.style.color='#dc2626'">🗑️</button>
+            </td>
         </tr>`;
     });
     html += '</tbody></table>';
     html += '<div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ' + items.length + ' propiedades</div>';
     document.getElementById("inventoryTableContainer").innerHTML = html;
+}
+
+async function deleteProperty(id, name) {
+    if (!confirm("¿Estás seguro de eliminar la propiedad '" + name + "'?\n\nEsta acción no se puede deshacer. La propiedad dejará de aparecer en el listado.")) return;
+    try {
+        const res = await fetch(API + "/inventory/" + id, { method:"DELETE", headers: authHeaders() });
+        if (!res.ok) {
+            // Si DELETE no está disponible, usar PATCH para inactivar
+            const res2 = await fetch(API + "/inventory/" + id + "/active?active=false", { method:"PATCH", headers: authHeaders() });
+            if (!res2.ok) throw new Error("Error " + res2.status);
+            alert("✓ Propiedad inactivada (no se pudo eliminar permanentemente)");
+        } else {
+            alert("✓ Propiedad eliminada exitosamente");
+        }
+        loadInventory();
+        loadProperties();
+    } catch (e) { alert("Error: " + e.message); }
 }
 
 function renderInvStats(items) {
@@ -895,6 +924,47 @@ function showTenantForm(propertyId) {
     document.getElementById("tenant_prop_comision").textContent = "$" + comision.toLocaleString('es-CO');
     document.getElementById("tenantFormPanel").style.display = "block";
     document.getElementById("tenantForm").reset();
+    // Inicializar con 1 codeudor
+    document.getElementById("codeudoresContainer").innerHTML = "";
+    document.getElementById("customFieldsContainer").innerHTML = "";
+    addCodeudor();
+}
+
+let codeudorCount = 0;
+function addCodeudor() {
+    codeudorCount++;
+    const idx = codeudorCount;
+    const container = document.getElementById("codeudoresContainer");
+    const div = document.createElement("div");
+    div.className = "codeudor-row";
+    div.dataset.idx = idx;
+    div.style.cssText = "background:#fff; border:1px solid #fef08a; border-radius:8px; padding:14px; margin-bottom:10px";
+    div.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+            <div style="font-size:0.78rem; font-weight:700; color:#854d0e">Codeudor #${idx}</div>
+            <button type="button" onclick="this.closest('.codeudor-row').remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:4px 10px; font-size:0.72rem; font-weight:600; cursor:pointer; font-family:inherit">🗑️ Quitar</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Nombre Completo</label><input type="text" class="cod-name" placeholder="Nombre del codeudor" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem"></div>
+            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Cédula</label><input type="text" class="cod-cedula" placeholder="Ej: 1.007.123.456" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem"></div>
+            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Teléfono</label><input type="text" class="cod-phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem"></div>
+            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Dirección</label><input type="text" class="cod-direccion" placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem"></div>
+            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Relación</label><select class="cod-relacion" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem; background:#fff"><option value="">Seleccione...</option><option value="Familiar">Familiar</option><option value="Amigo">Amigo</option><option value="Pareja">Pareja</option><option value="Socio">Socio</option><option value="Otro">Otro</option></select></div>
+            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Ocupación</label><input type="text" class="cod-ocupacion" placeholder="Ej: Comerciante" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem"></div>
+        </div>`;
+    container.appendChild(div);
+}
+
+function addCustomField() {
+    const container = document.getElementById("customFieldsContainer");
+    const div = document.createElement("div");
+    div.className = "custom-field-row";
+    div.style.cssText = "display:grid; grid-template-columns:1fr 2fr auto; gap:10px; margin-bottom:8px; align-items:center";
+    div.innerHTML = `
+        <input type="text" class="cf-label" placeholder="Etiqueta (ej: Empresa donde trabaja)" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem; font-weight:600">
+        <input type="text" class="cf-value" placeholder="Valor (ej: Coca-Cola FEMSA)" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem">
+        <button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:8px 12px; font-size:0.78rem; cursor:pointer; font-family:inherit">🗑️</button>`;
+    container.appendChild(div);
 }
 
 function hideTenantForm() { document.getElementById("tenantFormPanel").style.display = "none"; selectedAdminProperty = null; }
@@ -917,17 +987,18 @@ function calcFechaFin() {
 
 function toggleCodeudor() {
     const checkbox = document.getElementById("tf_has_codeudor");
-    const fields = document.getElementById("codeudorFields");
+    const container = document.getElementById("codeudoresContainer");
+    const btnAdd = document.getElementById("btnAddCodeudor");
     if (checkbox.checked) {
-        fields.style.opacity = "0.4";
-        fields.style.pointerEvents = "none";
-        // Limpiar campos
-        ['tf_cod_name','tf_cod_cedula','tf_cod_phone','tf_cod_direccion','tf_cod_relacion','tf_cod_ocupacion'].forEach(id => {
-            const el = document.getElementById(id); if (el) el.value = "";
-        });
+        container.style.opacity = "0.4";
+        container.style.pointerEvents = "none";
+        btnAdd.disabled = true;
+        btnAdd.style.opacity = "0.4";
     } else {
-        fields.style.opacity = "1";
-        fields.style.pointerEvents = "auto";
+        container.style.opacity = "1";
+        container.style.pointerEvents = "auto";
+        btnAdd.disabled = false;
+        btnAdd.style.opacity = "1";
     }
 }
 
@@ -942,12 +1013,30 @@ async function saveTenant(e) {
     const duracion = document.getElementById("tf_duracion").value;
     const obs = document.getElementById("tf_obs").value;
     const sinCodeudor = document.getElementById("tf_has_codeudor").checked;
-    const codName = document.getElementById("tf_cod_name").value;
-    const codCedula = document.getElementById("tf_cod_cedula").value;
-    const codPhone = document.getElementById("tf_cod_phone").value;
-    const codDir = document.getElementById("tf_cod_direccion").value;
-    const codRel = document.getElementById("tf_cod_relacion").value;
-    const codOcu = document.getElementById("tf_cod_ocupacion").value;
+
+    // Recolectar todos los codeudores
+    const codeudores = [];
+    if (!sinCodeudor) {
+        document.querySelectorAll("#codeudoresContainer .codeudor-row").forEach(row => {
+            const cName = row.querySelector(".cod-name").value;
+            const cCedula = row.querySelector(".cod-cedula").value;
+            const cPhone = row.querySelector(".cod-phone").value;
+            const cDir = row.querySelector(".cod-direccion").value;
+            const cRel = row.querySelector(".cod-relacion").value;
+            const cOcu = row.querySelector(".cod-ocupacion").value;
+            if (cName && cCedula) {
+                codeudores.push({ name: cName, cedula: cCedula, phone: cPhone, direccion: cDir, relacion: cRel, ocupacion: cOcu });
+            }
+        });
+    }
+
+    // Recolectar campos personalizados
+    const customFields = [];
+    document.querySelectorAll("#customFieldsContainer .custom-field-row").forEach(row => {
+        const label = row.querySelector(".cf-label").value;
+        const value = row.querySelector(".cf-value").value;
+        if (label && value) customFields.push({ label, value });
+    });
 
     // Calcular fecha fin
     let fechaFin = "";
@@ -957,16 +1046,6 @@ async function saveTenant(e) {
         fin.setMonth(fin.getMonth() + Number(duracion));
         fechaFin = fin.toISOString().split('T')[0];
     }
-
-    // Construir observaciones completas
-    let obsCompleta = [];
-    if (ocupacion) obsCompleta.push("Ocupación: " + ocupacion);
-    if (fechaInicio) obsCompleta.push("Inicio: " + fechaInicio);
-    if (fechaFin) obsCompleta.push("Fin: " + fechaFin + " (" + duracion + " meses)");
-    if (!sinCodeudor && codName) {
-        obsCompleta.push("Codeudor: " + codName + " CC " + codCedula + " Tel " + codPhone + (codRel ? " (" + codRel + ")" : ""));
-    }
-    if (obs) obsCompleta.push("Notas: " + obs);
 
     const clientBody = {
         name: name + " (Inquilino)",
@@ -982,15 +1061,15 @@ async function saveTenant(e) {
         const res = await fetch(API + "/clients", { method:"POST", headers: authHeaders(), body: JSON.stringify(clientBody) });
         if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
 
-        // Guardar codeudor también como cliente si existe
-        if (!sinCodeudor && codName && codCedula) {
+        // Guardar cada codeudor como cliente
+        for (const cod of codeudores) {
             const codBody = {
-                name: codName + " (Codeudor de " + name + ")",
+                name: cod.name + " (Codeudor de " + name + ")",
                 documentType: "CC",
-                document: codCedula,
-                phone: codPhone,
+                document: cod.cedula,
+                phone: cod.phone,
                 city: "",
-                address: codDir || "",
+                address: cod.direccion || "",
                 email: "",
                 creditLimit: 0
             };
@@ -1000,8 +1079,9 @@ async function saveTenant(e) {
         hideTenantForm();
         let msg = "✓ Inquilino '" + name + "' registrado como cliente\n\n";
         msg += "🏠 Propiedad: " + (selectedAdminProperty?.name || '') + "\n";
-        msg += "📅 Contrato: " + fechaInicio + " al " + fechaFin + " (" + duracion + " meses)";
-        if (!sinCodeudor && codName) msg += "\n🤝 Codeudor: " + codName;
+        if (fechaInicio && fechaFin) msg += "📅 Contrato: " + fechaInicio + " al " + fechaFin + " (" + duracion + " meses)\n";
+        if (codeudores.length > 0) msg += "🤝 " + codeudores.length + " codeudor(es) registrado(s)\n";
+        if (customFields.length > 0) msg += "📋 " + customFields.length + " dato(s) adicional(es) guardado(s)";
         alert(msg);
     } catch (e) { alert("Error: " + e.message); }
 }
