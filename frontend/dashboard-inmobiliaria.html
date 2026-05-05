@@ -104,7 +104,8 @@
                     <!-- Bienvenida -->
                     <div style="text-align:center; margin-bottom:20px">
                         <h2 style="font-size:1.6rem; font-weight:800; color:#1e3a5f; margin:0 0 4px">Bienvenido al Sistema</h2>
-                        <div style="font-size:1.05rem; font-weight:700; color:#1e3a5f; margin-bottom:4px" id="welcomeBizName">Mi Inmobiliaria</div>
+                        <div style="font-size:1.15rem; font-weight:800; color:#6366f1; margin-bottom:2px" id="welcomeBizName">Mi Inmobiliaria</div>
+                        <div style="font-size:0.88rem; font-weight:600; color:#1e3a5f; margin-bottom:4px" id="welcomeUserName">—</div>
                         <p style="color:#5a7a9a; font-size:0.85rem; margin:0">Administra, vende y gestiona contrataciones de construcción desde un solo lugar.</p>
                     </div>
 
@@ -2261,7 +2262,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
     document.getElementById("userEmail").textContent = user.email || "";
-    document.getElementById("welcomeBizName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
+    document.getElementById("welcomeBizName").textContent = localStorage.getItem("zentrix_biz_name") || "Mi Inmobiliaria";
+    document.getElementById("welcomeUserName").textContent = user.name || "";
     loadSavedLogo();
     loadDashboardStats();
     loadAlerts();
