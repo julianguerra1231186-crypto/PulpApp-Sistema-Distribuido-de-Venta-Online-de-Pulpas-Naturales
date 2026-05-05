@@ -325,7 +325,87 @@
         <div id="tab-contracts" style="display:none"><div class="panel"><h2>📝 Contratos</h2><div class="empty-msg">Gestiona contratos de arriendo y venta desde aquí.</div></div></div>
 
         <!-- Visits -->
-        <div id="tab-visits" style="display:none"><div class="panel"><h2>📅 Agenda de Visitas</h2><div class="empty-msg">Programa visitas a propiedades con tus clientes.</div></div></div>
+        <div id="tab-visits" style="display:none">
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+                    <div>
+                        <h2 style="margin:0">📅 Agendar Visitas a Inmuebles</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:4px 0 0">Programa visitas para clientes interesados en arriendo o compra.</p>
+                    </div>
+                    <button onclick="showVisitForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nueva Visita</button>
+                </div>
+                <div id="visitsListContainer"><div style="text-align:center; padding:32px; color:#9ca3af">No hay visitas programadas.</div></div>
+            </div>
+
+            <!-- Formulario nueva visita -->
+            <div id="visitFormPanel" style="display:none" class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px">
+                    <div>
+                        <h2 style="margin:0 0 4px; font-size:1.05rem">📅 Programar Nueva Visita</h2>
+                        <p style="color:#6b7280; font-size:0.78rem; margin:0">Completa los datos para agendar la visita al inmueble.</p>
+                    </div>
+                    <button onclick="hideVisitForm()" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:8px; padding:6px 14px; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#374151">✕ Cerrar</button>
+                </div>
+
+                <form id="visitForm" onsubmit="saveVisit(event)">
+                    <!-- Tipo de visita -->
+                    <div style="background:#eef2ff; border:1px solid #c7d2fe; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#3730a3; display:block; margin-bottom:8px">Tipo de Visita *</label>
+                        <div style="display:flex; gap:10px">
+                            <label style="display:flex; align-items:center; gap:6px; padding:8px 16px; border:2px solid #6366f1; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#6366f1; color:#fff" id="vt_arriendo_label"><input type="radio" name="visit_type" value="Arriendo" checked onchange="updateVisitTypeStyle()" style="display:none"> 🏘️ Arriendo</label>
+                            <label style="display:flex; align-items:center; gap:6px; padding:8px 16px; border:2px solid #e5e7eb; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff; color:#374151" id="vt_venta_label"><input type="radio" name="visit_type" value="Venta" onchange="updateVisitTypeStyle()" style="display:none"> 💰 Venta</label>
+                        </div>
+                    </div>
+
+                    <!-- Fecha y hora -->
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:10px">🗓️ Fecha y Hora</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Fecha de Visita *</label><input type="date" id="vf_fecha" required style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Hora *</label><input type="time" id="vf_hora" required style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Propiedad -->
+                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:10px">🏠 Propiedad a Visitar</div>
+                        <select id="vf_propiedad" required style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff">
+                            <option value="">Seleccione un inmueble...</option>
+                        </select>
+                    </div>
+
+                    <!-- Datos del interesado -->
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#92400e; margin-bottom:10px">👤 Persona Interesada (Contacto Principal)</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Nombre Completo *</label><input type="text" id="vf_nombre" required placeholder="Nombre de la persona" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Teléfono *</label><input type="text" id="vf_telefono" required placeholder="310 123 4567" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto alternativo -->
+                    <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#5b21b6; margin-bottom:10px">📞 Contacto Alternativo <span style="font-weight:400; color:#7c3aed; font-size:0.75rem">(si la primera persona no contesta)</span></div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Nombre</label><input type="text" id="vf_nombre2" placeholder="Nombre alternativo" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Teléfono</label><input type="text" id="vf_telefono2" placeholder="310 987 6543" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div style="margin-bottom:16px">
+                        <label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Observaciones</label>
+                        <input type="text" id="vf_obs" placeholder="Ej: Cliente viene con familia, necesita parqueadero, etc." style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                    </div>
+
+                    <!-- Botones -->
+                    <div style="display:flex; gap:10px; justify-content:flex-end; padding-top:12px; border-top:1px solid #e5e7eb">
+                        <button type="button" onclick="hideVisitForm()" style="padding:10px 22px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button>
+                        <button type="submit" style="padding:10px 26px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(99,102,241,0.3)">📅 Agendar Visita</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Invoices -->
         <div id="tab-invoices" style="display:none">
@@ -703,6 +783,7 @@ function showTab(name) {
     if (name === "audit") loadAudit();
     if (name === "settings") loadSettings();
     if (name === "properties") loadProperties();
+    if (name === "visits") renderVisits();
 }
 
 // ── Clientes API ──
@@ -1887,6 +1968,106 @@ async function syncPropietariosAsClients() {
         }
         alert("✓ Sincronización completada.\n" + created + " propietario(s) registrado(s) como clientes.");
     } catch (e) { alert("Error: " + e.message); }
+}
+
+// ── Visitas ──
+let visitsList = JSON.parse(localStorage.getItem('zentrix_visits') || '[]');
+
+function showVisitForm() {
+    document.getElementById("visitFormPanel").style.display = "block";
+    document.getElementById("visitForm").reset();
+    // Cargar propiedades en el select
+    const props = window._propertiesData || [];
+    const select = document.getElementById("vf_propiedad");
+    select.innerHTML = '<option value="">Seleccione un inmueble...</option>';
+    props.forEach(p => {
+        select.innerHTML += '<option value="' + p.id + '">' + p.name + ' — ' + (p.propertyAddress || '') + '</option>';
+    });
+    // Fecha mínima = hoy
+    document.getElementById("vf_fecha").min = new Date().toISOString().split('T')[0];
+    updateVisitTypeStyle();
+}
+
+function hideVisitForm() { document.getElementById("visitFormPanel").style.display = "none"; }
+
+function updateVisitTypeStyle() {
+    const arriendo = document.querySelector('input[name="visit_type"][value="Arriendo"]').checked;
+    const lblA = document.getElementById("vt_arriendo_label");
+    const lblV = document.getElementById("vt_venta_label");
+    if (arriendo) {
+        lblA.style.background = "#6366f1"; lblA.style.color = "#fff"; lblA.style.borderColor = "#6366f1";
+        lblV.style.background = "#fff"; lblV.style.color = "#374151"; lblV.style.borderColor = "#e5e7eb";
+    } else {
+        lblV.style.background = "#6366f1"; lblV.style.color = "#fff"; lblV.style.borderColor = "#6366f1";
+        lblA.style.background = "#fff"; lblA.style.color = "#374151"; lblA.style.borderColor = "#e5e7eb";
+    }
+}
+
+function saveVisit(e) {
+    e.preventDefault();
+    const tipo = document.querySelector('input[name="visit_type"]:checked').value;
+    const fecha = document.getElementById("vf_fecha").value;
+    const hora = document.getElementById("vf_hora").value;
+    const propId = document.getElementById("vf_propiedad").value;
+    const props = window._propertiesData || [];
+    const prop = props.find(p => p.id == propId);
+    const nombre = document.getElementById("vf_nombre").value;
+    const telefono = document.getElementById("vf_telefono").value;
+    const nombre2 = document.getElementById("vf_nombre2").value;
+    const telefono2 = document.getElementById("vf_telefono2").value;
+    const obs = document.getElementById("vf_obs").value;
+
+    const visit = {
+        id: Date.now(),
+        tipo,
+        fecha,
+        hora,
+        propiedad: prop ? (prop.name + ' — ' + (prop.propertyAddress || '')) : 'Sin asignar',
+        nombre,
+        telefono,
+        nombre2,
+        telefono2,
+        obs,
+        estado: 'Pendiente',
+        createdAt: new Date().toISOString()
+    };
+
+    visitsList.push(visit);
+    localStorage.setItem('zentrix_visits', JSON.stringify(visitsList));
+    hideVisitForm();
+    renderVisits();
+    alert("✓ Visita agendada\n\n📅 " + fecha + " a las " + hora + "\n🏠 " + visit.propiedad + "\n👤 " + nombre + " (" + tipo + ")");
+}
+
+function renderVisits() {
+    visitsList = JSON.parse(localStorage.getItem('zentrix_visits') || '[]');
+    if (!visitsList.length) {
+        document.getElementById("visitsListContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay visitas programadas. ¡Agenda la primera!</div>';
+        return;
+    }
+    // Ordenar por fecha más próxima
+    visitsList.sort((a, b) => new Date(a.fecha + 'T' + a.hora) - new Date(b.fecha + 'T' + b.hora));
+    let html = '<div style="display:grid; gap:12px">';
+    visitsList.forEach(v => {
+        const isPast = new Date(v.fecha + 'T' + v.hora) < new Date();
+        const tipoBadge = v.tipo === 'Arriendo' ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">🏘️ Arriendo</span>' : '<span style="background:#fef3c7; color:#92400e; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">💰 Venta</span>';
+        const estadoBadge = isPast ? '<span style="background:#fee2e2; color:#991b1b; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Pasada</span>' : '<span style="background:#d1fae5; color:#065f46; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Pendiente</span>';
+        const fechaDisplay = new Date(v.fecha + 'T12:00:00').toLocaleDateString('es-CO', { weekday:'short', day:'numeric', month:'short' });
+        html += '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:14px; display:grid; grid-template-columns:auto 1fr auto; gap:14px; align-items:center' + (isPast ? '; opacity:0.6' : '') + '">';
+        html += '<div style="text-align:center; min-width:60px"><div style="font-size:1.2rem; font-weight:800; color:#6366f1">' + v.hora + '</div><div style="font-size:0.72rem; color:#6b7280; font-weight:600">' + fechaDisplay + '</div></div>';
+        html += '<div><div style="font-weight:700; font-size:0.85rem; color:#111827; margin-bottom:3px">' + v.nombre + ' ' + tipoBadge + ' ' + estadoBadge + '</div><div style="font-size:0.78rem; color:#6b7280">📍 ' + v.propiedad + '</div><div style="font-size:0.75rem; color:#6b7280; margin-top:2px">📞 ' + v.telefono + (v.nombre2 ? ' | Alt: ' + v.nombre2 + ' ' + v.telefono2 : '') + '</div>' + (v.obs ? '<div style="font-size:0.72rem; color:#9ca3af; margin-top:2px">💬 ' + v.obs + '</div>' : '') + '</div>';
+        html += '<button onclick="deleteVisit(' + v.id + ')" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.78rem" title="Eliminar visita">🗑️</button>';
+        html += '</div>';
+    });
+    html += '</div>';
+    document.getElementById("visitsListContainer").innerHTML = html;
+}
+
+function deleteVisit(id) {
+    if (!confirm("¿Eliminar esta visita?")) return;
+    visitsList = visitsList.filter(v => v.id !== id);
+    localStorage.setItem('zentrix_visits', JSON.stringify(visitsList));
+    renderVisits();
 }
 
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
