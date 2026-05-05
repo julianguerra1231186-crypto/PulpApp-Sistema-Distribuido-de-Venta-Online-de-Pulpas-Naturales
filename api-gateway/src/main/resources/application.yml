@@ -141,6 +141,14 @@ spring:
             - Path=/invoices, /invoices/**
 
         # --------------------------------------------
+        # CAJA Y MOVIMIENTOS (ERP Fase E)
+        # --------------------------------------------
+        - id: ms-cash
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/cash, /cash/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users

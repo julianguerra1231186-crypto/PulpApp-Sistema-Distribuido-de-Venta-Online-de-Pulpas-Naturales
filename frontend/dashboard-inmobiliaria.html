@@ -348,10 +348,41 @@
         </div>
 
         <!-- Cashbox -->
-        <div id="tab-cashbox" style="display:none"><div class="panel"><h2>💰 Caja</h2><div class="empty-msg">Control de caja diaria: ingresos y egresos.</div></div></div>
+        <div id="tab-cashbox" style="display:none">
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px" id="cashStats"><div style="text-align:center; padding:20px; color:#9ca3af; grid-column:1/-1">Cargando resumen...</div></div>
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+                    <h2 style="margin:0">💰 Movimientos del Día</h2>
+                    <button onclick="showCashForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Registrar Movimiento</button>
+                </div>
+                <div id="cashTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando...</div></div>
+            </div>
+            <!-- Form -->
+            <div id="cashFormPanel" style="display:none" class="panel">
+                <h2 style="margin:0 0 16px">📝 Registrar Movimiento</h2>
+                <form id="cashForm" onsubmit="saveCashMovement(event)">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+                        <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Tipo *</label><select id="cm_type" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"><option value="INGRESO">Ingreso</option><option value="GASTO">Gasto</option></select></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Método de Pago *</label><select id="cm_method" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option></select></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Descripción *</label><input type="text" id="cm_desc" required placeholder="Ej: Venta de productos" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Monto *</label><input type="number" id="cm_amount" required min="1" placeholder="$0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div style="grid-column:1/-1"><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Observaciones</label><input type="text" id="cm_obs" placeholder="Opcional" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:16px; justify-content:flex-end">
+                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Registrar</button>
+                        <button type="button" onclick="hideCashForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-        <!-- Movements -->
-        <div id="tab-movements" style="display:none"><div class="panel"><h2>🔄 Movimientos</h2><div class="empty-msg">Historial de movimientos financieros de tu negocio.</div></div></div>
+        <!-- Movements (same as cashbox but all history) -->
+        <div id="tab-movements" style="display:none">
+            <div class="panel">
+                <h2 style="margin:0 0 16px">🔄 Historial de Movimientos</h2>
+                <div id="movementsTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando...</div></div>
+            </div>
+        </div>
 
         <!-- Reports -->
         <div id="tab-reports" style="display:none"><div class="panel"><h2>📊 Reportes</h2><div class="empty-msg">Reportes de ventas, arriendos y rendimiento del negocio.</div></div></div>
@@ -378,6 +409,8 @@ function showTab(name) {
     if (name === "inventory") loadInventory();
     if (name === "suppliers") loadSuppliers();
     if (name === "invoices") loadInvoices();
+    if (name === "cashbox") loadCash();
+    if (name === "movements") loadAllMovements();
 }
 
 // ── Clientes API ──
@@ -782,6 +815,72 @@ async function submitInvoice() {
         hideInvoiceForm();
         loadInvoices();
         alert("✓ Factura " + data.invoiceNumber + " creada — Total: $" + Number(data.total).toLocaleString('es-CO'));
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+// ── Caja y Movimientos ──
+async function loadCash() {
+    try {
+        const [summary, movements] = await Promise.all([
+            fetch(API + "/cash/summary", { headers: authHeaders() }).then(r => r.json()),
+            fetch(API + "/cash/today", { headers: authHeaders() }).then(r => r.json())
+        ]);
+        document.getElementById("cashStats").innerHTML = `
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Ingresos del Día</div><div style="font-size:1.4rem; font-weight:800; color:#16a34a">$${Number(summary.income).toLocaleString('es-CO')}</div></div>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Gastos del Día</div><div style="font-size:1.4rem; font-weight:800; color:#ef4444">$${Number(summary.expense).toLocaleString('es-CO')}</div></div>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Utilidad del Día</div><div style="font-size:1.4rem; font-weight:800; color:#111827">$${Number(summary.balance).toLocaleString('es-CO')}</div></div>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Movimientos Hoy</div><div style="font-size:1.4rem; font-weight:800; color:#0ea5e9">${movements.length}</div></div>`;
+        renderCashTable(movements, "cashTableContainer");
+    } catch (e) { document.getElementById("cashTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>'; }
+}
+
+async function loadAllMovements() {
+    try {
+        const res = await fetch(API + "/cash", { headers: authHeaders() });
+        const data = await res.json();
+        renderCashTable(data, "movementsTableContainer");
+    } catch (e) { document.getElementById("movementsTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>'; }
+}
+
+function renderCashTable(items, containerId) {
+    if (!items.length) { document.getElementById(containerId).innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af">No hay movimientos registrados.</div>'; return; }
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff">
+        <th style="padding:10px 12px">Hora</th><th style="padding:10px 12px">Tipo</th><th style="padding:10px 12px">Descripción</th>
+        <th style="padding:10px 12px; text-align:right">Monto</th><th style="padding:10px 12px">Método</th>
+    </tr></thead><tbody>`;
+    items.forEach(m => {
+        const typeColor = m.movementType === 'INGRESO' ? '#16a34a' : '#ef4444';
+        const methodBadge = m.paymentMethod === 'EFECTIVO' ? 'background:#d1fae5; color:#065f46' : 'background:#dbeafe; color:#1e40af';
+        html += `<tr style="border-bottom:1px solid #f3f4f6">
+            <td style="padding:10px 12px; font-size:0.78rem; color:#6b7280">${new Date(m.createdAt).toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'})}</td>
+            <td style="padding:10px 12px; font-weight:600; color:${typeColor}">${m.movementType}</td>
+            <td style="padding:10px 12px">${m.description}</td>
+            <td style="padding:10px 12px; text-align:right; font-weight:700">$${Number(m.amount).toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px"><span style="${methodBadge}; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">${m.paymentMethod}</span></td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    document.getElementById(containerId).innerHTML = html;
+}
+
+function showCashForm() { document.getElementById("cashFormPanel").style.display = "block"; }
+function hideCashForm() { document.getElementById("cashFormPanel").style.display = "none"; document.getElementById("cashForm").reset(); }
+
+async function saveCashMovement(e) {
+    e.preventDefault();
+    const body = {
+        movementType: document.getElementById("cm_type").value,
+        description: document.getElementById("cm_desc").value,
+        amount: Number(document.getElementById("cm_amount").value),
+        paymentMethod: document.getElementById("cm_method").value,
+        observations: document.getElementById("cm_obs").value
+    };
+    try {
+        const res = await fetch(API + "/cash", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
+        hideCashForm();
+        loadCash();
+        alert("✓ Movimiento registrado");
     } catch (e) { alert("Error: " + e.message); }
 }
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
