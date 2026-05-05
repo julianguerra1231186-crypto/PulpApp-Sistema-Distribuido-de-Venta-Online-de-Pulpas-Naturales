@@ -92,6 +92,15 @@ public class ClientService {
         return toDTO(client);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        Long tenantId = resolveTenantId();
+        Client client = clientRepository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con id: " + id));
+        clientRepository.delete(client);
+        log.info("Cliente eliminado: id={}, tenantId={}", id, tenantId);
+    }
+
     // ── Helpers ──
 
     private Long resolveTenantId() {
