@@ -77,6 +77,15 @@ public class InventoryService {
         return toDTO(item);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        Long tenantId = resolveTenantId();
+        InventoryItem item = repository.findByIdAndTenantId(id, tenantId)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
+        repository.delete(item);
+        log.info("Producto eliminado: id={}, tenantId={}", id, tenantId);
+    }
+
     private Long resolveTenantId() {
         Long tenantId = TenantContext.getTenantId();
         return tenantId != null ? tenantId : defaultTenantId;

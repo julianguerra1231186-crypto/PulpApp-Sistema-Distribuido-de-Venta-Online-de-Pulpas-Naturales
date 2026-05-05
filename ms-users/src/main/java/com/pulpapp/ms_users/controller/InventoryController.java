@@ -47,4 +47,10 @@ public class InventoryController {
     public InventoryItemResponseDTO toggleActive(@PathVariable Long id, @RequestParam boolean active) {
         return inventoryService.toggleActive(id, active);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        inventoryService.delete(id);
+    }
 }
