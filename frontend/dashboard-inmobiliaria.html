@@ -246,9 +246,15 @@
                     </div>
                 </div>
 
-                <!-- 1. Buscar inquilino -->
+                <!-- 1. Tipo de cliente + Buscar -->
                 <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
-                    <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">👤 Inquilino (buscar por nombre o cédula)</label>
+                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#111827">👤 Factura dirigida a:</label>
+                        <div style="display:flex; gap:6px">
+                            <button type="button" id="btn_tipo_inquilino" onclick="setClientType('inquilino')" style="padding:6px 16px; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #6366f1; background:#6366f1; color:#fff">Inquilino</button>
+                            <button type="button" id="btn_tipo_propietario" onclick="setClientType('propietario')" style="padding:6px 16px; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151">Propietario</button>
+                        </div>
+                    </div>
                     <input type="text" id="inv_search_client" placeholder="Escribe nombre o cédula..." style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem" oninput="searchClientForInvoice(this.value)">
                     <div id="inv_client_results" style="margin-top:8px"></div>
                     <div id="inv_client_info" style="display:none; margin-top:10px; padding:10px; background:#fff; border:1px solid #e5e7eb; border-radius:8px">
@@ -257,6 +263,7 @@
                             <div><strong>Cédula:</strong> <span id="inv_ci_doc">—</span></div>
                             <div><strong>Teléfono:</strong> <span id="inv_ci_phone">—</span></div>
                         </div>
+                        <div style="margin-top:6px; font-size:0.72rem; color:#6366f1; font-weight:600" id="inv_ci_type_label">Tipo: Inquilino</div>
                     </div>
                 </div>
 
@@ -848,6 +855,22 @@ async function saveSupplier(e) {
 let selectedClientData = null;
 let selectedPropertyData = null;
 let propertiesList = [];
+let invoiceClientType = "inquilino";
+
+function setClientType(type) {
+    invoiceClientType = type;
+    const btnInq = document.getElementById("btn_tipo_inquilino");
+    const btnProp = document.getElementById("btn_tipo_propietario");
+    if (type === "inquilino") {
+        btnInq.style.background = "#6366f1"; btnInq.style.color = "#fff"; btnInq.style.borderColor = "#6366f1";
+        btnProp.style.background = "#fff"; btnProp.style.color = "#374151"; btnProp.style.borderColor = "#e5e7eb";
+    } else {
+        btnProp.style.background = "#6366f1"; btnProp.style.color = "#fff"; btnProp.style.borderColor = "#6366f1";
+        btnInq.style.background = "#fff"; btnInq.style.color = "#374151"; btnInq.style.borderColor = "#e5e7eb";
+    }
+    const label = document.getElementById("inv_ci_type_label");
+    if (label) label.textContent = "Tipo: " + (type === "inquilino" ? "Inquilino" : "Propietario");
+}
 
 async function loadInvoices() {
     try {
