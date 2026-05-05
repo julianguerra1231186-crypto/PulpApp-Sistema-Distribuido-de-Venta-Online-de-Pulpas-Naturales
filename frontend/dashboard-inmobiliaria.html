@@ -13,9 +13,11 @@
         .dash-sidebar.collapsed { width:60px; }
         .dash-sidebar.collapsed .sb-text, .dash-sidebar.collapsed .sb-label, .dash-sidebar.collapsed .sb-user-name, .dash-sidebar.collapsed .sb-user-email, .dash-sidebar.collapsed .sb-logout { display:none; }
         .dash-sidebar.collapsed .sb-brand span { display:none; }
-        .dash-sidebar.collapsed .sb-brand img { margin:0 auto; }
+        .dash-sidebar.collapsed .sb-brand img { margin:0 auto; height:24px; }
+        .dash-sidebar.collapsed .sb-brand { padding:0 0 16px; justify-content:center; flex-direction:column; gap:8px; }
         .dash-sidebar.collapsed .sb-link { justify-content:center; padding:12px 0; }
         .dash-sidebar.collapsed .sb-link span:first-child { font-size:1.2rem; }
+        .dash-sidebar.collapsed #sidebarToggleBtn { position:fixed; top:10px; left:15px; z-index:200; }
         .sb-brand { display:flex; align-items:center; gap:10px; padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,0.08); }
         .sb-brand img { height:28px; } .sb-brand span { font-size:1.1rem; font-weight:800; }
         .sb-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.3); padding:20px 20px 8px; }
@@ -57,8 +59,8 @@
 <div class="dash-layout">
     <aside class="dash-sidebar" id="mainSidebar">
         <div class="sb-brand" style="display:flex; justify-content:space-between; align-items:center">
-            <div style="display:flex; align-items:center; gap:10px"><img id="sidebarLogo" src="img/logoZentrix-sinfondo.png" alt=""><span>Zentrix</span></div>
-            <button onclick="toggleSidebar()" id="sidebarToggleBtn" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:26px; height:26px; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center">◀</button>
+            <div style="display:flex; align-items:center; gap:10px"><img src="img/logoZentrix-sinfondo.png" alt="" style="height:28px"><span>Zentrix</span></div>
+            <button onclick="toggleSidebar()" id="sidebarToggleBtn" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:28px; height:28px; border-radius:6px; cursor:pointer; font-size:0.85rem; display:flex; align-items:center; justify-content:center; flex-shrink:0">◀</button>
         </div>
         <div class="sb-label">Inmobiliaria</div>
 
@@ -101,7 +103,7 @@
                             <div style="font-size:1.05rem; font-weight:700; color:#1e3a5f; margin-bottom:4px" id="welcomeBizName">Mi Inmobiliaria</div>
                             <p style="color:#5a7a9a; font-size:0.85rem; margin:0">Administra, vende y gestiona contrataciones de construcción desde un solo lugar.</p>
                         </div>
-                        <img id="welcomeLogo" src="img/logoZentrix-sinfondo.png" alt="Zentrix" style="height:64px; opacity:0.9; border-radius:50%">
+                        <img id="welcomeLogo" src="img/logoZentrix-sinfondo.png" alt="Logo Empresa" style="height:72px; width:72px; object-fit:cover; border-radius:50%; border:3px solid #fff; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
                     </div>
 
                     <!-- Acciones rápidas -->
@@ -2432,10 +2434,8 @@ function removeCompanyLogo() {
 
 function applyLogo(src) {
     const preview = document.getElementById('logoPreview');
-    const sidebarLogo = document.getElementById('sidebarLogo');
     const welcomeLogo = document.getElementById('welcomeLogo');
     if (preview) preview.src = src;
-    if (sidebarLogo) sidebarLogo.src = src;
     if (welcomeLogo) welcomeLogo.src = src;
 }
 
