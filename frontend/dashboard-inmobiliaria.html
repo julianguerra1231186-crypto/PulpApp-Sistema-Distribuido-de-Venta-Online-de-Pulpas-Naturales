@@ -636,6 +636,10 @@ const authHeaders = () => ({ "Content-Type":"application/json", "Authorization":
 
 async function loadClients() {
     try {
+        // Cargar propiedades para cruzar datos
+        if (!window._propertiesData || !window._propertiesData.length) {
+            try { const pRes = await fetch(API + "/inventory", { headers: authHeaders() }); window._propertiesData = await pRes.json(); } catch(e) {}
+        }
         const res = await fetch(API + "/clients", { headers: authHeaders() });
         if (!res.ok) throw new Error("Error " + res.status);
         const clients = await res.json();
@@ -648,65 +652,39 @@ async function loadClients() {
 
 function renderClientsTable(clients) {
     if (!clients.length) {
-        document.getElementById("clientsTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay clientes registrados. ¡Crea el primero!</div>';
+        document.getElementById("clientsTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay clientes registrados.</div>';
         return;
     }
-    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
-        <thead><tr style="background:#1e293b; color:#fff">
-            <th style="padding:10px 12px; text-align:left">Nombre</th>
-            <th style="padding:10px 12px; text-align:left">Tipo Doc</th>
-            <th style="padding:10px 12px; text-align:left">Documento</th>
-            <th style="padding:10px 12px; text-align:left">Teléfono</th>
-            <th style="padding:10px 12px; text-align:left">Ciudad</th>
-            <th style="padding:10px 12px; text-align:left">Límite Crédito</th>
-            <th style="padding:10px 12px; text-align:center">Estado</th>
-            <th style="padding:10px 12px; text-align:center">Acciones</th>
-        </tr></thead><tbody>`;
+    const props = window._propertiesData || [];
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Nombre</th><th style="padding:10px 12px; text-align:center">Rol</th><th style="padding:10px 12px; text-align:left">Documento</th><th style="padding:10px 12px; text-align:left">Telefono</th><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px; text-align:center">Acciones</th></tr></thead><tbody>';
     clients.forEach(c => {
-        const statusBadge = c.active
-            ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>'
-            : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
-        const actionBtn = c.active
-            ? `<button onclick="toggleClient(${c.id}, false)" style="padding:4px 12px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Inactivar</button>`
-            : `<button onclick="toggleClient(${c.id}, true)" style="padding:4px 12px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Activar</button>`;
-        html += `<tr style="border-bottom:1px solid #f3f4f6">
-            <td style="padding:10px 12px; font-weight:600">${c.name}</td>
-            <td style="padding:10px 12px">${c.documentType}</td>
-            <td style="padding:10px 12px">${c.document}</td>
-            <td style="padding:10px 12px">${c.phone || '—'}</td>
-            <td style="padding:10px 12px">${c.city || '—'}</td>
-            <td style="padding:10px 12px">$${Number(c.creditLimit || 0).toLocaleString('es-CO')}</td>
-            <td style="padding:10px 12px; text-align:center">${statusBadge}</td>
-            <td style="padding:10px 12px; text-align:center">${actionBtn}</td>
-        </tr>`;
+        const isPropietario = c.name.includes('(Propietario');
+        const isInquilino = c.name.includes('(Inquilino');
+        const displayName = c.name.replace(/\s*\(Propietario\/a\)/g, '').replace(/\s*\(Inquilino\)/g, '').trim();
+        let rolBadge = '<span style="background:#f3f4f6; color:#374151; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Cliente</span>';
+        if (isPropietario) rolBadge = '<span style="background:#dbeafe; color:#1e40af; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Propietario/a</span>';
+        if (isInquilino) rolBadge = '<span style="background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Inquilino</span>';
+        let inmuebleInfo = '—';
+        if (isPropietario && props.length) {
+            const prop = props.find(p => p.ownerName && p.ownerName.toLowerCase().indexOf(displayName.toLowerCase().substring(0, 4)) >= 0);
+            if (prop) inmuebleInfo = '<span style="color:#1e40af; font-weight:600">🏠 ' + (prop.propertyAddress || prop.name) + '</span>';
+        } else if (isInquilino && c.address) {
+            inmuebleInfo = '<span style="color:#92400e; font-weight:600">🔑 ' + c.address + '</span>';
+        }
+        const statusBadge = c.active ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>' : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
+        const actionBtn = c.active ? '<button onclick="toggleClient(' + c.id + ', false)" style="padding:4px 12px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Inactivar</button>' : '<button onclick="toggleClient(' + c.id + ', true)" style="padding:4px 12px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Activar</button>';
+        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px; font-weight:600">' + displayName + '</td><td style="padding:10px 12px; text-align:center">' + rolBadge + '</td><td style="padding:10px 12px">' + c.documentType + ' ' + c.document + '</td><td style="padding:10px 12px">' + (c.phone || '—') + '</td><td style="padding:10px 12px; font-size:0.78rem">' + inmuebleInfo + '</td><td style="padding:10px 12px; text-align:center">' + statusBadge + '</td><td style="padding:10px 12px; text-align:center">' + actionBtn + '</td></tr>';
     });
-    html += '</tbody></table>';
-    html += `<div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ${clients.length} clientes</div>`;
+    html += '</tbody></table><div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ' + clients.length + ' clientes</div>';
     document.getElementById("clientsTableContainer").innerHTML = html;
 }
 
 function renderClientStats(clients) {
     const total = clients.length;
     const active = clients.filter(c => c.active).length;
-    const withCredit = clients.filter(c => c.creditLimit > 0).length;
-    const avgCredit = total > 0 ? clients.reduce((s, c) => s + Number(c.creditLimit || 0), 0) / total : 0;
-    document.getElementById("clientStats").innerHTML = `
-        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
-            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Total Clientes</div>
-            <div style="font-size:1.6rem; font-weight:800; color:#111827">${total}</div>
-        </div>
-        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
-            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Clientes Activos</div>
-            <div style="font-size:1.6rem; font-weight:800; color:#16a34a">${active}</div>
-        </div>
-        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
-            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Con Crédito</div>
-            <div style="font-size:1.6rem; font-weight:800; color:#0ea5e9">${withCredit}</div>
-        </div>
-        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
-            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Promedio Crédito</div>
-            <div style="font-size:1.2rem; font-weight:800; color:#111827">$${Math.round(avgCredit).toLocaleString('es-CO')}</div>
-        </div>`;
+    const propietarios = clients.filter(c => c.name.includes('(Propietario')).length;
+    const inquilinos = clients.filter(c => c.name.includes('(Inquilino')).length;
+    document.getElementById("clientStats").innerHTML = '<div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Total Clientes</div><div style="font-size:1.6rem; font-weight:800; color:#111827">' + total + '</div></div><div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Activos</div><div style="font-size:1.6rem; font-weight:800; color:#16a34a">' + active + '</div></div><div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Propietarios</div><div style="font-size:1.6rem; font-weight:800; color:#1e40af">' + propietarios + '</div></div><div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Inquilinos</div><div style="font-size:1.6rem; font-weight:800; color:#d97706">' + inquilinos + '</div></div>';
 }
 
 async function toggleClient(id, active) {
