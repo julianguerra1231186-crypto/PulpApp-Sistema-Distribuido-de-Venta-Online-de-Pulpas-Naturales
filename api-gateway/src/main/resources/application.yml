@@ -149,6 +149,19 @@ spring:
             - Path=/cash, /cash/**
 
         # --------------------------------------------
+        # REPORTES Y AUDITORÍA (ERP Fase F)
+        # --------------------------------------------
+        - id: ms-reports
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/reports, /reports/**
+
+        - id: ms-audit
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/audit, /audit/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users

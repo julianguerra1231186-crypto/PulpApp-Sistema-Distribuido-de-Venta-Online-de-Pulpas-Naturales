@@ -83,6 +83,12 @@ public class SecurityConfig {
                 .requestMatchers("/cash").authenticated()
                 .requestMatchers("/cash/**").authenticated()
 
+                // ── Reportes y Auditoría (ERP) ────────────────────────────
+                .requestMatchers("/reports").authenticated()
+                .requestMatchers("/reports/**").authenticated()
+                .requestMatchers("/audit").authenticated()
+                .requestMatchers("/audit/**").authenticated()
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")

@@ -1454,3 +1454,76 @@ databaseChangeLog:
             columns:
               - column:
                   name: tenant_id
+
+  # ============================================================
+  # FASE F — REPORTES Y AUDITORÍA (ERP)
+  # ============================================================
+
+  - changeSet:
+      id: 38-create-audit-logs-table
+      author: pulpapp-team
+      comment: "ERP Fase F: crea la tabla audit_logs."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: audit_logs
+      changes:
+        - createTable:
+            tableName: audit_logs
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: action
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: module
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 39-index-audit-logs-tenant-id
+      author: pulpapp-team
+      comment: "ERP Fase F: indice en audit_logs.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_audit_logs_tenant_id
+      changes:
+        - createIndex:
+            tableName: audit_logs
+            indexName: idx_audit_logs_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
