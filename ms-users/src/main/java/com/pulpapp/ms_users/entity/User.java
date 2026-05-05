@@ -2,6 +2,7 @@ package com.pulpapp.ms_users.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -48,6 +49,12 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
     private UserStatus status = UserStatus.ACTIVE;
+
+    @Column(name = "force_password_change")
+    private Boolean forcePasswordChange = false;
+
+    @Column(name = "last_login")
+    private LocalDateTime lastLogin;
 
     /**
      * Identificador del tenant al que pertenece este usuario.

@@ -1561,3 +1561,29 @@ databaseChangeLog:
                   type: DECIMAL(12,2)
                   constraints:
                     nullable: true
+
+  # ============================================================
+  # ADMIN — Reset Password & Last Login
+  # ============================================================
+
+  - changeSet:
+      id: 41-add-force-password-change-and-last-login
+      author: pulpapp-team
+      comment: Adds force_password_change and last_login columns to users table
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: users
+            columnName: force_password_change
+      changes:
+        - addColumn:
+            tableName: users
+            columns:
+              - column:
+                  name: force_password_change
+                  type: boolean
+                  defaultValueBoolean: false
+              - column:
+                  name: last_login
+                  type: timestamp

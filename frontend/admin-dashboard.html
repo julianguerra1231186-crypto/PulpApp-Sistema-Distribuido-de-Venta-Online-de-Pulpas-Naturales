@@ -502,17 +502,35 @@ async function loadUsers() {
     try {
         const data = await apiFetch("/users");
         if (!data.length) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">No hay usuarios</div>'; return; }
-        let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Cédula</th><th>Teléfono</th><th>Rol</th><th>Tenant</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+        let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Cédula</th><th>Teléfono</th><th>Rol</th><th>Tenant</th><th>Último Acceso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
         data.forEach(u => {
             const statusBadge = u.activo ? '<span class="badge badge-green">Activo</span>' : '<span class="badge badge-red">Inactivo</span>';
             const isAdmin = u.role === 'ROLE_ADMIN';
-            const actionBtns = isAdmin ? '<span style="font-size:0.7rem; color:#6b7280; font-style:italic">🔒 Protegido</span>' : '<button onclick="toggleUserActive(' + u.id + ', ' + !u.activo + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px">' + (u.activo ? 'Inactivar' : 'Activar') + '</button><button onclick="deleteUser(' + u.id + ', \'' + u.name.replace(/'/g, "\\'") + '\')" class="btn-sm btn-danger-sm" style="font-size:0.7rem; padding:3px 8px">🗑️</button>';
-            html += '<tr><td>' + u.id + '</td><td><strong>' + u.name + '</strong></td><td>' + u.email + '</td><td>' + (u.cedula || '—') + '</td><td>' + (u.telefono || '—') + '</td><td><span class="badge badge-blue">' + (u.role || '—') + '</span></td><td>' + (u.tenantId || '—') + '</td><td>' + statusBadge + '</td><td style="display:flex; gap:4px">' + actionBtns + '</td></tr>';
+            const lastLoginStr = u.lastLogin ? new Date(u.lastLogin).toLocaleString('es-CO') : '<span style="color:#9ca3af">Nunca</span>';
+            const forceIcon = u.forcePasswordChange ? ' <span title="Debe cambiar contraseña" style="cursor:help">⚠️</span>' : '';
+            const resetBtn = isAdmin ? '' : '<button onclick="resetUserPassword(' + u.id + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px" title="Resetear contraseña">🔑 Resetear</button>';
+            const actionBtns = isAdmin ? '<span style="font-size:0.7rem; color:#6b7280; font-style:italic">🔒 Protegido</span>' : '<button onclick="toggleUserActive(' + u.id + ', ' + !u.activo + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px">' + (u.activo ? 'Inactivar' : 'Activar') + '</button>' + resetBtn + '<button onclick="deleteUser(' + u.id + ', \'' + u.name.replace(/'/g, "\\'") + '\')" class="btn-sm btn-danger-sm" style="font-size:0.7rem; padding:3px 8px">🗑️</button>';
+            html += '<tr><td>' + u.id + '</td><td><strong>' + u.name + '</strong>' + forceIcon + '</td><td>' + u.email + '</td><td>' + (u.cedula || '—') + '</td><td>' + (u.telefono || '—') + '</td><td><span class="badge badge-blue">' + (u.role || '—') + '</span></td><td>' + (u.tenantId || '—') + '</td><td>' + lastLoginStr + '</td><td>' + statusBadge + '</td><td style="display:flex; gap:4px; flex-wrap:wrap">' + actionBtns + '</td></tr>';
         });
         html += '</tbody></table>';
         html += '<div style="color:#9ca3af; font-size:0.75rem; margin-top:10px">Total: ' + data.length + ' usuario(s)</div>';
         document.getElementById("usersTable").innerHTML = html;
     } catch (e) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">Error al cargar usuarios: ' + e.message + '</div>'; }
+}
+
+async function resetUserPassword(userId) {
+    if (!confirm('¿Generar contraseña temporal para este usuario?\n\nLa contraseña actual será reemplazada.')) return;
+    try {
+        const res = await fetch(API + '/auth/reset-password?userId=' + userId, { method: 'POST', headers: headers() });
+        if (!res.ok) throw new Error('Error ' + res.status);
+        const data = await res.json();
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999';
+        modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        modal.innerHTML = '<div style="background:#fff; border-radius:14px; padding:32px; max-width:400px; width:100%; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,0.3)"><h3 style="margin:0 0 8px; font-size:1.1rem">🔑 Contraseña Temporal</h3><p style="color:#6b7280; font-size:0.85rem; margin:0 0 16px">Usuario: <strong>' + data.email + '</strong></p><div style="background:#111827; color:#22c55e; padding:16px; border-radius:8px; font-family:monospace; font-size:1.3rem; font-weight:700; letter-spacing:2px; margin-bottom:16px; user-select:all">' + data.tempPassword + '</div><p style="color:#ef4444; font-size:0.78rem; margin:0 0 16px">⚠️ Esta contraseña solo se muestra UNA VEZ. El usuario deberá cambiarla al iniciar sesión.</p><button onclick="this.closest(\'div[style]\').remove()" style="padding:10px 24px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer">Entendido</button></div>';
+        document.body.appendChild(modal);
+        loadUsers();
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
 }
 
 async function toggleUserActive(id, active) {

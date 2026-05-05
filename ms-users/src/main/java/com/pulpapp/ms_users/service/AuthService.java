@@ -10,6 +10,7 @@ import com.pulpapp.ms_users.entity.TenantStatus;
 import com.pulpapp.ms_users.entity.User;
 import com.pulpapp.ms_users.entity.UserStatus;
 import com.pulpapp.ms_users.exception.BadCredentialsException;
+import com.pulpapp.ms_users.exception.ResourceNotFoundException;
 import com.pulpapp.ms_users.repository.TenantRepository;
 import com.pulpapp.ms_users.repository.UserRepository;
 import com.pulpapp.ms_users.security.JwtService;
@@ -22,6 +23,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * Servicio de autenticación: login y registro de usuarios.
@@ -76,6 +79,10 @@ public class AuthService {
         String token = jwtService.generateToken(principal, resolvedRole, user.getTenantId());
 
         log.info("Login exitoso: email={}, tenantId={}, role={}", user.getEmail(), user.getTenantId(), resolvedRole);
+
+        // Update last login timestamp
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
 
         return buildAuthResponse(token, user, resolvedRole);
     }
@@ -135,6 +142,23 @@ public class AuthService {
         log.info("Registro SaaS: email={}, tenantId={}, status={}", user.getEmail(), tenantId, user.getStatus());
 
         return buildAuthResponse(token, user, user.getRole().name());
+    }
+
+    // ---------------------------------------------------------------
+    // Reset Password (Admin)
+    // ---------------------------------------------------------------
+
+    @Transactional
+    public java.util.Map<String, String> resetPassword(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        // Generate random 8-char password
+        String tempPassword = java.util.UUID.randomUUID().toString().substring(0, 8);
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        user.setForcePasswordChange(true);
+        userRepository.save(user);
+        log.info("Password reset for user id={}, email={}", userId, user.getEmail());
+        return java.util.Map.of("tempPassword", tempPassword, "email", user.getEmail());
     }
 
     // ---------------------------------------------------------------
