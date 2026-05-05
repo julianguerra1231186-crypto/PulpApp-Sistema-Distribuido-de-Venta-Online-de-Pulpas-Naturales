@@ -24,6 +24,9 @@ public class InventoryItemResponseDTO {
     private BigDecimal salePrice;
     private BigDecimal unitProfit;
     private String supplier;
+    private String ownerName;
+    private String propertyAddress;
+    private BigDecimal rentValue;
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

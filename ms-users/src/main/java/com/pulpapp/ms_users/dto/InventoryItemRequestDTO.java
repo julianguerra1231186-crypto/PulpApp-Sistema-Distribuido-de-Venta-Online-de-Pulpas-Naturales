@@ -32,4 +32,7 @@ public class InventoryItemRequestDTO {
     private BigDecimal salePrice;
 
     private String supplier;
+    private String ownerName;
+    private String propertyAddress;
+    private BigDecimal rentValue;
 }

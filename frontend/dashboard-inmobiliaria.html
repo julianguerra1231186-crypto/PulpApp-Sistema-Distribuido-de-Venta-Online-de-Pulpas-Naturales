@@ -56,7 +56,7 @@
         <a class="sb-link" onclick="showTab('purchases')"><span>🛒</span><span>Compras</span></a>
         <a class="sb-link" onclick="showTab('payments')"><span>💵</span><span>Pagos</span></a>
         <a class="sb-link" onclick="showTab('clients')"><span>👤</span><span>Clientes</span></a>
-        <a class="sb-link" onclick="showTab('inventory')"><span>📦</span><span>Inventario</span></a>
+        <a class="sb-link" onclick="showTab('inventory')"><span>🏘️</span><span>Propiedades Adm.</span></a>
         <a class="sb-link" onclick="showTab('suppliers')"><span>👥</span><span>Proveedores</span></a>
         <a class="sb-link" onclick="showTab('cashbox')"><span>💰</span><span>Caja</span></a>
         <a class="sb-link" onclick="showTab('movements')"><span>🔄</span><span>Movimientos</span></a>
@@ -228,39 +228,77 @@
         <div id="tab-invoices" style="display:none">
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-                    <h2 style="margin:0">📄 Facturación</h2>
+                    <h2 style="margin:0">📄 Facturación de Arriendos</h2>
                     <button onclick="showInvoiceForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nueva Factura</button>
                 </div>
                 <div id="invoicesTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando facturas...</div></div>
             </div>
 
-            <!-- Formulario nueva factura -->
+            <!-- Formulario nueva factura inmobiliaria -->
             <div id="invoiceFormPanel" style="display:none" class="panel">
-                <h2 style="margin:0 0 20px">📄 Nueva Factura</h2>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px">
-                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Nombre del Cliente</label><input type="text" id="inv_client" placeholder="Nombre del cliente" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
-                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Método de Pago *</label><select id="inv_method" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option><option value="CREDITO">Crédito</option></select></div>
-                </div>
+                <h2 style="margin:0 0 6px">📄 Nueva Factura de Arriendo</h2>
+                <p style="color:#6b7280; font-size:0.82rem; margin:0 0 20px">Genera la factura mensual del inmueble con cálculo automático de comisión (11%).</p>
 
-                <h3 style="font-size:0.9rem; margin:0 0 12px">Productos</h3>
-                <div id="invoiceItems">
-                    <div class="inv-item-row" style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:10px; margin-bottom:8px; align-items:end">
-                        <input type="text" placeholder="Nombre producto" class="inv-pname" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit">
-                        <input type="number" placeholder="Cant" class="inv-qty" min="1" value="1" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit">
-                        <input type="number" placeholder="Precio" class="inv-price" min="0" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit">
-                        <span class="inv-sub" style="font-size:0.82rem; font-weight:600; color:#111827; padding:8px 0">$0</span>
-                        <button type="button" onclick="this.closest('.inv-item-row').remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.8rem">🗑️</button>
+                <!-- 1. Buscar inquilino -->
+                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
+                    <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">👤 Inquilino (buscar por nombre o cédula)</label>
+                    <input type="text" id="inv_search_client" placeholder="Escribe nombre o cédula..." style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem" oninput="searchClientForInvoice(this.value)">
+                    <div id="inv_client_results" style="margin-top:8px"></div>
+                    <div id="inv_client_info" style="display:none; margin-top:10px; padding:10px; background:#fff; border:1px solid #e5e7eb; border-radius:8px">
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; font-size:0.78rem; color:#374151">
+                            <div><strong>Nombre:</strong> <span id="inv_ci_name">—</span></div>
+                            <div><strong>Cédula:</strong> <span id="inv_ci_doc">—</span></div>
+                            <div><strong>Teléfono:</strong> <span id="inv_ci_phone">—</span></div>
+                        </div>
                     </div>
                 </div>
-                <button type="button" onclick="addInvoiceItemRow()" style="padding:6px 14px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; font-size:0.78rem; cursor:pointer; font-family:inherit; margin-bottom:16px">+ Agregar Producto</button>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">
-                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Descuento ($)</label><input type="number" id="inv_discount" value="0" min="0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
-                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Observaciones</label><input type="text" id="inv_obs" placeholder="Opcional" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                <!-- 2. Seleccionar propiedad -->
+                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
+                    <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">🏠 Propiedad (seleccionar inmueble)</label>
+                    <select id="inv_property" onchange="selectProperty()" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem">
+                        <option value="">Seleccione una propiedad...</option>
+                    </select>
+                    <div id="inv_prop_info" style="display:none; margin-top:10px; padding:10px; background:#fff; border:1px solid #e5e7eb; border-radius:8px">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.78rem; color:#374151">
+                            <div><strong>Dirección:</strong> <span id="inv_pi_address">—</span></div>
+                            <div><strong>Propietario:</strong> <span id="inv_pi_owner">—</span></div>
+                            <div><strong>Valor Arriendo:</strong> <span id="inv_pi_rent" style="font-weight:700; color:#111827">—</span></div>
+                        </div>
+                    </div>
                 </div>
 
+                <!-- 3. Mes facturado -->
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">
+                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Mes Facturado</label><input type="month" id="inv_month" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Método de Pago</label><select id="inv_method" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"><option value="TRANSFERENCIA">Transferencia</option><option value="EFECTIVO">Efectivo</option><option value="CONSIGNACION">Consignación</option></select></div>
+                </div>
+
+                <!-- 4. Adicionales -->
+                <div style="background:#fff8f0; border:1px solid #fed7aa; border-radius:10px; padding:16px; margin-bottom:16px">
+                    <label style="font-size:0.82rem; font-weight:700; color:#92400e; display:block; margin-bottom:8px">🔧 Adicionales (mantenimiento, reparaciones, etc.)</label>
+                    <div id="inv_adicionales"></div>
+                    <button type="button" onclick="addAdicional()" style="padding:6px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; font-size:0.78rem; cursor:pointer; font-family:inherit; margin-top:8px">+ Agregar adicional</button>
+                </div>
+
+                <!-- 5. Resumen automático -->
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px; margin-bottom:16px">
+                    <h3 style="font-size:0.9rem; font-weight:700; color:#065f46; margin:0 0 12px">📋 Resumen de Factura</h3>
+                    <div style="display:grid; grid-template-columns:1fr auto; gap:6px; font-size:0.85rem">
+                        <span>Valor Arriendo:</span><span id="inv_r_rent" style="font-weight:700; text-align:right">$0</span>
+                        <span>Comisión Inmobiliaria (11%):</span><span id="inv_r_comision" style="font-weight:700; color:#ef4444; text-align:right">-$0</span>
+                        <span>Total Adicionales:</span><span id="inv_r_adicionales" style="font-weight:700; color:#ef4444; text-align:right">-$0</span>
+                        <div style="grid-column:1/-1; border-top:1px solid #bbf7d0; margin:6px 0"></div>
+                        <span style="font-weight:800; font-size:0.95rem">VALOR A ENVIAR PROPIETARIO:</span><span id="inv_r_propietario" style="font-weight:800; font-size:1.1rem; color:#065f46; text-align:right">$0</span>
+                        <span style="color:#6b7280">Comisión Inmobiliaria:</span><span id="inv_r_ganancia" style="font-weight:700; color:#6366f1; text-align:right">$0</span>
+                    </div>
+                </div>
+
+                <!-- Observaciones -->
+                <div style="margin-bottom:16px"><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Observaciones</label><input type="text" id="inv_obs" placeholder="Opcional" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+
                 <div style="display:flex; gap:10px; justify-content:flex-end">
-                    <button onclick="submitInvoice()" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Factura</button>
+                    <button onclick="submitRentInvoice()" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Generar Factura</button>
                     <button onclick="hideInvoiceForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
                 </div>
             </div>
@@ -792,7 +830,11 @@ async function saveSupplier(e) {
     } catch (e) { alert("Error: " + e.message); }
 }
 
-// ── Facturación ──
+// ── Facturación Inmobiliaria ──
+let selectedClientData = null;
+let selectedPropertyData = null;
+let propertiesList = [];
+
 async function loadInvoices() {
     try {
         const res = await fetch(API + "/invoices", { headers: authHeaders() });
@@ -801,18 +843,17 @@ async function loadInvoices() {
         if (!data.length) { document.getElementById("invoicesTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay facturas. ¡Crea la primera!</div>'; return; }
         let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
             <thead><tr style="background:#1e293b; color:#fff">
-                <th style="padding:10px 12px">N° Factura</th><th style="padding:10px 12px">Cliente</th>
+                <th style="padding:10px 12px">N° Factura</th><th style="padding:10px 12px">Inquilino</th>
                 <th style="padding:10px 12px; text-align:right">Total</th><th style="padding:10px 12px">Método</th>
                 <th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px">Fecha</th>
             </tr></thead><tbody>`;
         data.forEach(inv => {
-            const stColor = inv.status === 'REGISTRADA' ? '#dbeafe; color:#1e40af' : inv.status === 'PAGADA' ? '#d1fae5; color:#065f46' : '#fee2e2; color:#991b1b';
             html += `<tr style="border-bottom:1px solid #f3f4f6">
                 <td style="padding:10px 12px; font-weight:700; color:#6366f1">${inv.invoiceNumber}</td>
                 <td style="padding:10px 12px">${inv.clientName || '—'}</td>
                 <td style="padding:10px 12px; text-align:right; font-weight:700">$${Number(inv.total).toLocaleString('es-CO')}</td>
                 <td style="padding:10px 12px"><span style="background:#eef2ff; color:#4f46e5; padding:2px 8px; border-radius:999px; font-size:0.7rem; font-weight:600">${inv.paymentMethod}</span></td>
-                <td style="padding:10px 12px; text-align:center"><span style="background:${stColor}; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">${inv.status}</span></td>
+                <td style="padding:10px 12px; text-align:center"><span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">${inv.status}</span></td>
                 <td style="padding:10px 12px; font-size:0.78rem; color:#6b7280">${new Date(inv.createdAt).toLocaleDateString('es-CO')}</td>
             </tr>`;
         });
@@ -821,43 +862,117 @@ async function loadInvoices() {
     } catch (e) { document.getElementById("invoicesTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>'; }
 }
 
-function showInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "block"; }
-function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "none"; }
+async function showInvoiceForm() {
+    document.getElementById("invoiceFormPanel").style.display = "block";
+    // Cargar propiedades
+    try {
+        const res = await fetch(API + "/inventory", { headers: authHeaders() });
+        propertiesList = await res.json();
+        const select = document.getElementById("inv_property");
+        select.innerHTML = '<option value="">Seleccione una propiedad...</option>';
+        propertiesList.forEach(p => {
+            select.innerHTML += `<option value="${p.id}">${p.name} — ${p.propertyAddress || p.code}</option>`;
+        });
+    } catch (e) {}
+    // Mes actual
+    document.getElementById("inv_month").value = new Date().toISOString().slice(0, 7);
+}
 
-function addInvoiceItemRow() {
-    const container = document.getElementById("invoiceItems");
+function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "none"; selectedClientData = null; selectedPropertyData = null; }
+
+async function searchClientForInvoice(query) {
+    if (query.length < 2) { document.getElementById("inv_client_results").innerHTML = ""; return; }
+    try {
+        const res = await fetch(API + "/clients/search?q=" + encodeURIComponent(query), { headers: authHeaders() });
+        const clients = await res.json();
+        if (!clients.length) { document.getElementById("inv_client_results").innerHTML = '<div style="font-size:0.78rem; color:#9ca3af">No se encontraron resultados</div>'; return; }
+        let html = '<div style="display:flex; flex-direction:column; gap:4px">';
+        clients.forEach(c => {
+            html += `<div onclick="selectClientForInvoice(${c.id}, '${c.name}', '${c.document}', '${c.phone||""}')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; transition:background 0.2s" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#fff'"><strong>${c.name}</strong> — ${c.documentType} ${c.document}</div>`;
+        });
+        html += '</div>';
+        document.getElementById("inv_client_results").innerHTML = html;
+    } catch (e) {}
+}
+
+function selectClientForInvoice(id, name, doc, phone) {
+    selectedClientData = { id, name, document: doc, phone };
+    document.getElementById("inv_search_client").value = name;
+    document.getElementById("inv_client_results").innerHTML = "";
+    document.getElementById("inv_client_info").style.display = "block";
+    document.getElementById("inv_ci_name").textContent = name;
+    document.getElementById("inv_ci_doc").textContent = doc;
+    document.getElementById("inv_ci_phone").textContent = phone || "—";
+}
+
+function selectProperty() {
+    const id = document.getElementById("inv_property").value;
+    if (!id) { document.getElementById("inv_prop_info").style.display = "none"; selectedPropertyData = null; calculateInvoice(); return; }
+    selectedPropertyData = propertiesList.find(p => p.id == id);
+    document.getElementById("inv_prop_info").style.display = "block";
+    document.getElementById("inv_pi_address").textContent = selectedPropertyData.propertyAddress || selectedPropertyData.name;
+    document.getElementById("inv_pi_owner").textContent = selectedPropertyData.ownerName || "—";
+    document.getElementById("inv_pi_rent").textContent = "$" + Number(selectedPropertyData.rentValue || selectedPropertyData.salePrice || 0).toLocaleString('es-CO');
+    calculateInvoice();
+}
+
+function addAdicional() {
+    const container = document.getElementById("inv_adicionales");
     const row = document.createElement("div");
-    row.className = "inv-item-row";
-    row.style.cssText = "display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:10px; margin-bottom:8px; align-items:end";
-    row.innerHTML = `<input type="text" placeholder="Nombre producto" class="inv-pname" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit"><input type="number" placeholder="Cant" class="inv-qty" min="1" value="1" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit"><input type="number" placeholder="Precio" class="inv-price" min="0" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit"><span class="inv-sub" style="font-size:0.82rem; font-weight:600; color:#111827; padding:8px 0">$0</span><button type="button" onclick="this.closest('.inv-item-row').remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.8rem">🗑️</button>`;
+    row.style.cssText = "display:grid; grid-template-columns:2fr 1fr auto; gap:8px; margin-bottom:6px; align-items:center";
+    row.innerHTML = `<input type="text" placeholder="Concepto (ej: Plomería)" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit" class="adic-concepto"><input type="number" placeholder="$0" min="0" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit" class="adic-valor" oninput="calculateInvoice()"><button type="button" onclick="this.parentElement.remove(); calculateInvoice()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.78rem">🗑️</button>`;
     container.appendChild(row);
 }
 
-async function submitInvoice() {
-    const rows = document.querySelectorAll(".inv-item-row");
-    const items = [];
-    rows.forEach(row => {
-        const name = row.querySelector(".inv-pname").value.trim();
-        const qty = Number(row.querySelector(".inv-qty").value) || 1;
-        const price = Number(row.querySelector(".inv-price").value) || 0;
-        if (name && price > 0) items.push({ productName: name, quantity: qty, unitPrice: price });
+function calculateInvoice() {
+    const rent = selectedPropertyData ? Number(selectedPropertyData.rentValue || selectedPropertyData.salePrice || 0) : 0;
+    const comision = Math.round(rent * 0.11);
+    let totalAdicionales = 0;
+    document.querySelectorAll(".adic-valor").forEach(el => { totalAdicionales += Number(el.value) || 0; });
+    const valorPropietario = rent - comision - totalAdicionales;
+
+    document.getElementById("inv_r_rent").textContent = "$" + rent.toLocaleString('es-CO');
+    document.getElementById("inv_r_comision").textContent = "-$" + comision.toLocaleString('es-CO');
+    document.getElementById("inv_r_adicionales").textContent = "-$" + totalAdicionales.toLocaleString('es-CO');
+    document.getElementById("inv_r_propietario").textContent = "$" + valorPropietario.toLocaleString('es-CO');
+    document.getElementById("inv_r_ganancia").textContent = "$" + comision.toLocaleString('es-CO');
+}
+
+async function submitRentInvoice() {
+    if (!selectedClientData) { alert("Selecciona un inquilino"); return; }
+    if (!selectedPropertyData) { alert("Selecciona una propiedad"); return; }
+
+    const rent = Number(selectedPropertyData.rentValue || selectedPropertyData.salePrice || 0);
+    const comision = Math.round(rent * 0.11);
+    let adicionales = [];
+    document.querySelectorAll("#inv_adicionales > div").forEach(row => {
+        const concepto = row.querySelector(".adic-concepto").value;
+        const valor = Number(row.querySelector(".adic-valor").value) || 0;
+        if (concepto && valor > 0) adicionales.push({ productName: concepto, quantity: 1, unitPrice: valor });
     });
-    if (!items.length) { alert("Agrega al menos un producto"); return; }
+
+    const items = [
+        { productName: "Arriendo — " + (selectedPropertyData.propertyAddress || selectedPropertyData.name), quantity: 1, unitPrice: rent, productId: selectedPropertyData.id },
+        { productName: "Comisión Inmobiliaria (11%)", quantity: 1, unitPrice: -comision },
+        ...adicionales.map(a => ({ ...a, unitPrice: -a.unitPrice }))
+    ];
 
     const body = {
-        clientName: document.getElementById("inv_client").value,
+        clientId: selectedClientData.id,
+        clientName: selectedClientData.name,
         paymentMethod: document.getElementById("inv_method").value,
-        discount: Number(document.getElementById("inv_discount").value) || 0,
-        observations: document.getElementById("inv_obs").value,
-        items: items
+        observations: document.getElementById("inv_obs").value + " | Mes: " + document.getElementById("inv_month").value + " | Propietario: " + (selectedPropertyData.ownerName || "—"),
+        discount: 0,
+        items: items.map(i => ({ productName: i.productName, quantity: i.quantity, unitPrice: Math.abs(i.unitPrice), productId: i.productId }))
     };
+
     try {
         const res = await fetch(API + "/invoices", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
         if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
         const data = await res.json();
         hideInvoiceForm();
         loadInvoices();
-        alert("✓ Factura " + data.invoiceNumber + " creada — Total: $" + Number(data.total).toLocaleString('es-CO'));
+        alert("✓ Factura " + data.invoiceNumber + " generada\n\nValor a enviar propietario: $" + (rent - comision - adicionales.reduce((s,a) => s + Number(a.unitPrice), 0)).toLocaleString('es-CO') + "\nComisión inmobiliaria: $" + comision.toLocaleString('es-CO'));
     } catch (e) { alert("Error: " + e.message); }
 }
 

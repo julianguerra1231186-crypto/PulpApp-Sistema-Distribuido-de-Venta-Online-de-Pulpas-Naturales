@@ -41,13 +41,25 @@ public class InventoryItem {
     @Column(name = "cost_price", precision = 12, scale = 2, nullable = false)
     private BigDecimal costPrice;
 
-    /** Precio de venta */
+    /** Precio de venta / Valor arriendo mensual */
     @Column(name = "sale_price", precision = 12, scale = 2, nullable = false)
     private BigDecimal salePrice;
 
     /** Utilidad unitaria (calculada: salePrice - costPrice) */
     @Column(name = "unit_profit", precision = 12, scale = 2)
     private BigDecimal unitProfit;
+
+    /** Nombre del propietario del inmueble */
+    @Column(name = "owner_name", length = 150)
+    private String ownerName;
+
+    /** Dirección completa del inmueble */
+    @Column(name = "property_address", length = 300)
+    private String propertyAddress;
+
+    /** Valor del arriendo mensual */
+    @Column(name = "rent_value", precision = 12, scale = 2)
+    private BigDecimal rentValue;
 
     /** Nombre del proveedor principal */
     @Column(length = 150)

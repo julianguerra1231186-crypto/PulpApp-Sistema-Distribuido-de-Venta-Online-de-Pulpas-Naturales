@@ -1527,3 +1527,37 @@ databaseChangeLog:
             columns:
               - column:
                   name: tenant_id
+
+  # ============================================================
+  # INMOBILIARIA — Campos adicionales en inventory_items
+  # ============================================================
+
+  - changeSet:
+      id: 40-add-property-fields-to-inventory
+      author: pulpapp-team
+      comment: "Inmobiliaria: agrega campos owner_name, property_address, rent_value."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            tableName: inventory_items
+            columnName: owner_name
+      changes:
+        - addColumn:
+            tableName: inventory_items
+            columns:
+              - column:
+                  name: owner_name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: property_address
+                  type: VARCHAR(300)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: rent_value
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: true
