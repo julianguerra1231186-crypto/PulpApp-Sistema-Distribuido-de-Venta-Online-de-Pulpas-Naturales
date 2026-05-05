@@ -227,7 +227,7 @@
                             </div>
                             <div>
                                 <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Valor Administración</label>
-                                <div style="width:100%; padding:11px 14px; border:2px solid #bbf7d0; border-radius:8px; font-size:0.95rem; font-weight:800; color:#16a34a; background:#f0fdf4; min-height:20px" id="pp_admin_value">$0</div>
+                                <div style="width:100%; padding:11px 14px; border:2px solid #bbf7d0; border-radius:8px; font-size:0.95rem; font-weight:800; color:#16a34a; background:#f0fdf4; min-height:20px; transition:transform 0.2s" id="pp_admin_value">$0</div>
                             </div>
                         </div>
                         <div style="margin-top:10px; padding:8px 12px; background:#dcfce7; border-radius:8px; font-size:0.75rem; color:#065f46; font-weight:500">
@@ -252,7 +252,7 @@
                             </div>
                             <div>
                                 <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#374151">Comisión por Venta</label>
-                                <div style="width:100%; padding:11px 14px; border:2px solid #fde68a; border-radius:8px; font-size:0.95rem; font-weight:800; color:#d97706; background:#fffbeb; min-height:20px" id="pp_sale_admin_value">$0</div>
+                                <div style="width:100%; padding:11px 14px; border:2px solid #fde68a; border-radius:8px; font-size:0.95rem; font-weight:800; color:#d97706; background:#fffbeb; min-height:20px; transition:transform 0.2s" id="pp_sale_admin_value">$0</div>
                             </div>
                         </div>
                         <div style="margin-top:10px; padding:8px 12px; background:#fef3c7; border-radius:8px; font-size:0.75rem; color:#92400e; font-weight:500">
@@ -1256,9 +1256,17 @@ function setPropType(type) {
 
 // Formatea un input como moneda colombiana (puntos como separador de miles)
 function formatCurrency(input) {
+    // Guardar posición del cursor
+    const cursorPos = input.selectionStart;
+    const prevLen = input.value.length;
     let val = input.value.replace(/[^\d]/g, '');
     if (val === '') { input.value = ''; return; }
     input.value = Number(val).toLocaleString('es-CO');
+    // Ajustar cursor
+    const newLen = input.value.length;
+    const diff = newLen - prevLen;
+    const newPos = Math.max(0, cursorPos + diff);
+    input.setSelectionRange(newPos, newPos);
 }
 
 // Obtiene el valor numérico de un input formateado con puntos
@@ -1271,14 +1279,21 @@ function calcAdminValue() {
     const rent = getCurrencyValue("pp_rent");
     const pct = Number(document.getElementById("pp_comision").value) || 11;
     const admin = Math.round(rent * (pct / 100));
-    document.getElementById("pp_admin_value").textContent = "$" + admin.toLocaleString('es-CO');
+    const el = document.getElementById("pp_admin_value");
+    el.textContent = "$" + admin.toLocaleString('es-CO');
+    // Efecto visual cuando cambia
+    el.style.transform = "scale(1.05)";
+    setTimeout(() => el.style.transform = "scale(1)", 200);
 }
 
 function calcSaleComision() {
     const salePrice = getCurrencyValue("pp_sale_price");
     const pct = Number(document.getElementById("pp_sale_comision").value) || 3;
     const comision = Math.round(salePrice * (pct / 100));
-    document.getElementById("pp_sale_admin_value").textContent = "$" + comision.toLocaleString('es-CO');
+    const el = document.getElementById("pp_sale_admin_value");
+    el.textContent = "$" + comision.toLocaleString('es-CO');
+    el.style.transform = "scale(1.05)";
+    setTimeout(() => el.style.transform = "scale(1)", 200);
 }
 
 function showPropertyForm() { document.getElementById("propertyFormPanel").style.display = "block"; setPropType("administrar"); }
