@@ -502,15 +502,19 @@ async function loadUsers() {
     try {
         const data = await apiFetch("/users");
         if (!data.length) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">No hay usuarios</div>'; return; }
-        let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Cédula</th><th>Teléfono</th><th>Rol</th><th>Tenant</th><th>Último Acceso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+        let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Empresa</th><th>Email</th><th>Cédula</th><th>Teléfono</th><th>Rol</th><th>Último Acceso</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+        // Cargar tenants para mostrar nombre de empresa
+        let tenantsMap = {};
+        try { const tenants = await apiFetch("/tenants"); tenants.forEach(t => tenantsMap[t.id] = t.name); } catch(e) {}
         data.forEach(u => {
             const statusBadge = u.activo ? '<span class="badge badge-green">Activo</span>' : '<span class="badge badge-red">Inactivo</span>';
             const isAdmin = u.role === 'ROLE_ADMIN';
+            const empresaName = u.tenantId ? (tenantsMap[u.tenantId] || 'Tenant #' + u.tenantId) : '<span style="color:#9ca3af">—</span>';
             const lastLoginStr = u.lastLogin ? new Date(u.lastLogin).toLocaleString('es-CO') : '<span style="color:#9ca3af">Nunca</span>';
             const forceIcon = u.forcePasswordChange ? ' <span title="Debe cambiar contraseña" style="cursor:help">⚠️</span>' : '';
-            const resetBtn = isAdmin ? '' : '<button onclick="resetUserPassword(' + u.id + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px" title="Resetear contraseña">🔑 Resetear</button>';
+            const resetBtn = isAdmin ? '' : '<button onclick="resetUserPassword(' + u.id + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px" title="Resetear contraseña">🔑</button>';
             const actionBtns = isAdmin ? '<span style="font-size:0.7rem; color:#6b7280; font-style:italic">🔒 Protegido</span>' : '<button onclick="toggleUserActive(' + u.id + ', ' + !u.activo + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px">' + (u.activo ? 'Inactivar' : 'Activar') + '</button>' + resetBtn + '<button onclick="deleteUser(' + u.id + ', \'' + u.name.replace(/'/g, "\\'") + '\')" class="btn-sm btn-danger-sm" style="font-size:0.7rem; padding:3px 8px">🗑️</button>';
-            html += '<tr><td>' + u.id + '</td><td><strong>' + u.name + '</strong>' + forceIcon + '</td><td>' + u.email + '</td><td>' + (u.cedula || '—') + '</td><td>' + (u.telefono || '—') + '</td><td><span class="badge badge-blue">' + (u.role || '—') + '</span></td><td>' + (u.tenantId || '—') + '</td><td>' + lastLoginStr + '</td><td>' + statusBadge + '</td><td style="display:flex; gap:4px; flex-wrap:wrap">' + actionBtns + '</td></tr>';
+            html += '<tr><td>' + u.id + '</td><td><strong>' + u.name + '</strong>' + forceIcon + '</td><td>' + empresaName + '</td><td style="font-size:0.78rem">' + u.email + '</td><td>' + (u.cedula || '—') + '</td><td>' + (u.telefono || '—') + '</td><td><span class="badge badge-blue">' + (u.role || '—') + '</span></td><td style="font-size:0.75rem">' + lastLoginStr + '</td><td>' + statusBadge + '</td><td style="display:flex; gap:4px; flex-wrap:wrap">' + actionBtns + '</td></tr>';
         });
         html += '</tbody></table>';
         html += '<div style="color:#9ca3af; font-size:0.75rem; margin-top:10px">Total: ' + data.length + ' usuario(s)</div>';
