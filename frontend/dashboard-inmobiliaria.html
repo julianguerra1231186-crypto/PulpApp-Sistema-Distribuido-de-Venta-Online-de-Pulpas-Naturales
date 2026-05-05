@@ -138,23 +138,8 @@
                 <!-- Panel alertas derecho -->
                 <div style="background:#fff; border-radius:16px; padding:24px; border:1px solid #e5e7eb">
                     <h2 style="font-size:1.2rem; font-weight:800; color:#111827; margin:0 0 20px">Alertas</h2>
-                    <div style="display:flex; flex-direction:column; gap:14px">
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
-                            Carlos Pérez — Arriendo vence en 3 días
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
-                            María López — Pago pendiente hace 5 días
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
-                            Juan Rodríguez — Arriendo vencido
-                        </div>
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
-                            Ana García — Arriendo vence en 7 días
-                        </div>
+                    <div id="alertsContainer" style="display:flex; flex-direction:column; gap:14px">
+                        <div style="text-align:center; padding:16px; color:#9ca3af; font-size:0.8rem">Cargando alertas...</div>
                     </div>
                     <a href="#" style="display:block; margin-top:20px; font-size:0.82rem; color:#6366f1; font-weight:600; text-decoration:none; text-align:right">Ver todas →</a>
                 </div>
@@ -515,7 +500,36 @@
         <div id="tab-purchases" style="display:none"><div class="panel"><h2>🛒 Compras</h2><div class="empty-msg">Registra compras de materiales, servicios y mantenimiento.</div></div></div>
 
         <!-- Payments -->
-        <div id="tab-payments" style="display:none"><div class="panel"><h2>💵 Pagos</h2><div class="empty-msg">Controla pagos recibidos y pendientes de tus clientes.</div></div></div>
+        <div id="tab-payments" style="display:none">
+            <div class="panel">
+                <h2 style="margin:0 0 20px">💵 Pagos de Administración</h2>
+
+                <!-- Config Panel -->
+                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:24px">
+                    <h3 style="font-size:0.92rem; font-weight:700; color:#111827; margin:0 0 14px">⚙️ Configuración de Fechas de Pago</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:14px; align-items:end">
+                        <div>
+                            <label style="font-size:0.76rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Día pago inquilinos</label>
+                            <input type="number" id="pay_cfg_inquilinos" min="1" max="31" placeholder="25" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                        </div>
+                        <div>
+                            <label style="font-size:0.76rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Día pago propietarios</label>
+                            <input type="number" id="pay_cfg_propietarios" min="1" max="31" placeholder="1" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                        </div>
+                        <button onclick="savePaymentConfig()" style="padding:9px 20px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap">Guardar configuración</button>
+                    </div>
+                    <p style="font-size:0.7rem; color:#6b7280; margin:10px 0 0; font-style:italic">Define en qué día del mes deben pagar los inquilinos y en qué día se transfiere a los propietarios.</p>
+                </div>
+
+                <!-- Pagos Pendientes -->
+                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px">
+                    <h3 style="font-size:0.92rem; font-weight:700; color:#111827; margin:0 0 14px">📋 Pagos Pendientes del Mes</h3>
+                    <div id="paymentsPendingContainer">
+                        <div style="text-align:center; padding:24px; color:#9ca3af; font-size:0.82rem">Cargando pagos...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Inventory / Propiedades en Administración -->
         <div id="tab-inventory" style="display:none">
@@ -599,11 +613,16 @@
                     <div style="border:1px solid #bfdbfe; border-radius:10px; margin-bottom:10px; overflow:hidden">
                         <div onclick="toggleSection('sec_contrato')" style="background:#eff6ff; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#1e40af; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none"><span>📅 Contrato de Arriendo</span><span id="sec_contrato_icon" style="transition:transform 0.3s">▶</span></div>
                         <div id="sec_contrato" style="padding:14px 16px; display:none">
-                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:12px">
                                 <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fecha Inicio *</label><input type="date" id="tf_fecha_inicio" required style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem" onchange="calcFechaFin()"></div>
                                 <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Duración *</label><select id="tf_duracion" required style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; background:#fff" onchange="calcFechaFin()"><option value="">Seleccione...</option><option value="6">6 meses</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option></select></div>
                                 <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fecha Fin</label><div id="tf_fecha_fin" style="width:100%; padding:8px 12px; border:2px solid #bfdbfe; border-radius:7px; font-size:0.85rem; font-weight:800; color:#1e40af; background:#fff; min-height:18px; transition:transform 0.2s">—</div></div>
                             </div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:8px">
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fecha pago inquilinos (día del mes)</label><input type="number" id="tf_pago_inquilino_dia" min="1" max="31" placeholder="Ej: 25" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fecha pago propietarios (día del mes)</label><input type="number" id="tf_pago_propietario_dia" min="1" max="31" placeholder="Ej: 1" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                            </div>
+                            <p style="font-size:0.7rem; color:#6b7280; margin:0; font-style:italic">Ej: Inquilinos pagan del 25 al 10, Propietarios reciben del 1 al 10</p>
                         </div>
                     </div>
 
@@ -2086,7 +2105,163 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
     document.getElementById("userEmail").textContent = user.email || "";
     document.getElementById("welcomeBizName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
+    loadAlerts();
+    loadPaymentConfig();
+    renderPaymentsPending();
 });
+
+// ── Alertas Dinámicas ──
+function loadAlerts() {
+    const container = document.getElementById("alertsContainer");
+    if (!container) return;
+    const alerts = [];
+    const today = new Date();
+    const todayDay = today.getDate();
+
+    // 1. Visitas próximas (dentro de 3 días)
+    const visits = JSON.parse(localStorage.getItem('zentrix_visits') || '[]');
+    visits.forEach(v => {
+        if (v.estado === 'Cancelada') return;
+        const visitDate = new Date(v.fecha + 'T' + (v.hora || '00:00'));
+        const diffMs = visitDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        if (diffDays >= 0 && diffDays <= 3) {
+            alerts.push({
+                type: diffDays === 0 ? 'urgent' : 'warning',
+                text: `📅 Visita ${v.tipo || ''} — ${v.propiedad || 'Sin asignar'} ${diffDays === 0 ? 'HOY' : 'en ' + diffDays + ' día(s)'} (${v.hora || ''})`
+            });
+        }
+    });
+
+    // 2. Alertas de pago según configuración
+    const payConfig = JSON.parse(localStorage.getItem('zentrix_payment_config') || '{}');
+    const diaInq = payConfig.diaInquilinos || 25;
+    const diaProp = payConfig.diaPropietarios || 1;
+
+    // Alerta inquilinos: 3 días antes y hasta 5 días después
+    const diffInq = diaInq - todayDay;
+    if (diffInq >= 0 && diffInq <= 3) {
+        alerts.push({
+            type: 'warning',
+            text: `💰 Pago inquilinos — vence ${diffInq === 0 ? 'HOY (día ' + diaInq + ')' : 'en ' + diffInq + ' día(s) (día ' + diaInq + ')'}`
+        });
+    } else if (diffInq < 0 && diffInq >= -5) {
+        alerts.push({
+            type: 'urgent',
+            text: `💰 Pago inquilinos — venció hace ${Math.abs(diffInq)} día(s) (día ${diaInq})`
+        });
+    }
+
+    // Alerta propietarios: 3 días antes y hasta 5 días después
+    const diffProp = diaProp - todayDay;
+    if (diffProp >= 0 && diffProp <= 3) {
+        alerts.push({
+            type: 'warning',
+            text: `🏦 Pago a propietarios — vence ${diffProp === 0 ? 'HOY (día ' + diaProp + ')' : 'en ' + diffProp + ' día(s) (día ' + diaProp + ')'}`
+        });
+    } else if (diffProp < 0 && diffProp >= -5) {
+        alerts.push({
+            type: 'urgent',
+            text: `🏦 Pago a propietarios — venció hace ${Math.abs(diffProp)} día(s) (día ${diaProp})`
+        });
+    }
+
+    // Render
+    if (!alerts.length) {
+        container.innerHTML = '<div style="text-align:center; padding:16px; color:#16a34a; font-size:0.82rem; font-weight:600">✓ Sin alertas pendientes</div>';
+        return;
+    }
+    container.innerHTML = alerts.map(a => {
+        const bg = a.type === 'urgent'
+            ? 'background:linear-gradient(135deg,#ef4444,#dc2626)'
+            : 'background:linear-gradient(135deg,#d97706,#b45309)';
+        return `<div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
+            <span style="${bg}; color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
+            ${a.text}
+        </div>`;
+    }).join('');
+}
+
+// ── Pagos de Administración ──
+function savePaymentConfig() {
+    const diaInq = parseInt(document.getElementById('pay_cfg_inquilinos').value) || 25;
+    const diaProp = parseInt(document.getElementById('pay_cfg_propietarios').value) || 1;
+    const config = { diaInquilinos: Math.min(31, Math.max(1, diaInq)), diaPropietarios: Math.min(31, Math.max(1, diaProp)) };
+    localStorage.setItem('zentrix_payment_config', JSON.stringify(config));
+    alert('✓ Configuración de pagos guardada\n\nInquilinos pagan el día: ' + config.diaInquilinos + '\nPropietarios reciben el día: ' + config.diaPropietarios);
+    loadAlerts();
+    renderPaymentsPending();
+}
+
+function loadPaymentConfig() {
+    const config = JSON.parse(localStorage.getItem('zentrix_payment_config') || '{}');
+    if (config.diaInquilinos) document.getElementById('pay_cfg_inquilinos').value = config.diaInquilinos;
+    if (config.diaPropietarios) document.getElementById('pay_cfg_propietarios').value = config.diaPropietarios;
+}
+
+function renderPaymentsPending() {
+    const container = document.getElementById('paymentsPendingContainer');
+    if (!container) return;
+    const props = window._propertiesData || [];
+    const now = new Date();
+    const monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    const paymentStatuses = JSON.parse(localStorage.getItem('zentrix_payment_statuses') || '{}');
+
+    if (!props.length) {
+        container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af; font-size:0.82rem">No hay propiedades cargadas. Ve a Propiedades para agregar inmuebles.</div>';
+        return;
+    }
+
+    // Filter properties that have rent (are being administered)
+    const adminProps = props.filter(p => p.rentValue && Number(p.rentValue) > 0);
+    if (!adminProps.length) {
+        container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af; font-size:0.82rem">No hay propiedades con arriendo configurado.</div>';
+        return;
+    }
+
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
+        <thead><tr style="background:#1e293b; color:#fff">
+            <th style="padding:10px 12px; text-align:left">Inmueble</th>
+            <th style="padding:10px 12px; text-align:left">Propietario</th>
+            <th style="padding:10px 12px; text-align:right">Arriendo</th>
+            <th style="padding:10px 12px; text-align:right">Comisión</th>
+            <th style="padding:10px 12px; text-align:right">A Propietario</th>
+            <th style="padding:10px 12px; text-align:center">Estado</th>
+        </tr></thead><tbody>`;
+
+    adminProps.forEach(p => {
+        const rent = Number(p.rentValue || 0);
+        const comisionPct = Number(p.comisionPct || 11);
+        const comision = Math.round(rent * comisionPct / 100);
+        const toProp = rent - comision;
+        const statusKey = monthKey + '_' + p.id;
+        const isPaid = paymentStatuses[statusKey] === 'pagado';
+
+        html += `<tr style="border-bottom:1px solid #f3f4f6">
+            <td style="padding:10px 12px">
+                <div style="font-weight:600; color:#111827">${p.name || '—'}</div>
+                <div style="font-size:0.72rem; color:#6b7280">${p.propertyAddress || ''}</div>
+            </td>
+            <td style="padding:10px 12px; color:#374151">${p.ownerName || '—'}</td>
+            <td style="padding:10px 12px; text-align:right; font-weight:700; color:#111827">$${rent.toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; text-align:right; color:#6b7280">$${comision.toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; text-align:right; font-weight:700; color:#16a34a">$${toProp.toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; text-align:center">
+                <span onclick="togglePaymentStatus('${statusKey}')" style="cursor:pointer; padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700; ${isPaid ? 'background:#dcfce7; color:#16a34a' : 'background:#fef3c7; color:#92400e'}">${isPaid ? '✓ Pagado' : '⏳ Pendiente'}</span>
+            </td>
+        </tr>`;
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function togglePaymentStatus(statusKey) {
+    const statuses = JSON.parse(localStorage.getItem('zentrix_payment_statuses') || '{}');
+    statuses[statusKey] = statuses[statusKey] === 'pagado' ? 'pendiente' : 'pagado';
+    localStorage.setItem('zentrix_payment_statuses', JSON.stringify(statuses));
+    renderPaymentsPending();
+}
 </script>
 </body>
 </html>
