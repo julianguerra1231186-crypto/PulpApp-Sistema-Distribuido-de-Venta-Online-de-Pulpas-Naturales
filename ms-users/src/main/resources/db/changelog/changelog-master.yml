@@ -988,3 +988,107 @@ databaseChangeLog:
             columns:
               - column:
                   name: tenant_id
+
+  # ============================================================
+  # FASE B — MÓDULO DE INVENTARIO (ERP)
+  # ============================================================
+
+  - changeSet:
+      id: 28-create-inventory-items-table
+      author: pulpapp-team
+      comment: "ERP Fase B: crea la tabla inventory_items."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: inventory_items
+      changes:
+        - createTable:
+            tableName: inventory_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: code
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: stock
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cost_price
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sale_price
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_profit
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: supplier
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: active
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 29-index-inventory-items-tenant-id
+      author: pulpapp-team
+      comment: "ERP Fase B: indice en inventory_items.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_inventory_items_tenant_id
+      changes:
+        - createIndex:
+            tableName: inventory_items
+            indexName: idx_inventory_items_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
