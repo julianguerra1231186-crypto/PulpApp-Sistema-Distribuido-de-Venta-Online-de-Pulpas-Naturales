@@ -1937,42 +1937,77 @@ function setPayDateModal(propId) {
     const propName = prop ? prop.name + ' — ' + (prop.propertyAddress || '') : 'Propiedad #' + propId;
     const today = new Date().getDate();
 
-    // Calcular días restantes para preview
-    const diaInqCurrent = current.diaInquilino || 0;
-    const diaPropCurrent = current.diaPropietario || 0;
-    let diasInqText = diaInqCurrent ? (function(){ let d = diaInqCurrent - today; if(d<0) d+=30; return d + ' días'; })() : '—';
-    let diasPropText = diaPropCurrent ? (function(){ let d = diaPropCurrent - today; if(d<0) d+=30; return d + ' días'; })() : '—';
-
     const modal = document.createElement('div');
     modal.id = "payDateModal";
     modal.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; animation:fadeIn 0.2s";
     modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
-    modal.innerHTML = '<div style="background:#fff; border-radius:16px; max-width:480px; width:100%; padding:0; box-shadow:0 25px 60px rgba(0,0,0,0.25); animation:slideUp 0.3s; overflow:hidden">' +
+    modal.innerHTML = '<div style="background:#fff; border-radius:16px; max-width:520px; width:100%; padding:0; box-shadow:0 25px 60px rgba(0,0,0,0.25); animation:slideUp 0.3s; overflow:hidden">' +
         '<div style="background:linear-gradient(135deg,#6366f1,#4f46e5); padding:20px 24px; color:#fff"><h3 style="margin:0 0 4px; font-size:1.1rem; font-weight:800">📅 Configurar Fechas de Pago</h3><p style="margin:0; font-size:0.8rem; opacity:0.85">' + propName + '</p></div>' +
         '<div style="padding:24px">' +
-        '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">' +
-        '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:16px"><div style="display:flex; align-items:center; gap:8px; margin-bottom:10px"><span style="font-size:1.2rem">🏠</span><span style="font-size:0.82rem; font-weight:700; color:#065f46">Pago Inquilino</span></div><label style="font-size:0.72rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Día del mes (1-31)</label><input type="number" id="pdm_inq" min="1" max="31" value="' + (current.diaInquilino || '') + '" placeholder="25" style="width:100%; padding:10px 12px; border:2px solid #bbf7d0; border-radius:8px; font-family:inherit; font-size:1rem; font-weight:800; text-align:center; color:#065f46" oninput="previewPayDays()"><div id="pdm_inq_preview" style="text-align:center; margin-top:6px; font-size:0.75rem; font-weight:700; color:#16a34a">Faltan: ' + diasInqText + '</div></div>' +
-        '<div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px"><div style="display:flex; align-items:center; gap:8px; margin-bottom:10px"><span style="font-size:1.2rem">👤</span><span style="font-size:0.82rem; font-weight:700; color:#1e40af">Pago a Propietario</span></div><label style="font-size:0.72rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Día del mes (1-31)</label><input type="number" id="pdm_prop" min="1" max="31" value="' + (current.diaPropietario || '') + '" placeholder="1" style="width:100%; padding:10px 12px; border:2px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:1rem; font-weight:800; text-align:center; color:#1e40af" oninput="previewPayDays()"><div id="pdm_prop_preview" style="text-align:center; margin-top:6px; font-size:0.75rem; font-weight:700; color:#1e40af">Faltan: ' + diasPropText + '</div></div>' +
+
+        '<!-- Cobro Inquilino -->' +
+        '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:16px; margin-bottom:16px">' +
+        '<div style="display:flex; align-items:center; gap:8px; margin-bottom:12px"><span style="font-size:1.2rem">🏠</span><span style="font-size:0.88rem; font-weight:700; color:#065f46">Cobro al Inquilino</span></div>' +
+        '<p style="font-size:0.75rem; color:#6b7280; margin:0 0 10px">Selecciona el rango de días del mes para cobrar el arriendo:</p>' +
+        '<div style="display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center">' +
+        '<div><label style="font-size:0.7rem; font-weight:600; color:#374151; display:block; margin-bottom:3px; text-align:center">Desde día</label><select id="pdm_inq_desde" style="width:100%; padding:10px; border:2px solid #bbf7d0; border-radius:8px; font-family:inherit; font-size:0.95rem; font-weight:800; text-align:center; color:#065f46; background:#fff; cursor:pointer" onchange="previewPayDays()">' + generateDayOptions(current.diaInqDesde || 25, 20, 31) + '</select></div>' +
+        '<span style="font-size:0.85rem; font-weight:700; color:#6b7280; padding-top:16px">al</span>' +
+        '<div><label style="font-size:0.7rem; font-weight:600; color:#374151; display:block; margin-bottom:3px; text-align:center">Hasta día</label><select id="pdm_inq_hasta" style="width:100%; padding:10px; border:2px solid #bbf7d0; border-radius:8px; font-family:inherit; font-size:0.95rem; font-weight:800; text-align:center; color:#065f46; background:#fff; cursor:pointer" onchange="previewPayDays()">' + generateDayOptions(current.diaInqHasta || 31, 1, 31) + '</select></div>' +
         '</div>' +
-        '<div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:12px; margin-bottom:16px"><div style="display:flex; align-items:center; gap:8px"><span style="font-size:1rem">💡</span><p style="margin:0; font-size:0.75rem; color:#6b7280; line-height:1.4">El sistema calculará automáticamente cuántos días faltan para cada pago y mostrará alertas cuando se acerque la fecha.</p></div></div>' +
+        '<div id="pdm_inq_preview" style="text-align:center; margin-top:8px; font-size:0.78rem; font-weight:700; color:#16a34a; background:#dcfce7; padding:6px; border-radius:6px"></div>' +
+        '</div>' +
+
+        '<!-- Pago Propietario -->' +
+        '<div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px; margin-bottom:16px">' +
+        '<div style="display:flex; align-items:center; gap:8px; margin-bottom:12px"><span style="font-size:1.2rem">👤</span><span style="font-size:0.88rem; font-weight:700; color:#1e40af">Pago al Propietario</span></div>' +
+        '<p style="font-size:0.75rem; color:#6b7280; margin:0 0 10px">Selecciona el rango de días del mes para enviar el dinero al propietario:</p>' +
+        '<div style="display:grid; grid-template-columns:1fr auto 1fr; gap:8px; align-items:center">' +
+        '<div><label style="font-size:0.7rem; font-weight:600; color:#374151; display:block; margin-bottom:3px; text-align:center">Desde día</label><select id="pdm_prop_desde" style="width:100%; padding:10px; border:2px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:0.95rem; font-weight:800; text-align:center; color:#1e40af; background:#fff; cursor:pointer" onchange="previewPayDays()">' + generateDayOptions(current.diaPropDesde || 1, 1, 15) + '</select></div>' +
+        '<span style="font-size:0.85rem; font-weight:700; color:#6b7280; padding-top:16px">al</span>' +
+        '<div><label style="font-size:0.7rem; font-weight:600; color:#374151; display:block; margin-bottom:3px; text-align:center">Hasta día</label><select id="pdm_prop_hasta" style="width:100%; padding:10px; border:2px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:0.95rem; font-weight:800; text-align:center; color:#1e40af; background:#fff; cursor:pointer" onchange="previewPayDays()">' + generateDayOptions(current.diaPropHasta || 10, 1, 15) + '</select></div>' +
+        '</div>' +
+        '<div id="pdm_prop_preview" style="text-align:center; margin-top:8px; font-size:0.78rem; font-weight:700; color:#1e40af; background:#dbeafe; padding:6px; border-radius:6px"></div>' +
+        '</div>' +
+
         '<div style="display:flex; gap:10px; justify-content:flex-end"><button onclick="document.getElementById(\'payDateModal\').remove()" style="padding:10px 20px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button><button onclick="savePayDate(' + propId + ')" style="padding:10px 24px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(22,163,74,0.3)">✓ Guardar Fechas</button></div>' +
         '</div></div>';
     document.body.appendChild(modal);
+    previewPayDays();
+}
+
+function generateDayOptions(selected, min, max) {
+    let html = '';
+    for (let i = min; i <= max; i++) {
+        html += '<option value="' + i + '"' + (i === selected ? ' selected' : '') + '>' + i + '</option>';
+    }
+    return html;
 }
 
 function previewPayDays() {
     const today = new Date().getDate();
-    const inq = parseInt(document.getElementById('pdm_inq').value) || 0;
-    const prop = parseInt(document.getElementById('pdm_prop').value) || 0;
-    if (inq > 0) { let d = inq - today; if(d<0) d+=30; document.getElementById('pdm_inq_preview').innerHTML = 'Faltan: <strong>' + d + ' días</strong>'; }
-    if (prop > 0) { let d = prop - today; if(d<0) d+=30; document.getElementById('pdm_prop_preview').innerHTML = 'Faltan: <strong>' + d + ' días</strong>'; }
+    const inqDesde = parseInt(document.getElementById('pdm_inq_desde')?.value) || 25;
+    const inqHasta = parseInt(document.getElementById('pdm_inq_hasta')?.value) || 31;
+    const propDesde = parseInt(document.getElementById('pdm_prop_desde')?.value) || 1;
+    const propHasta = parseInt(document.getElementById('pdm_prop_hasta')?.value) || 10;
+
+    let diasInq = inqDesde - today;
+    if (diasInq < 0) diasInq += 30;
+    const inqEl = document.getElementById('pdm_inq_preview');
+    if (inqEl) inqEl.innerHTML = '📆 Cobro del <strong>' + inqDesde + '</strong> al <strong>' + inqHasta + '</strong> de cada mes — Próximo cobro en <strong>' + diasInq + ' días</strong>';
+
+    let diasProp = propDesde - today;
+    if (diasProp < 0) diasProp += 30;
+    const propEl = document.getElementById('pdm_prop_preview');
+    if (propEl) propEl.innerHTML = '📆 Envío del <strong>' + propDesde + '</strong> al <strong>' + propHasta + '</strong> de cada mes — Próximo envío en <strong>' + diasProp + ' días</strong>';
 }
 
 function savePayDate(propId) {
-    const diaInq = parseInt(document.getElementById('pdm_inq').value) || 0;
-    const diaProp = parseInt(document.getElementById('pdm_prop').value) || 0;
+    const inqDesde = parseInt(document.getElementById('pdm_inq_desde').value) || 25;
+    const inqHasta = parseInt(document.getElementById('pdm_inq_hasta').value) || 31;
+    const propDesde = parseInt(document.getElementById('pdm_prop_desde').value) || 1;
+    const propHasta = parseInt(document.getElementById('pdm_prop_hasta').value) || 10;
     const payDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
-    payDates[propId] = { diaInquilino: Math.min(31, Math.max(1, diaInq || 25)), diaPropietario: Math.min(31, Math.max(1, diaProp || 1)) };
+    payDates[propId] = { diaInqDesde: inqDesde, diaInqHasta: inqHasta, diaInquilino: inqDesde, diaPropDesde: propDesde, diaPropHasta: propHasta, diaPropietario: propDesde };
     localStorage.setItem('zentrix_prop_pay_dates', JSON.stringify(payDates));
     document.getElementById('payDateModal').remove();
     loadProperties();
