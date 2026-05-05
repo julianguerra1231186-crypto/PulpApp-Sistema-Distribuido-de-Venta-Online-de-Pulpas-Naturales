@@ -275,7 +275,13 @@
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px">
                     <h2 style="margin:0">👤 Listado de Clientes</h2>
-                    <div style="display:flex; gap:10px; align-items:center">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap">
+                        <div style="display:flex; gap:6px; align-items:center">
+                            <button onclick="filterClients('todos')" id="filter_todos" style="padding:5px 12px; background:#6366f1; color:#fff; border:none; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">Todos</button>
+                            <button onclick="filterClients('propietario')" id="filter_prop" style="padding:5px 12px; background:#fff; color:#374151; border:1px solid #e5e7eb; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">Propietarios</button>
+                            <button onclick="filterClients('inquilino')" id="filter_inq" style="padding:5px 12px; background:#fff; color:#374151; border:1px solid #e5e7eb; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">Inquilinos</button>
+                            <button onclick="filterClients('codeudor')" id="filter_cod" style="padding:5px 12px; background:#fff; color:#374151; border:1px solid #e5e7eb; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">Codeudores</button>
+                        </div>
                         <input type="text" id="clientSearch" placeholder="Buscar cliente..." style="padding:8px 14px; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; width:200px; font-family:inherit">
                         <button onclick="loadClients()" style="padding:8px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; cursor:pointer; font-family:inherit">🔄 Limpiar</button>
                         <button onclick="showNewClientForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nuevo Cliente</button>
@@ -846,6 +852,8 @@ const API = "http://localhost:8090";
 const getToken = () => localStorage.getItem("pulpapp_jwt");
 const authHeaders = () => ({ "Content-Type":"application/json", "Authorization":"Bearer " + getToken() });
 
+let currentClientFilter = 'todos';
+
 async function loadClients() {
     try {
         // Cargar propiedades para cruzar datos
@@ -855,11 +863,45 @@ async function loadClients() {
         const res = await fetch(API + "/clients", { headers: authHeaders() });
         if (!res.ok) throw new Error("Error " + res.status);
         const clients = await res.json();
-        renderClientsTable(clients);
+        const filtered = applyClientFilter(clients, currentClientFilter);
+        renderClientsTable(filtered);
         renderClientStats(clients);
     } catch (e) {
         document.getElementById("clientsTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error al cargar clientes: ' + e.message + '</div>';
     }
+}
+
+function applyClientFilter(clients, type) {
+    if (type === 'todos') return clients;
+    if (type === 'propietario') return clients.filter(c => c.name.includes('(Propietario'));
+    if (type === 'inquilino') return clients.filter(c => c.name.includes('(Inquilino'));
+    if (type === 'codeudor') return clients.filter(c => c.name.includes('(Codeudor'));
+    return clients;
+}
+
+function filterClients(type) {
+    currentClientFilter = type;
+    // Update button styles
+    const buttons = [
+        { id: 'filter_todos', key: 'todos' },
+        { id: 'filter_prop', key: 'propietario' },
+        { id: 'filter_inq', key: 'inquilino' },
+        { id: 'filter_cod', key: 'codeudor' }
+    ];
+    buttons.forEach(b => {
+        const el = document.getElementById(b.id);
+        if (!el) return;
+        if (b.key === type) {
+            el.style.background = '#6366f1';
+            el.style.color = '#fff';
+            el.style.border = 'none';
+        } else {
+            el.style.background = '#fff';
+            el.style.color = '#374151';
+            el.style.border = '1px solid #e5e7eb';
+        }
+    });
+    loadClients();
 }
 
 function renderClientsTable(clients) {
