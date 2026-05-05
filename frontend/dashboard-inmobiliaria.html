@@ -14,10 +14,10 @@
         .dash-sidebar.collapsed .sb-text, .dash-sidebar.collapsed .sb-label, .dash-sidebar.collapsed .sb-user-name, .dash-sidebar.collapsed .sb-user-email, .dash-sidebar.collapsed .sb-logout { display:none; }
         .dash-sidebar.collapsed .sb-brand span { display:none; }
         .dash-sidebar.collapsed .sb-brand img { margin:0 auto; height:24px; }
-        .dash-sidebar.collapsed .sb-brand { padding:0 0 16px; justify-content:center; flex-direction:column; gap:8px; }
+        .dash-sidebar.collapsed .sb-brand { padding:0 10px 16px; justify-content:center; }
         .dash-sidebar.collapsed .sb-link { justify-content:center; padding:12px 0; }
         .dash-sidebar.collapsed .sb-link span:first-child { font-size:1.2rem; }
-        .dash-sidebar.collapsed #sidebarToggleBtn { position:fixed; top:10px; left:15px; z-index:200; }
+        .dash-sidebar.collapsed #sidebarToggleBtn { position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:200; }
         .sb-brand { display:flex; align-items:center; gap:10px; padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,0.08); }
         .sb-brand img { height:28px; } .sb-brand span { font-size:1.1rem; font-weight:800; }
         .sb-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.3); padding:20px 20px 8px; }
@@ -96,20 +96,22 @@
                 <!-- Panel principal izquierdo -->
                 <div style="background:linear-gradient(135deg,#e8f4fd,#f0f7ff); border-radius:16px; padding:28px; border:1px solid #d0e8f7">
 
-                    <!-- Bienvenida con logo -->
-                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px">
-                        <div>
-                            <h2 style="font-size:1.8rem; font-weight:800; color:#1e3a5f; margin:0 0 4px; font-style:italic">Bienvenido al Sistema</h2>
-                            <div style="font-size:1.05rem; font-weight:700; color:#1e3a5f; margin-bottom:4px" id="welcomeBizName">Mi Inmobiliaria</div>
-                            <p style="color:#5a7a9a; font-size:0.85rem; margin:0">Administra, vende y gestiona contrataciones de construcción desde un solo lugar.</p>
-                        </div>
-                        <img id="welcomeLogo" src="img/logoZentrix-sinfondo.png" alt="Logo Empresa" style="height:72px; width:72px; object-fit:cover; border-radius:50%; border:3px solid #fff; box-shadow:0 4px 12px rgba(0,0,0,0.1)">
+                    <!-- Logo empresa centrado -->
+                    <div style="text-align:center; margin-bottom:20px">
+                        <img id="welcomeLogo" src="img/logoZentrix-sinfondo.png" alt="Logo Empresa" style="height:80px; width:80px; object-fit:cover; border-radius:50%; border:3px solid #fff; box-shadow:0 4px 16px rgba(0,0,0,0.1)">
+                    </div>
+
+                    <!-- Bienvenida -->
+                    <div style="text-align:center; margin-bottom:20px">
+                        <h2 style="font-size:1.6rem; font-weight:800; color:#1e3a5f; margin:0 0 4px">Bienvenido al Sistema</h2>
+                        <div style="font-size:1.05rem; font-weight:700; color:#1e3a5f; margin-bottom:4px" id="welcomeBizName">Mi Inmobiliaria</div>
+                        <p style="color:#5a7a9a; font-size:0.85rem; margin:0">Administra, vende y gestiona contrataciones de construcción desde un solo lugar.</p>
                     </div>
 
                     <!-- Acciones rápidas -->
-                    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap">
-                        <button style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Nueva Factura</button>
-                        <button style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#fff; color:#1e3a5f; border:2px solid #1e3a5f; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">💵 Registrar Pago</button>
+                    <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; justify-content:center">
+                        <button onclick="showTab('invoices'); setTimeout(showInvoiceForm, 200)" style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Nueva Factura</button>
+                        <button onclick="showTab('payments')" style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#fff; color:#1e3a5f; border:2px solid #1e3a5f; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">💵 Registrar Pago</button>
                     </div>
 
                     <!-- Stats -->
