@@ -157,23 +157,75 @@
         <div id="tab-properties" style="display:none">
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
-                    <h2 style="margin:0">Mis Propiedades</h2>
-                    <button class="z-btn z-btn-primary" style="padding:8px 18px; font-size:0.82rem">+ Agregar propiedad</button>
+                    <h2 style="margin:0">🏘️ Mis Propiedades</h2>
+                    <button onclick="showPropertyForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Agregar propiedad</button>
                 </div>
-                <div class="prop-grid">
-                    <div class="prop-card">
-                        <div class="prop-img">🏡</div>
-                        <div class="prop-body"><h3>Casa Campestre</h3><p>3 hab · 2 baños · 150m²</p><span class="prop-badge badge-sale">Venta</span><div class="prop-price" style="margin-top:8px">$350.000.000</div></div>
-                    </div>
-                    <div class="prop-card">
-                        <div class="prop-img">🏢</div>
-                        <div class="prop-body"><h3>Apartamento Centro</h3><p>2 hab · 1 baño · 65m²</p><span class="prop-badge badge-rent">Arriendo</span><div class="prop-price" style="margin-top:8px">$1.200.000/mes</div></div>
-                    </div>
-                    <div class="prop-card">
-                        <div class="prop-img">🏗️</div>
-                        <div class="prop-body"><h3>Local Comercial</h3><p>1 nivel · 80m² · Zona norte</p><span class="prop-badge badge-sale">Venta</span><div class="prop-price" style="margin-top:8px">$180.000.000</div></div>
+                <div id="propertiesGrid" class="prop-grid">
+                    <div style="text-align:center; padding:32px; color:#9ca3af; grid-column:1/-1">Cargando propiedades...</div>
+                </div>
+            </div>
+
+            <!-- Formulario nueva propiedad -->
+            <div id="propertyFormPanel" style="display:none" class="panel">
+                <h2 style="margin:0 0 6px">🏠 Registrar Nueva Propiedad</h2>
+                <p style="color:#6b7280; font-size:0.82rem; margin:0 0 20px">Completa los datos del inmueble para administración, venta o ambos.</p>
+
+                <!-- Tipo de propiedad -->
+                <div style="margin-bottom:20px">
+                    <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">Tipo de gestión *</label>
+                    <div style="display:flex; gap:8px">
+                        <button type="button" id="pt_admin" onclick="setPropType('administrar')" style="padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #6366f1; background:#6366f1; color:#fff">🏘️ Administrar</button>
+                        <button type="button" id="pt_venta" onclick="setPropType('venta')" style="padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151">💰 Venta</button>
+                        <button type="button" id="pt_ambas" onclick="setPropType('ambas')" style="padding:8px 18px; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151">🏘️💰 Ambas</button>
                     </div>
                 </div>
+
+                <form id="propertyForm" onsubmit="saveProperty(event)">
+                    <!-- Datos del inmueble -->
+                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:12px">📍 Datos del Inmueble</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre/Referencia *</label><input type="text" id="pp_name" required placeholder="Ej: Apartamento 301 Torres del Parque" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Código</label><input type="text" id="pp_code" placeholder="Ej: PROP-001" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección *</label><input type="text" id="pp_address" required placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Barrio *</label><input type="text" id="pp_barrio" required placeholder="Ej: Chapinero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div style="grid-column:1/-1"><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Descripción</label><input type="text" id="pp_desc" placeholder="Ej: 3 hab, 2 baños, 150m², parqueadero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Datos del propietario -->
+                    <div style="background:#f0f7ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#1e40af; margin-bottom:12px">👤 Datos del Propietario/a</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre Propietario/a *</label><input type="text" id="pp_owner" required placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono Propietario/a</label><input type="text" id="pp_owner_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Valores (arriendo) -->
+                    <div id="pp_section_arriendo" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:12px">💵 Valores de Arriendo</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Valor Arriendo Mensual *</label><input type="number" id="pp_rent" required min="0" placeholder="$0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" oninput="calcAdminValue()"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Comisión (%)</label><input type="number" id="pp_comision" value="11" min="0" max="100" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" oninput="calcAdminValue()"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Valor Administración</label><input type="text" id="pp_admin_value" disabled style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#f9fafb; font-weight:700; color:#16a34a"></div>
+                        </div>
+                    </div>
+
+                    <!-- Valores (venta) -->
+                    <div id="pp_section_venta" style="display:none; background:#fef3c7; border:1px solid #fde68a; border-radius:10px; padding:16px; margin-bottom:16px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#92400e; margin-bottom:12px">💰 Valores de Venta</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Valor de Venta</label><input type="number" id="pp_sale_price" min="0" placeholder="$0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Comisión Venta (%)</label><input type="number" id="pp_sale_comision" value="3" min="0" max="100" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
+                        </div>
+                    </div>
+
+                    <div style="display:flex; gap:10px; justify-content:flex-end">
+                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Propiedad</button>
+                        <button type="button" onclick="hidePropertyForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -513,6 +565,7 @@ function showTab(name) {
     if (name === "reports") initReports();
     if (name === "audit") loadAudit();
     if (name === "settings") loadSettings();
+    if (name === "properties") loadProperties();
 }
 
 // ── Clientes API ──
@@ -1145,6 +1198,82 @@ function saveConfig() {
     const name = document.getElementById("cfg_name").value;
     if (name) localStorage.setItem("zentrix_biz_name", name);
     alert("✓ Configuración guardada");
+}
+
+// ── Propiedades ──
+let propType = "administrar";
+
+function setPropType(type) {
+    propType = type;
+    const btns = { administrar: "pt_admin", venta: "pt_venta", ambas: "pt_ambas" };
+    Object.entries(btns).forEach(([k, id]) => {
+        const btn = document.getElementById(id);
+        if (k === type) { btn.style.background = "#6366f1"; btn.style.color = "#fff"; btn.style.borderColor = "#6366f1"; }
+        else { btn.style.background = "#fff"; btn.style.color = "#374151"; btn.style.borderColor = "#e5e7eb"; }
+    });
+    document.getElementById("pp_section_arriendo").style.display = (type === "administrar" || type === "ambas") ? "block" : "none";
+    document.getElementById("pp_section_venta").style.display = (type === "venta" || type === "ambas") ? "block" : "none";
+}
+
+function calcAdminValue() {
+    const rent = Number(document.getElementById("pp_rent").value) || 0;
+    const pct = Number(document.getElementById("pp_comision").value) || 11;
+    const admin = Math.round(rent * (pct / 100));
+    document.getElementById("pp_admin_value").value = "$" + admin.toLocaleString('es-CO');
+}
+
+function showPropertyForm() { document.getElementById("propertyFormPanel").style.display = "block"; setPropType("administrar"); }
+function hidePropertyForm() { document.getElementById("propertyFormPanel").style.display = "none"; document.getElementById("propertyForm").reset(); }
+
+async function loadProperties() {
+    try {
+        const res = await fetch(API + "/inventory", { headers: authHeaders() });
+        const data = await res.json();
+        if (!data.length) { document.getElementById("propertiesGrid").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af; grid-column:1/-1">No hay propiedades registradas. ¡Agrega la primera!</div>'; return; }
+        let html = "";
+        data.forEach(p => {
+            const isRent = p.rentValue > 0;
+            const isSale = p.salePrice > 0 && !isRent;
+            const badge = isRent ? '<span class="prop-badge badge-rent">Arriendo</span>' : '<span class="prop-badge badge-sale">Venta</span>';
+            const price = isRent ? "$" + Number(p.rentValue).toLocaleString('es-CO') + "/mes" : "$" + Number(p.salePrice).toLocaleString('es-CO');
+            html += `<div class="prop-card">
+                <div class="prop-img">${isRent ? '🏢' : '🏡'}</div>
+                <div class="prop-body">
+                    <h3>${p.name}</h3>
+                    <p>${p.propertyAddress || p.description || '—'}</p>
+                    <p style="font-size:0.72rem; color:#6b7280; margin:2px 0">👤 ${p.ownerName || '—'}</p>
+                    ${badge}
+                    <div class="prop-price" style="margin-top:8px">${price}</div>
+                </div>
+            </div>`;
+        });
+        document.getElementById("propertiesGrid").innerHTML = html;
+    } catch (e) { document.getElementById("propertiesGrid").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444; grid-column:1/-1">Error: ' + e.message + '</div>'; }
+}
+
+async function saveProperty(e) {
+    e.preventDefault();
+    const rent = Number(document.getElementById("pp_rent").value) || 0;
+    const salePrice = Number(document.getElementById("pp_sale_price")?.value) || rent;
+    const body = {
+        code: document.getElementById("pp_code").value || "PROP-" + Date.now().toString().slice(-5),
+        name: document.getElementById("pp_name").value,
+        description: document.getElementById("pp_desc").value + " | Barrio: " + document.getElementById("pp_barrio").value,
+        stock: 1,
+        costPrice: 0,
+        salePrice: salePrice || rent,
+        supplier: document.getElementById("pp_owner_phone").value || "",
+        ownerName: document.getElementById("pp_owner").value,
+        propertyAddress: document.getElementById("pp_address").value + ", " + document.getElementById("pp_barrio").value,
+        rentValue: rent
+    };
+    try {
+        const res = await fetch(API + "/inventory", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
+        hidePropertyForm();
+        loadProperties();
+        alert("✓ Propiedad registrada exitosamente");
+    } catch (e) { alert("Error: " + e.message); }
 }
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
 document.addEventListener("DOMContentLoaded", () => {
