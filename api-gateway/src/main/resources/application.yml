@@ -133,6 +133,14 @@ spring:
             - Path=/suppliers, /suppliers/**
 
         # --------------------------------------------
+        # FACTURACIÓN (ERP Fase D)
+        # --------------------------------------------
+        - id: ms-invoices
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/invoices, /invoices/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users
