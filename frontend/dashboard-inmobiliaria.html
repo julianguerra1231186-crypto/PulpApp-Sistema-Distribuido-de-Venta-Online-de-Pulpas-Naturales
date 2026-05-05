@@ -385,13 +385,53 @@
         </div>
 
         <!-- Reports -->
-        <div id="tab-reports" style="display:none"><div class="panel"><h2>📊 Reportes</h2><div class="empty-msg">Reportes de ventas, arriendos y rendimiento del negocio.</div></div></div>
+        <div id="tab-reports" style="display:none">
+            <div class="panel">
+                <h2 style="margin:0 0 16px">📊 Generar Reporte</h2>
+                <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end; margin-bottom:20px">
+                    <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Desde:</label><input type="date" id="rpt_from" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Hasta:</label><input type="date" id="rpt_to" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    <button onclick="generateReport()" style="padding:10px 20px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">🔍 Generar</button>
+                </div>
+                <div id="reportResult" style="display:none">
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px" id="reportStats"></div>
+                </div>
+            </div>
+        </div>
 
         <!-- Audit -->
-        <div id="tab-audit" style="display:none"><div class="panel"><h2>🔍 Auditoría</h2><div class="empty-msg">Registro de todas las acciones realizadas en el sistema.</div></div></div>
+        <div id="tab-audit" style="display:none">
+            <div class="panel">
+                <h2 style="margin:0 0 16px">🔍 Cambios Realizados en el Sistema</h2>
+                <div id="auditTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando auditoría...</div></div>
+            </div>
+        </div>
 
         <!-- Settings -->
-        <div id="tab-settings" style="display:none"><div class="panel"><h2>⚙️ Configuración</h2><div class="empty-msg">Personaliza tu negocio: logo, colores, datos fiscales y más.</div></div></div>
+        <div id="tab-settings" style="display:none">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px">
+                <div class="panel">
+                    <h2 style="margin:0 0 16px">🏢 Datos de la Empresa</h2>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre</label><input type="text" id="cfg_name" placeholder="Nombre del negocio" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">NIT</label><input type="text" id="cfg_nit" placeholder="123.456.789-0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección</label><input type="text" id="cfg_address" placeholder="Dirección" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono</label><input type="text" id="cfg_phone" placeholder="Teléfono" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    </div>
+                    <button onclick="saveConfig()" style="margin-top:16px; padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Guardar</button>
+                </div>
+                <div class="panel">
+                    <h2 style="margin:0 0 16px">🔒 Seguridad</h2>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Usuario actual</label><input type="text" id="cfg_user" disabled style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; background:#f9fafb"></div>
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cambiar Usuario</label><input type="text" id="cfg_newuser" placeholder="Nuevo usuario" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Contraseña Actual</label><input type="password" id="cfg_pass" placeholder="••••••••" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                        <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nueva Contraseña</label><input type="password" id="cfg_newpass" placeholder="Nueva contraseña" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    </div>
+                    <button style="margin-top:16px; padding:10px 22px; background:#1e293b; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Guardar</button>
+                </div>
+            </div>
+        </div>
     </main>
 </div>
 
@@ -411,6 +451,9 @@ function showTab(name) {
     if (name === "invoices") loadInvoices();
     if (name === "cashbox") loadCash();
     if (name === "movements") loadAllMovements();
+    if (name === "reports") initReports();
+    if (name === "audit") loadAudit();
+    if (name === "settings") loadSettings();
 }
 
 // ── Clientes API ──
@@ -882,6 +925,68 @@ async function saveCashMovement(e) {
         loadCash();
         alert("✓ Movimiento registrado");
     } catch (e) { alert("Error: " + e.message); }
+}
+
+// ── Reportes ──
+function initReports() {
+    const today = new Date().toISOString().split('T')[0];
+    const monthAgo = new Date(Date.now() - 30*24*60*60*1000).toISOString().split('T')[0];
+    document.getElementById("rpt_from").value = monthAgo;
+    document.getElementById("rpt_to").value = today;
+}
+
+async function generateReport() {
+    const from = document.getElementById("rpt_from").value;
+    const to = document.getElementById("rpt_to").value;
+    try {
+        const res = await fetch(API + `/reports/summary?from=${from}&to=${to}`, { headers: authHeaders() });
+        if (!res.ok) throw new Error("Error " + res.status);
+        const data = await res.json();
+        document.getElementById("reportResult").style.display = "block";
+        document.getElementById("reportStats").innerHTML = `
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Total Ventas</div><div style="font-size:1.3rem; font-weight:800; color:#16a34a">$${Number(data.totalSales).toLocaleString('es-CO')}</div></div>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Total Gastos</div><div style="font-size:1.3rem; font-weight:800; color:#ef4444">$${Number(data.totalExpenses).toLocaleString('es-CO')}</div></div>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Utilidad Bruta</div><div style="font-size:1.3rem; font-weight:800; color:#111827">$${Number(data.grossProfit).toLocaleString('es-CO')}</div></div>
+            <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:18px; text-align:center"><div style="font-size:0.72rem; font-weight:600; color:#6b7280">Facturas</div><div style="font-size:1.3rem; font-weight:800; color:#0ea5e9">${data.invoiceCount}</div></div>`;
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+// ── Auditoría ──
+async function loadAudit() {
+    try {
+        const res = await fetch(API + "/audit", { headers: authHeaders() });
+        if (!res.ok) throw new Error("Error " + res.status);
+        const data = await res.json();
+        if (!data.length) { document.getElementById("auditTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay registros de auditoría.</div>'; return; }
+        let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff">
+            <th style="padding:10px 12px">Fecha</th><th style="padding:10px 12px">Usuario</th><th style="padding:10px 12px">Acción</th>
+            <th style="padding:10px 12px">Módulo</th><th style="padding:10px 12px">Descripción</th>
+        </tr></thead><tbody>`;
+        data.forEach(a => {
+            html += `<tr style="border-bottom:1px solid #f3f4f6">
+                <td style="padding:10px 12px; font-size:0.78rem; color:#6b7280">${new Date(a.createdAt).toLocaleDateString('es-CO')}</td>
+                <td style="padding:10px 12px; font-weight:600">${a.userName}</td>
+                <td style="padding:10px 12px"><span style="background:#eef2ff; color:#4f46e5; padding:2px 8px; border-radius:999px; font-size:0.7rem; font-weight:600">${a.action}</span></td>
+                <td style="padding:10px 12px">${a.module}</td>
+                <td style="padding:10px 12px; color:#6b7280">${a.description}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById("auditTableContainer").innerHTML = html;
+    } catch (e) { document.getElementById("auditTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>'; }
+}
+
+// ── Configuración ──
+function loadSettings() {
+    const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+    document.getElementById("cfg_user").value = user.email || "";
+    document.getElementById("cfg_name").value = localStorage.getItem("zentrix_biz_name") || "";
+}
+
+function saveConfig() {
+    const name = document.getElementById("cfg_name").value;
+    if (name) localStorage.setItem("zentrix_biz_name", name);
+    alert("✓ Configuración guardada");
 }
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
 document.addEventListener("DOMContentLoaded", () => {
