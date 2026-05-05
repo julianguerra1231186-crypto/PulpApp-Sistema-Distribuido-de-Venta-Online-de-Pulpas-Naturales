@@ -293,8 +293,45 @@ async function loadTenants() {
     try {
         const data = await apiFetch("/tenants");
         if (!data.length) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">No hay tenants registrados</div>'; return; }
-        document.getElementById("tenantsTable").innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Estado</th><th>Creado</th></tr></thead><tbody>${data.map(t => `<tr><td>${t.id}</td><td><strong>${t.name}</strong></td><td><span class="badge ${t.status==='ACTIVE'?'badge-green':'badge-red'}">${t.status}</span></td><td>${new Date(t.createdAt).toLocaleDateString('es-CO')}</td></tr>`).join("")}</tbody></table>`;
-    } catch (e) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">Error al cargar tenants</div>'; }
+        let html = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre Empresa</th><th>Plan</th><th>Estado</th><th>Creado</th><th>Acciones</th></tr></thead><tbody>`;
+        data.forEach(t => {
+            const statusBadge = t.status === 'ACTIVE' ? '<span class="badge badge-green">ACTIVO</span>' : t.status === 'PENDING' ? '<span class="badge badge-yellow">PENDIENTE</span>' : '<span class="badge badge-red">' + t.status + '</span>';
+            html += `<tr>
+                <td>${t.id}</td>
+                <td><strong>${t.name}</strong>${t.businessType ? '<br><span style="font-size:0.75rem; color:#6b7280">' + t.businessType + '</span>' : ''}</td>
+                <td>${t.plan || 'Básico'}</td>
+                <td>${statusBadge}</td>
+                <td>${t.createdAt ? new Date(t.createdAt).toLocaleDateString('es-CO') : '—'}</td>
+                <td>
+                    ${t.status !== 'ACTIVE' ? '<button onclick="activateTenant(' + t.id + ')" style="padding:4px 10px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer; margin-right:4px">✓ Activar</button>' : ''}
+                    ${t.status === 'ACTIVE' ? '<button onclick="suspendTenant(' + t.id + ')" style="padding:4px 10px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Suspender</button>' : ''}
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        html += '<div style="color:#9ca3af; font-size:0.75rem; margin-top:10px">Total: ' + data.length + ' tenant(s) registrado(s)</div>';
+        document.getElementById("tenantsTable").innerHTML = html;
+    } catch (e) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">Error al cargar tenants: ' + e.message + '</div>'; }
+}
+
+async function activateTenant(id) {
+    if (!confirm('¿Activar este tenant?')) return;
+    try {
+        await apiFetch('/tenants/' + id + '/status?status=ACTIVE', { method: 'PATCH' });
+        loadTenants();
+        loadOverview();
+        alert('✓ Tenant activado');
+    } catch (e) { alert('Error: ' + e.message); }
+}
+
+async function suspendTenant(id) {
+    if (!confirm('¿Suspender este tenant? No podrá acceder al sistema.')) return;
+    try {
+        await apiFetch('/tenants/' + id + '/status?status=SUSPENDED', { method: 'PATCH' });
+        loadTenants();
+        loadOverview();
+        alert('✓ Tenant suspendido');
+    } catch (e) { alert('Error: ' + e.message); }
 }
 
 // ── Payments ──
