@@ -9,7 +9,13 @@
     <style>
         body { background:#f4f5f7; margin:0; font-family:'Inter',system-ui,sans-serif; }
         .dash-layout { display:flex; min-height:100vh; }
-        .dash-sidebar { width:250px; background:#111827; color:#fff; padding:24px 0; position:fixed; top:0; left:0; bottom:0; overflow-y:auto; }
+        .dash-sidebar { width:250px; background:#111827; color:#fff; padding:24px 0; position:fixed; top:0; left:0; bottom:0; overflow-y:auto; transition:width 0.3s ease; z-index:100; }
+        .dash-sidebar.collapsed { width:60px; }
+        .dash-sidebar.collapsed .sb-text, .dash-sidebar.collapsed .sb-label, .dash-sidebar.collapsed .sb-user-name, .dash-sidebar.collapsed .sb-user-email, .dash-sidebar.collapsed .sb-logout { display:none; }
+        .dash-sidebar.collapsed .sb-brand span { display:none; }
+        .dash-sidebar.collapsed .sb-brand img { margin:0 auto; }
+        .dash-sidebar.collapsed .sb-link { justify-content:center; padding:12px 0; }
+        .dash-sidebar.collapsed .sb-link span:first-child { font-size:1.2rem; }
         .sb-brand { display:flex; align-items:center; gap:10px; padding:0 20px 24px; border-bottom:1px solid rgba(255,255,255,0.08); }
         .sb-brand img { height:28px; } .sb-brand span { font-size:1.1rem; font-weight:800; }
         .sb-label { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.3); padding:20px 20px 8px; }
@@ -20,7 +26,8 @@
         .sb-user-name { font-size:0.82rem; font-weight:600; } .sb-user-email { font-size:0.7rem; color:rgba(255,255,255,0.4); }
         .sb-logout { margin-top:8px; font-size:0.75rem; color:#ef4444; cursor:pointer; background:none; border:none; font-family:inherit; font-weight:600; padding:0; }
 
-        .dash-main { flex:1; margin-left:250px; padding:32px; }
+        .dash-main { flex:1; margin-left:250px; padding:32px; transition:margin-left 0.3s ease; }
+        .dash-main.expanded { margin-left:60px; }
         .dash-topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:28px; }
         .dash-topbar h1 { font-size:1.4rem; font-weight:800; color:#111827; margin:0; }
         .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
@@ -48,25 +55,25 @@
 </head>
 <body>
 <div class="dash-layout">
-    <aside class="dash-sidebar">
-        <div class="sb-brand"><img src="img/logoZentrix-sinfondo.png" alt=""><span>Zentrix</span></div>
+    <aside class="dash-sidebar" id="mainSidebar">
+        <div class="sb-brand" style="display:flex; justify-content:space-between; align-items:center">
+            <div style="display:flex; align-items:center; gap:10px"><img src="img/logoZentrix-sinfondo.png" alt=""><span>Zentrix</span></div>
+            <button onclick="toggleSidebar()" id="sidebarToggleBtn" style="background:rgba(255,255,255,0.1); border:none; color:#fff; width:26px; height:26px; border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center">◀</button>
+        </div>
         <div class="sb-label">Inmobiliaria</div>
-        <a class="sb-link active" onclick="showTab('overview')"><span>🏠</span><span>Inicio</span></a>
-        <a class="sb-link" onclick="showTab('properties')"><span>🏘️</span><span>Propiedades</span></a>
-        <a class="sb-link" onclick="showTab('invoices')"><span>📄</span><span>Facturación</span></a>
-        <a class="sb-link" onclick="showTab('quotes')"><span>📋</span><span>Cotizaciones</span></a>
-        <a class="sb-link" onclick="showTab('purchases')"><span>🛒</span><span>Compras</span></a>
-        <a class="sb-link" onclick="showTab('payments')"><span>💵</span><span>Pagos</span></a>
-        <a class="sb-link" onclick="showTab('clients')"><span>👤</span><span>Clientes</span></a>
-        <a class="sb-link" onclick="showTab('inventory')"><span>🏘️</span><span>Propiedades Adm.</span></a>
-        <a class="sb-link" onclick="showTab('suppliers')"><span>👥</span><span>Proveedores</span></a>
-        <a class="sb-link" onclick="showTab('cashbox')"><span>💰</span><span>Caja</span></a>
-        <a class="sb-link" onclick="showTab('movements')"><span>🔄</span><span>Movimientos</span></a>
-        <a class="sb-link" onclick="showTab('reports')"><span>📊</span><span>Reportes</span></a>
-        <a class="sb-link" onclick="showTab('audit')"><span>🔍</span><span>Auditoría</span></a>
-        <a class="sb-link" onclick="showTab('settings')"><span>⚙️</span><span>Configuración</span></a>
-        <a class="sb-link" onclick="showTab('contracts')"><span>📝</span><span>Contratos</span></a>
-        <a class="sb-link" onclick="showTab('visits')"><span>📅</span><span>Visitas</span></a>
+
+        <a class="sb-link active" onclick="showTab('overview')"><span>🏠</span><span class="sb-text">Inicio</span></a>
+        <a class="sb-link" onclick="showTab('properties')"><span>🏘️</span><span class="sb-text">Propiedades</span></a>
+        <a class="sb-link" onclick="showTab('inventory')"><span>📋</span><span class="sb-text">Administración</span></a>
+        <a class="sb-link" onclick="showTab('clients')"><span>👤</span><span class="sb-text">Clientes</span></a>
+        <a class="sb-link" onclick="showTab('invoices')"><span>📄</span><span class="sb-text">Facturación</span></a>
+        <a class="sb-link" onclick="showTab('contracts')"><span>📝</span><span class="sb-text">Contratos</span></a>
+        <a class="sb-link" onclick="showTab('visits')"><span>📅</span><span class="sb-text">Agendar Visitas</span></a>
+        <a class="sb-link" onclick="showTab('payments')"><span>💵</span><span class="sb-text">Pagos / Nómina</span></a>
+        <a class="sb-link" onclick="showTab('suppliers')"><span>👥</span><span class="sb-text">Proveedores</span></a>
+        <a class="sb-link" onclick="showTab('reports')"><span>📊</span><span class="sb-text">Reportes</span></a>
+        <a class="sb-link" onclick="showTab('settings')"><span>⚙️</span><span class="sb-text">Configuración</span></a>
+
         <div class="sb-user">
             <div class="sb-user-name" id="userName">Mi Negocio</div>
             <div class="sb-user-email" id="userEmail">email@zentrix.app</div>
@@ -1883,6 +1890,15 @@ async function syncPropietariosAsClients() {
 }
 
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
+
+function toggleSidebar() {
+    const sidebar = document.getElementById("mainSidebar");
+    const main = document.querySelector(".dash-main");
+    const btn = document.getElementById("sidebarToggleBtn");
+    sidebar.classList.toggle("collapsed");
+    main.classList.toggle("expanded");
+    btn.textContent = sidebar.classList.contains("collapsed") ? "▶" : "◀";
+}
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
     const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
