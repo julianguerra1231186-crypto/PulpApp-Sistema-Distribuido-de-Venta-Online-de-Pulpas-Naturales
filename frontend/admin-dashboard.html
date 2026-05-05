@@ -502,13 +502,41 @@ async function loadUsers() {
     try {
         const data = await apiFetch("/users");
         if (!data.length) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">No hay usuarios</div>'; return; }
-        document.getElementById("usersTable").innerHTML = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Tenant</th><th>Estado</th></tr></thead><tbody>${data.map(u => `<tr>
-            <td>${u.id}</td><td><strong>${u.name}</strong></td><td>${u.email}</td>
-            <td><span class="badge badge-blue">${u.role || '—'}</span></td>
-            <td>${u.tenantId || '—'}</td>
-            <td><span class="badge ${u.activo?'badge-green':'badge-red'}">${u.activo?'Activo':'Inactivo'}</span></td>
-        </tr>`).join("")}</tbody></table>`;
-    } catch (e) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">Error al cargar usuarios</div>'; }
+        let html = '<table class="admin-table"><thead><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Cédula</th><th>Teléfono</th><th>Rol</th><th>Tenant</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+        data.forEach(u => {
+            const statusBadge = u.activo ? '<span class="badge badge-green">Activo</span>' : '<span class="badge badge-red">Inactivo</span>';
+            const statusText = u.status || (u.activo ? 'ACTIVE' : 'INACTIVE');
+            html += '<tr><td>' + u.id + '</td><td><strong>' + u.name + '</strong></td><td>' + u.email + '</td><td>' + (u.cedula || '—') + '</td><td>' + (u.telefono || '—') + '</td><td><span class="badge badge-blue">' + (u.role || '—') + '</span></td><td>' + (u.tenantId || '—') + '</td><td>' + statusBadge + '</td><td style="display:flex; gap:4px"><button onclick="toggleUserActive(' + u.id + ', ' + !u.activo + ')" class="btn-sm btn-outline-sm" style="font-size:0.7rem; padding:3px 8px">' + (u.activo ? 'Inactivar' : 'Activar') + '</button><button onclick="deleteUser(' + u.id + ', \'' + u.name.replace(/'/g, "\\'") + '\')" class="btn-sm btn-danger-sm" style="font-size:0.7rem; padding:3px 8px">🗑️</button></td></tr>';
+        });
+        html += '</tbody></table>';
+        html += '<div style="color:#9ca3af; font-size:0.75rem; margin-top:10px">Total: ' + data.length + ' usuario(s)</div>';
+        document.getElementById("usersTable").innerHTML = html;
+    } catch (e) { document.getElementById("usersTable").innerHTML = '<div class="empty-msg">Error al cargar usuarios: ' + e.message + '</div>'; }
+}
+
+async function toggleUserActive(id, active) {
+    try {
+        await fetch(API + '/users/' + id, { method: 'PUT', headers: headers(), body: JSON.stringify({ activo: active }) });
+        toast('✓ Usuario ' + (active ? 'activado' : 'inactivado'));
+        loadUsers();
+        loadOverview();
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+async function deleteUser(id, name) {
+    if (!confirm('⚠️ ¿Eliminar al usuario "' + name + '"?\n\nEsta acción no se puede deshacer.')) return;
+    try {
+        const res = await fetch(API + '/users/' + id, { method: 'DELETE', headers: headers() });
+        if (!res.ok) {
+            // Fallback: inactivar
+            await fetch(API + '/users/' + id, { method: 'PUT', headers: headers(), body: JSON.stringify({ activo: false }) });
+            toast('Usuario inactivado (eliminación no disponible)');
+        } else {
+            toast('✓ Usuario eliminado');
+        }
+        loadUsers();
+        loadOverview();
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
 }
 
 // ── Products ──
