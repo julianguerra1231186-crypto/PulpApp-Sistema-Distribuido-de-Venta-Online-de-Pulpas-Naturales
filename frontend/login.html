@@ -112,6 +112,7 @@
         if (input.type === "password") { input.type = "text"; btn.textContent = "🙈"; }
         else { input.type = "password"; btn.textContent = "👁️"; }
     }
+    window.togglePasswordVisibility = togglePasswordVisibility;
 
     function toast(msg, type) {
         const el = document.getElementById("appToast");
