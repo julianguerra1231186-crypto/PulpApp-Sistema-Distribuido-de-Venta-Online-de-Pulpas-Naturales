@@ -64,7 +64,10 @@
                 </div>
                 <div class="z-form-group">
                     <label for="loginPassword">Contraseña</label>
-                    <input type="password" id="loginPassword" class="z-input" placeholder="Tu contraseña" required>
+                    <div style="position:relative">
+                        <input type="password" id="loginPassword" class="z-input" placeholder="Tu contraseña" required>
+                        <button type="button" onclick="togglePasswordVisibility()" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.1rem; color:#6b7280" id="togglePwdBtn">👁️</button>
+                    </div>
                 </div>
                 <button type="submit" id="loginBtn" class="z-btn z-btn-primary z-btn-block z-btn-lg" style="margin-top:8px">Iniciar sesión</button>
             </form>
@@ -103,6 +106,13 @@
         }
     });
 
+    function togglePasswordVisibility() {
+        const input = document.getElementById("loginPassword");
+        const btn = document.getElementById("togglePwdBtn");
+        if (input.type === "password") { input.type = "text"; btn.textContent = "🙈"; }
+        else { input.type = "password"; btn.textContent = "👁️"; }
+    }
+
     function toast(msg, type) {
         const el = document.getElementById("appToast");
         el.textContent = msg;
@@ -133,20 +143,20 @@
             localStorage.setItem("user", JSON.stringify(fullData));
             toast("Sesión iniciada ✓");
 
-            // Redirigir según tipo de negocio guardado o al admin dashboard
-            const bizType = localStorage.getItem("zentrix_biz_type");
-            const bizRedirect = { inmobiliaria: "dashboard-inmobiliaria.html", restaurante: "dashboard-restaurante.html" };
-
             const role = fullData.role?.name || fullData.role || "";
             let redirect;
-            if (bizType && bizRedirect[bizType]) {
-                redirect = bizRedirect[bizType];
-            } else if (role === "ROLE_ADMIN") {
+            if (role === "ROLE_ADMIN") {
                 redirect = "admin-dashboard.html";
+                localStorage.removeItem("zentrix_biz_type");
             } else {
-                // Por defecto: dashboard de inmobiliaria para todos los usuarios
-                redirect = "dashboard-inmobiliaria.html";
-                localStorage.setItem("zentrix_biz_type", "inmobiliaria");
+                const bizType = localStorage.getItem("zentrix_biz_type");
+                const bizRedirect = { inmobiliaria: "dashboard-inmobiliaria.html", restaurante: "dashboard-restaurante.html" };
+                if (bizType && bizRedirect[bizType]) {
+                    redirect = bizRedirect[bizType];
+                } else {
+                    redirect = "dashboard-inmobiliaria.html";
+                    localStorage.setItem("zentrix_biz_type", "inmobiliaria");
+                }
             }
             localStorage.removeItem("pulpapp_redirect");
             setTimeout(() => { window.location.href = redirect; }, 800);
