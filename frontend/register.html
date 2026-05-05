@@ -30,6 +30,18 @@
         .auth-side-features li::before { content:"✓"; color:#6366f1; font-weight:700; }
         .auth-link { color:#6366f1; font-weight:600; text-decoration:none; }
         .auth-link:hover { text-decoration:underline; }
+
+        /* Business type selector */
+        .biz-type-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .biz-type-card {
+            border:2px solid #e5e7eb; border-radius:12px; padding:16px; text-align:center;
+            cursor:pointer; transition:all 0.25s ease;
+        }
+        .biz-type-card:hover { border-color:#a5b4fc; background:#f8faff; }
+        .biz-type-card.selected { border-color:#6366f1; background:#eef2ff; box-shadow:0 0 0 3px rgba(99,102,241,0.15); }
+        .biz-type-icon { font-size:2rem; margin-bottom:8px; }
+        .biz-type-name { font-size:0.9rem; font-weight:700; color:#111827; margin-bottom:4px; }
+        .biz-type-desc { font-size:0.75rem; color:#6b7280; }
         .z-toast { position:fixed; bottom:24px; right:24px; padding:14px 24px; border-radius:10px; font-size:0.9rem; font-weight:600; color:#fff; background:#111827; box-shadow:0 8px 24px rgba(0,0,0,0.15); opacity:0; transform:translateY(12px); transition:all 0.3s ease; z-index:999; pointer-events:none; }
         .z-toast.show { opacity:1; transform:translateY(0); }
         .z-toast.error { background:#ef4444; }
@@ -89,6 +101,30 @@
                         <input type="text" id="regDireccion" class="z-input" placeholder="Tu dirección" required>
                     </div>
                 </div>
+
+                <!-- Nombre del negocio -->
+                <div class="z-form-group">
+                    <label for="regNegocio">Nombre de tu negocio</label>
+                    <input type="text" id="regNegocio" class="z-input" placeholder="Ej: Mi Restaurante, Inmobiliaria López" required>
+                </div>
+
+                <!-- Tipo de negocio -->
+                <div class="z-form-group">
+                    <label>Tipo de negocio</label>
+                    <div class="biz-type-grid" id="bizTypeGrid">
+                        <div class="biz-type-card" data-type="inmobiliaria" onclick="selectBizType(this)">
+                            <div class="biz-type-icon">🏠</div>
+                            <div class="biz-type-name">Inmobiliaria</div>
+                            <div class="biz-type-desc">Propiedades, arriendos y ventas</div>
+                        </div>
+                        <div class="biz-type-card" data-type="restaurante" onclick="selectBizType(this)">
+                            <div class="biz-type-icon">🍽️</div>
+                            <div class="biz-type-name">Restaurante</div>
+                            <div class="biz-type-desc">Menú, pedidos y delivery</div>
+                        </div>
+                    </div>
+                </div>
+
                 <button type="submit" id="registerBtn" class="z-btn z-btn-primary z-btn-block z-btn-lg" style="margin-top:8px">Crear mi cuenta →</button>
             </form>
 
@@ -118,9 +154,17 @@
 <script src="services.js"></script>
 <script src="auth.js"></script>
 <script>
+let selectedBizType = null;
+
+function selectBizType(el) {
+    document.querySelectorAll(".biz-type-card").forEach(c => c.classList.remove("selected"));
+    el.classList.add("selected");
+    selectedBizType = el.dataset.type;
+}
+
 (function() {
     document.addEventListener("DOMContentLoaded", () => {
-        if (window.PulpAuth?.isTokenValid()) { window.location.href = "dashboard.html"; }
+        if (window.PulpAuth?.isTokenValid()) { window.location.href = "admin-dashboard.html"; }
     });
 
     function toast(msg, type) {
@@ -140,23 +184,32 @@
         const email = document.getElementById("regEmail").value.trim().toLowerCase();
         const password = document.getElementById("regPassword").value.trim();
         const direccion = document.getElementById("regDireccion").value.trim();
+        const negocio = document.getElementById("regNegocio").value.trim();
 
         if (!cedula || !telefono || !name || !email || !password || !direccion) { toast("Completa todos los campos", "error"); return; }
         if (password.length < 6) { toast("La contraseña debe tener mínimo 6 caracteres", "error"); return; }
+        if (!negocio) { toast("Ingresa el nombre de tu negocio", "error"); return; }
+        if (!selectedBizType) { toast("Selecciona el tipo de negocio", "error"); return; }
 
         btn.disabled = true; btn.textContent = "Creando cuenta...";
 
         try {
             const data = await window.PulpAppServices.authRegister({ cedula, telefono, name, email, password, direccion });
-            const fullData = { ...data, cedula, telefono, direccion, name };
+            const fullData = { ...data, cedula, telefono, direccion, name, negocio, bizType: selectedBizType };
             localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
             localStorage.setItem("user", JSON.stringify(fullData));
+            localStorage.setItem("zentrix_biz_type", selectedBizType);
+            localStorage.setItem("zentrix_biz_name", negocio);
             toast("Cuenta creada ✓");
 
             // Redirigir según estado SaaS
             const status = fullData.status || "ACTIVE";
             if (status === "PENDING_PAYMENT") { setTimeout(() => { window.location.href = "payment.html"; }, 1000); return; }
-            setTimeout(() => { window.location.href = "dashboard.html"; }, 1000);
+
+            // Redirigir según tipo de negocio
+            const redirectMap = { inmobiliaria: "dashboard-inmobiliaria.html", restaurante: "dashboard-restaurante.html" };
+            const dest = redirectMap[selectedBizType] || "admin-dashboard.html";
+            setTimeout(() => { window.location.href = dest; }, 1000);
         } catch (err) {
             toast(err.message || "No fue posible registrarte", "error");
             btn.disabled = false; btn.textContent = "Crear mi cuenta →";
