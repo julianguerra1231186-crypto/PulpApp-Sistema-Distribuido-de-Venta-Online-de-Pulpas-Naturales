@@ -202,11 +202,7 @@ function selectBizType(el) {
             localStorage.setItem("zentrix_biz_name", negocio);
             toast("Cuenta creada ✓");
 
-            // Redirigir según estado SaaS
-            const status = fullData.status || "ACTIVE";
-            if (status === "PENDING_PAYMENT") { setTimeout(() => { window.location.href = "payment.html"; }, 1000); return; }
-
-            // Redirigir según tipo de negocio
+            // Redirigir directo al dashboard del tipo de negocio (sin pasar por pago)
             const redirectMap = { inmobiliaria: "dashboard-inmobiliaria.html", restaurante: "dashboard-restaurante.html" };
             const dest = redirectMap[selectedBizType] || "admin-dashboard.html";
             setTimeout(() => { window.location.href = dest; }, 1000);

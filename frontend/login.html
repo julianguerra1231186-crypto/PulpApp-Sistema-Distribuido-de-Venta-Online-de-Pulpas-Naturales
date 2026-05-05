@@ -129,13 +129,12 @@
             localStorage.setItem("user", JSON.stringify(fullData));
             toast("Sesión iniciada ✓");
 
-            // Redirigir según estado SaaS
-            const status = fullData.status || "ACTIVE";
-            if (status === "PENDING_PAYMENT") { setTimeout(() => { window.location.href = "payment.html"; }, 800); return; }
-            if (status === "PENDING_APPROVAL") { setTimeout(() => { window.location.href = "pending.html"; }, 800); return; }
+            // Redirigir según tipo de negocio guardado o al admin dashboard
+            const bizType = localStorage.getItem("zentrix_biz_type");
+            const bizRedirect = { inmobiliaria: "dashboard-inmobiliaria.html", restaurante: "dashboard-restaurante.html" };
 
             const role = fullData.role?.name || fullData.role || "";
-            let redirect = localStorage.getItem("pulpapp_redirect") || "admin-dashboard.html";
+            let redirect = bizRedirect[bizType] || localStorage.getItem("pulpapp_redirect") || "admin-dashboard.html";
             if (role === "ROLE_CLIENT") redirect = "mi-cuenta.html";
             localStorage.removeItem("pulpapp_redirect");
             setTimeout(() => { window.location.href = redirect; }, 800);
