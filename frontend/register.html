@@ -194,7 +194,7 @@ function selectBizType(el) {
         btn.disabled = true; btn.textContent = "Creando cuenta...";
 
         try {
-            const data = await window.PulpAppServices.authRegister({ cedula, telefono, name, email, password, direccion });
+            const data = await window.PulpAppServices.authRegister({ cedula, telefono, name, email, password, direccion, businessName: negocio, businessType: selectedBizType });
             const fullData = { ...data, cedula, telefono, direccion, name, negocio, bizType: selectedBizType };
             localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
             localStorage.setItem("user", JSON.stringify(fullData));
