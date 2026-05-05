@@ -73,8 +73,8 @@
     </aside>
 
     <main class="dash-main">
-        <div class="dash-topbar">
-            <h1 id="pageTitle">Dashboard — Inmobiliaria</h1>
+        <div class="dash-topbar" style="display:none">
+            <h1 id="pageTitle">Inicio</h1>
             <span style="font-size:0.78rem; background:#eef2ff; color:#6366f1; padding:4px 12px; border-radius:999px; font-weight:600">🏠 Inmobiliaria</span>
         </div>
 
@@ -85,48 +85,43 @@
                 <!-- Panel principal izquierdo -->
                 <div style="background:linear-gradient(135deg,#e8f4fd,#f0f7ff); border-radius:16px; padding:28px; border:1px solid #d0e8f7">
 
-                    <!-- Bienvenida -->
-                    <div style="margin-bottom:24px">
-                        <h2 style="font-size:1.8rem; font-weight:800; color:#1e3a5f; margin:0 0 4px; font-style:italic">Bienvenido al Sistema</h2>
-                        <div style="font-size:1.05rem; font-weight:700; color:#1e3a5f; margin-bottom:4px" id="welcomeBizName">Mi Inmobiliaria</div>
-                        <p style="color:#5a7a9a; font-size:0.85rem; margin:0">Administra las operaciones principales del negocio desde un solo lugar.</p>
-                    </div>
-
-                    <!-- Jornada -->
-                    <div style="background:#fff; border-radius:12px; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:20px; border:1px solid #e0ecf5; flex-wrap:wrap">
-                        <div style="display:flex; align-items:center; gap:16px">
-                            <div style="font-size:1.1rem; font-weight:800; color:#1e3a5f">Jornada<br>cerrada</div>
-                            <div style="font-size:0.8rem; color:#5a7a9a"><strong>Última Jornada:</strong><br>04/05/2026 — 2:00pm</div>
+                    <!-- Bienvenida con logo -->
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px">
+                        <div>
+                            <h2 style="font-size:1.8rem; font-weight:800; color:#1e3a5f; margin:0 0 4px; font-style:italic">Bienvenido al Sistema</h2>
+                            <div style="font-size:1.05rem; font-weight:700; color:#1e3a5f; margin-bottom:4px" id="welcomeBizName">Mi Inmobiliaria</div>
+                            <p style="color:#5a7a9a; font-size:0.85rem; margin:0">Administra, vende y gestiona contrataciones de construcción desde un solo lugar.</p>
                         </div>
-                        <button style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; border:none; padding:10px 24px; border-radius:8px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit">Abrir jornada</button>
+                        <img src="img/logoZentrix-sinfondo.png" alt="Zentrix" style="height:64px; opacity:0.9">
                     </div>
 
                     <!-- Acciones rápidas -->
                     <div style="display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap">
                         <button style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Nueva Factura</button>
-                        <button style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">🛒 Nueva Compra</button>
                         <button style="display:flex; align-items:center; gap:6px; padding:10px 18px; background:#fff; color:#1e3a5f; border:2px solid #1e3a5f; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">💵 Registrar Pago</button>
                     </div>
 
                     <!-- Stats -->
-                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px">
-                        <div style="background:#fff; border-radius:12px; padding:18px; text-align:center; border:1px solid #e0ecf5">
-                            <div style="font-size:0.75rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Ventas Hoy</div>
-                            <div style="font-size:2rem; font-weight:800; color:#1e3a5f">45</div>
-                            <div style="margin-top:8px"><span style="background:#0ea5e9; color:#fff; padding:4px 14px; border-radius:999px; font-size:0.72rem; font-weight:700">$1.560.000</span></div>
-                            <a href="#" style="display:block; margin-top:6px; font-size:0.7rem; color:#0ea5e9; text-decoration:none; font-weight:600">Más info</a>
+                    <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px">
+                        <div style="background:#fff; border-radius:12px; padding:16px; text-align:center; border:1px solid #e0ecf5">
+                            <div style="font-size:0.7rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Propiedades Administrando</div>
+                            <div style="font-size:1.8rem; font-weight:800; color:#1e3a5f">24</div>
+                            <div style="margin-top:6px"><span style="background:#0ea5e9; color:#fff; padding:3px 12px; border-radius:999px; font-size:0.68rem; font-weight:700">Activas</span></div>
                         </div>
-                        <div style="background:#fff; border-radius:12px; padding:18px; text-align:center; border:1px solid #e0ecf5">
-                            <div style="font-size:0.75rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Compras</div>
-                            <div style="font-size:2rem; font-weight:800; color:#1e3a5f">7</div>
-                            <div style="margin-top:8px"><span style="background:#16a34a; color:#fff; padding:4px 14px; border-radius:999px; font-size:0.72rem; font-weight:700">$700.000</span></div>
-                            <a href="#" style="display:block; margin-top:6px; font-size:0.7rem; color:#0ea5e9; text-decoration:none; font-weight:600">Más info</a>
+                        <div style="background:#fff; border-radius:12px; padding:16px; text-align:center; border:1px solid #e0ecf5">
+                            <div style="font-size:0.7rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Propiedades En Venta</div>
+                            <div style="font-size:1.8rem; font-weight:800; color:#1e3a5f">8</div>
+                            <div style="margin-top:6px"><span style="background:#6366f1; color:#fff; padding:3px 12px; border-radius:999px; font-size:0.68rem; font-weight:700">Disponibles</span></div>
                         </div>
-                        <div style="background:#fff; border-radius:12px; padding:18px; text-align:center; border:1px solid #e0ecf5">
-                            <div style="font-size:0.75rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Caja Actual</div>
-                            <div style="font-size:1.6rem; font-weight:800; color:#1e3a5f">$2.700.000</div>
-                            <div style="margin-top:8px"><span style="background:#16a34a; color:#fff; padding:4px 14px; border-radius:999px; font-size:0.72rem; font-weight:700">57 Movimientos</span></div>
-                            <a href="#" style="display:block; margin-top:6px; font-size:0.7rem; color:#0ea5e9; text-decoration:none; font-weight:600">Más info</a>
+                        <div style="background:#fff; border-radius:12px; padding:16px; text-align:center; border:1px solid #e0ecf5">
+                            <div style="font-size:0.7rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Ingresos Arriendos</div>
+                            <div style="font-size:1.4rem; font-weight:800; color:#1e3a5f">$4.800.000</div>
+                            <div style="margin-top:6px"><span style="background:#16a34a; color:#fff; padding:3px 12px; border-radius:999px; font-size:0.68rem; font-weight:700">Este mes</span></div>
+                        </div>
+                        <div style="background:#fff; border-radius:12px; padding:16px; text-align:center; border:1px solid #e0ecf5">
+                            <div style="font-size:0.7rem; font-weight:600; color:#5a7a9a; margin-bottom:6px">Ingresos Ganancias</div>
+                            <div style="font-size:1.4rem; font-weight:800; color:#16a34a">$2.150.000</div>
+                            <div style="margin-top:6px"><span style="background:#16a34a; color:#fff; padding:3px 12px; border-radius:999px; font-size:0.68rem; font-weight:700">Neto</span></div>
                         </div>
                     </div>
                 </div>
@@ -135,17 +130,21 @@
                 <div style="background:#fff; border-radius:16px; padding:24px; border:1px solid #e5e7eb">
                     <h2 style="font-size:1.2rem; font-weight:800; color:#111827; margin:0 0 20px">Alertas</h2>
                     <div style="display:flex; flex-direction:column; gap:14px">
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.85rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0">A</span>
-                            4 facturas vencidas
+                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
+                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
+                            Carlos Pérez — Arriendo vence en 3 días
                         </div>
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.85rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0">A</span>
-                            3 Productos Bajo Stock
+                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
+                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
+                            María López — Pago pendiente hace 5 días
                         </div>
-                        <div style="display:flex; align-items:center; gap:10px; font-size:0.85rem; color:#374151">
-                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:800; flex-shrink:0">A</span>
-                            1 Factura próxima a vencer
+                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
+                            <span style="background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
+                            Juan Rodríguez — Arriendo vencido
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px; font-size:0.82rem; color:#374151">
+                            <span style="background:linear-gradient(135deg,#d97706,#b45309); color:#fff; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.6rem; font-weight:800; flex-shrink:0">!</span>
+                            Ana García — Arriendo vence en 7 días
                         </div>
                     </div>
                     <a href="#" style="display:block; margin-top:20px; font-size:0.82rem; color:#6366f1; font-weight:600; text-decoration:none; text-align:right">Ver todas →</a>
