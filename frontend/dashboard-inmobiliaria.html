@@ -160,7 +160,10 @@
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
                     <h2 style="margin:0">🏘️ Mis Propiedades</h2>
-                    <button onclick="showPropertyForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Agregar propiedad</button>
+                    <div style="display:flex; gap:8px">
+                        <button onclick="syncPropietariosAsClients()" style="padding:8px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#6b7280">🔄 Sincronizar Clientes</button>
+                        <button onclick="showPropertyForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Agregar propiedad</button>
+                    </div>
                 </div>
                 <div id="propertiesGrid" class="prop-grid">
                     <div style="text-align:center; padding:32px; color:#9ca3af; grid-column:1/-1">Cargando propiedades...</div>
@@ -1568,6 +1571,37 @@ async function saveProperty(e) {
         alert("✓ Propiedad registrada y propietario/a guardado como cliente");
     } catch (e) { alert("Error: " + e.message); }
 }
+async function syncPropietariosAsClients() {
+    try {
+        const res = await fetch(API + "/inventory", { headers: authHeaders() });
+        const props = await res.json();
+        let created = 0;
+        for (const p of props) {
+            if (!p.ownerName) continue;
+            const supData = p.supplier || '';
+            const cedulaMatch = supData.match(/CC:([^\|]+)/);
+            const cedula = cedulaMatch ? cedulaMatch[1].trim() : '';
+            const phone = supData.replace(/CC:[^\|]+\|?\s*/, '').trim();
+            if (!cedula) continue;
+            const clientBody = {
+                name: p.ownerName + " (Propietario/a)",
+                documentType: "CC",
+                document: cedula,
+                phone: phone,
+                city: "",
+                address: p.propertyAddress || "",
+                email: "",
+                creditLimit: 0
+            };
+            try {
+                const cRes = await fetch(API + "/clients", { method:"POST", headers: authHeaders(), body: JSON.stringify(clientBody) });
+                if (cRes.ok) created++;
+            } catch (e) {}
+        }
+        alert("✓ Sincronización completada.\n" + created + " propietario(s) registrado(s) como clientes.");
+    } catch (e) { alert("Error: " + e.message); }
+}
+
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
