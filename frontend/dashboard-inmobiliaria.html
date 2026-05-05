@@ -2273,7 +2273,17 @@ function deleteVisit(id) {
     renderVisits();
 }
 
-function logout() { localStorage.clear(); window.location.href = "login.html"; }
+function logout() {
+    // Preservar logo y nombre de empresa al cerrar sesión
+    const logo = localStorage.getItem('zentrix_biz_logo');
+    const bizName = localStorage.getItem('zentrix_biz_name');
+    const bizType = localStorage.getItem('zentrix_biz_type');
+    localStorage.clear();
+    if (logo) localStorage.setItem('zentrix_biz_logo', logo);
+    if (bizName) localStorage.setItem('zentrix_biz_name', bizName);
+    if (bizType) localStorage.setItem('zentrix_biz_type', bizType);
+    window.location.href = "login.html";
+}
 
 function toggleSidebar() {
     const sidebar = document.getElementById("mainSidebar");
