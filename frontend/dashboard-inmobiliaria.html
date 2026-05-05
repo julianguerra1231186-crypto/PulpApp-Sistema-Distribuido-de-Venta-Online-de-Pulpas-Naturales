@@ -448,136 +448,104 @@
             <div id="tenantFormPanel" style="display:none" class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px">
                     <div>
-                        <h2 style="margin:0 0 4px">👤 Asignar Inquilino</h2>
+                        <h2 style="margin:0 0 4px; font-size:1.1rem">👤 Asignar Inquilino</h2>
                         <p style="color:#6b7280; font-size:0.8rem; margin:0">Propiedad: <strong id="tenant_prop_name" style="color:#6366f1">—</strong></p>
                     </div>
                     <button onclick="hideTenantForm()" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:8px; padding:6px 14px; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#374151">✕ Cerrar</button>
                 </div>
 
-                <!-- Info del inmueble -->
-                <div style="background:#f0f7ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px; margin-bottom:16px">
+                                <!-- Info del inmueble compacta -->
+                <div style="background:linear-gradient(135deg,#eff6ff,#f0f7ff); border:1px solid #bfdbfe; border-radius:10px; padding:14px; margin-bottom:20px">
                     <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; font-size:0.78rem">
-                        <div><span style="color:#6b7280; display:block; font-size:0.7rem">Dirección</span><strong id="tenant_prop_address">—</strong></div>
-                        <div><span style="color:#6b7280; display:block; font-size:0.7rem">Propietario/a</span><strong id="tenant_prop_owner" style="color:#1e40af">—</strong></div>
-                        <div><span style="color:#6b7280; display:block; font-size:0.7rem">Arriendo</span><strong id="tenant_prop_rent" style="color:#16a34a">—</strong></div>
-                        <div><span style="color:#6b7280; display:block; font-size:0.7rem">Comisión (11%)</span><strong id="tenant_prop_comision" style="color:#6366f1">—</strong></div>
+                        <div><span style="color:#6b7280; display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em">Dirección</span><strong id="tenant_prop_address">—</strong></div>
+                        <div><span style="color:#6b7280; display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em">Propietario/a</span><strong id="tenant_prop_owner" style="color:#1e40af">—</strong></div>
+                        <div><span style="color:#6b7280; display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em">Arriendo</span><strong id="tenant_prop_rent" style="color:#16a34a">—</strong></div>
+                        <div><span style="color:#6b7280; display:block; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em">Comisión (11%)</span><strong id="tenant_prop_comision" style="color:#6366f1">—</strong></div>
                     </div>
                 </div>
 
-                <!-- Formulario inquilino -->
                 <form id="tenantForm" onsubmit="saveTenant(event)">
-                    <!-- Datos personales del inquilino -->
-                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:12px">📝 Datos del Inquilino</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre Completo *</label><input type="text" id="tf_name" required placeholder="Nombre del inquilino" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cédula *</label><input type="text" id="tf_cedula" required placeholder="Ej: 1.007.123.456" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono *</label><input type="text" id="tf_phone" required placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Email</label><input type="email" id="tf_email" placeholder="correo@ejemplo.com" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección Residencia Actual</label><input type="text" id="tf_direccion" placeholder="Ej: Calle 50 #15-20" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Estado Civil</label><select id="tf_estado_civil" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="Soltero/a">Soltero/a</option><option value="Casado/a">Casado/a</option><option value="Union libre">Unión libre</option><option value="Divorciado/a">Divorciado/a</option><option value="Viudo/a">Viudo/a</option></select></div>
-                        </div>
-                    </div>
-
-                    <!-- Información Laboral y Financiera -->
-                    <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:12px">💼 Información Laboral y Financiera</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Empresa donde trabaja</label><input type="text" id="tf_empresa" placeholder="Ej: Coca-Cola FEMSA" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cargo / Ocupación</label><input type="text" id="tf_ocupacion" placeholder="Ej: Ingeniero de Sistemas" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Tipo de Contrato</label><select id="tf_tipo_contrato" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff"><option value="">Seleccione...</option><option value="Indefinido">Indefinido</option><option value="Fijo">Término Fijo</option><option value="Obra">Obra o Labor</option><option value="Prestacion">Prestación Servicios</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option></select></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Dirección Empresa</label><input type="text" id="tf_empresa_direccion" placeholder="Ej: Av. Caracas #45-12" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Teléfono Empresa</label><input type="text" id="tf_empresa_tel" placeholder="Ej: 601 234 5678" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Antigüedad Laboral</label><input type="text" id="tf_antiguedad" placeholder="Ej: 3 años" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div>
-                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ingresos Mensuales</label>
-                                <div style="position:relative">
-                                    <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#6b7280; font-weight:600">$</span>
-                                    <input type="text" id="tf_ingresos" placeholder="3.500.000" style="width:100%; padding:10px 10px 10px 22px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700" oninput="formatCurrency(this)">
-                                </div>
-                            </div>
-                            <div>
-                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Otros Ingresos (opcional)</label>
-                                <div style="position:relative">
-                                    <span style="position:absolute; left:10px; top:50%; transform:translateY(-50%); font-size:0.85rem; color:#6b7280; font-weight:600">$</span>
-                                    <input type="text" id="tf_otros_ingresos" placeholder="0" style="width:100%; padding:10px 10px 10px 22px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700" oninput="formatCurrency(this)">
-                                </div>
-                            </div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fuente de Otros Ingresos</label><input type="text" id="tf_otros_fuente" placeholder="Ej: Alquiler, freelance" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                        </div>
-                    </div>
-
-                    <!-- Referencias -->
-                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#92400e; margin-bottom:12px">📞 Referencias Personales y Familiares</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. Personal #1 - Nombre</label><input type="text" id="tf_ref1_name" placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #1 - Teléfono</label><input type="text" id="tf_ref1_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #1 - Relación</label><input type="text" id="tf_ref1_rel" placeholder="Ej: Hermano, Amigo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. Personal #2 - Nombre</label><input type="text" id="tf_ref2_name" placeholder="Nombre completo" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #2 - Teléfono</label><input type="text" id="tf_ref2_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                            <div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Ref. #2 - Relación</label><input type="text" id="tf_ref2_rel" placeholder="Ej: Tío, Compañero" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem"></div>
-                        </div>
-                        <div style="margin-top:10px">
-                            <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px; color:#92400e">Observaciones / Notas adicionales</label>
-                            <input type="text" id="tf_obs" placeholder="Ej: Tiene mascota, requiere parqueadero, etc." style="width:100%; padding:10px; border:1px solid #fde68a; border-radius:8px; font-family:inherit; font-size:0.85rem">
-                        </div>
-                    </div>
-
-                    <!-- Contrato -->
-                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#1e40af; margin-bottom:12px">📅 Contrato de Arriendo</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px">
-                            <div>
-                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fecha Inicio *</label>
-                                <input type="date" id="tf_fecha_inicio" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" onchange="calcFechaFin()">
-                            </div>
-                            <div>
-                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Duración *</label>
-                                <select id="tf_duracion" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff" onchange="calcFechaFin()">
-                                    <option value="">Seleccione...</option>
-                                    <option value="6">6 meses</option>
-                                    <option value="12">12 meses</option>
-                                    <option value="18">18 meses</option>
-                                    <option value="24">24 meses</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Fecha Finalización</label>
-                                <div id="tf_fecha_fin" style="width:100%; padding:10px 14px; border:2px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:800; color:#1e40af; background:#fff; min-height:20px">Selecciona fecha y duración</div>
+                    <!-- 1. Datos personales (siempre visible) -->
+                    <div style="border:1px solid #e5e7eb; border-radius:10px; margin-bottom:10px; overflow:hidden">
+                        <div style="background:#f9fafb; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#111827; border-bottom:1px solid #e5e7eb">📝 Datos del Inquilino</div>
+                        <div style="padding:14px 16px">
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Nombre Completo *</label><input type="text" id="tf_name" required placeholder="Nombre del inquilino" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Cédula *</label><input type="text" id="tf_cedula" required placeholder="1.007.123.456" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Teléfono *</label><input type="text" id="tf_phone" required placeholder="310 123 4567" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Email</label><input type="email" id="tf_email" placeholder="correo@ejemplo.com" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Dirección Actual</label><input type="text" id="tf_direccion" placeholder="Calle 50 #15-20" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#374151">Estado Civil</label><select id="tf_estado_civil" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; background:#fff"><option value="">Seleccione...</option><option value="Soltero/a">Soltero/a</option><option value="Casado/a">Casado/a</option><option value="Union libre">Unión libre</option><option value="Divorciado/a">Divorciado/a</option></select></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Codeudores (múltiples) -->
-                    <div style="background:#fefce8; border:1px solid #fef08a; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-                            <div style="font-size:0.82rem; font-weight:700; color:#854d0e">🤝 Datos del Codeudor(es)</div>
-                            <div style="display:flex; gap:10px; align-items:center">
-                                <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer">
-                                    <input type="checkbox" id="tf_has_codeudor" onchange="toggleCodeudor()" style="cursor:pointer"> Sin codeudor
-                                </label>
-                                <button type="button" id="btnAddCodeudor" onclick="addCodeudor()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir otro codeudor</button>
+                    <!-- 2. Laboral (colapsable) -->
+                    <div style="border:1px solid #a7f3d0; border-radius:10px; margin-bottom:10px; overflow:hidden">
+                        <div onclick="toggleSection('sec_laboral')" style="background:#ecfdf5; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#065f46; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none"><span>💼 Información Laboral y Financiera</span><span id="sec_laboral_icon" style="transition:transform 0.3s">▶</span></div>
+                        <div id="sec_laboral" style="padding:14px 16px; display:none">
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Empresa</label><input type="text" id="tf_empresa" placeholder="Coca-Cola FEMSA" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Cargo</label><input type="text" id="tf_ocupacion" placeholder="Ingeniero" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Tipo Contrato</label><select id="tf_tipo_contrato" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; background:#fff"><option value="">Seleccione...</option><option value="Indefinido">Indefinido</option><option value="Fijo">Fijo</option><option value="Prestacion">Prestación</option><option value="Independiente">Independiente</option><option value="Pensionado">Pensionado</option></select></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Dir. Empresa</label><input type="text" id="tf_empresa_direccion" placeholder="Av. Caracas #45-12" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Tel. Empresa</label><input type="text" id="tf_empresa_tel" placeholder="601 234 5678" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Antigüedad</label><input type="text" id="tf_antiguedad" placeholder="3 años" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Ingresos Mensuales</label><div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#6b7280">$</span><input type="text" id="tf_ingresos" placeholder="3.500.000" style="width:100%; padding:8px 10px 8px 20px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; font-weight:700" oninput="formatCurrency(this)"></div></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Otros Ingresos</label><div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#6b7280">$</span><input type="text" id="tf_otros_ingresos" placeholder="0" style="width:100%; padding:8px 10px 8px 20px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; font-weight:700" oninput="formatCurrency(this)"></div></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fuente Otros</label><input type="text" id="tf_otros_fuente" placeholder="Alquiler, freelance" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                             </div>
                         </div>
-                        <div id="codeudoresContainer"></div>
                     </div>
 
-                    <!-- Campos adicionales personalizados -->
-                    <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:16px; margin-bottom:16px">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-                            <div>
-                                <div style="font-size:0.82rem; font-weight:700; color:#5b21b6">📋 Datos Adicionales del Inquilino</div>
-                                <p style="font-size:0.72rem; color:#7c3aed; margin:2px 0 0">Agrega cualquier dato que tu inmobiliaria necesite (empresa, referencias, etc.)</p>
-                            </div>
-                            <button type="button" onclick="addCustomField()" style="padding:5px 12px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; border-radius:6px; font-size:0.75rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir dato</button>
+                    <!-- 3. Referencias (colapsable, dinámicas) -->
+                    <div style="border:1px solid #fde68a; border-radius:10px; margin-bottom:10px; overflow:hidden">
+                        <div onclick="toggleSection('sec_refs')" style="background:#fffbeb; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#92400e; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none"><span>📞 Referencias Personales y Familiares</span><span id="sec_refs_icon" style="transition:transform 0.3s">▶</span></div>
+                        <div id="sec_refs" style="padding:14px 16px; display:none">
+                            <div id="refsContainer"></div>
+                            <button type="button" onclick="addReference()" style="padding:6px 14px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px">+ Añadir referencia</button>
+                            <div style="margin-top:10px"><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px; color:#92400e">Observaciones</label><input type="text" id="tf_obs" placeholder="Tiene mascota, requiere parqueadero, etc." style="width:100%; padding:8px 10px; border:1px solid #fde68a; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                         </div>
-                        <div id="customFieldsContainer"></div>
                     </div>
 
-                    <div style="display:flex; gap:10px; justify-content:flex-end">
-                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Inquilino</button>
-                        <button type="button" onclick="hideTenantForm()" style="padding:10px 22px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button>
+                    <!-- 4. Contrato (colapsable) -->
+                    <div style="border:1px solid #bfdbfe; border-radius:10px; margin-bottom:10px; overflow:hidden">
+                        <div onclick="toggleSection('sec_contrato')" style="background:#eff6ff; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#1e40af; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none"><span>📅 Contrato de Arriendo</span><span id="sec_contrato_icon" style="transition:transform 0.3s">▶</span></div>
+                        <div id="sec_contrato" style="padding:14px 16px; display:none">
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fecha Inicio *</label><input type="date" id="tf_fecha_inicio" required style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem" onchange="calcFechaFin()"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Duración *</label><select id="tf_duracion" required style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; background:#fff" onchange="calcFechaFin()"><option value="">Seleccione...</option><option value="6">6 meses</option><option value="12">12 meses</option><option value="18">18 meses</option><option value="24">24 meses</option></select></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Fecha Fin</label><div id="tf_fecha_fin" style="width:100%; padding:8px 12px; border:2px solid #bfdbfe; border-radius:7px; font-size:0.85rem; font-weight:800; color:#1e40af; background:#fff; min-height:18px; transition:transform 0.2s">—</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. Codeudores (colapsable) -->
+                    <div style="border:1px solid #fef08a; border-radius:10px; margin-bottom:10px; overflow:hidden">
+                        <div onclick="toggleSection('sec_codeudor')" style="background:#fefce8; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#854d0e; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none"><span>🤝 Codeudor(es)</span><span id="sec_codeudor_icon" style="transition:transform 0.3s">▶</span></div>
+                        <div id="sec_codeudor" style="padding:14px 16px; display:none">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+                                <label style="display:flex; align-items:center; gap:6px; font-size:0.76rem; color:#6b7280; cursor:pointer"><input type="checkbox" id="tf_has_codeudor" onchange="toggleCodeudor()" style="cursor:pointer"> Sin codeudor</label>
+                                <button type="button" id="btnAddCodeudor" onclick="addCodeudor()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir codeudor</button>
+                            </div>
+                            <div id="codeudoresContainer"></div>
+                        </div>
+                    </div>
+
+                    <!-- 6. Datos Adicionales (colapsable) -->
+                    <div style="border:1px solid #ddd6fe; border-radius:10px; margin-bottom:16px; overflow:hidden">
+                        <div onclick="toggleSection('sec_adicional')" style="background:#f5f3ff; padding:11px 16px; font-size:0.82rem; font-weight:700; color:#5b21b6; cursor:pointer; display:flex; justify-content:space-between; align-items:center; user-select:none"><span>📋 Datos Adicionales</span><span id="sec_adicional_icon" style="transition:transform 0.3s">▶</span></div>
+                        <div id="sec_adicional" style="padding:14px 16px; display:none">
+                            <p style="font-size:0.72rem; color:#7c3aed; margin:0 0 8px">Crea campos personalizados: texto, número, fecha, selección, etc.</p>
+                            <div id="customFieldsContainer"></div>
+                            <button type="button" onclick="addCustomField()" style="padding:6px 14px; background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px">+ Añadir campo</button>
+                        </div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div style="display:flex; gap:10px; justify-content:flex-end; padding-top:12px; border-top:1px solid #e5e7eb">
+                        <button type="button" onclick="hideTenantForm()" style="padding:11px 24px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button>
+                        <button type="submit" style="padding:11px 28px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(22,163,74,0.3)">✓ Guardar Inquilino</button>
                     </div>
                 </form>
             </div>
@@ -969,10 +937,35 @@ function showTenantForm(propertyId) {
     document.getElementById("tenant_prop_comision").textContent = "$" + comision.toLocaleString('es-CO');
     document.getElementById("tenantFormPanel").style.display = "block";
     document.getElementById("tenantForm").reset();
-    // Inicializar con 1 codeudor
     document.getElementById("codeudoresContainer").innerHTML = "";
     document.getElementById("customFieldsContainer").innerHTML = "";
+    document.getElementById("refsContainer").innerHTML = "";
+    codeudorCount = 0;
     addCodeudor();
+    addReference();
+}
+
+function toggleSection(id) {
+    const el = document.getElementById(id);
+    const icon = document.getElementById(id + "_icon");
+    if (el.style.display === "none") {
+        el.style.display = "block";
+        if (icon) icon.textContent = "▼";
+    } else {
+        el.style.display = "none";
+        if (icon) icon.textContent = "▶";
+    }
+}
+
+let refCount = 0;
+function addReference() {
+    refCount++;
+    const container = document.getElementById("refsContainer");
+    const div = document.createElement("div");
+    div.className = "ref-row";
+    div.style.cssText = "display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:8px; margin-bottom:8px; align-items:end";
+    div.innerHTML = '<div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Nombre</label><input type="text" class="ref-name" placeholder="Nombre completo" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Teléfono</label><input type="text" class="ref-phone" placeholder="310 123 4567" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Relación</label><input type="text" class="ref-rel" placeholder="Hermano, Amigo" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:7px 10px; cursor:pointer; font-size:0.78rem; margin-bottom:1px">🗑️</button>';
+    container.appendChild(div);
 }
 
 let codeudorCount = 0;
@@ -1004,12 +997,22 @@ function addCustomField() {
     const container = document.getElementById("customFieldsContainer");
     const div = document.createElement("div");
     div.className = "custom-field-row";
-    div.style.cssText = "display:grid; grid-template-columns:1fr 2fr auto; gap:10px; margin-bottom:8px; align-items:center";
-    div.innerHTML = `
-        <input type="text" class="cf-label" placeholder="Etiqueta (ej: Empresa donde trabaja)" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem; font-weight:600">
-        <input type="text" class="cf-value" placeholder="Valor (ej: Coca-Cola FEMSA)" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.83rem">
-        <button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:8px 12px; font-size:0.78rem; cursor:pointer; font-family:inherit">🗑️</button>`;
+    div.style.cssText = "display:grid; grid-template-columns:1fr auto 2fr auto; gap:8px; margin-bottom:8px; align-items:end";
+    div.innerHTML = '<div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Etiqueta</label><input type="text" class="cf-label" placeholder="Ej: Empresa, Salario, Fecha nacimiento" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; font-weight:600"></div><div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Tipo</label><select class="cf-type" onchange="updateCustomFieldInput(this)" style="width:100%; padding:7px 8px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.78rem; background:#fff"><option value="texto">Texto</option><option value="numero">Número</option><option value="moneda">Moneda $</option><option value="fecha">Fecha</option><option value="si_no">Sí/No</option></select></div><div class="cf-input-wrap"><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Valor</label><input type="text" class="cf-value" placeholder="Ingrese el valor" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><button type="button" onclick="this.parentElement.remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:7px 10px; cursor:pointer; font-size:0.78rem; margin-bottom:1px">🗑️</button>';
     container.appendChild(div);
+}
+
+function updateCustomFieldInput(select) {
+    const row = select.closest('.custom-field-row');
+    const wrap = row.querySelector('.cf-input-wrap');
+    const type = select.value;
+    let inputHtml = '<label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Valor</label>';
+    if (type === 'texto') inputHtml += '<input type="text" class="cf-value" placeholder="Ingrese texto" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem">';
+    else if (type === 'numero') inputHtml += '<input type="number" class="cf-value" placeholder="0" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem">';
+    else if (type === 'moneda') inputHtml += '<div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.8rem; color:#6b7280">$</span><input type="text" class="cf-value" placeholder="1.500.000" style="width:100%; padding:7px 10px 7px 20px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; font-weight:700" oninput="formatCurrency(this)"></div>';
+    else if (type === 'fecha') inputHtml += '<input type="date" class="cf-value" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem">';
+    else if (type === 'si_no') inputHtml += '<select class="cf-value" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; background:#fff"><option value="">Seleccione...</option><option value="Sí">Sí</option><option value="No">No</option></select>';
+    wrap.innerHTML = inputHtml;
 }
 
 function hideTenantForm() { document.getElementById("tenantFormPanel").style.display = "none"; selectedAdminProperty = null; }
