@@ -725,27 +725,64 @@ function renderClientsTable(clients) {
         return;
     }
     const props = window._propertiesData || [];
-    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Nombre</th><th style="padding:10px 12px; text-align:center">Rol</th><th style="padding:10px 12px; text-align:left">Documento</th><th style="padding:10px 12px; text-align:left">Telefono</th><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px; text-align:center">Acciones</th></tr></thead><tbody>';
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Nombre</th><th style="padding:10px 12px; text-align:center">Rol</th><th style="padding:10px 12px; text-align:left">Documento</th><th style="padding:10px 12px; text-align:left">Telefono</th><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px; text-align:center">Acciones</th><th style="padding:10px 12px; text-align:center">Eliminar</th></tr></thead><tbody>';
     clients.forEach(c => {
         const isPropietario = c.name.includes('(Propietario');
         const isInquilino = c.name.includes('(Inquilino');
-        const displayName = c.name.replace(/\s*\(Propietario\/a\)/g, '').replace(/\s*\(Inquilino\)/g, '').trim();
+        const displayName = c.name.replace(/\s*\(Propietario\/a\)/g, '').replace(/\s*\(Inquilino\)/g, '').replace(/\s*\(Codeudor de [^)]+\)/g, '').trim();
         let rolBadge = '<span style="background:#f3f4f6; color:#374151; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Cliente</span>';
         if (isPropietario) rolBadge = '<span style="background:#dbeafe; color:#1e40af; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Propietario/a</span>';
         if (isInquilino) rolBadge = '<span style="background:#fef3c7; color:#92400e; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Inquilino</span>';
+        if (c.name.includes('(Codeudor')) rolBadge = '<span style="background:#fce7f3; color:#9d174d; padding:3px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">Codeudor</span>';
+
+        // Buscar propiedad asociada y construir tooltip
         let inmuebleInfo = '—';
+        let tooltipAttr = '';
         if (isPropietario && props.length) {
             const prop = props.find(p => p.ownerName && p.ownerName.toLowerCase().indexOf(displayName.toLowerCase().substring(0, 4)) >= 0);
-            if (prop) inmuebleInfo = '<span style="color:#1e40af; font-weight:600">🏠 ' + (prop.propertyAddress || prop.name) + '</span>';
+            if (prop) {
+                const rent = Number(prop.rentValue || 0);
+                const comision = Math.round(rent * 0.11);
+                const supData = prop.supplier || '';
+                const cedulaMatch = supData.match(/CC:([^|]+)/);
+                const cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+                const phone = supData.replace(/CC:[^|]+\|?\s*/, '').trim() || '—';
+                tooltipAttr = ' title="👤 ' + (prop.ownerName || '—') + '&#10;📞 ' + phone + '&#10;🆔 CC ' + cedula + '&#10;💵 Arriendo: $' + rent.toLocaleString('es-CO') + '&#10;💼 Comisión: $' + comision.toLocaleString('es-CO') + '&#10;📍 ' + (prop.propertyAddress || '—') + '" style="cursor:help"';
+                inmuebleInfo = '<span style="color:#1e40af; font-weight:600">🏠 ' + (prop.propertyAddress || prop.name) + ' <span style="font-size:0.65rem; color:#6366f1">ℹ️</span></span>';
+            }
         } else if (isInquilino && c.address) {
-            inmuebleInfo = '<span style="color:#92400e; font-weight:600">🔑 ' + c.address + '</span>';
+            const prop = props.find(p => p.propertyAddress && p.propertyAddress === c.address);
+            if (prop) {
+                const rent = Number(prop.rentValue || 0);
+                const comision = Math.round(rent * 0.11);
+                tooltipAttr = ' title="🏠 ' + (prop.name || '—') + '&#10;👤 Propietario: ' + (prop.ownerName || '—') + '&#10;💵 Arriendo: $' + rent.toLocaleString('es-CO') + '&#10;💼 Comisión: $' + comision.toLocaleString('es-CO') + '&#10;📍 ' + (prop.propertyAddress || '—') + '" style="cursor:help"';
+            }
+            inmuebleInfo = '<span style="color:#92400e; font-weight:600">🔑 ' + c.address + ' <span style="font-size:0.65rem; color:#6366f1">ℹ️</span></span>';
         }
+
         const statusBadge = c.active ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>' : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
         const actionBtn = c.active ? '<button onclick="toggleClient(' + c.id + ', false)" style="padding:4px 12px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Inactivar</button>' : '<button onclick="toggleClient(' + c.id + ', true)" style="padding:4px 12px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Activar</button>';
-        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px; font-weight:600">' + displayName + '</td><td style="padding:10px 12px; text-align:center">' + rolBadge + '</td><td style="padding:10px 12px">' + c.documentType + ' ' + c.document + '</td><td style="padding:10px 12px">' + (c.phone || '—') + '</td><td style="padding:10px 12px; font-size:0.78rem">' + inmuebleInfo + '</td><td style="padding:10px 12px; text-align:center">' + statusBadge + '</td><td style="padding:10px 12px; text-align:center">' + actionBtn + '</td></tr>';
+        const deleteBtn = '<button onclick="deleteClient(' + c.id + ', \'' + displayName.replace(/'/g, "\\'") + '\')" style="padding:4px 10px; background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; font-size:0.78rem; cursor:pointer; transition:all 0.2s" onmouseover="this.style.background=\'#dc2626\'; this.style.color=\'#fff\'" onmouseout="this.style.background=\'#fef2f2\'; this.style.color=\'#dc2626\'">🗑️</button>';
+
+        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px; font-weight:600">' + displayName + '</td><td style="padding:10px 12px; text-align:center">' + rolBadge + '</td><td style="padding:10px 12px">' + c.documentType + ' ' + c.document + '</td><td style="padding:10px 12px">' + (c.phone || '—') + '</td><td style="padding:10px 12px; font-size:0.78rem"' + tooltipAttr + '>' + inmuebleInfo + '</td><td style="padding:10px 12px; text-align:center">' + statusBadge + '</td><td style="padding:10px 12px; text-align:center">' + actionBtn + '</td><td style="padding:10px 12px; text-align:center">' + deleteBtn + '</td></tr>';
     });
     html += '</tbody></table><div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ' + clients.length + ' clientes</div>';
     document.getElementById("clientsTableContainer").innerHTML = html;
+}
+
+async function deleteClient(id, name) {
+    if (!confirm("¿Eliminar al cliente '" + name + "'?\n\nEsta acción no se puede deshacer.")) return;
+    try {
+        const res = await fetch(API + "/clients/" + id, { method:"DELETE", headers: authHeaders() });
+        if (!res.ok) {
+            // Si no hay DELETE, inactivar
+            await fetch(API + "/clients/" + id + "/active?active=false", { method:"PATCH", headers: authHeaders() });
+            alert("✓ Cliente inactivado");
+        } else {
+            alert("✓ Cliente eliminado");
+        }
+        loadClients();
+    } catch (e) { alert("Error: " + e.message); }
 }
 
 function renderClientStats(clients) {

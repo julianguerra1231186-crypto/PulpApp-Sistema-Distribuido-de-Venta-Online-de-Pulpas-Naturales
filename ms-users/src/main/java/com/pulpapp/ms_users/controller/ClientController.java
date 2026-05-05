@@ -51,4 +51,10 @@ public class ClientController {
     public ClientResponseDTO toggleActive(@PathVariable Long id, @RequestParam boolean active) {
         return clientService.toggleActive(id, active);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        clientService.delete(id);
+    }
 }
