@@ -525,6 +525,13 @@
                     </div>
                 </div>
 
+                <!-- Pago a Propietarios -->
+                <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-top:20px">
+                    <h3 style="font-size:0.92rem; font-weight:700; color:#111827; margin:0 0 4px">👤 Pago a Propietarios</h3>
+                    <p style="font-size:0.78rem; color:#6b7280; margin:0 0 14px">Transferencias pendientes a propietarios. Fechas de envío: del 1 al 10 de cada mes.</p>
+                    <div id="pagosPropietariosContainer"><div style="text-align:center; padding:16px; color:#9ca3af; font-size:0.82rem">Cargando...</div></div>
+                </div>
+
                 <!-- Pago Colaboradores -->
                 <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-top:20px">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
@@ -2543,6 +2550,7 @@ async function loadPaymentsTab() {
     }
     loadPaymentConfig();
     renderPaymentsPending();
+    renderPagosPropietarios();
     renderColaboradores();
 }
 
@@ -2583,28 +2591,29 @@ function renderPaymentsPending() {
     const adminProps = props.filter(p => p.rentValue && Number(p.rentValue) > 0);
     if (!adminProps.length) { container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af">No hay propiedades con arriendo.</div>'; return; }
 
-    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:left">Propietario</th><th style="padding:10px 12px; text-align:right">Arriendo</th><th style="padding:10px 12px; text-align:right">Ganancia</th><th style="padding:10px 12px; text-align:right">Enviar a Propietario</th><th style="padding:10px 12px; text-align:center">Fechas Cobro</th><th style="padding:10px 12px; text-align:center">Dias Restantes</th><th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px; text-align:center">Factura Propietario</th></tr></thead><tbody>';
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:left">Inquilino</th><th style="padding:10px 12px; text-align:right">Arriendo</th><th style="padding:10px 12px; text-align:center">Fechas Cobro</th><th style="padding:10px 12px; text-align:center">Dias Restantes</th><th style="padding:10px 12px; text-align:center">Estado</th></tr></thead><tbody>';
 
     adminProps.forEach(function(p) {
         var rent = Number(p.rentValue || 0);
-        var comision = Math.round(rent * 0.11);
-        var toProp = rent - comision;
-        var statusKey = monthKey + '_' + p.id;
+        var statusKey = monthKey + '_inq_' + p.id;
         var isPaid = paymentStatuses[statusKey] === 'pagado';
         var propPay = propPayDates[p.id] || {};
         var inqDesde = propPay.diaInqDesde || propPay.diaInquilino || 25;
         var inqHasta = propPay.diaInqHasta || 31;
-        var propDesde = propPay.diaPropDesde || propPay.diaPropietario || 1;
-        var propHasta = propPay.diaPropHasta || 10;
         var diasFaltan = inqDesde - todayDay;
         if (diasFaltan < 0) diasFaltan += 30;
         var diasColor = diasFaltan <= 3 ? '#ef4444' : diasFaltan <= 7 ? '#d97706' : '#16a34a';
         var diasBg = diasFaltan <= 3 ? '#fef2f2' : diasFaltan <= 7 ? '#fffbeb' : '#f0fdf4';
         var diasBadge = isPaid ? '<span style="color:#16a34a; font-weight:700">✓</span>' : '<span style="background:' + diasBg + '; color:' + diasColor + '; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:800">' + diasFaltan + ' días</span>';
-        var fechasInfo = '<div style="font-size:0.7rem; line-height:1.4"><span style="color:#065f46">Cobro: ' + inqDesde + '-' + inqHasta + '</span><br><span style="color:#1e40af">Envío: ' + propDesde + '-' + propHasta + '</span></div>';
-        var estadoBtn = '<span onclick="togglePaymentStatus(\'' + statusKey + '\')" style="cursor:pointer; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:700; ' + (isPaid ? 'background:#dcfce7; color:#16a34a' : 'background:#fef3c7; color:#92400e') + '">' + (isPaid ? '✓ Pagado' : '⏳ Pendiente') + '</span>';
+        var fechasInfo = '<span style="font-size:0.72rem; color:#065f46; font-weight:600">Del ' + inqDesde + ' al ' + inqHasta + '</span>';
+        var estadoBtn = '<span onclick="togglePaymentStatus(\'' + statusKey + '\')" style="cursor:pointer; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:700; ' + (isPaid ? 'background:#dcfce7; color:#16a34a' : 'background:#fef3c7; color:#92400e') + '">' + (isPaid ? '✓ Cobrado' : '⏳ Pendiente') + '</span>';
+        // Buscar inquilino asociado a esta propiedad
+        var inquilinoName = '—';
+        var allClients = document.getElementById('clientsTableContainer')?.dataset?.clients;
+        // Simplificado: mostrar dirección como referencia
+        inquilinoName = '<span style="color:#92400e; font-weight:600">🔑 Inquilino asignado</span>';
 
-        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px"><div style="font-weight:600; color:#111827">' + (p.name || '') + '</div><div style="font-size:0.68rem; color:#6b7280">' + (p.propertyAddress || '') + '</div></td><td style="padding:10px 12px; color:#1e40af; font-weight:600">' + (p.ownerName || '') + '</td><td style="padding:10px 12px; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:right; font-weight:700; color:#6366f1">$' + comision.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:right; font-weight:800; color:#16a34a">$' + toProp.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:center">' + fechasInfo + '</td><td style="padding:10px 12px; text-align:center">' + diasBadge + '</td><td style="padding:10px 12px; text-align:center">' + estadoBtn + '</td><td style="padding:10px 12px; text-align:center"><button onclick="generarFacturaPropietario(' + p.id + ')" style="padding:5px 12px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:6px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Generar</button></td></tr>';
+        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px"><div style="font-weight:600; color:#111827">' + (p.name || '') + '</div><div style="font-size:0.68rem; color:#6b7280">' + (p.propertyAddress || '') + '</div></td><td style="padding:10px 12px; font-size:0.8rem">' + inquilinoName + '</td><td style="padding:10px 12px; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:center">' + fechasInfo + '</td><td style="padding:10px 12px; text-align:center">' + diasBadge + '</td><td style="padding:10px 12px; text-align:center">' + estadoBtn + '</td></tr>';
     });
 
     html += '</tbody></table>';
@@ -2643,6 +2652,46 @@ function togglePaymentStatus(statusKey) {
     statuses[statusKey] = statuses[statusKey] === 'pagado' ? 'pendiente' : 'pagado';
     localStorage.setItem('zentrix_payment_statuses', JSON.stringify(statuses));
     renderPaymentsPending();
+    renderPagosPropietarios();
+}
+
+function renderPagosPropietarios() {
+    const container = document.getElementById('pagosPropietariosContainer');
+    if (!container) return;
+    const props = window._propertiesData || [];
+    const now = new Date();
+    const todayDay = now.getDate();
+    const monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    const paymentStatuses = JSON.parse(localStorage.getItem('zentrix_payment_statuses') || '{}');
+    const propPayDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
+
+    const adminProps = props.filter(p => p.rentValue && Number(p.rentValue) > 0);
+    if (!adminProps.length) { container.innerHTML = '<div style="text-align:center; padding:16px; color:#9ca3af; font-size:0.82rem">No hay propiedades con arriendo.</div>'; return; }
+
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e3a5f; color:#fff"><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:left">Propietario</th><th style="padding:10px 12px; text-align:right">Arriendo</th><th style="padding:10px 12px; text-align:right">Comisión (11%)</th><th style="padding:10px 12px; text-align:right">Enviar a Propietario</th><th style="padding:10px 12px; text-align:center">Fecha Envío</th><th style="padding:10px 12px; text-align:center">Días Restantes</th><th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px; text-align:center">Factura</th></tr></thead><tbody>';
+
+    adminProps.forEach(function(p) {
+        var rent = Number(p.rentValue || 0);
+        var comision = Math.round(rent * 0.11);
+        var toProp = rent - comision;
+        var statusKey = monthKey + '_prop_' + p.id;
+        var isPaid = paymentStatuses[statusKey] === 'pagado';
+        var propPay = propPayDates[p.id] || {};
+        var propDesde = propPay.diaPropDesde || propPay.diaPropietario || 1;
+        var propHasta = propPay.diaPropHasta || 10;
+        var diasFaltan = propDesde - todayDay;
+        if (diasFaltan < 0) diasFaltan += 30;
+        var diasColor = diasFaltan <= 3 ? '#ef4444' : diasFaltan <= 7 ? '#d97706' : '#1e40af';
+        var diasBg = diasFaltan <= 3 ? '#fef2f2' : diasFaltan <= 7 ? '#fffbeb' : '#eff6ff';
+        var diasBadge = isPaid ? '<span style="color:#16a34a; font-weight:700">✓</span>' : '<span style="background:' + diasBg + '; color:' + diasColor + '; padding:3px 10px; border-radius:999px; font-size:0.75rem; font-weight:800">' + diasFaltan + ' días</span>';
+        var fechaEnvio = '<span style="font-size:0.72rem; color:#1e40af; font-weight:600">Del ' + propDesde + ' al ' + propHasta + '</span>';
+        var estadoBtn = '<span onclick="togglePaymentStatus(\'' + statusKey + '\')" style="cursor:pointer; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:700; ' + (isPaid ? 'background:#dcfce7; color:#16a34a' : 'background:#dbeafe; color:#1e40af') + '">' + (isPaid ? '✓ Enviado' : '⏳ Pendiente') + '</span>';
+
+        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px"><div style="font-weight:600; color:#111827">' + (p.name || '') + '</div><div style="font-size:0.68rem; color:#6b7280">' + (p.propertyAddress || '') + '</div></td><td style="padding:10px 12px; color:#1e40af; font-weight:700">' + (p.ownerName || '') + '</td><td style="padding:10px 12px; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:right; color:#6366f1; font-weight:600">-$' + comision.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:right; font-weight:800; color:#16a34a">$' + toProp.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:center">' + fechaEnvio + '</td><td style="padding:10px 12px; text-align:center">' + diasBadge + '</td><td style="padding:10px 12px; text-align:center">' + estadoBtn + '</td><td style="padding:10px 12px; text-align:center"><button onclick="generarFacturaPropietario(' + p.id + ')" style="padding:5px 10px; background:linear-gradient(135deg,#1e40af,#1e3a5f); color:#fff; border:none; border-radius:6px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Generar</button></td></tr>';
+    });
+
+    html += '</tbody></table>';
+    container.innerHTML = html;
 }
 
 // ── TASK 2: Logo Upload ──
