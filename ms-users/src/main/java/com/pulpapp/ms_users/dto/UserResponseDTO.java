@@ -3,6 +3,8 @@ package com.pulpapp.ms_users.dto;
 import com.pulpapp.ms_users.entity.Role;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 public class UserResponseDTO {
 
@@ -15,5 +17,7 @@ public class UserResponseDTO {
     private Role role;
     private Boolean activo;
     private Long tenantId;
+    private Boolean forcePasswordChange;
+    private LocalDateTime lastLogin;
 
 }

@@ -42,6 +42,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
 
                 // ── Autenticación JWT ──────────────────────────────────────
+                .requestMatchers(HttpMethod.POST, "/auth/reset-password").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/auth/**").permitAll()
 
                 // ── Tenants: solo ADMIN puede gestionar tenants ────────────

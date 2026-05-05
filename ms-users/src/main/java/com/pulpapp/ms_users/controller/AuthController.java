@@ -41,4 +41,13 @@ public class AuthController {
     public AuthResponseDTO register(@Valid @RequestBody RegisterRequestDTO request) {
         return authService.register(request);
     }
+
+    /**
+     * POST /auth/reset-password
+     * Admin-only: resets a user's password to a random temporary one.
+     */
+    @PostMapping("/reset-password")
+    public java.util.Map<String, String> resetPassword(@RequestParam Long userId) {
+        return authService.resetPassword(userId);
+    }
 }

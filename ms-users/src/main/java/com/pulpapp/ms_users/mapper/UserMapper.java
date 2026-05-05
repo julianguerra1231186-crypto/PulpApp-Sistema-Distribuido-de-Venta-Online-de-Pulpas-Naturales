@@ -22,6 +22,8 @@ public class UserMapper {
         dto.setRole(user.getRole());
         dto.setActivo(user.getActivo());
         dto.setTenantId(user.getTenantId());
+        dto.setForcePasswordChange(user.getForcePasswordChange());
+        dto.setLastLogin(user.getLastLogin());
         return dto;
     }
 
