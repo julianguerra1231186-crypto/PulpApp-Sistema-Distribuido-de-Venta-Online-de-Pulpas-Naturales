@@ -90,6 +90,9 @@ public class InventoryService {
         item.setCostPrice(dto.getCostPrice());
         item.setSalePrice(dto.getSalePrice());
         item.setSupplier(dto.getSupplier());
+        item.setOwnerName(dto.getOwnerName());
+        item.setPropertyAddress(dto.getPropertyAddress());
+        item.setRentValue(dto.getRentValue());
     }
 
     private InventoryItemResponseDTO toDTO(InventoryItem i) {
@@ -97,6 +100,7 @@ public class InventoryService {
                 .id(i.getId()).tenantId(i.getTenantId()).code(i.getCode()).name(i.getName())
                 .description(i.getDescription()).stock(i.getStock()).costPrice(i.getCostPrice())
                 .salePrice(i.getSalePrice()).unitProfit(i.getUnitProfit()).supplier(i.getSupplier())
+                .ownerName(i.getOwnerName()).propertyAddress(i.getPropertyAddress()).rentValue(i.getRentValue())
                 .active(i.getActive()).createdAt(i.getCreatedAt()).updatedAt(i.getUpdatedAt())
                 .build();
     }
