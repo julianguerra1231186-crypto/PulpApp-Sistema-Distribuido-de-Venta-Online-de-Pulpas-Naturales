@@ -42,6 +42,8 @@
         .badge-rent { background:#dbeafe; color:#1e40af; }
         .empty-msg { text-align:center; padding:32px; color:#9ca3af; }
         @media(max-width:768px) { .dash-sidebar{width:60px} .dash-main{margin-left:60px} .stats-row{grid-template-columns:1fr 1fr} .prop-grid{grid-template-columns:1fr} }
+        @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+        @keyframes slideUp { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
     </style>
 </head>
 <body>
@@ -1303,18 +1305,18 @@ async function loadProperties() {
     try {
         const res = await fetch(API + "/inventory", { headers: authHeaders() });
         const data = await res.json();
+        window._propertiesData = data; // guardar para el detalle
         if (!data.length) { document.getElementById("propertiesGrid").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af; grid-column:1/-1">No hay propiedades registradas. ¡Agrega la primera!</div>'; return; }
         let html = "";
-        data.forEach(p => {
+        data.forEach((p, idx) => {
             const isRent = p.rentValue > 0;
             const isSale = p.salePrice > 0 && !isRent;
             const badge = isRent ? '<span class="prop-badge badge-rent">Arriendo</span>' : '<span class="prop-badge badge-sale">Venta</span>';
             const price = isRent ? "$" + Number(p.rentValue).toLocaleString('es-CO') + "/mes" : "$" + Number(p.salePrice).toLocaleString('es-CO');
-            // Extraer tipo de inmueble de la descripción
             const desc = p.description || '';
             const tipoMatch = desc.match(/^(Casa|Apartamento|Local Comercial|Bodega|Lote|Oficina)/);
             const tipoIcon = tipoMatch ? (tipoMatch[1] === 'Casa' ? '🏡' : tipoMatch[1] === 'Apartamento' ? '🏢' : tipoMatch[1] === 'Local Comercial' ? '🏪' : '🏠') : (isRent ? '🏢' : '🏡');
-            html += `<div class="prop-card">
+            html += `<div class="prop-card" onclick="showPropertyDetail(${idx})" style="cursor:pointer">
                 <div class="prop-img" style="position:relative">
                     <span style="font-size:2.5rem">${tipoIcon}</span>
                     <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-weight:600">${tipoMatch ? tipoMatch[1] : 'Inmueble'}</span>
@@ -1325,11 +1327,111 @@ async function loadProperties() {
                     <p style="font-size:0.72rem; color:#6b7280; margin:2px 0">👤 ${p.ownerName || '—'}</p>
                     ${badge}
                     <div class="prop-price" style="margin-top:8px">${price}</div>
+                    <div style="margin-top:6px; font-size:0.7rem; color:#6366f1; font-weight:600">Click para ver detalle →</div>
                 </div>
             </div>`;
         });
         document.getElementById("propertiesGrid").innerHTML = html;
     } catch (e) { document.getElementById("propertiesGrid").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444; grid-column:1/-1">Error: ' + e.message + '</div>'; }
+}
+
+function showPropertyDetail(idx) {
+    const p = window._propertiesData[idx];
+    if (!p) return;
+    const desc = p.description || '';
+    const tipoMatch = desc.match(/^(Casa|Apartamento|Local Comercial|Bodega|Lote|Oficina)/);
+    const clasMatch = desc.match(/Propiedad Horizontal|Barrio \(No P\.H\.\)|Barrio/);
+    const estratoMatch = desc.match(/Estrato (\d)/);
+    const barrioMatch = desc.match(/Barrio: (.+?)$/);
+    const isRent = p.rentValue > 0;
+    const rentVal = Number(p.rentValue || 0);
+    const saleVal = Number(p.salePrice || 0);
+    const comision = Math.round(rentVal * 0.11);
+    // Extraer cédula del campo supplier
+    const supData = p.supplier || '';
+    const cedulaMatch = supData.match(/CC:([^\|]+)/);
+    const phoneMatch = supData.replace(/CC:[^\|]+\|?\s*/, '');
+
+    const modal = document.createElement('div');
+    modal.id = "propDetailModal";
+    modal.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; animation:fadeIn 0.2s";
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = `
+        <div style="background:#fff; border-radius:16px; max-width:600px; width:100%; max-height:85vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideUp 0.3s">
+            <!-- Header -->
+            <div style="background:linear-gradient(135deg,#6366f1,#4f46e5); padding:24px; border-radius:16px 16px 0 0; color:#fff; position:relative">
+                <button onclick="document.getElementById('propDetailModal').remove()" style="position:absolute; top:12px; right:12px; background:rgba(255,255,255,0.2); border:none; color:#fff; width:30px; height:30px; border-radius:50%; font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center">✕</button>
+                <div style="font-size:1.3rem; font-weight:800">${p.name}</div>
+                <div style="font-size:0.82rem; opacity:0.85; margin-top:4px">📍 ${p.propertyAddress || '—'}</div>
+                <div style="display:flex; gap:8px; margin-top:10px">
+                    ${tipoMatch ? `<span style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600">${tipoMatch[1]}</span>` : ''}
+                    ${clasMatch ? `<span style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600">${clasMatch[0]}</span>` : ''}
+                    ${estratoMatch ? `<span style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600">Estrato ${estratoMatch[1]}</span>` : ''}
+                    <span style="background:${isRent ? 'rgba(34,197,94,0.3)' : 'rgba(234,179,8,0.3)'}; padding:4px 10px; border-radius:6px; font-size:0.72rem; font-weight:600">${isRent ? '🏘️ Arriendo' : '💰 Venta'}</span>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div style="padding:24px">
+                <!-- Datos del inmueble -->
+                <div style="margin-bottom:20px">
+                    <div style="font-size:0.82rem; font-weight:700; color:#111827; margin-bottom:10px; display:flex; align-items:center; gap:6px"><span style="background:#eef2ff; padding:3px 6px; border-radius:4px">🏠</span> Datos del Inmueble</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.82rem">
+                        <div style="background:#f9fafb; padding:10px 12px; border-radius:8px"><span style="color:#6b7280; font-size:0.72rem; display:block">Dirección</span><strong>${p.propertyAddress || '—'}</strong></div>
+                        <div style="background:#f9fafb; padding:10px 12px; border-radius:8px"><span style="color:#6b7280; font-size:0.72rem; display:block">Barrio</span><strong>${barrioMatch ? barrioMatch[1] : '—'}</strong></div>
+                        <div style="background:#f9fafb; padding:10px 12px; border-radius:8px"><span style="color:#6b7280; font-size:0.72rem; display:block">Tipo</span><strong>${tipoMatch ? tipoMatch[1] : '—'}</strong></div>
+                        <div style="background:#f9fafb; padding:10px 12px; border-radius:8px"><span style="color:#6b7280; font-size:0.72rem; display:block">Clasificación</span><strong>${clasMatch ? clasMatch[0] : '—'}</strong></div>
+                        <div style="background:#f9fafb; padding:10px 12px; border-radius:8px"><span style="color:#6b7280; font-size:0.72rem; display:block">Estrato</span><strong>${estratoMatch ? estratoMatch[1] : '—'}</strong></div>
+                        <div style="background:#f9fafb; padding:10px 12px; border-radius:8px"><span style="color:#6b7280; font-size:0.72rem; display:block">Código</span><strong>${p.code || '—'}</strong></div>
+                    </div>
+                    ${desc ? `<div style="margin-top:10px; padding:10px 12px; background:#f9fafb; border-radius:8px; font-size:0.8rem; color:#374151"><span style="color:#6b7280; font-size:0.72rem; display:block; margin-bottom:2px">Descripción</span>${desc}</div>` : ''}
+                </div>
+
+                <!-- Datos del propietario -->
+                <div style="margin-bottom:20px">
+                    <div style="font-size:0.82rem; font-weight:700; color:#1e40af; margin-bottom:10px; display:flex; align-items:center; gap:6px"><span style="background:#dbeafe; padding:3px 6px; border-radius:4px">👤</span> Propietario/a</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; font-size:0.82rem">
+                        <div style="background:#f0f7ff; padding:10px 12px; border-radius:8px; border:1px solid #bfdbfe"><span style="color:#6b7280; font-size:0.72rem; display:block">Nombre</span><strong style="color:#1e40af">${p.ownerName || '—'}</strong></div>
+                        <div style="background:#f0f7ff; padding:10px 12px; border-radius:8px; border:1px solid #bfdbfe"><span style="color:#6b7280; font-size:0.72rem; display:block">Cédula</span><strong>${cedulaMatch ? cedulaMatch[1].trim() : '—'}</strong></div>
+                        <div style="background:#f0f7ff; padding:10px 12px; border-radius:8px; border:1px solid #bfdbfe"><span style="color:#6b7280; font-size:0.72rem; display:block">Teléfono</span><strong>${phoneMatch || '—'}</strong></div>
+                    </div>
+                </div>
+
+                <!-- Valores financieros -->
+                <div>
+                    <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:10px; display:flex; align-items:center; gap:6px"><span style="background:#dcfce7; padding:3px 6px; border-radius:4px">💵</span> Valores</div>
+                    ${isRent ? `
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px">
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; text-align:center">
+                            <div>
+                                <div style="font-size:0.7rem; color:#6b7280; font-weight:600; margin-bottom:4px">Arriendo Mensual</div>
+                                <div style="font-size:1.2rem; font-weight:800; color:#111827">$${rentVal.toLocaleString('es-CO')}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.7rem; color:#6b7280; font-weight:600; margin-bottom:4px">Comisión (11%)</div>
+                                <div style="font-size:1.2rem; font-weight:800; color:#6366f1">$${comision.toLocaleString('es-CO')}</div>
+                            </div>
+                            <div>
+                                <div style="font-size:0.7rem; color:#6b7280; font-weight:600; margin-bottom:4px">Enviar Propietario</div>
+                                <div style="font-size:1.2rem; font-weight:800; color:#16a34a">$${(rentVal - comision).toLocaleString('es-CO')}</div>
+                            </div>
+                        </div>
+                    </div>` : `
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:16px; text-align:center">
+                        <div style="font-size:0.7rem; color:#6b7280; font-weight:600; margin-bottom:4px">Valor de Venta</div>
+                        <div style="font-size:1.4rem; font-weight:800; color:#d97706">$${saleVal.toLocaleString('es-CO')}</div>
+                    </div>`}
+                </div>
+
+                <!-- Fecha registro -->
+                <div style="margin-top:16px; padding-top:12px; border-top:1px solid #e5e7eb; display:flex; justify-content:space-between; font-size:0.75rem; color:#9ca3af">
+                    <span>Registrado: ${p.createdAt ? new Date(p.createdAt).toLocaleDateString('es-CO') : '—'}</span>
+                    <span style="color:${p.active ? '#16a34a' : '#ef4444'}; font-weight:600">${p.active ? '● Activo' : '● Inactivo'}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
 }
 
 async function saveProperty(e) {
