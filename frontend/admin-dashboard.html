@@ -139,24 +139,24 @@
         <div id="sec-overview">
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-card-label">Tenants activos</div>
+                    <div class="stat-card-label">Tenants Activos</div>
                     <div class="stat-card-value" id="statTenants">—</div>
-                    <div class="stat-card-change up">Negocios registrados</div>
+                    <div class="stat-card-change up">Estado ACTIVE</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Pagos pendientes</div>
-                    <div class="stat-card-value" id="statPayments">—</div>
-                    <div class="stat-card-change">Por aprobar</div>
+                    <div class="stat-card-label">Tenants Suspendidos</div>
+                    <div class="stat-card-value" id="statSuspended">—</div>
+                    <div class="stat-card-change down">Inactivos</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Usuarios totales</div>
-                    <div class="stat-card-value" id="statUsers">—</div>
-                    <div class="stat-card-change up">En la plataforma</div>
+                    <div class="stat-card-label">Planes por Vencer</div>
+                    <div class="stat-card-value" id="statExpiring">—</div>
+                    <div class="stat-card-change down">Menos de 7 días</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-card-label">Pedidos hoy</div>
-                    <div class="stat-card-value" id="statOrders">—</div>
-                    <div class="stat-card-change">Últimas 24h</div>
+                    <div class="stat-card-label">Ingresos Estimados</div>
+                    <div class="stat-card-value" id="statRevenue">—</div>
+                    <div class="stat-card-change up">Mensual</div>
                 </div>
             </div>
 
@@ -210,6 +210,37 @@
         </div>
 
     </main>
+</div>
+
+<!-- ═══════════ MODAL: Asignar Plan ═══════════ -->
+<div id="planModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; display:none; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:32px; width:440px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <h3 style="margin:0 0 6px; font-size:1.1rem; font-weight:800; color:#111827;">📦 Asignar Plan al Tenant</h3>
+        <p style="margin:0 0 20px; font-size:0.82rem; color:#6b7280;">Selecciona el plan y la fecha de inicio. La fecha de vencimiento se calcula automáticamente.</p>
+        <input type="hidden" id="planTenantId">
+        <div style="margin-bottom:16px;">
+            <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Plan</label>
+            <select id="planSelect" onchange="calcPlanEndDate()" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem;">
+                <option value="Básico" data-days="30">Básico — 30 días ($50.000)</option>
+                <option value="Pro" data-days="90">Pro — 90 días ($150.000)</option>
+                <option value="Enterprise" data-days="365">Enterprise — 365 días ($500.000)</option>
+            </select>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+            <div>
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Fecha Inicio</label>
+                <input type="date" id="planStartDate" onchange="calcPlanEndDate()" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem;">
+            </div>
+            <div>
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Fecha Vencimiento</label>
+                <input type="date" id="planEndDate" readonly style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#f9fafb; font-weight:700; color:#6366f1;">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; padding-top:12px; border-top:1px solid #e5e7eb;">
+            <button onclick="closePlanModal()" style="padding:10px 20px; background:#fff; color:#374151; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit;">Cancelar</button>
+            <button onclick="savePlan()" style="padding:10px 20px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit;">💾 Guardar Plan</button>
+        </div>
+    </div>
 </div>
 
 <div id="appToast" class="z-toast"></div>
@@ -289,49 +320,154 @@ async function loadOverview() {
 }
 
 // ── Tenants ──
+function getAdminPlans() {
+    try { return JSON.parse(localStorage.getItem('zentrix_admin_plans') || '{}'); } catch(e) { return {}; }
+}
+
+function calcDaysRemaining(tenantId) {
+    const plans = getAdminPlans();
+    const p = plans[tenantId];
+    if (!p || !p.startDate || !p.days) return null;
+    const start = new Date(p.startDate);
+    const end = new Date(start.getTime() + p.days * 86400000);
+    const now = new Date();
+    const diff = Math.ceil((end - now) / 86400000);
+    return diff;
+}
+
+function getDaysBadge(tenantId) {
+    const days = calcDaysRemaining(tenantId);
+    if (days === null) return '<span class="badge badge-blue">Sin plan</span>';
+    if (days <= 0) return '<span class="badge badge-red">Vencido</span>';
+    if (days < 5) return '<span class="badge badge-red">' + days + ' días</span>';
+    if (days <= 15) return '<span class="badge badge-yellow">' + days + ' días</span>';
+    return '<span class="badge badge-green">' + days + ' días</span>';
+}
+
+function getTenantPlanName(tenantId) {
+    const plans = getAdminPlans();
+    const p = plans[tenantId];
+    return p ? p.plan : 'Sin asignar';
+}
+
 async function loadTenants() {
     try {
         const data = await apiFetch("/tenants");
         if (!data.length) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">No hay tenants registrados</div>'; return; }
-        let html = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre Empresa</th><th>Plan</th><th>Estado</th><th>Creado</th><th>Acciones</th></tr></thead><tbody>`;
+        let html = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre Empresa</th><th>Tipo Negocio</th><th>Plan</th><th>Días Restantes</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>`;
         data.forEach(t => {
-            const statusBadge = t.status === 'ACTIVE' ? '<span class="badge badge-green">ACTIVO</span>' : t.status === 'PENDING' ? '<span class="badge badge-yellow">PENDIENTE</span>' : '<span class="badge badge-red">' + t.status + '</span>';
+            const statusBadge = t.status === 'ACTIVE' ? '<span class="badge badge-green">ACTIVO</span>' : t.status === 'PENDING' ? '<span class="badge badge-yellow">PENDIENTE</span>' : t.status === 'SUSPENDED' ? '<span class="badge badge-red">SUSPENDIDO</span>' : '<span class="badge badge-red">' + t.status + '</span>';
+            const planName = getTenantPlanName(t.id);
+            const daysBadge = getDaysBadge(t.id);
             html += `<tr>
                 <td>${t.id}</td>
-                <td><strong>${t.name}</strong>${t.businessType ? '<br><span style="font-size:0.75rem; color:#6b7280">' + t.businessType + '</span>' : ''}</td>
-                <td>${t.plan || 'Básico'}</td>
+                <td><strong>${t.name}</strong></td>
+                <td>${t.businessType || '—'}</td>
+                <td>${planName}</td>
+                <td>${daysBadge}</td>
                 <td>${statusBadge}</td>
-                <td>${t.createdAt ? new Date(t.createdAt).toLocaleDateString('es-CO') : '—'}</td>
-                <td>
-                    ${t.status !== 'ACTIVE' ? '<button onclick="activateTenant(' + t.id + ')" style="padding:4px 10px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer; margin-right:4px">✓ Activar</button>' : ''}
-                    ${t.status === 'ACTIVE' ? '<button onclick="suspendTenant(' + t.id + ')" style="padding:4px 10px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Suspender</button>' : ''}
+                <td style="display:flex; gap:4px; flex-wrap:wrap; align-items:center">
+                    ${t.status !== 'ACTIVE' ? '<button onclick="activateTenant(' + t.id + ')" class="btn-sm btn-primary-sm" style="font-size:0.72rem; padding:4px 10px">✓ Activar</button>' : ''}
+                    ${t.status === 'ACTIVE' ? '<button onclick="suspendTenant(' + t.id + ')" class="btn-sm btn-danger-sm" style="font-size:0.72rem; padding:4px 10px">Suspender</button>' : ''}
+                    <button onclick="openPlanModal(${t.id})" class="btn-sm btn-outline-sm" style="font-size:0.72rem; padding:4px 10px">📦 Plan</button>
+                    <button onclick="deleteTenant(${t.id})" class="btn-sm btn-danger-sm" style="font-size:0.72rem; padding:4px 10px">🗑️ Eliminar</button>
                 </td>
             </tr>`;
         });
         html += '</tbody></table>';
         html += '<div style="color:#9ca3af; font-size:0.75rem; margin-top:10px">Total: ' + data.length + ' tenant(s) registrado(s)</div>';
         document.getElementById("tenantsTable").innerHTML = html;
+
+        // Update overview stats
+        const plans = getAdminPlans();
+        let expiring = 0;
+        data.forEach(t => { const d = calcDaysRemaining(t.id); if (d !== null && d <= 7 && d > 0) expiring++; });
+        document.getElementById("statExpiring").textContent = expiring;
+        document.getElementById("statSuspended").textContent = data.filter(t => t.status === 'SUSPENDED').length;
     } catch (e) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">Error al cargar tenants: ' + e.message + '</div>'; }
 }
 
 async function activateTenant(id) {
     if (!confirm('¿Activar este tenant?')) return;
     try {
-        await apiFetch('/tenants/' + id + '/status?status=ACTIVE', { method: 'PATCH' });
+        await apiAction('/tenants/' + id + '/status?status=ACTIVE', 'PATCH');
+        toast('✓ Tenant activado');
         loadTenants();
         loadOverview();
-        alert('✓ Tenant activado');
-    } catch (e) { alert('Error: ' + e.message); }
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
 }
 
 async function suspendTenant(id) {
     if (!confirm('¿Suspender este tenant? No podrá acceder al sistema.')) return;
     try {
-        await apiFetch('/tenants/' + id + '/status?status=SUSPENDED', { method: 'PATCH' });
+        await apiAction('/tenants/' + id + '/status?status=SUSPENDED', 'PATCH');
+        toast('✓ Tenant suspendido');
         loadTenants();
         loadOverview();
-        alert('✓ Tenant suspendido');
-    } catch (e) { alert('Error: ' + e.message); }
+    } catch (e) { toast('Error: ' + e.message, 'error'); }
+}
+
+async function deleteTenant(id) {
+    if (!confirm('⚠️ ¿Eliminar este tenant permanentemente?\n\nEsta acción no se puede deshacer.')) return;
+    try {
+        const res = await fetch(API + '/tenants/' + id, { method: 'DELETE', headers: headers() });
+        if (!res.ok) {
+            // Fallback: suspend instead of delete
+            await apiAction('/tenants/' + id + '/status?status=SUSPENDED', 'PATCH');
+            toast('Tenant suspendido (eliminación no disponible)');
+        } else {
+            toast('✓ Tenant eliminado');
+        }
+        loadTenants();
+        loadOverview();
+    } catch (e) {
+        // Fallback to suspend
+        try {
+            await apiAction('/tenants/' + id + '/status?status=SUSPENDED', 'PATCH');
+            toast('Tenant suspendido (fallback)');
+            loadTenants();
+        } catch (e2) { toast('Error: ' + e2.message, 'error'); }
+    }
+}
+
+// ── Plan Modal ──
+function openPlanModal(tenantId) {
+    document.getElementById('planTenantId').value = tenantId;
+    document.getElementById('planStartDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('planSelect').selectedIndex = 0;
+    calcPlanEndDate();
+    document.getElementById('planModal').style.display = 'flex';
+}
+
+function closePlanModal() {
+    document.getElementById('planModal').style.display = 'none';
+}
+
+function calcPlanEndDate() {
+    const sel = document.getElementById('planSelect');
+    const days = parseInt(sel.options[sel.selectedIndex].getAttribute('data-days')) || 30;
+    const start = document.getElementById('planStartDate').value;
+    if (start) {
+        const end = new Date(new Date(start).getTime() + days * 86400000);
+        document.getElementById('planEndDate').value = end.toISOString().split('T')[0];
+    }
+}
+
+function savePlan() {
+    const tenantId = document.getElementById('planTenantId').value;
+    const sel = document.getElementById('planSelect');
+    const planName = sel.value;
+    const days = parseInt(sel.options[sel.selectedIndex].getAttribute('data-days')) || 30;
+    const startDate = document.getElementById('planStartDate').value;
+    if (!tenantId || !startDate) { toast('Completa todos los campos', 'error'); return; }
+
+    const plans = getAdminPlans();
+    plans[tenantId] = { plan: planName, startDate: startDate, days: days };
+    localStorage.setItem('zentrix_admin_plans', JSON.stringify(plans));
+
+    closePlanModal();
+    toast('✓ Plan "' + planName + '" asignado correctamente');
+    loadTenants();
 }
 
 // ── Payments ──
