@@ -6,9 +6,11 @@ import com.pulpapp.ms_users.dto.RegisterRequestDTO;
 import com.pulpapp.ms_users.entity.Role;
 import com.pulpapp.ms_users.entity.Tenant;
 import com.pulpapp.ms_users.entity.TenantRole;
+import com.pulpapp.ms_users.entity.TenantStatus;
 import com.pulpapp.ms_users.entity.User;
 import com.pulpapp.ms_users.entity.UserStatus;
 import com.pulpapp.ms_users.exception.BadCredentialsException;
+import com.pulpapp.ms_users.repository.TenantRepository;
 import com.pulpapp.ms_users.repository.UserRepository;
 import com.pulpapp.ms_users.security.JwtService;
 import com.pulpapp.ms_users.security.UserPrincipal;
@@ -35,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final TenantRepository tenantRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -84,11 +87,8 @@ public class AuthService {
     /**
      * Registra un nuevo usuario en el flujo SaaS.
      *
-     * Fase 4 — Cambio crítico:
-     *  - El usuario se registra con status = PENDING_PAYMENT
-     *  - tenant_id = NULL (se asigna cuando el admin aprueba el pago)
-     *  - Recibe un JWT limitado para poder subir comprobante de pago
-     *  - NO tiene acceso completo al sistema hasta que sea ACTIVE
+     * Si el usuario envía businessName, se crea un nuevo tenant automáticamente
+     * y se asocia al usuario. El tenant queda ACTIVE inmediatamente.
      */
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO request) {
@@ -99,6 +99,22 @@ public class AuthService {
             throw new IllegalArgumentException("La cédula ya está registrada");
         }
 
+        // Crear tenant si se proporcionó nombre de negocio
+        Long tenantId = null;
+        if (request.getBusinessName() != null && !request.getBusinessName().isBlank()) {
+            Tenant tenant = new Tenant();
+            String tenantName = request.getBusinessName().trim();
+            // Evitar duplicados: si ya existe, agregar sufijo
+            if (tenantRepository.existsByNameIgnoreCase(tenantName)) {
+                tenantName = tenantName + " (" + request.getCedula() + ")";
+            }
+            tenant.setName(tenantName);
+            tenant.setStatus(TenantStatus.ACTIVE);
+            tenant = tenantRepository.save(tenant);
+            tenantId = tenant.getId();
+            log.info("Tenant creado en registro: id={}, name={}, businessType={}", tenant.getId(), tenantName, request.getBusinessType());
+        }
+
         User user = new User();
         user.setCedula(request.getCedula());
         user.setTelefono(request.getTelefono());
@@ -106,18 +122,17 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setDireccion(request.getDireccion());
-        // Fase 4 SaaS: usuario inicia sin tenant y pendiente de pago
-        user.setTenantId(null);
+        user.setTenantId(tenantId);
         user.setRole(Role.ROLE_CLIENT);
-        user.setStatus(UserStatus.PENDING_PAYMENT);
+        // Si tiene tenant, activar inmediatamente; si no, pendiente de pago
+        user.setStatus(tenantId != null ? UserStatus.ACTIVE : UserStatus.PENDING_PAYMENT);
 
         userRepository.save(user);
 
         UserPrincipal principal = new UserPrincipal(user);
-        // JWT sin tenantId (null) — acceso limitado
         String token = jwtService.generateToken(principal, user.getRole().name(), user.getTenantId());
 
-        log.info("Registro SaaS: email={}, status=PENDING_PAYMENT", user.getEmail());
+        log.info("Registro SaaS: email={}, tenantId={}, status={}", user.getEmail(), tenantId, user.getStatus());
 
         return buildAuthResponse(token, user, user.getRole().name());
     }

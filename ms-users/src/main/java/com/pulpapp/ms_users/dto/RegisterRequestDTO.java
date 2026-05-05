@@ -29,6 +29,12 @@ public class RegisterRequestDTO {
     @NotBlank(message = "La dirección es obligatoria")
     private String direccion;
 
+    // Nombre del negocio/empresa del cliente
+    private String businessName;
+
+    // Tipo de negocio (inmobiliaria, restaurante, etc.)
+    private String businessType;
+
     // Opcional: si no se envía se asigna ROLE_SELLER por defecto
     private Role role;
 }
