@@ -125,6 +125,14 @@ spring:
             - Path=/inventory, /inventory/**
 
         # --------------------------------------------
+        # PROVEEDORES (ERP Fase C)
+        # --------------------------------------------
+        - id: ms-suppliers
+          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          predicates:
+            - Path=/suppliers, /suppliers/**
+
+        # --------------------------------------------
         # MICROSERVICIO DE USUARIOS
         # --------------------------------------------
         - id: ms-users
