@@ -510,22 +510,6 @@
                 <h2 style="margin:0 0 20px">💵 Pagos de Administración</h2>
 
                 <!-- Config Panel -->
-                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:24px">
-                    <h3 style="font-size:0.92rem; font-weight:700; color:#111827; margin:0 0 14px">⚙️ Configuración de Fechas de Pago</h3>
-                    <div style="display:grid; grid-template-columns:1fr 1fr auto; gap:14px; align-items:end">
-                        <div>
-                            <label style="font-size:0.76rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Día pago inquilinos</label>
-                            <input type="number" id="pay_cfg_inquilinos" min="1" max="31" placeholder="25" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
-                        </div>
-                        <div>
-                            <label style="font-size:0.76rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Día pago propietarios</label>
-                            <input type="number" id="pay_cfg_propietarios" min="1" max="31" placeholder="1" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
-                        </div>
-                        <button onclick="savePaymentConfig()" style="padding:9px 20px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit; white-space:nowrap">Guardar configuración</button>
-                    </div>
-                    <p style="font-size:0.7rem; color:#6b7280; margin:10px 0 0; font-style:italic">Define en qué día del mes deben pagar los inquilinos y en qué día se transfiere a los propietarios.</p>
-                </div>
-
                 <!-- Pagos Pendientes -->
                 <div style="background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:20px">
                     <h3 style="font-size:0.92rem; font-weight:700; color:#111827; margin:0 0 14px">📋 Pagos Pendientes del Mes</h3>
@@ -2345,19 +2329,11 @@ function loadAlerts() {
 
 // ── Pagos de Administración ──
 function savePaymentConfig() {
-    const diaInq = parseInt(document.getElementById('pay_cfg_inquilinos').value) || 25;
-    const diaProp = parseInt(document.getElementById('pay_cfg_propietarios').value) || 1;
-    const config = { diaInquilinos: Math.min(31, Math.max(1, diaInq)), diaPropietarios: Math.min(31, Math.max(1, diaProp)) };
-    localStorage.setItem('zentrix_payment_config', JSON.stringify(config));
-    alert('✓ Configuración de pagos guardada\n\nInquilinos pagan el día: ' + config.diaInquilinos + '\nPropietarios reciben el día: ' + config.diaPropietarios);
-    loadAlerts();
-    renderPaymentsPending();
+    // Config now managed per-property via "Fechas Pago" button
 }
 
 function loadPaymentConfig() {
-    const config = JSON.parse(localStorage.getItem('zentrix_payment_config') || '{}');
-    if (config.diaInquilinos) document.getElementById('pay_cfg_inquilinos').value = config.diaInquilinos;
-    if (config.diaPropietarios) document.getElementById('pay_cfg_propietarios').value = config.diaPropietarios;
+    // Config now managed per-property via "Fechas Pago" button
 }
 
 // ── Colaboradores ──
