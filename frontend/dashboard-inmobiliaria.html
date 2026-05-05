@@ -272,7 +272,41 @@
         </div>
 
         <!-- Suppliers -->
-        <div id="tab-suppliers" style="display:none"><div class="panel"><h2>👥 Proveedores</h2><div class="empty-msg">Gestiona proveedores de servicios (mantenimiento, limpieza, etc.).</div></div></div>
+        <div id="tab-suppliers" style="display:none">
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px">
+                    <h2 style="margin:0">👥 Listado de Proveedores</h2>
+                    <div style="display:flex; gap:10px; align-items:center">
+                        <input type="text" id="supSearch" placeholder="Buscar proveedor..." style="padding:8px 14px; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; width:180px; font-family:inherit">
+                        <button onclick="loadSuppliers()" style="padding:8px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; cursor:pointer; font-family:inherit">🔄 Limpiar</button>
+                        <button onclick="showNewSupplierForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nuevo Proveedor</button>
+                    </div>
+                </div>
+                <p style="color:#6b7280; font-size:0.85rem; margin:0 0 16px">Consulta, filtra y administra el estado operativo de los proveedores registrados.</p>
+                <div id="suppliersTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando proveedores...</div></div>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:20px" id="supStats"></div>
+            </div>
+
+            <div id="newSupplierForm" style="display:none" class="panel">
+                <h2 style="margin:0 0 16px">📝 Crear Nuevo Proveedor</h2>
+                <p style="color:#6b7280; font-size:0.85rem; margin:0 0 20px">Registra la información del proveedor para compras y gestión de inventario.</p>
+                <form id="supplierForm" onsubmit="saveSupplier(event)">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Tipo de Documento *</label><select id="sf_docType" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"><option value="">Seleccione...</option><option value="NIT">NIT</option><option value="CC">CC</option><option value="CE">CE</option></select></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Número de Documento *</label><input type="text" id="sf_document" required placeholder="Ej: 900000000" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Razón Social *</label><input type="text" id="sf_name" required placeholder="Nombre del proveedor" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Teléfono</label><input type="text" id="sf_phone" placeholder="Ej: 310 123 4567" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Dirección</label><input type="text" id="sf_address" placeholder="Ej: Calle 45 #12A-56" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Ciudad</label><input type="text" id="sf_city" placeholder="Ej: Bogotá" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div style="grid-column:1/-1"><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Correo</label><input type="email" id="sf_email" placeholder="Ej: proveedor@dominio.com" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end">
+                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Proveedor</button>
+                        <button type="button" onclick="hideNewSupplierForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Cashbox -->
         <div id="tab-cashbox" style="display:none"><div class="panel"><h2>💰 Caja</h2><div class="empty-msg">Control de caja diaria: ingresos y egresos.</div></div></div>
@@ -303,6 +337,7 @@ function showTab(name) {
     document.getElementById("pageTitle").textContent = titles[name] || name;
     if (name === "clients") loadClients();
     if (name === "inventory") loadInventory();
+    if (name === "suppliers") loadSuppliers();
 }
 
 // ── Clientes API ──
@@ -440,6 +475,17 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (e) {}
         });
     }
+    const supSearchInput = document.getElementById("supSearch");
+    if (supSearchInput) {
+        supSearchInput.addEventListener("input", async () => {
+            const q = supSearchInput.value.trim();
+            if (q.length < 2) { loadSuppliers(); return; }
+            try {
+                const res = await fetch(API + "/suppliers/search?q=" + encodeURIComponent(q), { headers: authHeaders() });
+                if (res.ok) { const data = await res.json(); renderSuppliersTable(data); }
+            } catch (e) {}
+        });
+    }
 });
 
 // ── Inventario ──
@@ -538,6 +584,95 @@ async function saveProduct(e) {
         hideNewProductForm();
         loadInventory();
         alert("✓ Producto creado exitosamente");
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+// ── Proveedores ──
+async function loadSuppliers() {
+    try {
+        const res = await fetch(API + "/suppliers", { headers: authHeaders() });
+        if (!res.ok) throw new Error("Error " + res.status);
+        const data = await res.json();
+        renderSuppliersTable(data);
+        renderSupStats(data);
+    } catch (e) {
+        document.getElementById("suppliersTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>';
+    }
+}
+
+function renderSuppliersTable(items) {
+    if (!items.length) {
+        document.getElementById("suppliersTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay proveedores. ¡Crea el primero!</div>';
+        return;
+    }
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
+        <thead><tr style="background:#1e293b; color:#fff">
+            <th style="padding:10px 12px; text-align:left">Razón Social</th>
+            <th style="padding:10px 12px; text-align:left">CC/NIT</th>
+            <th style="padding:10px 12px; text-align:left">Documento</th>
+            <th style="padding:10px 12px; text-align:left">Teléfono</th>
+            <th style="padding:10px 12px; text-align:left">Ciudad</th>
+            <th style="padding:10px 12px; text-align:center">Productos</th>
+            <th style="padding:10px 12px; text-align:center">Estado</th>
+            <th style="padding:10px 12px; text-align:center">Acciones</th>
+        </tr></thead><tbody>`;
+    items.forEach(s => {
+        const st = s.active ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>' : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
+        const btn = s.active
+            ? `<button onclick="toggleSupplier(${s.id}, false)" style="padding:4px 12px; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Inactivar</button>`
+            : `<button onclick="toggleSupplier(${s.id}, true)" style="padding:4px 12px; background:#d1fae5; color:#065f46; border:none; border-radius:6px; font-size:0.72rem; font-weight:600; cursor:pointer">Activar</button>`;
+        html += `<tr style="border-bottom:1px solid #f3f4f6">
+            <td style="padding:10px 12px; font-weight:600">${s.businessName}</td>
+            <td style="padding:10px 12px">${s.documentType}</td>
+            <td style="padding:10px 12px">${s.document}</td>
+            <td style="padding:10px 12px">${s.phone || '—'}</td>
+            <td style="padding:10px 12px">${s.city || '—'}</td>
+            <td style="padding:10px 12px; text-align:center">${s.productsCount || 0} Productos</td>
+            <td style="padding:10px 12px; text-align:center">${st}</td>
+            <td style="padding:10px 12px; text-align:center">${btn}</td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    html += `<div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ${items.length} proveedores</div>`;
+    document.getElementById("suppliersTableContainer").innerHTML = html;
+}
+
+function renderSupStats(items) {
+    const total = items.length;
+    const active = items.filter(s => s.active).length;
+    const inactive = total - active;
+    const totalProducts = items.reduce((s, i) => s + (i.productsCount || 0), 0);
+    document.getElementById("supStats").innerHTML = `
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Total Proveedores</div><div style="font-size:1.6rem; font-weight:800; color:#111827">${total}</div></div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Activos</div><div style="font-size:1.6rem; font-weight:800; color:#16a34a">${active}</div></div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Inactivos</div><div style="font-size:1.6rem; font-weight:800; color:#ef4444">${inactive}</div></div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center"><div style="font-size:0.7rem; font-weight:600; color:#6b7280">Productos Asociados</div><div style="font-size:1.6rem; font-weight:800; color:#0ea5e9">${totalProducts}</div></div>`;
+}
+
+async function toggleSupplier(id, active) {
+    try { await fetch(API + `/suppliers/${id}/active?active=${active}`, { method:"PATCH", headers: authHeaders() }); loadSuppliers(); } catch (e) { alert("Error: " + e.message); }
+}
+
+function showNewSupplierForm() { document.getElementById("newSupplierForm").style.display = "block"; }
+function hideNewSupplierForm() { document.getElementById("newSupplierForm").style.display = "none"; document.getElementById("supplierForm").reset(); }
+
+async function saveSupplier(e) {
+    e.preventDefault();
+    const body = {
+        businessName: document.getElementById("sf_name").value,
+        documentType: document.getElementById("sf_docType").value,
+        document: document.getElementById("sf_document").value,
+        phone: document.getElementById("sf_phone").value,
+        city: document.getElementById("sf_city").value,
+        address: document.getElementById("sf_address").value,
+        email: document.getElementById("sf_email").value
+    };
+    try {
+        const res = await fetch(API + "/suppliers", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
+        hideNewSupplierForm();
+        loadSuppliers();
+        alert("✓ Proveedor creado exitosamente");
     } catch (e) { alert("Error: " + e.message); }
 }
 function logout() { localStorage.clear(); window.location.href = "login.html"; }

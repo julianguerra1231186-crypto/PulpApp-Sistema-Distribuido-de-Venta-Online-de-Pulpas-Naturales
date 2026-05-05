@@ -71,6 +71,10 @@ public class SecurityConfig {
                 .requestMatchers("/inventory").authenticated()
                 .requestMatchers("/inventory/**").authenticated()
 
+                // ── Proveedores (ERP) ─────────────────────────────────────
+                .requestMatchers("/suppliers").authenticated()
+                .requestMatchers("/suppliers/**").authenticated()
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")
