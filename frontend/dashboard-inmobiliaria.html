@@ -1780,34 +1780,115 @@ async function loadProperties() {
     try {
         const res = await fetch(API + "/inventory", { headers: authHeaders() });
         const data = await res.json();
-        window._propertiesData = data; // guardar para el detalle
+        window._propertiesData = data;
         if (!data.length) { document.getElementById("propertiesGrid").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af; grid-column:1/-1">No hay propiedades registradas. ¡Agrega la primera!</div>'; return; }
+        const payDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
+        const today = new Date().getDate();
         let html = "";
         data.forEach((p, idx) => {
             const isRent = p.rentValue > 0;
-            const isSale = p.salePrice > 0 && !isRent;
             const badge = isRent ? '<span class="prop-badge badge-rent">Arriendo</span>' : '<span class="prop-badge badge-sale">Venta</span>';
             const price = isRent ? "$" + Number(p.rentValue).toLocaleString('es-CO') + "/mes" : "$" + Number(p.salePrice).toLocaleString('es-CO');
             const desc = p.description || '';
             const tipoMatch = desc.match(/^(Casa|Apartamento|Local Comercial|Bodega|Lote|Oficina)/);
             const tipoIcon = tipoMatch ? (tipoMatch[1] === 'Casa' ? '🏡' : tipoMatch[1] === 'Apartamento' ? '🏢' : tipoMatch[1] === 'Local Comercial' ? '🏪' : '🏠') : (isRent ? '🏢' : '🏡');
-            html += `<div class="prop-card" onclick="showPropertyDetail(${idx})" style="cursor:pointer">
-                <div class="prop-img" style="position:relative">
-                    <span style="font-size:2.5rem">${tipoIcon}</span>
-                    <span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-weight:600">${tipoMatch ? tipoMatch[1] : 'Inmueble'}</span>
-                </div>
-                <div class="prop-body">
-                    <h3>${p.name}</h3>
-                    <p style="display:flex; align-items:center; gap:4px">📍 ${p.propertyAddress || '—'}</p>
-                    <p style="font-size:0.72rem; color:#6b7280; margin:2px 0">👤 ${p.ownerName || '—'}</p>
-                    ${badge}
-                    <div class="prop-price" style="margin-top:8px">${price}</div>
-                    <div style="margin-top:6px; font-size:0.7rem; color:#6366f1; font-weight:600">Click para ver detalle →</div>
-                </div>
-            </div>`;
+
+            // Calcular días para pago
+            const propPayData = payDates[p.id] || {};
+            let payInfo = '';
+            if (isRent && propPayData.diaInquilino) {
+                const diaInq = propPayData.diaInquilino;
+                let diasFaltan = diaInq - today;
+                if (diasFaltan < 0) diasFaltan += 30;
+                const payColor = diasFaltan <= 3 ? '#ef4444' : diasFaltan <= 7 ? '#d97706' : '#16a34a';
+                payInfo = '<div style="margin-top:6px; padding:4px 8px; background:#f9fafb; border:1px solid #e5e7eb; border-radius:6px; font-size:0.7rem"><span style="color:' + payColor + '; font-weight:700">⏱️ Pago en ' + diasFaltan + ' día(s)</span> <span style="color:#6b7280">(día ' + diaInq + ')</span></div>';
+            }
+
+            html += '<div class="prop-card" style="cursor:pointer; position:relative">';
+            html += '<div class="prop-img" style="position:relative" onclick="showPropertyDetail(' + idx + ')">';
+            html += '<span style="font-size:2.5rem">' + tipoIcon + '</span>';
+            html += '<span style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); color:#fff; padding:3px 8px; border-radius:6px; font-size:0.65rem; font-weight:600">' + (tipoMatch ? tipoMatch[1] : 'Inmueble') + '</span>';
+            html += '</div>';
+            html += '<div class="prop-body">';
+            html += '<h3>' + p.name + '</h3>';
+            html += '<p style="display:flex; align-items:center; gap:4px">📍 ' + (p.propertyAddress || '—') + '</p>';
+            html += '<p style="font-size:0.72rem; color:#6b7280; margin:2px 0">👤 ' + (p.ownerName || '—') + '</p>';
+            html += badge;
+            html += '<div class="prop-price" style="margin-top:8px">' + price + '</div>';
+            html += payInfo;
+            html += '<div style="display:flex; gap:6px; margin-top:8px">';
+            html += '<button onclick="event.stopPropagation(); editPropertyModal(' + idx + ')" style="padding:4px 10px; background:#eef2ff; color:#4f46e5; border:1px solid #c7d2fe; border-radius:6px; font-size:0.68rem; font-weight:600; cursor:pointer; font-family:inherit">✏️ Editar</button>';
+            html += '<button onclick="event.stopPropagation(); setPayDateModal(' + p.id + ')" style="padding:4px 10px; background:#ecfdf5; color:#065f46; border:1px solid #a7f3d0; border-radius:6px; font-size:0.68rem; font-weight:600; cursor:pointer; font-family:inherit">📅 Fechas Pago</button>';
+            html += '</div>';
+            html += '</div></div>';
         });
         document.getElementById("propertiesGrid").innerHTML = html;
     } catch (e) { document.getElementById("propertiesGrid").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444; grid-column:1/-1">Error: ' + e.message + '</div>'; }
+}
+
+function setPayDateModal(propId) {
+    const payDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
+    const current = payDates[propId] || {};
+    const modal = document.createElement('div');
+    modal.id = "payDateModal";
+    modal.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; animation:fadeIn 0.2s";
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = '<div style="background:#fff; border-radius:14px; max-width:400px; width:100%; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideUp 0.3s"><h3 style="margin:0 0 16px; font-size:1rem; font-weight:800; color:#111827">📅 Configurar Fechas de Pago</h3><div style="display:grid; gap:12px"><div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Día pago inquilino (1-31)</label><input type="number" id="pdm_inq" min="1" max="31" value="' + (current.diaInquilino || '') + '" placeholder="Ej: 25" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700"></div><div><label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Día pago a propietario (1-31)</label><input type="number" id="pdm_prop" min="1" max="31" value="' + (current.diaPropietario || '') + '" placeholder="Ej: 1" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem; font-weight:700"></div></div><p style="font-size:0.72rem; color:#6b7280; margin:10px 0; font-style:italic">El sistema calculará automáticamente cuántos días faltan para cada pago.</p><div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px"><button onclick="document.getElementById(\'payDateModal\').remove()" style="padding:9px 18px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button><button onclick="savePayDate(' + propId + ')" style="padding:9px 18px; background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar</button></div></div>';
+    document.body.appendChild(modal);
+}
+
+function savePayDate(propId) {
+    const diaInq = parseInt(document.getElementById('pdm_inq').value) || 0;
+    const diaProp = parseInt(document.getElementById('pdm_prop').value) || 0;
+    const payDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
+    payDates[propId] = { diaInquilino: Math.min(31, Math.max(1, diaInq || 25)), diaPropietario: Math.min(31, Math.max(1, diaProp || 1)) };
+    localStorage.setItem('zentrix_prop_pay_dates', JSON.stringify(payDates));
+    document.getElementById('payDateModal').remove();
+    loadProperties();
+    loadAlerts();
+    alert('✓ Fechas de pago configuradas');
+}
+
+function editPropertyModal(idx) {
+    const p = window._propertiesData[idx];
+    if (!p) return;
+    const modal = document.createElement('div');
+    modal.id = "editPropModal";
+    modal.style.cssText = "position:fixed; inset:0; background:rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:9999; padding:20px; animation:fadeIn 0.2s";
+    modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+    modal.innerHTML = '<div style="background:#fff; border-radius:14px; max-width:500px; width:100%; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,0.2); animation:slideUp 0.3s; max-height:80vh; overflow-y:auto"><h3 style="margin:0 0 16px; font-size:1rem; font-weight:800; color:#111827">✏️ Editar Propiedad</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Nombre</label><input type="text" id="ep_name" value="' + (p.name || '') + '" style="width:100%; padding:9px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.85rem"></div><div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Dirección</label><input type="text" id="ep_address" value="' + (p.propertyAddress || '') + '" style="width:100%; padding:9px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.85rem"></div><div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Propietario/a</label><input type="text" id="ep_owner" value="' + (p.ownerName || '') + '" style="width:100%; padding:9px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.85rem"></div><div><label style="font-size:0.76rem; font-weight:600; display:block; margin-bottom:3px">Valor Arriendo</label><input type="text" id="ep_rent" value="' + (p.rentValue ? Number(p.rentValue).toLocaleString('es-CO') : '') + '" style="width:100%; padding:9px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.85rem; font-weight:700" oninput="formatCurrency(this)"></div></div><div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px"><button onclick="document.getElementById(\'editPropModal\').remove()" style="padding:9px 18px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button><button onclick="saveEditProperty(' + p.id + ')" style="padding:9px 18px; background:linear-gradient(135deg,#6366f1,#4f46e5); color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar</button></div></div>';
+    document.body.appendChild(modal);
+}
+
+async function saveEditProperty(id) {
+    const name = document.getElementById('ep_name').value;
+    const address = document.getElementById('ep_address').value;
+    const owner = document.getElementById('ep_owner').value;
+    const rentStr = document.getElementById('ep_rent').value;
+    const rent = Number(rentStr.replace(/[^\d]/g, '')) || 0;
+
+    const p = window._propertiesData.find(x => x.id === id);
+    if (!p) return;
+
+    const body = {
+        code: p.code,
+        name: name,
+        description: p.description,
+        stock: p.stock || 1,
+        costPrice: p.costPrice || 0,
+        salePrice: rent || p.salePrice,
+        supplier: p.supplier,
+        ownerName: owner,
+        propertyAddress: address,
+        rentValue: rent
+    };
+    try {
+        const res = await fetch(API + "/inventory/" + id, { method:"PUT", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) throw new Error("Error " + res.status);
+        document.getElementById('editPropModal').remove();
+        loadProperties();
+        alert('✓ Propiedad actualizada');
+    } catch (e) { alert("Error: " + e.message); }
 }
 
 function showPropertyDetail(idx) {
@@ -2133,38 +2214,38 @@ function loadAlerts() {
         }
     });
 
-    // 2. Alertas de pago según configuración
+    // 2. Alertas de pago según configuración global
     const payConfig = JSON.parse(localStorage.getItem('zentrix_payment_config') || '{}');
     const diaInq = payConfig.diaInquilinos || 25;
     const diaProp = payConfig.diaPropietarios || 1;
 
-    // Alerta inquilinos: 3 días antes y hasta 5 días después
     const diffInq = diaInq - todayDay;
     if (diffInq >= 0 && diffInq <= 3) {
-        alerts.push({
-            type: 'warning',
-            text: `💰 Pago inquilinos — vence ${diffInq === 0 ? 'HOY (día ' + diaInq + ')' : 'en ' + diffInq + ' día(s) (día ' + diaInq + ')'}`
-        });
+        alerts.push({ type: 'warning', text: '💰 Pago inquilinos — vence ' + (diffInq === 0 ? 'HOY' : 'en ' + diffInq + ' día(s)') + ' (día ' + diaInq + ')' });
     } else if (diffInq < 0 && diffInq >= -5) {
-        alerts.push({
-            type: 'urgent',
-            text: `💰 Pago inquilinos — venció hace ${Math.abs(diffInq)} día(s) (día ${diaInq})`
-        });
+        alerts.push({ type: 'urgent', text: '💰 Pago inquilinos — venció hace ' + Math.abs(diffInq) + ' día(s) (día ' + diaInq + ')' });
     }
 
-    // Alerta propietarios: 3 días antes y hasta 5 días después
     const diffProp = diaProp - todayDay;
     if (diffProp >= 0 && diffProp <= 3) {
-        alerts.push({
-            type: 'warning',
-            text: `🏦 Pago a propietarios — vence ${diffProp === 0 ? 'HOY (día ' + diaProp + ')' : 'en ' + diffProp + ' día(s) (día ' + diaProp + ')'}`
-        });
+        alerts.push({ type: 'warning', text: '🏦 Pago a propietarios — vence ' + (diffProp === 0 ? 'HOY' : 'en ' + diffProp + ' día(s)') + ' (día ' + diaProp + ')' });
     } else if (diffProp < 0 && diffProp >= -5) {
-        alerts.push({
-            type: 'urgent',
-            text: `🏦 Pago a propietarios — venció hace ${Math.abs(diffProp)} día(s) (día ${diaProp})`
-        });
+        alerts.push({ type: 'urgent', text: '🏦 Pago a propietarios — venció hace ' + Math.abs(diffProp) + ' día(s) (día ' + diaProp + ')' });
     }
+
+    // 3. Alertas por propiedad individual
+    const propPayDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
+    const props = window._propertiesData || [];
+    Object.entries(propPayDates).forEach(([propId, cfg]) => {
+        const prop = props.find(p => p.id == propId);
+        if (!prop || !cfg.diaInquilino) return;
+        let diasFaltan = cfg.diaInquilino - todayDay;
+        if (diasFaltan < 0) diasFaltan += 30;
+        if (diasFaltan <= 3) {
+            const propName = prop.name || prop.propertyAddress || 'Propiedad';
+            alerts.push({ type: diasFaltan === 0 ? 'urgent' : 'warning', text: '🏠 ' + propName + ' — pago inquilino ' + (diasFaltan === 0 ? 'HOY' : 'en ' + diasFaltan + ' día(s)') });
+        }
+    });
 
     // Render
     if (!alerts.length) {
@@ -2204,52 +2285,33 @@ function renderPaymentsPending() {
     if (!container) return;
     const props = window._propertiesData || [];
     const now = new Date();
+    const todayDay = now.getDate();
     const monthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
     const paymentStatuses = JSON.parse(localStorage.getItem('zentrix_payment_statuses') || '{}');
+    const propPayDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
 
-    if (!props.length) {
-        container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af; font-size:0.82rem">No hay propiedades cargadas. Ve a Propiedades para agregar inmuebles.</div>';
-        return;
-    }
-
-    // Filter properties that have rent (are being administered)
+    if (!props.length) { container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af">No hay propiedades cargadas.</div>'; return; }
     const adminProps = props.filter(p => p.rentValue && Number(p.rentValue) > 0);
-    if (!adminProps.length) {
-        container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af; font-size:0.82rem">No hay propiedades con arriendo configurado.</div>';
-        return;
-    }
+    if (!adminProps.length) { container.innerHTML = '<div style="text-align:center; padding:24px; color:#9ca3af">No hay propiedades con arriendo.</div>'; return; }
 
-    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
-        <thead><tr style="background:#1e293b; color:#fff">
-            <th style="padding:10px 12px; text-align:left">Inmueble</th>
-            <th style="padding:10px 12px; text-align:left">Propietario</th>
-            <th style="padding:10px 12px; text-align:right">Arriendo</th>
-            <th style="padding:10px 12px; text-align:right">Comisión</th>
-            <th style="padding:10px 12px; text-align:right">A Propietario</th>
-            <th style="padding:10px 12px; text-align:center">Estado</th>
-        </tr></thead><tbody>`;
+    let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Inmueble</th><th style="padding:10px 12px; text-align:left">Propietario</th><th style="padding:10px 12px; text-align:right">Arriendo</th><th style="padding:10px 12px; text-align:right">A Propietario</th><th style="padding:10px 12px; text-align:center">Dias para Pago</th><th style="padding:10px 12px; text-align:center">Estado</th></tr></thead><tbody>';
 
-    adminProps.forEach(p => {
-        const rent = Number(p.rentValue || 0);
-        const comisionPct = Number(p.comisionPct || 11);
-        const comision = Math.round(rent * comisionPct / 100);
-        const toProp = rent - comision;
-        const statusKey = monthKey + '_' + p.id;
-        const isPaid = paymentStatuses[statusKey] === 'pagado';
+    adminProps.forEach(function(p) {
+        var rent = Number(p.rentValue || 0);
+        var comision = Math.round(rent * 0.11);
+        var toProp = rent - comision;
+        var statusKey = monthKey + '_' + p.id;
+        var isPaid = paymentStatuses[statusKey] === 'pagado';
+        var propPay = propPayDates[p.id] || {};
+        var diaInq = propPay.diaInquilino || 25;
+        var diasFaltan = diaInq - todayDay;
+        if (diasFaltan < 0) diasFaltan += 30;
+        var diasColor = diasFaltan <= 3 ? '#ef4444' : diasFaltan <= 7 ? '#d97706' : '#16a34a';
+        var diasBg = diasFaltan <= 3 ? '#fef2f2' : diasFaltan <= 7 ? '#fffbeb' : '#f0fdf4';
+        var diasBadge = isPaid ? '<span style="color:#16a34a; font-weight:700; font-size:0.82rem">✓ Pagado</span>' : '<span style="background:' + diasBg + '; color:' + diasColor + '; padding:4px 12px; border-radius:999px; font-size:0.78rem; font-weight:800">' + diasFaltan + ' dias</span>';
+        var estadoBtn = '<span onclick="togglePaymentStatus(\'' + statusKey + '\')" style="cursor:pointer; padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700; ' + (isPaid ? 'background:#dcfce7; color:#16a34a' : 'background:#fef3c7; color:#92400e') + '">' + (isPaid ? '✓ Pagado' : '⏳ Pendiente') + '</span>';
 
-        html += `<tr style="border-bottom:1px solid #f3f4f6">
-            <td style="padding:10px 12px">
-                <div style="font-weight:600; color:#111827">${p.name || '—'}</div>
-                <div style="font-size:0.72rem; color:#6b7280">${p.propertyAddress || ''}</div>
-            </td>
-            <td style="padding:10px 12px; color:#374151">${p.ownerName || '—'}</td>
-            <td style="padding:10px 12px; text-align:right; font-weight:700; color:#111827">$${rent.toLocaleString('es-CO')}</td>
-            <td style="padding:10px 12px; text-align:right; color:#6b7280">$${comision.toLocaleString('es-CO')}</td>
-            <td style="padding:10px 12px; text-align:right; font-weight:700; color:#16a34a">$${toProp.toLocaleString('es-CO')}</td>
-            <td style="padding:10px 12px; text-align:center">
-                <span onclick="togglePaymentStatus('${statusKey}')" style="cursor:pointer; padding:4px 12px; border-radius:999px; font-size:0.72rem; font-weight:700; ${isPaid ? 'background:#dcfce7; color:#16a34a' : 'background:#fef3c7; color:#92400e'}">${isPaid ? '✓ Pagado' : '⏳ Pendiente'}</span>
-            </td>
-        </tr>`;
+        html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px"><div style="font-weight:600; color:#111827">' + (p.name || '') + '</div><div style="font-size:0.7rem; color:#6b7280">' + (p.propertyAddress || '') + '</div></td><td style="padding:10px 12px; color:#374151">' + (p.ownerName || '') + '</td><td style="padding:10px 12px; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:right; font-weight:700; color:#16a34a">$' + toProp.toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:center">' + diasBadge + '</td><td style="padding:10px 12px; text-align:center">' + estadoBtn + '</td></tr>';
     });
 
     html += '</tbody></table>';
