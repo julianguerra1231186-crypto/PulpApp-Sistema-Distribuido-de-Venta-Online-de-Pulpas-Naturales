@@ -1197,3 +1197,182 @@ databaseChangeLog:
             columns:
               - column:
                   name: tenant_id
+
+  # ============================================================
+  # FASE D — MÓDULO DE FACTURACIÓN (ERP)
+  # ============================================================
+
+  - changeSet:
+      id: 32-create-invoices-table
+      author: pulpapp-team
+      comment: "ERP Fase D: crea la tabla invoices."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: invoices
+      changes:
+        - createTable:
+            tableName: invoices
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: invoice_number
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: client_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: client_name
+                  type: VARCHAR(150)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: subtotal
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: discount
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: total
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_method
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: due_date
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+              - column:
+                  name: observations
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  defaultValue: REGISTRADA
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 33-create-invoice-items-table
+      author: pulpapp-team
+      comment: "ERP Fase D: crea la tabla invoice_items."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: invoice_items
+      changes:
+        - createTable:
+            tableName: invoice_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: invoice_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: BIGINT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: product_code
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: product_name
+                  type: VARCHAR(200)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INTEGER
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_price
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: subtotal
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 34-fk-invoice-items-to-invoices
+      author: pulpapp-team
+      comment: "ERP Fase D: FK invoice_items -> invoices."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          foreignKeyConstraintExists:
+            foreignKeyName: fk_invoice_items_invoice
+      changes:
+        - addForeignKeyConstraint:
+            baseTableName: invoice_items
+            baseColumnNames: invoice_id
+            constraintName: fk_invoice_items_invoice
+            referencedTableName: invoices
+            referencedColumnNames: id
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 35-index-invoices-tenant-id
+      author: pulpapp-team
+      comment: "ERP Fase D: indice en invoices.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_invoices_tenant_id
+      changes:
+        - createIndex:
+            tableName: invoices
+            indexName: idx_invoices_tenant_id
+            columns:
+              - column:
+                  name: tenant_id

@@ -75,6 +75,10 @@ public class SecurityConfig {
                 .requestMatchers("/suppliers").authenticated()
                 .requestMatchers("/suppliers/**").authenticated()
 
+                // ── Facturación (ERP) ─────────────────────────────────────
+                .requestMatchers("/invoices").authenticated()
+                .requestMatchers("/invoices/**").authenticated()
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")

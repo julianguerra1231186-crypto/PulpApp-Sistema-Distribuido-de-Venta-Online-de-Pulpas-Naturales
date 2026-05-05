@@ -225,7 +225,46 @@
         <div id="tab-visits" style="display:none"><div class="panel"><h2>📅 Agenda de Visitas</h2><div class="empty-msg">Programa visitas a propiedades con tus clientes.</div></div></div>
 
         <!-- Invoices -->
-        <div id="tab-invoices" style="display:none"><div class="panel"><h2>📄 Facturación</h2><div class="empty-msg">Crea y gestiona facturas de venta y arriendo.</div></div></div>
+        <div id="tab-invoices" style="display:none">
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                    <h2 style="margin:0">📄 Facturación</h2>
+                    <button onclick="showInvoiceForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nueva Factura</button>
+                </div>
+                <div id="invoicesTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando facturas...</div></div>
+            </div>
+
+            <!-- Formulario nueva factura -->
+            <div id="invoiceFormPanel" style="display:none" class="panel">
+                <h2 style="margin:0 0 20px">📄 Nueva Factura</h2>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px">
+                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Nombre del Cliente</label><input type="text" id="inv_client" placeholder="Nombre del cliente" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Método de Pago *</label><select id="inv_method" required style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option><option value="CREDITO">Crédito</option></select></div>
+                </div>
+
+                <h3 style="font-size:0.9rem; margin:0 0 12px">Productos</h3>
+                <div id="invoiceItems">
+                    <div class="inv-item-row" style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:10px; margin-bottom:8px; align-items:end">
+                        <input type="text" placeholder="Nombre producto" class="inv-pname" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit">
+                        <input type="number" placeholder="Cant" class="inv-qty" min="1" value="1" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit">
+                        <input type="number" placeholder="Precio" class="inv-price" min="0" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit">
+                        <span class="inv-sub" style="font-size:0.82rem; font-weight:600; color:#111827; padding:8px 0">$0</span>
+                        <button type="button" onclick="this.closest('.inv-item-row').remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.8rem">🗑️</button>
+                    </div>
+                </div>
+                <button type="button" onclick="addInvoiceItemRow()" style="padding:6px 14px; background:#f3f4f6; border:1px solid #e5e7eb; border-radius:6px; font-size:0.78rem; cursor:pointer; font-family:inherit; margin-bottom:16px">+ Agregar Producto</button>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">
+                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Descuento ($)</label><input type="number" id="inv_discount" value="0" min="0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Observaciones</label><input type="text" id="inv_obs" placeholder="Opcional" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
+                </div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end">
+                    <button onclick="submitInvoice()" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Factura</button>
+                    <button onclick="hideInvoiceForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Quotes -->
         <div id="tab-quotes" style="display:none"><div class="panel"><h2>📋 Cotizaciones</h2><div class="empty-msg">Genera cotizaciones para tus clientes interesados.</div></div></div>
@@ -338,6 +377,7 @@ function showTab(name) {
     if (name === "clients") loadClients();
     if (name === "inventory") loadInventory();
     if (name === "suppliers") loadSuppliers();
+    if (name === "invoices") loadInvoices();
 }
 
 // ── Clientes API ──
@@ -673,6 +713,75 @@ async function saveSupplier(e) {
         hideNewSupplierForm();
         loadSuppliers();
         alert("✓ Proveedor creado exitosamente");
+    } catch (e) { alert("Error: " + e.message); }
+}
+
+// ── Facturación ──
+async function loadInvoices() {
+    try {
+        const res = await fetch(API + "/invoices", { headers: authHeaders() });
+        if (!res.ok) throw new Error("Error " + res.status);
+        const data = await res.json();
+        if (!data.length) { document.getElementById("invoicesTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay facturas. ¡Crea la primera!</div>'; return; }
+        let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
+            <thead><tr style="background:#1e293b; color:#fff">
+                <th style="padding:10px 12px">N° Factura</th><th style="padding:10px 12px">Cliente</th>
+                <th style="padding:10px 12px; text-align:right">Total</th><th style="padding:10px 12px">Método</th>
+                <th style="padding:10px 12px; text-align:center">Estado</th><th style="padding:10px 12px">Fecha</th>
+            </tr></thead><tbody>`;
+        data.forEach(inv => {
+            const stColor = inv.status === 'REGISTRADA' ? '#dbeafe; color:#1e40af' : inv.status === 'PAGADA' ? '#d1fae5; color:#065f46' : '#fee2e2; color:#991b1b';
+            html += `<tr style="border-bottom:1px solid #f3f4f6">
+                <td style="padding:10px 12px; font-weight:700; color:#6366f1">${inv.invoiceNumber}</td>
+                <td style="padding:10px 12px">${inv.clientName || '—'}</td>
+                <td style="padding:10px 12px; text-align:right; font-weight:700">$${Number(inv.total).toLocaleString('es-CO')}</td>
+                <td style="padding:10px 12px"><span style="background:#eef2ff; color:#4f46e5; padding:2px 8px; border-radius:999px; font-size:0.7rem; font-weight:600">${inv.paymentMethod}</span></td>
+                <td style="padding:10px 12px; text-align:center"><span style="background:${stColor}; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">${inv.status}</span></td>
+                <td style="padding:10px 12px; font-size:0.78rem; color:#6b7280">${new Date(inv.createdAt).toLocaleDateString('es-CO')}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        document.getElementById("invoicesTableContainer").innerHTML = html;
+    } catch (e) { document.getElementById("invoicesTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>'; }
+}
+
+function showInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "block"; }
+function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "none"; }
+
+function addInvoiceItemRow() {
+    const container = document.getElementById("invoiceItems");
+    const row = document.createElement("div");
+    row.className = "inv-item-row";
+    row.style.cssText = "display:grid; grid-template-columns:2fr 1fr 1fr 1fr auto; gap:10px; margin-bottom:8px; align-items:end";
+    row.innerHTML = `<input type="text" placeholder="Nombre producto" class="inv-pname" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit"><input type="number" placeholder="Cant" class="inv-qty" min="1" value="1" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit"><input type="number" placeholder="Precio" class="inv-price" min="0" style="padding:8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.82rem; font-family:inherit"><span class="inv-sub" style="font-size:0.82rem; font-weight:600; color:#111827; padding:8px 0">$0</span><button type="button" onclick="this.closest('.inv-item-row').remove()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; font-size:0.8rem">🗑️</button>`;
+    container.appendChild(row);
+}
+
+async function submitInvoice() {
+    const rows = document.querySelectorAll(".inv-item-row");
+    const items = [];
+    rows.forEach(row => {
+        const name = row.querySelector(".inv-pname").value.trim();
+        const qty = Number(row.querySelector(".inv-qty").value) || 1;
+        const price = Number(row.querySelector(".inv-price").value) || 0;
+        if (name && price > 0) items.push({ productName: name, quantity: qty, unitPrice: price });
+    });
+    if (!items.length) { alert("Agrega al menos un producto"); return; }
+
+    const body = {
+        clientName: document.getElementById("inv_client").value,
+        paymentMethod: document.getElementById("inv_method").value,
+        discount: Number(document.getElementById("inv_discount").value) || 0,
+        observations: document.getElementById("inv_obs").value,
+        items: items
+    };
+    try {
+        const res = await fetch(API + "/invoices", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
+        const data = await res.json();
+        hideInvoiceForm();
+        loadInvoices();
+        alert("✓ Factura " + data.invoiceNumber + " creada — Total: $" + Number(data.total).toLocaleString('es-CO'));
     } catch (e) { alert("Error: " + e.message); }
 }
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
