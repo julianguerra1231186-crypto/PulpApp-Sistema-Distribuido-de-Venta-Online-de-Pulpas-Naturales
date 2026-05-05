@@ -49,10 +49,21 @@
     <aside class="dash-sidebar">
         <div class="sb-brand"><img src="img/logoZentrix-sinfondo.png" alt=""><span>Zentrix</span></div>
         <div class="sb-label">Inmobiliaria</div>
-        <a class="sb-link active" onclick="showTab('overview')"><span>📊</span><span>Dashboard</span></a>
-        <a class="sb-link" onclick="showTab('properties')"><span>🏠</span><span>Propiedades</span></a>
-        <a class="sb-link" onclick="showTab('clients')"><span>👥</span><span>Clientes</span></a>
-        <a class="sb-link" onclick="showTab('contracts')"><span>📄</span><span>Contratos</span></a>
+        <a class="sb-link active" onclick="showTab('overview')"><span>🏠</span><span>Inicio</span></a>
+        <a class="sb-link" onclick="showTab('properties')"><span>🏘️</span><span>Propiedades</span></a>
+        <a class="sb-link" onclick="showTab('invoices')"><span>📄</span><span>Facturación</span></a>
+        <a class="sb-link" onclick="showTab('quotes')"><span>📋</span><span>Cotizaciones</span></a>
+        <a class="sb-link" onclick="showTab('purchases')"><span>🛒</span><span>Compras</span></a>
+        <a class="sb-link" onclick="showTab('payments')"><span>💵</span><span>Pagos</span></a>
+        <a class="sb-link" onclick="showTab('clients')"><span>👤</span><span>Clientes</span></a>
+        <a class="sb-link" onclick="showTab('inventory')"><span>📦</span><span>Inventario</span></a>
+        <a class="sb-link" onclick="showTab('suppliers')"><span>👥</span><span>Proveedores</span></a>
+        <a class="sb-link" onclick="showTab('cashbox')"><span>💰</span><span>Caja</span></a>
+        <a class="sb-link" onclick="showTab('movements')"><span>🔄</span><span>Movimientos</span></a>
+        <a class="sb-link" onclick="showTab('reports')"><span>📊</span><span>Reportes</span></a>
+        <a class="sb-link" onclick="showTab('audit')"><span>🔍</span><span>Auditoría</span></a>
+        <a class="sb-link" onclick="showTab('settings')"><span>⚙️</span><span>Configuración</span></a>
+        <a class="sb-link" onclick="showTab('contracts')"><span>📝</span><span>Contratos</span></a>
         <a class="sb-link" onclick="showTab('visits')"><span>📅</span><span>Visitas</span></a>
         <div class="sb-user">
             <div class="sb-user-name" id="userName">Mi Negocio</div>
@@ -106,13 +117,46 @@
         </div>
 
         <!-- Clients -->
-        <div id="tab-clients" style="display:none"><div class="panel"><h2>Clientes Interesados</h2><div class="empty-msg">Los clientes que consulten tus propiedades aparecerán aquí.</div></div></div>
+        <div id="tab-clients" style="display:none"><div class="panel"><h2>👤 Clientes</h2><div class="empty-msg">Los clientes que consulten tus propiedades aparecerán aquí.</div></div></div>
 
         <!-- Contracts -->
-        <div id="tab-contracts" style="display:none"><div class="panel"><h2>Contratos</h2><div class="empty-msg">Gestiona contratos de arriendo y venta desde aquí.</div></div></div>
+        <div id="tab-contracts" style="display:none"><div class="panel"><h2>📝 Contratos</h2><div class="empty-msg">Gestiona contratos de arriendo y venta desde aquí.</div></div></div>
 
         <!-- Visits -->
-        <div id="tab-visits" style="display:none"><div class="panel"><h2>Agenda de Visitas</h2><div class="empty-msg">Programa visitas a propiedades con tus clientes.</div></div></div>
+        <div id="tab-visits" style="display:none"><div class="panel"><h2>📅 Agenda de Visitas</h2><div class="empty-msg">Programa visitas a propiedades con tus clientes.</div></div></div>
+
+        <!-- Invoices -->
+        <div id="tab-invoices" style="display:none"><div class="panel"><h2>📄 Facturación</h2><div class="empty-msg">Crea y gestiona facturas de venta y arriendo.</div></div></div>
+
+        <!-- Quotes -->
+        <div id="tab-quotes" style="display:none"><div class="panel"><h2>📋 Cotizaciones</h2><div class="empty-msg">Genera cotizaciones para tus clientes interesados.</div></div></div>
+
+        <!-- Purchases -->
+        <div id="tab-purchases" style="display:none"><div class="panel"><h2>🛒 Compras</h2><div class="empty-msg">Registra compras de materiales, servicios y mantenimiento.</div></div></div>
+
+        <!-- Payments -->
+        <div id="tab-payments" style="display:none"><div class="panel"><h2>💵 Pagos</h2><div class="empty-msg">Controla pagos recibidos y pendientes de tus clientes.</div></div></div>
+
+        <!-- Inventory -->
+        <div id="tab-inventory" style="display:none"><div class="panel"><h2>📦 Inventario</h2><div class="empty-msg">Administra el inventario de propiedades, llaves y documentos.</div></div></div>
+
+        <!-- Suppliers -->
+        <div id="tab-suppliers" style="display:none"><div class="panel"><h2>👥 Proveedores</h2><div class="empty-msg">Gestiona proveedores de servicios (mantenimiento, limpieza, etc.).</div></div></div>
+
+        <!-- Cashbox -->
+        <div id="tab-cashbox" style="display:none"><div class="panel"><h2>💰 Caja</h2><div class="empty-msg">Control de caja diaria: ingresos y egresos.</div></div></div>
+
+        <!-- Movements -->
+        <div id="tab-movements" style="display:none"><div class="panel"><h2>🔄 Movimientos</h2><div class="empty-msg">Historial de movimientos financieros de tu negocio.</div></div></div>
+
+        <!-- Reports -->
+        <div id="tab-reports" style="display:none"><div class="panel"><h2>📊 Reportes</h2><div class="empty-msg">Reportes de ventas, arriendos y rendimiento del negocio.</div></div></div>
+
+        <!-- Audit -->
+        <div id="tab-audit" style="display:none"><div class="panel"><h2>🔍 Auditoría</h2><div class="empty-msg">Registro de todas las acciones realizadas en el sistema.</div></div></div>
+
+        <!-- Settings -->
+        <div id="tab-settings" style="display:none"><div class="panel"><h2>⚙️ Configuración</h2><div class="empty-msg">Personaliza tu negocio: logo, colores, datos fiscales y más.</div></div></div>
     </main>
 </div>
 
@@ -124,7 +168,7 @@ function showTab(name) {
     document.getElementById("tab-" + name).style.display = "block";
     document.querySelectorAll(".sb-link").forEach(l => l.classList.remove("active"));
     event?.target?.closest?.(".sb-link")?.classList.add("active");
-    const titles = { overview:"Dashboard — Inmobiliaria", properties:"Propiedades", clients:"Clientes", contracts:"Contratos", visits:"Visitas" };
+    const titles = { overview:"Inicio", properties:"Propiedades", clients:"Clientes", contracts:"Contratos", visits:"Visitas", invoices:"Facturación", quotes:"Cotizaciones", purchases:"Compras", payments:"Pagos", inventory:"Inventario", suppliers:"Proveedores", cashbox:"Caja", movements:"Movimientos", reports:"Reportes", audit:"Auditoría", settings:"Configuración" };
     document.getElementById("pageTitle").textContent = titles[name] || name;
 }
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
