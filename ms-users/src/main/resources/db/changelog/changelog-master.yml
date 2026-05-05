@@ -1376,3 +1376,81 @@ databaseChangeLog:
             columns:
               - column:
                   name: tenant_id
+
+  # ============================================================
+  # FASE E — MÓDULO DE CAJA Y MOVIMIENTOS (ERP)
+  # ============================================================
+
+  - changeSet:
+      id: 36-create-cash-movements-table
+      author: pulpapp-team
+      comment: "ERP Fase E: crea la tabla cash_movements."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: cash_movements
+      changes:
+        - createTable:
+            tableName: cash_movements
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: movement_type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(12,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: payment_method
+                  type: VARCHAR(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: observations
+                  type: TEXT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 37-index-cash-movements-tenant-id
+      author: pulpapp-team
+      comment: "ERP Fase E: indice en cash_movements.tenant_id."
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            indexName: idx_cash_movements_tenant_id
+      changes:
+        - createIndex:
+            tableName: cash_movements
+            indexName: idx_cash_movements_tenant_id
+            columns:
+              - column:
+                  name: tenant_id

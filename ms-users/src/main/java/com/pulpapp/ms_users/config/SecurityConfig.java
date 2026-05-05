@@ -79,6 +79,10 @@ public class SecurityConfig {
                 .requestMatchers("/invoices").authenticated()
                 .requestMatchers("/invoices/**").authenticated()
 
+                // ── Caja y Movimientos (ERP) ──────────────────────────────
+                .requestMatchers("/cash").authenticated()
+                .requestMatchers("/cash/**").authenticated()
+
                 // ── Configuración dinámica del sistema (Fase 2) ───────────
                 .requestMatchers("/admin/config").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/admin/config/**").hasAuthority("ROLE_ADMIN")
