@@ -237,7 +237,39 @@
         <div id="tab-payments" style="display:none"><div class="panel"><h2>💵 Pagos</h2><div class="empty-msg">Controla pagos recibidos y pendientes de tus clientes.</div></div></div>
 
         <!-- Inventory -->
-        <div id="tab-inventory" style="display:none"><div class="panel"><h2>📦 Inventario</h2><div class="empty-msg">Administra el inventario de propiedades, llaves y documentos.</div></div></div>
+        <div id="tab-inventory" style="display:none">
+            <div class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px">
+                    <h2 style="margin:0">📦 Listado de Productos</h2>
+                    <div style="display:flex; gap:10px; align-items:center">
+                        <input type="text" id="invSearch" placeholder="Buscar..." style="padding:8px 14px; border:1px solid #e5e7eb; border-radius:8px; font-size:0.85rem; width:180px; font-family:inherit">
+                        <button onclick="loadInventory()" style="padding:8px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; cursor:pointer; font-family:inherit">🔄 Limpiar</button>
+                        <button onclick="showNewProductForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nuevo Producto</button>
+                    </div>
+                </div>
+                <div id="inventoryTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando inventario...</div></div>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:20px" id="invStats"></div>
+            </div>
+
+            <!-- Formulario nuevo producto -->
+            <div id="newProductForm" style="display:none" class="panel">
+                <h2 style="margin:0 0 16px">📦 Crear Nuevo Producto</h2>
+                <form id="productForm" onsubmit="saveProduct(event)">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Código *</label><input type="text" id="pf_code" required placeholder="Ej: P000001" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Nombre del Producto *</label><input type="text" id="pf_name" required placeholder="Ej: Pintura Blanca 1 Galón" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Proveedor</label><input type="text" id="pf_supplier" placeholder="Nombre del proveedor" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Stock *</label><input type="number" id="pf_stock" required placeholder="0" min="0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Precio Compra *</label><input type="number" id="pf_cost" required placeholder="$0" min="0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                        <div><label style="font-size:0.8rem; font-weight:600; color:#374151; display:block; margin-bottom:4px">Precio Venta *</label><input type="number" id="pf_sale" required placeholder="$0" min="0" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem"></div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end">
+                        <button type="submit" style="padding:10px 22px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✓ Guardar Producto</button>
+                        <button type="button" onclick="hideNewProductForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
 
         <!-- Suppliers -->
         <div id="tab-suppliers" style="display:none"><div class="panel"><h2>👥 Proveedores</h2><div class="empty-msg">Gestiona proveedores de servicios (mantenimiento, limpieza, etc.).</div></div></div>
@@ -270,6 +302,7 @@ function showTab(name) {
     const titles = { overview:"Inicio", properties:"Propiedades", clients:"Clientes", contracts:"Contratos", visits:"Visitas", invoices:"Facturación", quotes:"Cotizaciones", purchases:"Compras", payments:"Pagos", inventory:"Inventario", suppliers:"Proveedores", cashbox:"Caja", movements:"Movimientos", reports:"Reportes", audit:"Auditoría", settings:"Configuración" };
     document.getElementById("pageTitle").textContent = titles[name] || name;
     if (name === "clients") loadClients();
+    if (name === "inventory") loadInventory();
 }
 
 // ── Clientes API ──
@@ -396,7 +429,117 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (e) {}
         });
     }
+    const invSearchInput = document.getElementById("invSearch");
+    if (invSearchInput) {
+        invSearchInput.addEventListener("input", async () => {
+            const q = invSearchInput.value.trim();
+            if (q.length < 2) { loadInventory(); return; }
+            try {
+                const res = await fetch(API + "/inventory/search?q=" + encodeURIComponent(q), { headers: authHeaders() });
+                if (res.ok) { const data = await res.json(); renderInventoryTable(data); }
+            } catch (e) {}
+        });
+    }
 });
+
+// ── Inventario ──
+async function loadInventory() {
+    try {
+        const res = await fetch(API + "/inventory", { headers: authHeaders() });
+        if (!res.ok) throw new Error("Error " + res.status);
+        const items = await res.json();
+        renderInventoryTable(items);
+        renderInvStats(items);
+    } catch (e) {
+        document.getElementById("inventoryTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>';
+    }
+}
+
+function renderInventoryTable(items) {
+    if (!items.length) {
+        document.getElementById("inventoryTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay productos. ¡Crea el primero!</div>';
+        return;
+    }
+    let html = `<table style="width:100%; border-collapse:collapse; font-size:0.82rem">
+        <thead><tr style="background:#1e293b; color:#fff">
+            <th style="padding:10px 12px; text-align:left">Código</th>
+            <th style="padding:10px 12px; text-align:left">Producto</th>
+            <th style="padding:10px 12px; text-align:right">Stock</th>
+            <th style="padding:10px 12px; text-align:right">Costo</th>
+            <th style="padding:10px 12px; text-align:right">Venta</th>
+            <th style="padding:10px 12px; text-align:right">Utilidad</th>
+            <th style="padding:10px 12px; text-align:left">Proveedor</th>
+            <th style="padding:10px 12px; text-align:center">Estado</th>
+            <th style="padding:10px 12px; text-align:center">Acciones</th>
+        </tr></thead><tbody>`;
+    items.forEach(i => {
+        const st = i.active ? '<span style="background:#d1fae5; color:#065f46; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Activo</span>' : '<span style="background:#fee2e2; color:#991b1b; padding:3px 10px; border-radius:999px; font-size:0.7rem; font-weight:600">Inactivo</span>';
+        html += `<tr style="border-bottom:1px solid #f3f4f6">
+            <td style="padding:10px 12px; font-weight:600">${i.code}</td>
+            <td style="padding:10px 12px">${i.name}</td>
+            <td style="padding:10px 12px; text-align:right">${i.stock}</td>
+            <td style="padding:10px 12px; text-align:right">$${Number(i.costPrice).toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; text-align:right">$${Number(i.salePrice).toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px; text-align:right; color:#16a34a; font-weight:600">$${Number(i.unitProfit||0).toLocaleString('es-CO')}</td>
+            <td style="padding:10px 12px">${i.supplier || '—'}</td>
+            <td style="padding:10px 12px; text-align:center">${st}</td>
+            <td style="padding:10px 12px; text-align:center"><button onclick="toggleProduct(${i.id}, ${!i.active})" style="padding:4px 10px; background:${i.active?'#fee2e2':'#d1fae5'}; color:${i.active?'#991b1b':'#065f46'}; border:none; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer">${i.active?'Inactivar':'Activar'}</button></td>
+        </tr>`;
+    });
+    html += '</tbody></table>';
+    html += `<div style="color:#9ca3af; font-size:0.75rem; margin-top:12px">Mostrando ${items.length} productos</div>`;
+    document.getElementById("inventoryTableContainer").innerHTML = html;
+}
+
+function renderInvStats(items) {
+    const active = items.filter(i => i.active).length;
+    const totalStock = items.reduce((s, i) => s + (i.stock || 0), 0);
+    const totalValue = items.reduce((s, i) => s + (Number(i.costPrice || 0) * (i.stock || 0)), 0);
+    const totalProfit = items.reduce((s, i) => s + (Number(i.unitProfit || 0) * (i.stock || 0)), 0);
+    document.getElementById("invStats").innerHTML = `
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Productos Activos</div>
+            <div style="font-size:1.6rem; font-weight:800; color:#111827">${active}</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Stock Total</div>
+            <div style="font-size:1.6rem; font-weight:800; color:#111827">${totalStock.toLocaleString('es-CO')}</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Valor Inventario</div>
+            <div style="font-size:1.2rem; font-weight:800; color:#111827">$${Math.round(totalValue).toLocaleString('es-CO')}</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; text-align:center">
+            <div style="font-size:0.7rem; font-weight:600; color:#6b7280">Utilidad Potencial</div>
+            <div style="font-size:1.2rem; font-weight:800; color:#16a34a">$${Math.round(totalProfit).toLocaleString('es-CO')}</div>
+        </div>`;
+}
+
+async function toggleProduct(id, active) {
+    try { await fetch(API + `/inventory/${id}/active?active=${active}`, { method:"PATCH", headers: authHeaders() }); loadInventory(); } catch (e) { alert("Error: " + e.message); }
+}
+
+function showNewProductForm() { document.getElementById("newProductForm").style.display = "block"; }
+function hideNewProductForm() { document.getElementById("newProductForm").style.display = "none"; document.getElementById("productForm").reset(); }
+
+async function saveProduct(e) {
+    e.preventDefault();
+    const body = {
+        code: document.getElementById("pf_code").value,
+        name: document.getElementById("pf_name").value,
+        supplier: document.getElementById("pf_supplier").value,
+        stock: Number(document.getElementById("pf_stock").value) || 0,
+        costPrice: Number(document.getElementById("pf_cost").value) || 0,
+        salePrice: Number(document.getElementById("pf_sale").value) || 0
+    };
+    try {
+        const res = await fetch(API + "/inventory", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
+        hideNewProductForm();
+        loadInventory();
+        alert("✓ Producto creado exitosamente");
+    } catch (e) { alert("Error: " + e.message); }
+}
 function logout() { localStorage.clear(); window.location.href = "login.html"; }
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
