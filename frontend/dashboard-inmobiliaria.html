@@ -407,9 +407,34 @@
         <div id="tab-invoices" style="display:none">
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-                    <h2 style="margin:0">📄 Facturación de Arriendos</h2>
-                    <button onclick="showInvoiceForm()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nueva Factura</button>
+                    <div>
+                        <h2 style="margin:0">📄 Facturación</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:4px 0 0">Genera facturas para propietarios, inquilinos u otros conceptos.</p>
+                    </div>
+                    <button onclick="showInvoiceTypeSelector()" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Nueva Factura</button>
                 </div>
+
+                <!-- Selector de tipo de factura -->
+                <div id="invoiceTypeSelector" style="display:none; margin-bottom:20px">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px">
+                        <div onclick="selectInvoiceType('propietario')" style="background:#eff6ff; border:2px solid #bfdbfe; border-radius:12px; padding:20px; text-align:center; cursor:pointer; transition:all 0.2s" onmouseover="this.style.borderColor='#6366f1'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#bfdbfe'; this.style.transform='translateY(0)'">
+                            <div style="font-size:2rem; margin-bottom:8px">👤</div>
+                            <div style="font-size:0.88rem; font-weight:800; color:#1e40af; margin-bottom:4px">Factura para Propietario</div>
+                            <p style="font-size:0.72rem; color:#6b7280; margin:0">Comprobante de pago al propietario con desglose de comisión</p>
+                        </div>
+                        <div onclick="selectInvoiceType('inquilino')" style="background:#f0fdf4; border:2px solid #bbf7d0; border-radius:12px; padding:20px; text-align:center; cursor:pointer; transition:all 0.2s" onmouseover="this.style.borderColor='#16a34a'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#bbf7d0'; this.style.transform='translateY(0)'">
+                            <div style="font-size:2rem; margin-bottom:8px">🏠</div>
+                            <div style="font-size:0.88rem; font-weight:800; color:#065f46; margin-bottom:4px">Factura para Inquilino</div>
+                            <p style="font-size:0.72rem; color:#6b7280; margin:0">Cobro de arriendo mensual al inquilino del inmueble</p>
+                        </div>
+                        <div onclick="selectInvoiceType('otros')" style="background:#f5f3ff; border:2px solid #ddd6fe; border-radius:12px; padding:20px; text-align:center; cursor:pointer; transition:all 0.2s" onmouseover="this.style.borderColor='#7c3aed'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#ddd6fe'; this.style.transform='translateY(0)'">
+                            <div style="font-size:2rem; margin-bottom:8px">📋</div>
+                            <div style="font-size:0.88rem; font-weight:800; color:#5b21b6; margin-bottom:4px">Factura para Otros</div>
+                            <p style="font-size:0.72rem; color:#6b7280; margin:0">Mantenimiento, reparaciones, servicios u otros conceptos</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div id="invoicesTableContainer"><div style="text-align:center; padding:32px; color:#9ca3af">Cargando facturas...</div></div>
             </div>
 
@@ -1510,6 +1535,25 @@ async function loadInvoices() {
         html += '</tbody></table>';
         document.getElementById("invoicesTableContainer").innerHTML = html;
     } catch (e) { document.getElementById("invoicesTableContainer").innerHTML = '<div style="text-align:center; padding:24px; color:#ef4444">Error: ' + e.message + '</div>'; }
+}
+
+function showInvoiceTypeSelector() {
+    document.getElementById("invoiceTypeSelector").style.display = "block";
+    document.getElementById("invoiceFormPanel").style.display = "none";
+}
+
+function selectInvoiceType(type) {
+    document.getElementById("invoiceTypeSelector").style.display = "none";
+    if (type === 'propietario') {
+        showInvoiceForm();
+        setClientType('propietario');
+    } else if (type === 'inquilino') {
+        showInvoiceForm();
+        setClientType('inquilino');
+    } else if (type === 'otros') {
+        showInvoiceForm();
+        setClientType('inquilino');
+    }
 }
 
 async function showInvoiceForm() {
