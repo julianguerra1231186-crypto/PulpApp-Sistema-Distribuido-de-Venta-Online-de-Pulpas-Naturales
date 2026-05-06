@@ -84,6 +84,15 @@
     </aside>
 
     <main class="dash-main">
+        <!-- Barra de búsqueda global -->
+        <div style="margin-bottom:20px; position:relative">
+            <div style="position:relative; max-width:500px">
+                <span style="position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:1rem; color:#9ca3af">🔍</span>
+                <input type="text" id="globalSearch" placeholder="Buscar propiedades, clientes, facturas..." style="width:100%; padding:12px 14px 12px 42px; border:2px solid #e5e7eb; border-radius:12px; font-family:inherit; font-size:0.88rem; transition:border 0.2s; background:#fff" onfocus="this.style.borderColor='#6366f1'" onblur="setTimeout(()=>{this.style.borderColor='#e5e7eb'; document.getElementById('globalSearchResults').style.display='none'}, 200)" oninput="globalSearchHandler(this.value)">
+                <div id="globalSearchResults" style="display:none; position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid #e5e7eb; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin-top:6px; max-height:320px; overflow-y:auto; z-index:100"></div>
+            </div>
+        </div>
+
         <div class="dash-topbar" style="display:none">
             <h1 id="pageTitle">Inicio</h1>
             <span style="font-size:0.78rem; background:#eef2ff; color:#6366f1; padding:4px 12px; border-radius:999px; font-weight:600">🏠 Inmobiliaria</span>
@@ -146,14 +155,38 @@
                     <div id="alertsContainer" style="display:flex; flex-direction:column; gap:14px">
                         <div style="text-align:center; padding:16px; color:#9ca3af; font-size:0.8rem">Cargando alertas...</div>
                     </div>
-                    <a href="#" style="display:block; margin-top:20px; font-size:0.82rem; color:#6366f1; font-weight:600; text-decoration:none; text-align:right">Ver todas →</a>
+                    <a href="#" onclick="showTab('payments')" style="display:block; margin-top:20px; font-size:0.82rem; color:#6366f1; font-weight:600; text-decoration:none; text-align:right">Ver pagos →</a>
                 </div>
 
             </div>
-        </div>
 
-        <!-- Properties -->
-        <div id="tab-properties" style="display:none">
+            <!-- Wizard para nuevos usuarios (se oculta cuando hay propiedades) -->
+            <div id="onboardingWizard" style="display:none; margin-top:20px; background:#fff; border:2px dashed #c7d2fe; border-radius:16px; padding:28px">
+                <div style="text-align:center; margin-bottom:20px">
+                    <div style="font-size:2rem; margin-bottom:8px">🚀</div>
+                    <h3 style="margin:0 0 4px; font-size:1.1rem; font-weight:800; color:#111827">¡Bienvenido! Configura tu inmobiliaria</h3>
+                    <p style="color:#6b7280; font-size:0.82rem; margin:0">Sigue estos pasos para empezar a administrar propiedades</p>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:12px">
+                    <div onclick="showTab('properties'); setTimeout(showPropertyForm, 300)" style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="width:32px; height:32px; background:#16a34a; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; margin:0 auto 8px">1</div>
+                        <div style="font-size:0.78rem; font-weight:700; color:#065f46">Registra tu primera propiedad</div>
+                    </div>
+                    <div onclick="showTab('inventory')" style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="width:32px; height:32px; background:#1e40af; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; margin:0 auto 8px">2</div>
+                        <div style="font-size:0.78rem; font-weight:700; color:#1e40af">Asigna un inquilino</div>
+                    </div>
+                    <div onclick="showTab('payments')" style="background:#fefce8; border:1px solid #fef08a; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="width:32px; height:32px; background:#d97706; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; margin:0 auto 8px">3</div>
+                        <div style="font-size:0.78rem; font-weight:700; color:#92400e">Configura fechas de pago</div>
+                    </div>
+                    <div onclick="showTab('invoices')" style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:12px; padding:16px; text-align:center; cursor:pointer; transition:transform 0.2s" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
+                        <div style="width:32px; height:32px; background:#7c3aed; color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; font-weight:800; margin:0 auto 8px">4</div>
+                        <div style="font-size:0.78rem; font-weight:700; color:#5b21b6">Genera tu primera factura</div>
+                    </div>
+                </div>
+            </div>
+        </div>
             <div class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
                     <h2 style="margin:0">🏘️ Mis Propiedades</h2>
@@ -2601,6 +2634,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadDashboardStats();
     loadAlerts();
     checkTenantNotifications();
+    updateSidebarBadges();
     loadPaymentConfig();
     renderPaymentsPending();
 });
@@ -3023,6 +3057,11 @@ async function loadDashboardStats() {
         document.getElementById('stat_venta_count').textContent = ventaCount;
         document.getElementById('stat_arriendos').textContent = '$' + totalArriendos.toLocaleString('es-CO');
         document.getElementById('stat_ganancias').textContent = '$' + totalGanancias.toLocaleString('es-CO');
+        // Mostrar/ocultar wizard para nuevos usuarios
+        var wizard = document.getElementById('onboardingWizard');
+        if (wizard) wizard.style.display = properties.length === 0 ? 'block' : 'none';
+        // Actualizar badges
+        updateSidebarBadges();
     } catch (e) {
         document.getElementById('stat_admin_count').textContent = '—';
         document.getElementById('stat_venta_count').textContent = '—';
@@ -3088,6 +3127,83 @@ function generateInvoicePDFFromData(inv) {
         month: ((inv.observations || '').match(/Mes:\s*([^|]+)/) || [])[1] || '—'
     };
     generateInvoicePDF(invoiceData);
+}
+
+// ── Búsqueda Global ──
+function globalSearchHandler(query) {
+    const container = document.getElementById('globalSearchResults');
+    if (query.length < 2) { container.style.display = 'none'; return; }
+    const q = query.toLowerCase();
+    const results = [];
+    // Buscar en propiedades
+    (window._propertiesData || []).forEach(function(p) {
+        if ((p.name || '').toLowerCase().includes(q) || (p.propertyAddress || '').toLowerCase().includes(q) || (p.ownerName || '').toLowerCase().includes(q)) {
+            results.push({ type: 'property', icon: '🏠', title: p.name, subtitle: p.propertyAddress || '', action: "showTab('properties')" });
+        }
+    });
+    // Buscar en historial de facturas
+    var invoiceHistory = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]');
+    invoiceHistory.forEach(function(inv) {
+        if ((inv.clientName || '').toLowerCase().includes(q) || (inv.invoiceNumber || '').toLowerCase().includes(q)) {
+            results.push({ type: 'invoice', icon: '📄', title: inv.invoiceNumber, subtitle: inv.clientName + ' — $' + Number(inv.total || 0).toLocaleString('es-CO'), action: "showTab('invoices')" });
+        }
+    });
+    // Buscar en visitas
+    var visits = JSON.parse(localStorage.getItem('zentrix_visits') || '[]');
+    visits.forEach(function(v) {
+        if ((v.nombre || '').toLowerCase().includes(q) || (v.propiedad || '').toLowerCase().includes(q)) {
+            results.push({ type: 'visit', icon: '📅', title: v.nombre, subtitle: v.propiedad + ' — ' + v.fecha, action: "showTab('visits')" });
+        }
+    });
+    if (!results.length) { container.innerHTML = '<div style="padding:16px; text-align:center; color:#9ca3af; font-size:0.82rem">No se encontraron resultados</div>'; container.style.display = 'block'; return; }
+    var html = '';
+    results.slice(0, 8).forEach(function(r) {
+        html += '<div onclick="' + r.action + '; document.getElementById(\'globalSearch\').value=\'\'; document.getElementById(\'globalSearchResults\').style.display=\'none\'" style="padding:10px 14px; cursor:pointer; display:flex; align-items:center; gap:10px; border-bottom:1px solid #f3f4f6; transition:background 0.1s" onmouseover="this.style.background=\'#f9fafb\'" onmouseout="this.style.background=\'#fff\'"><span style="font-size:1.1rem">' + r.icon + '</span><div><div style="font-size:0.82rem; font-weight:600; color:#111827">' + r.title + '</div><div style="font-size:0.72rem; color:#6b7280">' + r.subtitle + '</div></div></div>';
+    });
+    container.innerHTML = html;
+    container.style.display = 'block';
+}
+
+// ── Badges en Sidebar ──
+function updateSidebarBadges() {
+    var today = new Date();
+    var todayDay = today.getDate();
+    var propPayDates = JSON.parse(localStorage.getItem('zentrix_prop_pay_dates') || '{}');
+    var paymentStatuses = JSON.parse(localStorage.getItem('zentrix_payment_statuses') || '{}');
+    var monthKey = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
+    var vencidos = 0;
+    Object.entries(propPayDates).forEach(function(entry) {
+        var propId = entry[0]; var cfg = entry[1];
+        var diaInq = cfg.diaInqDesde || cfg.diaInquilino || 25;
+        var statusKey = monthKey + '_inq_' + propId;
+        if (paymentStatuses[statusKey] !== 'pagado') {
+            var dias = diaInq - todayDay;
+            if (dias < 0) vencidos++;
+        }
+    });
+    // Visitas hoy
+    var visits = JSON.parse(localStorage.getItem('zentrix_visits') || '[]');
+    var visitasHoy = visits.filter(function(v) { return v.fecha === today.toISOString().split('T')[0]; }).length;
+    // Insertar badges en sidebar
+    document.querySelectorAll('.sb-link').forEach(function(link) {
+        var onclick = link.getAttribute('onclick') || '';
+        var existingBadge = link.querySelector('.sb-badge');
+        if (existingBadge) existingBadge.remove();
+        if (onclick.includes("'payments'") && vencidos > 0) {
+            var badge = document.createElement('span');
+            badge.className = 'sb-badge';
+            badge.style.cssText = 'background:#ef4444; color:#fff; font-size:0.6rem; font-weight:800; padding:2px 6px; border-radius:999px; margin-left:auto';
+            badge.textContent = vencidos;
+            link.appendChild(badge);
+        }
+        if (onclick.includes("'visits'") && visitasHoy > 0) {
+            var badge2 = document.createElement('span');
+            badge2.className = 'sb-badge';
+            badge2.style.cssText = 'background:#d97706; color:#fff; font-size:0.6rem; font-weight:800; padding:2px 6px; border-radius:999px; margin-left:auto';
+            badge2.textContent = visitasHoy;
+            link.appendChild(badge2);
+        }
+    });
 }
 </script>
 </body>
