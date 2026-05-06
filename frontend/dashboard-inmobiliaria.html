@@ -560,12 +560,16 @@
 
                     <!-- Datos del proveedor/trabajador -->
                     <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:14px; margin-bottom:14px">
-                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:10px">👷 Proveedor / Trabajador</div>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
-                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre *</label><input type="text" id="ot_proveedor" required placeholder="Nombre del proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+                            <div style="font-size:0.82rem; font-weight:700; color:#065f46">👷 Proveedor / Trabajador</div>
+                            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer"><input type="checkbox" id="ot_es_inmobiliaria" onchange="toggleProveedorFields()" style="cursor:pointer"> Trabajo realizado por la inmobiliaria</label>
+                        </div>
+                        <div id="ot_proveedor_fields" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre *</label><input type="text" id="ot_proveedor" placeholder="Nombre del proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                             <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Teléfono</label><input type="text" id="ot_prov_tel" placeholder="310 123 4567" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                             <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Cédula/NIT</label><input type="text" id="ot_prov_doc" placeholder="Documento" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                         </div>
+                        <div id="ot_inmobiliaria_msg" style="display:none; padding:10px; background:#dcfce7; border-radius:8px; text-align:center; font-size:0.82rem; color:#065f46; font-weight:600">🏢 La factura se generará a nombre de tu inmobiliaria</div>
                     </div>
 
                     <!-- Conceptos -->
@@ -1633,6 +1637,8 @@ function showOtrosForm() {
     document.getElementById("invoiceOtrosPanel").style.display = "block";
     document.getElementById("otrosForm").reset();
     document.getElementById("otrosConceptosContainer").innerHTML = "";
+    document.getElementById("ot_proveedor_fields").style.display = "grid";
+    document.getElementById("ot_inmobiliaria_msg").style.display = "none";
     addOtrosConcepto();
     // Cargar propiedades
     const props = window._propertiesData || [];
@@ -1647,6 +1653,12 @@ function showOtrosForm() {
 }
 
 function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; }
+
+function toggleProveedorFields() {
+    const checked = document.getElementById('ot_es_inmobiliaria').checked;
+    document.getElementById('ot_proveedor_fields').style.display = checked ? 'none' : 'grid';
+    document.getElementById('ot_inmobiliaria_msg').style.display = checked ? 'block' : 'none';
+}
 
 function updateOtrosTipoStyle() {
     ['ot_tipo_mant','ot_tipo_rep','ot_tipo_serv','ot_tipo_otro'].forEach(id => {
@@ -1677,9 +1689,10 @@ function calcOtrosTotal() {
 function submitOtrosInvoice(e) {
     e.preventDefault();
     const tipo = document.querySelector('input[name="otros_tipo"]:checked').value;
-    const proveedor = document.getElementById('ot_proveedor').value;
-    const provTel = document.getElementById('ot_prov_tel').value;
-    const provDoc = document.getElementById('ot_prov_doc').value;
+    const esInmobiliaria = document.getElementById('ot_es_inmobiliaria').checked;
+    const proveedor = esInmobiliaria ? (localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria') : document.getElementById('ot_proveedor').value;
+    const provTel = esInmobiliaria ? '' : document.getElementById('ot_prov_tel').value;
+    const provDoc = esInmobiliaria ? '' : document.getElementById('ot_prov_doc').value;
     const metodo = document.getElementById('ot_metodo').value;
     const obs = document.getElementById('ot_obs').value;
     const propId = document.getElementById('ot_propiedad').value;
@@ -1695,6 +1708,7 @@ function submitOtrosInvoice(e) {
     });
 
     if (!conceptos.length) { alert('Agrega al menos un concepto con valor'); return; }
+    if (!esInmobiliaria && !proveedor) { alert('Ingresa el nombre del proveedor o marca "Trabajo realizado por la inmobiliaria"'); return; }
 
     // Generar PDF
     const logo = localStorage.getItem('zentrix_biz_logo') || '';
