@@ -527,6 +527,77 @@
                     <button onclick="hideInvoiceForm()" style="padding:10px 22px; background:#ef4444; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">✕ Cancelar</button>
                 </div>
             </div>
+
+            <!-- Formulario Factura Otros (Mantenimiento/Reparaciones/Servicios) -->
+            <div id="invoiceOtrosPanel" style="display:none" class="panel">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px">
+                    <div>
+                        <h2 style="margin:0 0 4px">📋 Factura — Mantenimiento / Reparaciones / Servicios</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:0">Genera una factura por trabajos realizados en un inmueble.</p>
+                    </div>
+                    <button onclick="hideOtrosForm()" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:8px; padding:6px 14px; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#374151">✕ Cerrar</button>
+                </div>
+
+                <form id="otrosForm" onsubmit="submitOtrosInvoice(event)">
+                    <!-- Tipo de servicio -->
+                    <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#5b21b6; display:block; margin-bottom:8px">Tipo de Servicio *</label>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap">
+                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_mant"><input type="radio" name="otros_tipo" value="Mantenimiento" checked style="display:none"> 🔧 Mantenimiento</label>
+                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_rep"><input type="radio" name="otros_tipo" value="Reparación" style="display:none"> 🛠️ Reparación</label>
+                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_serv"><input type="radio" name="otros_tipo" value="Servicio" style="display:none"> ⚡ Servicio</label>
+                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_otro"><input type="radio" name="otros_tipo" value="Otro" style="display:none"> 📝 Otro</label>
+                        </div>
+                    </div>
+
+                    <!-- Propiedad -->
+                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">🏠 Inmueble (opcional)</label>
+                        <select id="ot_propiedad" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff">
+                            <option value="">Sin inmueble específico</option>
+                        </select>
+                    </div>
+
+                    <!-- Datos del proveedor/trabajador -->
+                    <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#065f46; margin-bottom:10px">👷 Proveedor / Trabajador</div>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre *</label><input type="text" id="ot_proveedor" required placeholder="Nombre del proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Teléfono</label><input type="text" id="ot_prov_tel" placeholder="310 123 4567" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Cédula/NIT</label><input type="text" id="ot_prov_doc" placeholder="Documento" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                        </div>
+                    </div>
+
+                    <!-- Conceptos -->
+                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+                            <div style="font-size:0.82rem; font-weight:700; color:#92400e">📝 Conceptos / Trabajos Realizados</div>
+                            <button type="button" onclick="addOtrosConcepto()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir concepto</button>
+                        </div>
+                        <div id="otrosConceptosContainer"></div>
+                    </div>
+
+                    <!-- Total -->
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="display:flex; justify-content:space-between; align-items:center">
+                            <span style="font-size:0.92rem; font-weight:800; color:#065f46">TOTAL:</span>
+                            <span id="ot_total" style="font-size:1.3rem; font-weight:800; color:#16a34a">$0</span>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones y método -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px">
+                        <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Método de Pago</label><select id="ot_metodo" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; background:#fff"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option><option value="CONSIGNACION">Consignación</option></select></div>
+                        <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Observaciones</label><input type="text" id="ot_obs" placeholder="Notas adicionales" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                    </div>
+
+                    <!-- Botones -->
+                    <div style="display:flex; gap:10px; justify-content:flex-end">
+                        <button type="button" onclick="hideOtrosForm()" style="padding:10px 20px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button>
+                        <button type="submit" style="padding:10px 24px; background:linear-gradient(135deg,#5b21b6,#4c1d95); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(91,33,182,0.3)">📋 Generar Factura</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Quotes -->
@@ -1545,15 +1616,106 @@ function showInvoiceTypeSelector() {
 function selectInvoiceType(type) {
     document.getElementById("invoiceTypeSelector").style.display = "none";
     if (type === 'propietario') {
+        document.getElementById("invoiceOtrosPanel").style.display = "none";
         showInvoiceForm();
         setClientType('propietario');
     } else if (type === 'inquilino') {
+        document.getElementById("invoiceOtrosPanel").style.display = "none";
         showInvoiceForm();
         setClientType('inquilino');
     } else if (type === 'otros') {
-        showInvoiceForm();
-        setClientType('inquilino');
+        document.getElementById("invoiceFormPanel").style.display = "none";
+        showOtrosForm();
     }
+}
+
+function showOtrosForm() {
+    document.getElementById("invoiceOtrosPanel").style.display = "block";
+    document.getElementById("otrosForm").reset();
+    document.getElementById("otrosConceptosContainer").innerHTML = "";
+    addOtrosConcepto();
+    // Cargar propiedades
+    const props = window._propertiesData || [];
+    const select = document.getElementById("ot_propiedad");
+    select.innerHTML = '<option value="">Sin inmueble específico</option>';
+    props.forEach(p => { select.innerHTML += '<option value="' + p.id + '">' + p.name + ' — ' + (p.propertyAddress || '') + '</option>'; });
+    // Estilo radio buttons
+    document.querySelectorAll('#invoiceOtrosPanel input[name="otros_tipo"]').forEach(r => {
+        r.addEventListener('change', updateOtrosTipoStyle);
+    });
+    updateOtrosTipoStyle();
+}
+
+function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; }
+
+function updateOtrosTipoStyle() {
+    ['ot_tipo_mant','ot_tipo_rep','ot_tipo_serv','ot_tipo_otro'].forEach(id => {
+        const el = document.getElementById(id);
+        const checked = el.querySelector('input').checked;
+        el.style.background = checked ? '#7c3aed' : '#fff';
+        el.style.color = checked ? '#fff' : '#374151';
+        el.style.borderColor = checked ? '#7c3aed' : '#ddd6fe';
+    });
+}
+
+function addOtrosConcepto() {
+    const container = document.getElementById("otrosConceptosContainer");
+    const row = document.createElement("div");
+    row.style.cssText = "display:grid; grid-template-columns:2fr 1fr auto; gap:8px; margin-bottom:8px; align-items:end";
+    row.innerHTML = '<div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Descripción</label><input type="text" class="ot-desc" placeholder="Ej: Cambio de grifo baño principal" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Valor</label><div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.78rem; color:#6b7280">$</span><input type="text" class="ot-valor" placeholder="150.000" style="width:100%; padding:7px 10px 7px 20px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; font-weight:700" oninput="formatCurrency(this); calcOtrosTotal()"></div></div><button type="button" onclick="this.parentElement.remove(); calcOtrosTotal()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:7px 10px; cursor:pointer; font-size:0.78rem; margin-bottom:1px">🗑️</button>';
+    container.appendChild(row);
+}
+
+function calcOtrosTotal() {
+    let total = 0;
+    document.querySelectorAll('#otrosConceptosContainer .ot-valor').forEach(el => {
+        total += Number(el.value.replace(/[^\d]/g, '')) || 0;
+    });
+    document.getElementById('ot_total').textContent = '$' + total.toLocaleString('es-CO');
+}
+
+function submitOtrosInvoice(e) {
+    e.preventDefault();
+    const tipo = document.querySelector('input[name="otros_tipo"]:checked').value;
+    const proveedor = document.getElementById('ot_proveedor').value;
+    const provTel = document.getElementById('ot_prov_tel').value;
+    const provDoc = document.getElementById('ot_prov_doc').value;
+    const metodo = document.getElementById('ot_metodo').value;
+    const obs = document.getElementById('ot_obs').value;
+    const propId = document.getElementById('ot_propiedad').value;
+    const props = window._propertiesData || [];
+    const prop = propId ? props.find(p => p.id == propId) : null;
+
+    let conceptos = [];
+    let total = 0;
+    document.querySelectorAll('#otrosConceptosContainer > div').forEach(row => {
+        const desc = row.querySelector('.ot-desc').value;
+        const val = Number(row.querySelector('.ot-valor').value.replace(/[^\d]/g, '')) || 0;
+        if (desc && val > 0) { conceptos.push({ desc, val }); total += val; }
+    });
+
+    if (!conceptos.length) { alert('Agrega al menos un concepto con valor'); return; }
+
+    // Generar PDF
+    const logo = localStorage.getItem('zentrix_biz_logo') || '';
+    const bizName = localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria';
+    const logoHtml = logo ? '<img src="' + logo + '" style="width:60px; height:60px; border-radius:50%; object-fit:cover">' : '<div style="width:60px; height:60px; border-radius:50%; background:#f5f3ff; display:flex; align-items:center; justify-content:center; font-size:1.5rem">📋</div>';
+    const fecha = new Date().toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+    const numFac = 'FAC-SRV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
+
+    let conceptosHtml = conceptos.map(c => '<tr><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb">' + c.desc + '</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + c.val.toLocaleString('es-CO') + '</td></tr>').join('');
+
+    const html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura ' + numFac + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:650px; margin:0 auto"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #7c3aed"><div style="display:flex; align-items:center; gap:12px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.8rem">Administración Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#7c3aed; font-size:1rem">FACTURA DE ' + tipo.toUpperCase() + '</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numFac + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div>' +
+    '<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px"><div style="background:#f9fafb; padding:14px; border-radius:10px; border:1px solid #e5e7eb"><h3 style="margin:0 0 6px; font-size:0.78rem; color:#6b7280; text-transform:uppercase">Proveedor / Trabajador</h3><p style="margin:0; font-weight:700">' + proveedor + '</p><p style="margin:2px 0 0; font-size:0.8rem; color:#6b7280">' + (provDoc ? 'Doc: ' + provDoc : '') + (provTel ? ' | Tel: ' + provTel : '') + '</p></div>' + (prop ? '<div style="background:#f9fafb; padding:14px; border-radius:10px; border:1px solid #e5e7eb"><h3 style="margin:0 0 6px; font-size:0.78rem; color:#6b7280; text-transform:uppercase">Inmueble</h3><p style="margin:0; font-weight:700">' + (prop.propertyAddress || prop.name) + '</p><p style="margin:2px 0 0; font-size:0.8rem; color:#6b7280">Propietario: ' + (prop.ownerName || '—') + '</p></div>' : '<div></div>') + '</div>' +
+    '<table style="width:100%; border-collapse:collapse; margin-bottom:16px"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left; font-size:0.82rem">Concepto</th><th style="padding:10px 12px; text-align:right; font-size:0.82rem">Valor</th></tr></thead><tbody>' + conceptosHtml + '</tbody></table>' +
+    '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center; margin-bottom:16px"><span style="font-weight:800; font-size:0.95rem">TOTAL:</span><span style="font-weight:800; font-size:1.3rem; color:#16a34a">$' + total.toLocaleString('es-CO') + '</span></div>' +
+    '<div style="font-size:0.8rem; color:#6b7280; margin-bottom:20px">Método de pago: ' + metodo + (obs ? ' | Obs: ' + obs : '') + '</div>' +
+    '<div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#7c3aed; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">📄 Descargar PDF</button></div></div></body></html>';
+
+    const w = window.open('', '_blank');
+    if (w) { w.document.write(html); w.document.close(); }
+    hideOtrosForm();
+    alert('✓ Factura de ' + tipo + ' generada\n\nProveedor: ' + proveedor + '\nTotal: $' + total.toLocaleString('es-CO'));
 }
 
 async function showInvoiceForm() {
