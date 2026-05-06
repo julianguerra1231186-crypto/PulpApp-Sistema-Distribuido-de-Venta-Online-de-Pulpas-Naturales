@@ -1623,6 +1623,136 @@ function deleteLocalInvoice(idx) { if (!confirm('Eliminar esta factura del histo
 
 function saveInvoiceToHistory(invoiceData) { var history = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]'); history.unshift({ numero: invoiceData.invoiceNumber, invoiceNumber: invoiceData.invoiceNumber, tipo: invoiceData.tipo || 'Otro', clientName: invoiceData.clientName || '', propietario: invoiceData.ownerName || '', total: invoiceData.totalAmount || invoiceData.totalPropietario || invoiceData.rentValue || 0, totalAmount: invoiceData.totalAmount || invoiceData.totalPropietario || 0, date: invoiceData.date, createdAt: new Date().toISOString(), source: 'local', pdfData: invoiceData }); localStorage.setItem('zentrix_invoice_history', JSON.stringify(history)); }
 
+// ── Facturación: Selector y Formularios ──
+function showInvoiceTypeSelector() {
+    document.getElementById("invoiceTypeSelector").style.display = "block";
+    document.getElementById("invoiceFormPanel").style.display = "none";
+    document.getElementById("invoiceOtrosPanel").style.display = "none";
+}
+
+function selectInvoiceType(type) {
+    document.getElementById("invoiceTypeSelector").style.display = "none";
+    if (type === 'propietario') {
+        document.getElementById("invoiceOtrosPanel").style.display = "none";
+        showInvoiceForm();
+        setTimeout(function() { setClientType('propietario'); }, 100);
+    } else if (type === 'inquilino') {
+        document.getElementById("invoiceOtrosPanel").style.display = "none";
+        showInvoiceForm();
+        setTimeout(function() { setClientType('inquilino'); }, 100);
+    } else if (type === 'otros') {
+        document.getElementById("invoiceFormPanel").style.display = "none";
+        showOtrosForm();
+    }
+}
+
+async function showInvoiceForm() {
+    document.getElementById("invoiceFormPanel").style.display = "block";
+    try {
+        const res = await fetch(API + "/inventory", { headers: authHeaders() });
+        propertiesList = await res.json();
+        window._propertiesData = propertiesList;
+        const select = document.getElementById("inv_property");
+        select.innerHTML = '<option value="">Seleccione una propiedad...</option>';
+        propertiesList.forEach(function(p) { select.innerHTML += '<option value="' + p.id + '">' + p.name + ' — ' + (p.propertyAddress || p.code) + '</option>'; });
+    } catch (e) {}
+    document.getElementById("inv_month").value = new Date().toISOString().slice(0, 7);
+}
+
+function showOtrosForm() {
+    document.getElementById("invoiceOtrosPanel").style.display = "block";
+    document.getElementById("otrosForm").reset();
+    document.getElementById("otrosConceptosContainer").innerHTML = "";
+    document.getElementById("ot_proveedor_fields").style.display = "grid";
+    document.getElementById("ot_inmobiliaria_msg").style.display = "none";
+    addOtrosConcepto();
+    var props = window._propertiesData || [];
+    var select = document.getElementById("ot_propiedad");
+    select.innerHTML = '<option value="">Seleccione el inmueble...</option>';
+    props.forEach(function(p) { select.innerHTML += '<option value="' + p.id + '">' + p.name + ' — ' + (p.propertyAddress || '') + '</option>'; });
+    updateOtrosTipoStyle();
+}
+
+function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; }
+
+function selectOtrosProperty() {
+    var propId = document.getElementById('ot_propiedad').value;
+    var infoDiv = document.getElementById('ot_prop_info');
+    if (!propId) { infoDiv.style.display = 'none'; return; }
+    var props = window._propertiesData || [];
+    var p = props.find(function(x) { return x.id == propId; });
+    if (!p) { infoDiv.style.display = 'none'; return; }
+    var supData = p.supplier || '';
+    var cedulaMatch = supData.match(/CC:([^|]+)/);
+    var cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+    var phone = supData.replace(/CC:[^|]+\|?\s*/, '').trim() || '—';
+    document.getElementById('ot_prop_name').textContent = p.ownerName || '—';
+    document.getElementById('ot_prop_cedula').textContent = cedula;
+    document.getElementById('ot_prop_phone').textContent = phone;
+    infoDiv.style.display = 'block';
+}
+
+function toggleProveedorFields() {
+    var checked = document.getElementById('ot_es_inmobiliaria').checked;
+    document.getElementById('ot_proveedor_fields').style.display = checked ? 'none' : 'grid';
+    document.getElementById('ot_inmobiliaria_msg').style.display = checked ? 'block' : 'none';
+}
+
+function updateOtrosTipoStyle() {
+    ['ot_tipo_mant','ot_tipo_rep','ot_tipo_serv','ot_tipo_otro'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        var checked = el.querySelector('input').checked;
+        el.style.background = checked ? '#7c3aed' : '#fff';
+        el.style.color = checked ? '#fff' : '#374151';
+        el.style.borderColor = checked ? '#7c3aed' : '#ddd6fe';
+    });
+}
+
+function addOtrosConcepto() {
+    var container = document.getElementById("otrosConceptosContainer");
+    var row = document.createElement("div");
+    row.style.cssText = "display:grid; grid-template-columns:2fr 1fr auto; gap:8px; margin-bottom:8px; align-items:end";
+    row.innerHTML = '<div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Descripción</label><input type="text" class="ot-desc" placeholder="Ej: Cambio de grifo" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Valor</label><div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.78rem; color:#6b7280">$</span><input type="text" class="ot-valor" placeholder="150.000" style="width:100%; padding:7px 10px 7px 20px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; font-weight:700" oninput="formatCurrency(this); calcOtrosTotal()"></div></div><button type="button" onclick="this.parentElement.remove(); calcOtrosTotal()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:7px 10px; cursor:pointer; font-size:0.78rem; margin-bottom:1px">🗑️</button>';
+    container.appendChild(row);
+}
+
+function calcOtrosTotal() {
+    var total = 0;
+    document.querySelectorAll('#otrosConceptosContainer .ot-valor').forEach(function(el) { total += Number(el.value.replace(/[^\d]/g, '')) || 0; });
+    document.getElementById('ot_total').textContent = '$' + total.toLocaleString('es-CO');
+}
+
+function submitOtrosInvoice(e) {
+    e.preventDefault();
+    var tipo = document.querySelector('input[name="otros_tipo"]:checked').value;
+    var esInmobiliaria = document.getElementById('ot_es_inmobiliaria').checked;
+    var proveedor = esInmobiliaria ? (localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria') : document.getElementById('ot_proveedor').value;
+    var obs = document.getElementById('ot_obs').value;
+    var propId = document.getElementById('ot_propiedad').value;
+    var props = window._propertiesData || [];
+    var prop = propId ? props.find(function(p) { return p.id == propId; }) : null;
+    var conceptos = []; var total = 0;
+    document.querySelectorAll('#otrosConceptosContainer > div').forEach(function(row) {
+        var desc = row.querySelector('.ot-desc').value;
+        var val = Number(row.querySelector('.ot-valor').value.replace(/[^\d]/g, '')) || 0;
+        if (desc && val > 0) { conceptos.push({ desc: desc, val: val }); total += val; }
+    });
+    if (!conceptos.length) { alert('Agrega al menos un concepto con valor'); return; }
+    if (!esInmobiliaria && !proveedor) { alert('Ingresa el nombre del proveedor o marca "Trabajo propio"'); return; }
+    var fecha = new Date().toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+    var numFac = 'FAC-SRV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
+    var logo = localStorage.getItem('zentrix_biz_logo') || '';
+    var bizName = localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria';
+    var logoHtml = logo ? '<img src="' + logo + '" style="width:60px; height:60px; border-radius:50%; object-fit:cover">' : '<div style="width:60px; height:60px; border-radius:50%; background:#f5f3ff; display:flex; align-items:center; justify-content:center; font-size:1.5rem">📋</div>';
+    var conceptosHtml = conceptos.map(function(c) { return '<tr><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb">' + c.desc + '</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + c.val.toLocaleString('es-CO') + '</td></tr>'; }).join('');
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura ' + numFac + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:650px; margin:0 auto"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #7c3aed"><div style="display:flex; align-items:center; gap:12px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.8rem">Administracion Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#7c3aed; font-size:1rem">COBRO POR ' + tipo.toUpperCase() + '</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numFac + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div>' + (prop ? '<div style="background:#f9fafb; padding:14px; border-radius:10px; border:1px solid #e5e7eb; margin-bottom:16px"><h3 style="margin:0 0 6px; font-size:0.78rem; color:#6b7280">COBRAR A: ' + (prop.ownerName || '') + '</h3><p style="margin:0; font-size:0.85rem">Inmueble: ' + (prop.propertyAddress || prop.name) + '</p></div>' : '') + '<table style="width:100%; border-collapse:collapse; margin-bottom:16px"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Concepto</th><th style="padding:10px 12px; text-align:right">Valor</th></tr></thead><tbody>' + conceptosHtml + '</tbody></table><div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center"><span style="font-weight:800">TOTAL:</span><span style="font-weight:800; font-size:1.3rem; color:#16a34a">$' + total.toLocaleString('es-CO') + '</span></div><div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#7c3aed; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">Descargar PDF</button></div></div></body></html>';
+    var w = window.open('', '_blank');
+    if (w) { w.document.write(html); w.document.close(); }
+    saveInvoiceToHistory({ invoiceNumber: numFac, tipo: tipo, clientName: (prop ? prop.ownerName : proveedor), ownerName: prop ? prop.ownerName : '', totalAmount: total, totalPropietario: total, date: fecha, propertyAddress: prop ? prop.propertyAddress : '' });
+    document.getElementById("invoiceOtrosPanel").style.display = "none";
+    loadInvoices();
+}
 
 function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "none"; selectedClientData = null; selectedPropertyData = null; }
 
