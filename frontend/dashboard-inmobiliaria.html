@@ -2374,6 +2374,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSavedLogo();
     loadDashboardStats();
     loadAlerts();
+    checkTenantNotifications();
     loadPaymentConfig();
     renderPaymentsPending();
 });
@@ -2751,6 +2752,26 @@ function applyLogo(src) {
 function loadSavedLogo() {
     const savedLogo = localStorage.getItem('zentrix_biz_logo');
     if (savedLogo) applyLogo(savedLogo);
+}
+
+function checkTenantNotifications() {
+    const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+    const tenantId = user.tenantId;
+    if (!tenantId) return;
+    const notifications = JSON.parse(localStorage.getItem('zentrix_tenant_notifications') || '{}');
+    const tenantNotifs = notifications[tenantId] || [];
+    if (!tenantNotifs.length) return;
+    // Mostrar la última notificación
+    const last = tenantNotifs[tenantNotifs.length - 1];
+    if (last.type === 'warning') {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:99999; padding:20px';
+        modal.innerHTML = '<div style="background:#fff; border-radius:16px; max-width:420px; width:100%; padding:32px; text-align:center; box-shadow:0 25px 60px rgba(0,0,0,0.3)"><div style="font-size:3rem; margin-bottom:12px">⚠️</div><h2 style="margin:0 0 8px; font-size:1.2rem; color:#111827">Plan Pausado</h2><p style="color:#6b7280; font-size:0.88rem; margin:0 0 16px">' + last.message + '</p><p style="color:#9ca3af; font-size:0.75rem; margin:0 0 20px">' + last.date + '</p><button onclick="this.closest(\'div[style]\').remove()" style="padding:10px 24px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer">Entendido</button></div>';
+        document.body.appendChild(modal);
+    }
+    // Limpiar notificaciones mostradas
+    notifications[tenantId] = [];
+    localStorage.setItem('zentrix_tenant_notifications', JSON.stringify(notifications));
 }
 
 // ── TASK 3: Dynamic Dashboard Stats ──
