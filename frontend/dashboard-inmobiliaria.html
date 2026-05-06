@@ -532,73 +532,81 @@
             <div id="invoiceOtrosPanel" style="display:none" class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px">
                     <div>
-                        <h2 style="margin:0 0 4px">📋 Factura — Mantenimiento / Reparaciones / Servicios</h2>
-                        <p style="color:#6b7280; font-size:0.8rem; margin:0">Genera una factura por trabajos realizados en un inmueble.</p>
+                        <h2 style="margin:0 0 4px">📋 Cobro al Propietario — Servicios al Inmueble</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:0">Genera una factura de cobro al propietario por trabajos realizados en su inmueble.</p>
                     </div>
                     <button onclick="hideOtrosForm()" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:8px; padding:6px 14px; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#374151">✕ Cerrar</button>
                 </div>
 
                 <form id="otrosForm" onsubmit="submitOtrosInvoice(event)">
-                    <!-- Tipo de servicio -->
+                    <!-- Tipo de servicio con descripción -->
                     <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px; margin-bottom:14px">
-                        <label style="font-size:0.82rem; font-weight:700; color:#5b21b6; display:block; margin-bottom:8px">Tipo de Servicio *</label>
-                        <div style="display:flex; gap:8px; flex-wrap:wrap">
-                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_mant"><input type="radio" name="otros_tipo" value="Mantenimiento" checked style="display:none"> 🔧 Mantenimiento</label>
-                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_rep"><input type="radio" name="otros_tipo" value="Reparación" style="display:none"> 🛠️ Reparación</label>
-                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_serv"><input type="radio" name="otros_tipo" value="Servicio" style="display:none"> ⚡ Servicio</label>
-                            <label style="display:flex; align-items:center; gap:6px; padding:8px 14px; border:2px solid #ddd6fe; border-radius:8px; cursor:pointer; font-size:0.82rem; font-weight:600; background:#fff" id="ot_tipo_otro"><input type="radio" name="otros_tipo" value="Otro" style="display:none"> 📝 Otro</label>
+                        <label style="font-size:0.82rem; font-weight:700; color:#5b21b6; display:block; margin-bottom:10px">Tipo de Cobro *</label>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px">
+                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_mant"><input type="radio" name="otros_tipo" value="Mantenimiento" checked style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">🔧</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Mantenimiento</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Preventivo, limpieza, pintura</span></label>
+                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_rep"><input type="radio" name="otros_tipo" value="Reparación" style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">🛠️</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Reparación</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Daños, averías, urgencias</span></label>
+                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_serv"><input type="radio" name="otros_tipo" value="Servicios" style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">⚡</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Servicios</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Agua, luz, gas, admin</span></label>
+                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_otro"><input type="radio" name="otros_tipo" value="Otro" style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">📝</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Otro</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Conceptos varios</span></label>
                         </div>
                     </div>
 
-                    <!-- Propiedad -->
-                    <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:14px; margin-bottom:14px">
-                        <label style="font-size:0.82rem; font-weight:700; color:#111827; display:block; margin-bottom:8px">🏠 Inmueble (opcional)</label>
-                        <select id="ot_propiedad" style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff">
-                            <option value="">Sin inmueble específico</option>
+                    <!-- Propiedad + datos propietario -->
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#1e40af; display:block; margin-bottom:8px">🏠 Inmueble y Propietario *</label>
+                        <select id="ot_propiedad" required onchange="selectOtrosProperty()" style="width:100%; padding:9px 12px; border:1px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff">
+                            <option value="">Seleccione el inmueble...</option>
                         </select>
+                        <div id="ot_prop_info" style="display:none; margin-top:10px; padding:12px; background:#fff; border:1px solid #bfdbfe; border-radius:8px">
+                            <div style="font-size:0.78rem; font-weight:700; color:#1e40af; margin-bottom:6px">👤 Datos del Propietario (a quien se le cobra)</div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; font-size:0.8rem">
+                                <div><span style="color:#6b7280; font-size:0.7rem; display:block">Nombre</span><strong id="ot_prop_name">—</strong></div>
+                                <div><span style="color:#6b7280; font-size:0.7rem; display:block">Cédula</span><strong id="ot_prop_cedula">—</strong></div>
+                                <div><span style="color:#6b7280; font-size:0.7rem; display:block">Teléfono</span><strong id="ot_prop_phone">—</strong></div>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Datos del proveedor/trabajador -->
+                    <!-- Quien realizó el trabajo -->
                     <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:14px; margin-bottom:14px">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                            <div style="font-size:0.82rem; font-weight:700; color:#065f46">👷 Proveedor / Trabajador</div>
-                            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer"><input type="checkbox" id="ot_es_inmobiliaria" onchange="toggleProveedorFields()" style="cursor:pointer"> Trabajo realizado por la inmobiliaria</label>
+                            <div style="font-size:0.82rem; font-weight:700; color:#065f46">👷 Realizado por</div>
+                            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer"><input type="checkbox" id="ot_es_inmobiliaria" onchange="toggleProveedorFields()" style="cursor:pointer"> Trabajo propio de la inmobiliaria</label>
                         </div>
                         <div id="ot_proveedor_fields" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
-                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre *</label><input type="text" id="ot_proveedor" placeholder="Nombre del proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre</label><input type="text" id="ot_proveedor" placeholder="Nombre del trabajador/proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                             <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Teléfono</label><input type="text" id="ot_prov_tel" placeholder="310 123 4567" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                             <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Cédula/NIT</label><input type="text" id="ot_prov_doc" placeholder="Documento" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
                         </div>
-                        <div id="ot_inmobiliaria_msg" style="display:none; padding:10px; background:#dcfce7; border-radius:8px; text-align:center; font-size:0.82rem; color:#065f46; font-weight:600">🏢 La factura se generará a nombre de tu inmobiliaria</div>
+                        <div id="ot_inmobiliaria_msg" style="display:none; padding:10px; background:#dcfce7; border-radius:8px; text-align:center; font-size:0.82rem; color:#065f46; font-weight:600">🏢 Trabajo realizado directamente por la inmobiliaria</div>
                     </div>
 
                     <!-- Conceptos -->
                     <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:14px">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                            <div style="font-size:0.82rem; font-weight:700; color:#92400e">📝 Conceptos / Trabajos Realizados</div>
-                            <button type="button" onclick="addOtrosConcepto()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir concepto</button>
+                            <div style="font-size:0.82rem; font-weight:700; color:#92400e">📝 Detalle de Trabajos / Conceptos</div>
+                            <button type="button" onclick="addOtrosConcepto()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir</button>
                         </div>
                         <div id="otrosConceptosContainer"></div>
                     </div>
 
-                    <!-- Total -->
-                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; margin-bottom:14px">
+                    <!-- Total a cobrar -->
+                    <div style="background:#f0fdf4; border:2px solid #16a34a; border-radius:10px; padding:16px; margin-bottom:14px">
                         <div style="display:flex; justify-content:space-between; align-items:center">
-                            <span style="font-size:0.92rem; font-weight:800; color:#065f46">TOTAL:</span>
-                            <span id="ot_total" style="font-size:1.3rem; font-weight:800; color:#16a34a">$0</span>
+                            <span style="font-size:0.95rem; font-weight:800; color:#065f46">TOTAL A COBRAR AL PROPIETARIO:</span>
+                            <span id="ot_total" style="font-size:1.4rem; font-weight:800; color:#16a34a">$0</span>
                         </div>
                     </div>
 
-                    <!-- Observaciones y método -->
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px">
-                        <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Método de Pago</label><select id="ot_metodo" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem; background:#fff"><option value="EFECTIVO">Efectivo</option><option value="TRANSFERENCIA">Transferencia</option><option value="CONSIGNACION">Consignación</option></select></div>
-                        <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Observaciones</label><input type="text" id="ot_obs" placeholder="Notas adicionales" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                    <!-- Observaciones -->
+                    <div style="margin-bottom:14px">
+                        <label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Observaciones</label>
+                        <input type="text" id="ot_obs" placeholder="Notas adicionales para el propietario" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem">
                     </div>
 
                     <!-- Botones -->
                     <div style="display:flex; gap:10px; justify-content:flex-end">
                         <button type="button" onclick="hideOtrosForm()" style="padding:10px 20px; background:#fff; color:#374151; border:2px solid #e5e7eb; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit">Cancelar</button>
-                        <button type="submit" style="padding:10px 24px; background:linear-gradient(135deg,#5b21b6,#4c1d95); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(91,33,182,0.3)">📋 Generar Factura</button>
+                        <button type="submit" style="padding:10px 24px; background:linear-gradient(135deg,#5b21b6,#4c1d95); color:#fff; border:none; border-radius:10px; font-size:0.85rem; font-weight:700; cursor:pointer; font-family:inherit; box-shadow:0 4px 12px rgba(91,33,182,0.3)">📋 Generar Factura de Cobro</button>
                     </div>
                 </form>
             </div>
@@ -1654,6 +1662,23 @@ function showOtrosForm() {
 
 function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; }
 
+function selectOtrosProperty() {
+    const propId = document.getElementById('ot_propiedad').value;
+    const infoDiv = document.getElementById('ot_prop_info');
+    if (!propId) { infoDiv.style.display = 'none'; return; }
+    const props = window._propertiesData || [];
+    const p = props.find(x => x.id == propId);
+    if (!p) { infoDiv.style.display = 'none'; return; }
+    const supData = p.supplier || '';
+    const cedulaMatch = supData.match(/CC:([^|]+)/);
+    const cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+    const phone = supData.replace(/CC:[^|]+\|?\s*/, '').trim() || '—';
+    document.getElementById('ot_prop_name').textContent = p.ownerName || '—';
+    document.getElementById('ot_prop_cedula').textContent = cedula;
+    document.getElementById('ot_prop_phone').textContent = phone;
+    infoDiv.style.display = 'block';
+}
+
 function toggleProveedorFields() {
     const checked = document.getElementById('ot_es_inmobiliaria').checked;
     document.getElementById('ot_proveedor_fields').style.display = checked ? 'none' : 'grid';
@@ -1693,7 +1718,7 @@ function submitOtrosInvoice(e) {
     const proveedor = esInmobiliaria ? (localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria') : document.getElementById('ot_proveedor').value;
     const provTel = esInmobiliaria ? '' : document.getElementById('ot_prov_tel').value;
     const provDoc = esInmobiliaria ? '' : document.getElementById('ot_prov_doc').value;
-    const metodo = document.getElementById('ot_metodo').value;
+    const metodo = '';
     const obs = document.getElementById('ot_obs').value;
     const propId = document.getElementById('ot_propiedad').value;
     const props = window._propertiesData || [];
