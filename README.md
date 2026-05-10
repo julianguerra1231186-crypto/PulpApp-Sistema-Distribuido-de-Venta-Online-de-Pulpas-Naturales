@@ -9,6 +9,14 @@ CODE_ORGANIZATION: code-corhuila
 
 # 🍊 PulpApp — Sistema Distribuido de Venta Online de Pulpas Naturales
 
+
+## Flujo de Ramas
+
+- main → producción
+- qa → validación y pruebas funcionales
+- develop → desarrollo activo
+- feature/* → nuevas funcionalidades
+
 **Plataforma escalable de gestión distribuida para la comercialización inteligente y logística de pulpas frutales naturales.**
 
 [![Estado](https://img.shields.io/badge/Estado-Funcional%20100%25-brightgreen?style=for-the-badge)](https://github.com)
