@@ -30,6 +30,13 @@ CODE_ORGANIZATION: code-corhuila
 
 **Grupo 5** — Programa de Ingeniería de Sistemas
 
+
+## Flujo Git Profesional
+- QA
+- Develop
+- Main
+- Organización ZentrixSaaS
+
 📋 [Mesa de Trabajo — Jira](https://julianguerra1231186-1773894024267.atlassian.net/jira/software/projects/KAN/list?jql=project+%3D+KAN+ORDER+BY+created+DESC)
 
 ---
