@@ -1004,6 +1004,20 @@ const API = "http://localhost:8090";
 const getToken = () => localStorage.getItem("pulpapp_jwt");
 const authHeaders = () => ({ "Content-Type":"application/json", "Authorization":"Bearer " + getToken() });
 
+// Interceptor global: si cualquier fetch devuelve 401/403, redirigir a login
+const originalFetch = window.fetch;
+window.fetch = async function(...args) {
+    const response = await originalFetch.apply(this, args);
+    if ((response.status === 401 || response.status === 403) && args[0] && args[0].toString().includes(API)) {
+        // Token expirado o inválido
+        localStorage.removeItem("pulpapp_jwt");
+        alert("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+        window.location.href = "login.html";
+        return response;
+    }
+    return response;
+};
+
 let currentClientFilter = 'todos';
 
 async function loadClients() {
