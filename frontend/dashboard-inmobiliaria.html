@@ -476,7 +476,7 @@
 
             <!-- Formulario nueva factura inmobiliaria -->
             <div id="invoiceFormPanel" style="display:none" class="panel">
-                <h2 style="margin:0 0 6px">📄 Nueva Factura de Arriendo</h2>
+                <h2 style="margin:0 0 6px">📄 Nueva Factura</h2>
                 <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px">
                     <p style="color:#6b7280; font-size:0.82rem; margin:0">Comisión actual:</p>
                     <div style="display:flex; align-items:center; gap:6px">
@@ -487,15 +487,13 @@
                 </div>
 
                 <!-- 1. Tipo de cliente + Buscar -->
+                <!-- 1. Buscar propietario/inquilino -->
                 <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
-                    <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px">
-                        <label style="font-size:0.82rem; font-weight:700; color:#111827">👤 Factura dirigida a:</label>
-                        <div style="display:flex; gap:6px">
-                            <button type="button" id="btn_tipo_inquilino" onclick="setClientType('inquilino')" style="padding:6px 16px; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #6366f1; background:#6366f1; color:#fff">Inquilino</button>
-                            <button type="button" id="btn_tipo_propietario" onclick="setClientType('propietario')" style="padding:6px 16px; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; border:2px solid #e5e7eb; background:#fff; color:#374151">Propietario</button>
-                        </div>
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#111827">👤</label>
+                        <span id="inv_tipo_label" style="font-size:0.82rem; font-weight:700; color:#6366f1; background:#eef2ff; padding:4px 12px; border-radius:6px">Propietario</span>
                     </div>
-                    <input type="text" id="inv_search_client" placeholder="Escribe nombre o cédula..." style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem" oninput="searchClientForInvoice(this.value)">
+                    <input type="text" id="inv_search_client" placeholder="Buscar propietario por nombre, cédula o teléfono..." style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem" oninput="searchClientForInvoice(this.value)">
                     <div id="inv_client_results" style="margin-top:8px"></div>
                     <div id="inv_client_info" style="display:none; margin-top:10px; padding:10px; background:#fff; border:1px solid #e5e7eb; border-radius:8px">
                         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; font-size:0.78rem; color:#374151">
@@ -503,8 +501,11 @@
                             <div><strong>Cédula:</strong> <span id="inv_ci_doc">—</span></div>
                             <div><strong>Teléfono:</strong> <span id="inv_ci_phone">—</span></div>
                         </div>
-                        <div style="margin-top:6px; font-size:0.72rem; color:#6366f1; font-weight:600" id="inv_ci_type_label">Tipo: Inquilino</div>
+                        <div style="margin-top:6px; font-size:0.72rem; color:#6366f1; font-weight:600; display:none" id="inv_ci_type_label"></div>
                     </div>
+                    <!-- Botones ocultos para mantener compatibilidad -->
+                    <button type="button" id="btn_tipo_inquilino" style="display:none"></button>
+                    <button type="button" id="btn_tipo_propietario" style="display:none"></button>
                 </div>
 
                 <!-- 2. Seleccionar propiedad -->
@@ -1619,25 +1620,19 @@ let invoiceClientType = "inquilino";
 
 function setClientType(type) {
     invoiceClientType = type;
-    const btnInq = document.getElementById("btn_tipo_inquilino");
-    const btnProp = document.getElementById("btn_tipo_propietario");
     const searchInput = document.getElementById("inv_search_client");
+    const tipoLabel = document.getElementById("inv_tipo_label");
     if (type === "inquilino") {
-        btnInq.style.background = "#6366f1"; btnInq.style.color = "#fff"; btnInq.style.borderColor = "#6366f1";
-        btnProp.style.background = "#fff"; btnProp.style.color = "#374151"; btnProp.style.borderColor = "#e5e7eb";
         searchInput.placeholder = "Buscar inquilino por nombre o cédula...";
+        if (tipoLabel) { tipoLabel.textContent = "Inquilino"; tipoLabel.style.background = "#dcfce7"; tipoLabel.style.color = "#065f46"; }
     } else {
-        btnProp.style.background = "#6366f1"; btnProp.style.color = "#fff"; btnProp.style.borderColor = "#6366f1";
-        btnInq.style.background = "#fff"; btnInq.style.color = "#374151"; btnInq.style.borderColor = "#e5e7eb";
         searchInput.placeholder = "Buscar propietario por nombre, cédula o teléfono...";
+        if (tipoLabel) { tipoLabel.textContent = "Propietario"; tipoLabel.style.background = "#eef2ff"; tipoLabel.style.color = "#6366f1"; }
     }
-    // Limpiar búsqueda anterior
     searchInput.value = "";
     document.getElementById("inv_client_results").innerHTML = "";
     document.getElementById("inv_client_info").style.display = "none";
     selectedClientData = null;
-    const label = document.getElementById("inv_ci_type_label");
-    if (label) label.textContent = "Tipo: " + (type === "inquilino" ? "Inquilino" : "Propietario");
 }
 
 async function loadInvoices() {
