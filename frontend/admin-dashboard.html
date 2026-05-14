@@ -189,6 +189,7 @@
         <div id="sec-users" class="admin-panel hidden">
             <div class="admin-panel-header">
                 <h2>👥 Usuarios del Sistema</h2>
+                <button class="btn-sm btn-primary-sm" onclick="openCreateAdminModal()">+ Crear Super Admin</button>
             </div>
             <div id="usersTable"><div class="empty-msg">Cargando usuarios...</div></div>
         </div>
@@ -243,6 +244,40 @@
     </div>
 </div>
 
+<!-- ═══════════ MODAL: Crear Super Admin ═══════════ -->
+<div id="createAdminModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:16px; padding:32px; width:500px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <h3 style="margin:0 0 6px; font-size:1.1rem; font-weight:800; color:#111827;">🛡️ Crear Super Administrador</h3>
+        <p style="margin:0 0 20px; font-size:0.82rem; color:#6b7280;">Este usuario tendrá acceso total al panel de administración.</p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:16px;">
+            <div>
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Nombre completo *</label>
+                <input type="text" id="adminName" placeholder="Ej: Juan Pérez" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem;">
+            </div>
+            <div>
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Cédula *</label>
+                <input type="text" id="adminCedula" placeholder="Ej: 1007123456" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem;">
+            </div>
+            <div>
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Email *</label>
+                <input type="email" id="adminEmail" placeholder="admin@zentrix.app" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem;">
+            </div>
+            <div>
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Teléfono *</label>
+                <input type="text" id="adminTelefono" placeholder="Ej: 3101234567" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem;">
+            </div>
+            <div style="grid-column: 1 / -1;">
+                <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:6px; color:#374151;">Contraseña *</label>
+                <input type="password" id="adminPassword" placeholder="Mínimo 6 caracteres" style="width:100%; padding:11px 14px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.88rem;">
+            </div>
+        </div>
+        <div style="display:flex; gap:10px; justify-content:flex-end; padding-top:12px; border-top:1px solid #e5e7eb;">
+            <button onclick="closeCreateAdminModal()" style="padding:10px 20px; background:#fff; color:#374151; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit;">Cancelar</button>
+            <button onclick="submitCreateAdmin()" id="createAdminBtn" style="padding:10px 20px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit;">🛡️ Crear Super Admin</button>
+        </div>
+    </div>
+</div>
+
 <div id="appToast" class="z-toast"></div>
 
 <script src="js/config.js"></script>
@@ -285,7 +320,11 @@ function showSection(name) {
 
 // ── API helpers ──
 async function apiFetch(url) {
+    const t = token();
+    if (!t) throw new Error("Sin token de autenticación. Inicia sesión nuevamente.");
     const res = await fetch(API + url, { headers: headers() });
+    if (res.status === 401) throw new Error("Error 401: Token inválido o expirado. Cierra sesión e ingresa de nuevo.");
+    if (res.status === 403) throw new Error("Error 403: No tienes permisos para esta acción.");
     if (!res.ok) throw new Error(`Error ${res.status}`);
     const text = await res.text();
     return text ? JSON.parse(text) : [];
@@ -625,6 +664,62 @@ async function loadOrders() {
             <td>${new Date(o.fecha).toLocaleDateString('es-CO')}</td>
         </tr>`).join("")}</tbody></table>`;
     } catch (e) { document.getElementById("ordersTable").innerHTML = '<div class="empty-msg">Error al cargar pedidos</div>'; }
+}
+
+// ── Create Admin ──
+function openCreateAdminModal() {
+    document.getElementById('adminName').value = '';
+    document.getElementById('adminCedula').value = '';
+    document.getElementById('adminEmail').value = '';
+    document.getElementById('adminTelefono').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('createAdminModal').style.display = 'flex';
+}
+
+function closeCreateAdminModal() {
+    document.getElementById('createAdminModal').style.display = 'none';
+}
+
+async function submitCreateAdmin() {
+    const name = document.getElementById('adminName').value.trim();
+    const cedula = document.getElementById('adminCedula').value.trim();
+    const email = document.getElementById('adminEmail').value.trim();
+    const telefono = document.getElementById('adminTelefono').value.trim();
+    const password = document.getElementById('adminPassword').value.trim();
+
+    if (!name || !cedula || !email || !telefono || !password) {
+        toast('Completa todos los campos obligatorios (*)', 'error');
+        return;
+    }
+    if (password.length < 6) {
+        toast('La contraseña debe tener mínimo 6 caracteres', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('createAdminBtn');
+    btn.disabled = true;
+    btn.textContent = 'Creando...';
+
+    try {
+        const res = await fetch(API + '/auth/create-admin', {
+            method: 'POST',
+            headers: headers(),
+            body: JSON.stringify({ name, cedula, email, telefono, password, direccion: 'N/A' })
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || err.error || 'Error ' + res.status);
+        }
+        const data = await res.json();
+        closeCreateAdminModal();
+        toast('✓ Super Admin "' + data.name + '" creado exitosamente');
+        loadUsers();
+    } catch (e) {
+        toast(e.message || 'Error al crear administrador', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '🛡️ Crear Super Admin';
+    }
 }
 
 // ── Init ──

@@ -13,7 +13,6 @@ import com.pulpapp.ms_users.service.IUserService;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class UserController {
 

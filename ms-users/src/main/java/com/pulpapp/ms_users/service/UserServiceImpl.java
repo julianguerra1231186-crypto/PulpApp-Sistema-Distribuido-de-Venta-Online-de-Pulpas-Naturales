@@ -3,6 +3,7 @@ package com.pulpapp.ms_users.service;
 import com.pulpapp.ms_users.core.BaseServiceImpl;
 import com.pulpapp.ms_users.dto.UserRequestDTO;
 import com.pulpapp.ms_users.dto.UserResponseDTO;
+import com.pulpapp.ms_users.entity.Role;
 import com.pulpapp.ms_users.entity.User;
 import com.pulpapp.ms_users.exception.ResourceNotFoundException;
 import com.pulpapp.ms_users.mapper.UserMapper;
@@ -43,6 +44,10 @@ public class UserServiceImpl
     // Sobreescribe save para encriptar la contraseña antes de persistir
     @Override
     public UserResponseDTO save(UserRequestDTO dto) {
+        // Prevenir creación de admins desde el endpoint público
+        if (dto.getRole() == Role.ROLE_ADMIN) {
+            dto.setRole(Role.ROLE_CLIENT);
+        }
         User entity = mapper.toEntity(dto);
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         return mapper.toResponseDto(repository.save(entity));

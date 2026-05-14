@@ -162,14 +162,52 @@ public class AuthService {
     }
 
     // ---------------------------------------------------------------
+    // Crear Super Administrador (solo ADMIN)
+    // ---------------------------------------------------------------
+
+    @Transactional
+    public AuthResponseDTO createAdmin(RegisterRequestDTO request) {
+        if (userRepository.existsByEmailIgnoreCase(request.getEmail())) {
+            throw new IllegalArgumentException("El email ya está registrado");
+        }
+        if (userRepository.existsByCedula(request.getCedula())) {
+            throw new IllegalArgumentException("La cédula ya está registrada");
+        }
+
+        User user = new User();
+        user.setCedula(request.getCedula());
+        user.setTelefono(request.getTelefono());
+        user.setName(request.getName());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setDireccion(request.getDireccion());
+        user.setRole(Role.ROLE_ADMIN);
+        user.setStatus(UserStatus.ACTIVE);
+
+        userRepository.save(user);
+
+        UserPrincipal principal = new UserPrincipal(user);
+        String token = jwtService.generateToken(principal, Role.ROLE_ADMIN.name(), null);
+
+        log.info("Super Admin creado: email={}, por admin autenticado", user.getEmail());
+
+        return buildAuthResponse(token, user, Role.ROLE_ADMIN.name());
+    }
+
+    // ---------------------------------------------------------------
     // Helpers
     // ---------------------------------------------------------------
 
     /**
      * Resuelve el rol del usuario desde user_tenant_roles (fuente de verdad).
      * Fallback al campo legacy User.role si no hay registro en la tabla RBAC.
+     * ROLE_ADMIN (super admin global) siempre se preserva sin importar tenant roles.
      */
     private String resolveRole(User user) {
+        // Super admin global siempre mantiene su rol
+        if (user.getRole() == Role.ROLE_ADMIN) {
+            return Role.ROLE_ADMIN.name();
+        }
         if (user.getTenantId() != null) {
             TenantRole tenantRole = userTenantRoleService.getRoleInTenant(user.getId(), user.getTenantId());
             if (tenantRole != null) {

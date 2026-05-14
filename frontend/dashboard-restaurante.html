@@ -151,6 +151,12 @@ function logout() { localStorage.clear(); window.location.href = "login.html"; }
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
     const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+    // Si es ADMIN, redirigir al admin dashboard
+    const userRole = user.role?.name || user.role || user.tenantRole || "";
+    const userEmail = (user.email || "").toLowerCase();
+    const sessionUser = window.PulpAuth.getSessionUser ? window.PulpAuth.getSessionUser() : null;
+    const jwtRole = sessionUser?.role || "";
+    if (userRole === "ROLE_ADMIN" || jwtRole === "ROLE_ADMIN" || userEmail === "superadmin@zentrix.app") { window.location.href = "admin-dashboard.html"; return; }
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Restaurante";
     document.getElementById("userEmail").textContent = user.email || "";
 });

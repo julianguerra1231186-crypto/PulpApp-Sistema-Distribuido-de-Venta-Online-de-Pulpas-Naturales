@@ -488,7 +488,7 @@
 
                 <!-- 1. Tipo de cliente + Buscar -->
                 <!-- 1. Buscar propietario/inquilino -->
-                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
+                <div id="inv_search_section" style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:16px; margin-bottom:16px">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px">
                         <label style="font-size:0.82rem; font-weight:700; color:#111827">👤</label>
                         <span id="inv_tipo_label" style="font-size:0.82rem; font-weight:700; color:#6366f1; background:#eef2ff; padding:4px 12px; border-radius:6px">Propietario</span>
@@ -531,28 +531,46 @@
                 </div>
 
                 <!-- 3. Mes facturado -->
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px">
-                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Mes Facturado</label><input type="month" id="inv_month" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"></div>
-                    <div><label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Método de Pago</label><select id="inv_method" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit"><option value="TRANSFERENCIA">Transferencia</option><option value="EFECTIVO">Efectivo</option><option value="CONSIGNACION">Consignación</option></select></div>
+                <div style="margin-bottom:16px">
+                    <label style="font-size:0.8rem; font-weight:600; display:block; margin-bottom:4px">Mes Facturado</label>
+                    <input type="month" id="inv_month" style="width:100%; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit">
                 </div>
 
-                <!-- 4. Adicionales -->
-                <div style="background:#fff8f0; border:1px solid #fed7aa; border-radius:10px; padding:16px; margin-bottom:16px">
-                    <label style="font-size:0.82rem; font-weight:700; color:#92400e; display:block; margin-bottom:8px">🔧 Adicionales (mantenimiento, reparaciones, etc.)</label>
-                    <div id="inv_adicionales"></div>
-                    <button type="button" onclick="addAdicional()" style="padding:6px 14px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; font-size:0.78rem; cursor:pointer; font-family:inherit; margin-top:8px">+ Agregar adicional</button>
+                <!-- 4. Intereses por demora (solo para inquilino) -->
+                <div id="inv_intereses_section" style="background:#fff8f0; border:1px solid #fed7aa; border-radius:10px; padding:16px; margin-bottom:16px">
+                    <label style="font-size:0.82rem; font-weight:700; color:#92400e; display:block; margin-bottom:4px">⏰ Intereses por demora en pago del arriendo</label>
+                    <p style="font-size:0.72rem; color:#6b7280; margin:0 0 12px">Agrega los días de mora con su respectivo valor de interés. Se detallarán en la factura.</p>
+                    <div id="inv_intereses_rows"></div>
+                    <button type="button" onclick="addInteresRow()" style="padding:6px 14px; background:#fff; border:1px solid #fed7aa; border-radius:6px; font-size:0.78rem; font-weight:600; cursor:pointer; font-family:inherit; margin-top:8px; color:#92400e">+ Agregar día de interés</button>
+                    <div id="inv_intereses_total" style="display:none; margin-top:10px; padding:8px 12px; background:#fef3c7; border-radius:6px; font-size:0.82rem; font-weight:700; color:#92400e; text-align:right"></div>
                 </div>
 
                 <!-- 5. Resumen automático -->
                 <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px; margin-bottom:16px">
                     <h3 style="font-size:0.9rem; font-weight:700; color:#065f46; margin:0 0 12px">📋 Resumen de Factura</h3>
-                    <div style="display:grid; grid-template-columns:1fr auto; gap:6px; font-size:0.85rem">
-                        <span>Valor Arriendo:</span><span id="inv_r_rent" style="font-weight:700; text-align:right">$0</span>
-                        <span>Comisión Inmobiliaria (11%):</span><span id="inv_r_comision" style="font-weight:700; color:#ef4444; text-align:right">-$0</span>
-                        <span>Total Adicionales:</span><span id="inv_r_adicionales" style="font-weight:700; color:#ef4444; text-align:right">-$0</span>
+                    <!-- Resumen para INQUILINO -->
+                    <div id="inv_resumen_inquilino" style="display:grid; grid-template-columns:1fr auto; gap:6px; font-size:0.85rem">
+                        <span>Canon de Arriendo:</span><span id="inv_r_rent" style="font-weight:700; text-align:right">$0</span>
+                        <span>Intereses por demora (<span id="inv_r_dias_mora">0</span> días):</span><span id="inv_r_intereses" style="font-weight:700; color:#92400e; text-align:right">$0</span>
                         <div style="grid-column:1/-1; border-top:1px solid #bbf7d0; margin:6px 0"></div>
-                        <span style="font-weight:800; font-size:0.95rem">VALOR A ENVIAR PROPIETARIO:</span><span id="inv_r_propietario" style="font-weight:800; font-size:1.1rem; color:#065f46; text-align:right">$0</span>
-                        <span style="color:#6b7280">Comisión Inmobiliaria:</span><span id="inv_r_ganancia" style="font-weight:700; color:#6366f1; text-align:right">$0</span>
+                        <span style="font-weight:800; font-size:0.95rem">TOTAL A COBRAR AL INQUILINO:</span><span id="inv_r_total_inquilino" style="font-weight:800; font-size:1.1rem; color:#065f46; text-align:right">$0</span>
+                    </div>
+                    <!-- Resumen para PROPIETARIO -->
+                    <div id="inv_resumen_propietario" style="display:none">
+                        <div style="display:grid; grid-template-columns:1fr auto; gap:6px; font-size:0.85rem">
+                            <span>Canon de Arriendo:</span><span id="inv_r_rent_prop" style="font-weight:700; text-align:right">$0</span>
+                            <span style="color:#ef4444">Comisión Inmobiliaria (<span id="inv_r_pct_prop">11</span>%):</span><span id="inv_r_comision_prop" style="font-weight:700; color:#ef4444; text-align:right">-$0</span>
+                            <div style="grid-column:1/-1; border-top:1px solid #bbf7d0; margin:6px 0"></div>
+                            <span style="font-weight:800; font-size:0.95rem">TOTAL A ENVIAR AL PROPIETARIO:</span><span id="inv_r_total_propietario" style="font-weight:800; font-size:1.1rem; color:#065f46; text-align:right">$0</span>
+                        </div>
+                    </div>
+                    <!-- Info interna (solo visible en modo inquilino) -->
+                    <div id="inv_resumen_ganancia" style="margin-top:12px; padding-top:10px; border-top:1px dashed #bbf7d0">
+                        <div style="display:grid; grid-template-columns:1fr auto; gap:6px; font-size:0.8rem; color:#6b7280">
+                            <span>Ganancia Inmobiliaria (comisión + intereses):</span><span id="inv_r_comision" style="font-weight:700; color:#6366f1; text-align:right">$0</span>
+                            <span>Valor a enviar al Propietario:</span><span id="inv_r_propietario" style="font-weight:700; text-align:right">$0</span>
+                            <span style="display:none">Ganancia:</span><span id="inv_r_ganancia" style="display:none">$0</span>
+                        </div>
                     </div>
                 </div>
 
@@ -569,8 +587,8 @@
             <div id="invoiceOtrosPanel" style="display:none" class="panel">
                 <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px">
                     <div>
-                        <h2 style="margin:0 0 4px">📋 Cobro al Propietario — Servicios al Inmueble</h2>
-                        <p style="color:#6b7280; font-size:0.8rem; margin:0">Genera una factura de cobro al propietario por trabajos realizados en su inmueble.</p>
+                        <h2 style="margin:0 0 4px" id="otrosFormTitle">📋 Cobro al Propietario</h2>
+                        <p style="color:#6b7280; font-size:0.8rem; margin:0" id="otrosFormSubtitle">Selecciona el tipo de cobro para ver los campos correspondientes.</p>
                     </div>
                     <button onclick="hideOtrosForm()" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:8px; padding:6px 14px; font-size:0.78rem; cursor:pointer; font-family:inherit; color:#374151">✕ Cerrar</button>
                 </div>
@@ -579,15 +597,14 @@
                     <!-- Tipo de servicio con descripción -->
                     <div style="background:#f5f3ff; border:1px solid #ddd6fe; border-radius:10px; padding:14px; margin-bottom:14px">
                         <label style="font-size:0.82rem; font-weight:700; color:#5b21b6; display:block; margin-bottom:10px">Tipo de Cobro *</label>
-                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px">
-                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_mant"><input type="radio" name="otros_tipo" value="Mantenimiento" checked style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">🔧</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Mantenimiento</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Preventivo, limpieza, pintura</span></label>
-                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_rep"><input type="radio" name="otros_tipo" value="Reparación" style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">🛠️</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Reparación</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Daños, averías, urgencias</span></label>
+                        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px">
+                            <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_mant"><input type="radio" name="otros_tipo" value="Mantenimiento" checked style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">🔧</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Mantenimiento y Reparaciones</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Preventivo, correctivo, averías</span></label>
                             <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_serv"><input type="radio" name="otros_tipo" value="Servicios" style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">⚡</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Servicios</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Agua, luz, gas, admin</span></label>
                             <label style="display:flex; flex-direction:column; align-items:center; padding:12px 8px; border:2px solid #ddd6fe; border-radius:10px; cursor:pointer; text-align:center; transition:all 0.2s" id="ot_tipo_otro"><input type="radio" name="otros_tipo" value="Otro" style="display:none" onchange="updateOtrosTipoStyle()"><span style="font-size:1.3rem">📝</span><span style="font-size:0.75rem; font-weight:700; margin-top:4px">Otro</span><span style="font-size:0.65rem; color:#6b7280; margin-top:2px">Conceptos varios</span></label>
                         </div>
                     </div>
 
-                    <!-- Propiedad + datos propietario -->
+                    <!-- Propiedad + datos propietario (siempre visible) -->
                     <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px; margin-bottom:14px">
                         <label style="font-size:0.82rem; font-weight:700; color:#1e40af; display:block; margin-bottom:8px">🏠 Inmueble y Propietario *</label>
                         <select id="ot_propiedad" required onchange="selectOtrosProperty()" style="width:100%; padding:9px 12px; border:1px solid #bfdbfe; border-radius:8px; font-family:inherit; font-size:0.85rem; background:#fff">
@@ -603,21 +620,23 @@
                         </div>
                     </div>
 
-                    <!-- Quien realizó el trabajo -->
-                    <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:14px; margin-bottom:14px">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                            <div style="font-size:0.82rem; font-weight:700; color:#065f46">👷 Realizado por</div>
-                            <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer"><input type="checkbox" id="ot_es_inmobiliaria" onchange="toggleProveedorFields()" style="cursor:pointer"> Trabajo propio de la inmobiliaria</label>
+                    <!-- ═══ SECCIÓN MANTENIMIENTO ═══ -->
+                    <div id="seccionMantenimiento">
+                        <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:10px; padding:14px; margin-bottom:14px">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
+                                <div style="font-size:0.82rem; font-weight:700; color:#065f46">👷 Realizado por</div>
+                                <label style="display:flex; align-items:center; gap:6px; font-size:0.78rem; color:#6b7280; cursor:pointer"><input type="checkbox" id="ot_es_inmobiliaria" onchange="toggleProveedorFields()" style="cursor:pointer"> Trabajo propio de la inmobiliaria</label>
+                            </div>
+                            <div id="ot_proveedor_fields" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre</label><input type="text" id="ot_proveedor" placeholder="Nombre del trabajador/proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Teléfono</label><input type="text" id="ot_prov_tel" placeholder="310 123 4567" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                                <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Cédula/NIT</label><input type="text" id="ot_prov_doc" placeholder="Documento" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
+                            </div>
+                            <div id="ot_inmobiliaria_msg" style="display:none; padding:10px; background:#dcfce7; border-radius:8px; text-align:center; font-size:0.82rem; color:#065f46; font-weight:600">🏢 Trabajo realizado directamente por la inmobiliaria</div>
                         </div>
-                        <div id="ot_proveedor_fields" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px">
-                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Nombre</label><input type="text" id="ot_proveedor" placeholder="Nombre del trabajador/proveedor" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
-                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Teléfono</label><input type="text" id="ot_prov_tel" placeholder="310 123 4567" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
-                            <div><label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">Cédula/NIT</label><input type="text" id="ot_prov_doc" placeholder="Documento" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem"></div>
-                        </div>
-                        <div id="ot_inmobiliaria_msg" style="display:none; padding:10px; background:#dcfce7; border-radius:8px; text-align:center; font-size:0.82rem; color:#065f46; font-weight:600">🏢 Trabajo realizado directamente por la inmobiliaria</div>
                     </div>
 
-                    <!-- Sección Recibos (solo visible cuando tipo = Servicios) -->
+                    <!-- ═══ SECCIÓN SERVICIOS (Recibos) ═══ -->
                     <div id="recibosSection" style="display:none; background:#f0f9ff; border:1px solid #bae6fd; border-radius:10px; padding:14px; margin-bottom:14px">
                         <div style="font-size:0.82rem; font-weight:700; color:#0369a1; margin-bottom:10px">⚡ Recibos de Servicios Públicos — Prorrateo por Días</div>
                         <p style="font-size:0.72rem; color:#6b7280; margin:0 0 10px">Ingresa la fecha de alojamiento del inquilino y los datos del recibo. El sistema calcula automáticamente cuánto paga cada parte.</p>
@@ -630,19 +649,56 @@
                         <div id="recibosResumen" style="display:none; margin-top:12px; background:#fff; border:1px solid #bae6fd; border-radius:8px; padding:12px"></div>
                     </div>
 
-                    <!-- Conceptos -->
-                    <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:14px">
+                    <!-- ═══ SECCIÓN CONCEPTOS (Mantenimiento, Reparación, Otro) ═══ -->
+                    <div id="seccionConceptos" style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:14px">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
-                            <div style="font-size:0.82rem; font-weight:700; color:#92400e">📝 Detalle de Trabajos / Conceptos</div>
+                            <div style="font-size:0.82rem; font-weight:700; color:#92400e" id="conceptosLabel">📝 Detalle de Trabajos / Conceptos</div>
                             <button type="button" onclick="addOtrosConcepto()" style="padding:5px 12px; background:#fef3c7; color:#92400e; border:1px solid #fde68a; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit">+ Añadir</button>
                         </div>
                         <div id="otrosConceptosContainer"></div>
                     </div>
 
+                    <!-- ═══ A QUIÉN SE COBRA ═══ -->
+                    <div style="background:#faf5ff; border:1px solid #e9d5ff; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <label style="font-size:0.82rem; font-weight:700; color:#7c3aed; display:block; margin-bottom:10px">💰 Cobrar a *</label>
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px">
+                            <label id="ot_cobrar_prop_label" style="display:flex; align-items:center; gap:10px; padding:12px 16px; border:2px solid #e9d5ff; border-radius:10px; cursor:pointer; transition:all 0.2s; background:#fff">
+                                <input type="radio" name="ot_cobrar_a" value="propietario" checked style="display:none" onchange="updateCobrarAStyle()">
+                                <span style="font-size:1.2rem">👤</span>
+                                <div><span style="font-size:0.82rem; font-weight:700; display:block">Propietario</span><span style="font-size:0.68rem; color:#6b7280">Dueño del inmueble</span></div>
+                            </label>
+                            <label id="ot_cobrar_inq_label" style="display:flex; align-items:center; gap:10px; padding:12px 16px; border:2px solid #e9d5ff; border-radius:10px; cursor:pointer; transition:all 0.2s; background:#fff">
+                                <input type="radio" name="ot_cobrar_a" value="inquilino" style="display:none" onchange="updateCobrarAStyle()">
+                                <span style="font-size:1.2rem">🏠</span>
+                                <div><span style="font-size:0.82rem; font-weight:700; display:block">Inquilino</span><span style="font-size:0.68rem; color:#6b7280">Arrendatario del inmueble</span></div>
+                            </label>
+                        </div>
+
+                        <!-- Buscador de persona -->
+                        <div id="ot_buscar_persona" style="background:#fff; border:1px solid #e9d5ff; border-radius:8px; padding:12px">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px">
+                                <span style="font-size:0.78rem; font-weight:700; color:#7c3aed" id="ot_buscar_label">🔍 Buscar Propietario</span>
+                            </div>
+                            <input type="text" id="ot_buscar_input" placeholder="Buscar por nombre, cédula o teléfono..." style="width:100%; padding:9px 12px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem" oninput="buscarPersonaCobro(this.value)">
+                            <div id="ot_buscar_results" style="margin-top:8px; max-height:160px; overflow-y:auto"></div>
+                            <!-- Persona seleccionada -->
+                            <div id="ot_persona_selected" style="display:none; margin-top:10px; padding:10px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:8px">
+                                <div style="display:flex; justify-content:space-between; align-items:center">
+                                    <div>
+                                        <span style="font-size:0.72rem; color:#065f46; font-weight:600; display:block">✓ Seleccionado:</span>
+                                        <strong id="ot_persona_nombre" style="font-size:0.88rem; color:#111827">—</strong>
+                                        <span id="ot_persona_detalle" style="font-size:0.75rem; color:#6b7280; display:block">—</span>
+                                    </div>
+                                    <button type="button" onclick="clearPersonaCobro()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:5px 10px; font-size:0.72rem; font-weight:700; cursor:pointer">✕ Cambiar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Total a cobrar -->
                     <div style="background:#f0fdf4; border:2px solid #16a34a; border-radius:10px; padding:16px; margin-bottom:14px">
                         <div style="display:flex; justify-content:space-between; align-items:center">
-                            <span style="font-size:0.95rem; font-weight:800; color:#065f46">TOTAL A COBRAR AL PROPIETARIO:</span>
+                            <span style="font-size:0.95rem; font-weight:800; color:#065f46" id="ot_total_label">TOTAL A COBRAR:</span>
                             <span id="ot_total" style="font-size:1.4rem; font-weight:800; color:#16a34a">$0</span>
                         </div>
                     </div>
@@ -1633,13 +1689,30 @@ let invoiceClientType = "inquilino";
 
 function setClientType(type) {
     invoiceClientType = type;
+    const searchSection = document.getElementById("inv_search_section");
     const searchInput = document.getElementById("inv_search_client");
     const tipoLabel = document.getElementById("inv_tipo_label");
+    const interesesSection = document.getElementById("inv_intereses_section");
+    const resumenInquilino = document.getElementById("inv_resumen_inquilino");
+    const resumenPropietario = document.getElementById("inv_resumen_propietario");
+    const resumenGanancia = document.getElementById("inv_resumen_ganancia");
+
     if (type === "inquilino") {
+        // Inquilino: mostrar búsqueda, intereses, resumen inquilino
+        if (searchSection) searchSection.style.display = "block";
+        if (interesesSection) interesesSection.style.display = "block";
+        if (resumenInquilino) resumenInquilino.style.display = "grid";
+        if (resumenPropietario) resumenPropietario.style.display = "none";
+        if (resumenGanancia) resumenGanancia.style.display = "block";
         searchInput.placeholder = "Buscar inquilino por nombre o cédula...";
         if (tipoLabel) { tipoLabel.textContent = "Inquilino"; tipoLabel.style.background = "#dcfce7"; tipoLabel.style.color = "#065f46"; }
     } else {
-        searchInput.placeholder = "Buscar propietario por nombre, cédula o teléfono...";
+        // Propietario: ocultar búsqueda, ocultar intereses, mostrar resumen propietario
+        if (searchSection) searchSection.style.display = "none";
+        if (interesesSection) interesesSection.style.display = "none";
+        if (resumenInquilino) resumenInquilino.style.display = "none";
+        if (resumenPropietario) resumenPropietario.style.display = "block";
+        if (resumenGanancia) resumenGanancia.style.display = "none";
         if (tipoLabel) { tipoLabel.textContent = "Propietario"; tipoLabel.style.background = "#eef2ff"; tipoLabel.style.color = "#6366f1"; }
     }
     searchInput.value = "";
@@ -1749,15 +1822,18 @@ function showOtrosForm() {
     document.getElementById("otrosConceptosContainer").innerHTML = "";
     document.getElementById("ot_proveedor_fields").style.display = "grid";
     document.getElementById("ot_inmobiliaria_msg").style.display = "none";
+    document.getElementById("recibosRows").innerHTML = "";
+    clearPersonaCobro();
     addOtrosConcepto();
     var props = window._propertiesData || [];
     var select = document.getElementById("ot_propiedad");
     select.innerHTML = '<option value="">Seleccione el inmueble...</option>';
     props.forEach(function(p) { select.innerHTML += '<option value="' + p.id + '">' + p.name + ' — ' + (p.propertyAddress || '') + '</option>'; });
     updateOtrosTipoStyle();
+    updateCobrarAStyle();
 }
 
-function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; document.getElementById("invoicesTableContainer").style.display = "block"; }
+function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; document.getElementById("invoicesTableContainer").style.display = "block"; document.getElementById("invoiceTypeSelector").style.display = ""; }
 
 function selectOtrosProperty() {
     var propId = document.getElementById('ot_propiedad').value;
@@ -1783,7 +1859,7 @@ function toggleProveedorFields() {
 }
 
 function updateOtrosTipoStyle() {
-    ['ot_tipo_mant','ot_tipo_rep','ot_tipo_serv','ot_tipo_otro'].forEach(function(id) {
+    ['ot_tipo_mant','ot_tipo_serv','ot_tipo_otro'].forEach(function(id) {
         var el = document.getElementById(id);
         if (!el) return;
         var checked = el.querySelector('input').checked;
@@ -1791,10 +1867,127 @@ function updateOtrosTipoStyle() {
         el.style.color = checked ? '#fff' : '#374151';
         el.style.borderColor = checked ? '#7c3aed' : '#ddd6fe';
     });
-    // Mostrar/ocultar sección de recibos según tipo
-    var tipoServ = document.querySelector('input[name="otros_tipo"][value="Servicios"]') || document.querySelector('input[name="otros_tipo"][value="Servicio"]');
+
+    var tipo = document.querySelector('input[name="otros_tipo"]:checked')?.value || 'Mantenimiento';
+    var secMantenimiento = document.getElementById('seccionMantenimiento');
     var recSection = document.getElementById('recibosSection');
-    if (recSection) recSection.style.display = (tipoServ && tipoServ.checked) ? 'block' : 'none';
+    var secConceptos = document.getElementById('seccionConceptos');
+    var titleEl = document.getElementById('otrosFormTitle');
+    var subtitleEl = document.getElementById('otrosFormSubtitle');
+    var conceptosLabel = document.getElementById('conceptosLabel');
+
+    // Ocultar todo primero
+    if (secMantenimiento) secMantenimiento.style.display = 'none';
+    if (recSection) recSection.style.display = 'none';
+    if (secConceptos) secConceptos.style.display = 'none';
+
+    // Mostrar según tipo
+    if (tipo === 'Mantenimiento') {
+        if (secMantenimiento) secMantenimiento.style.display = 'block';
+        if (secConceptos) secConceptos.style.display = 'block';
+        if (titleEl) titleEl.textContent = '🔧 Cobro por Mantenimiento y Reparaciones';
+        if (subtitleEl) subtitleEl.textContent = 'Registra trabajos de mantenimiento preventivo, correctivo, reparaciones o averías.';
+        if (conceptosLabel) conceptosLabel.textContent = '📝 Detalle de Trabajos';
+    } else if (tipo === 'Servicios') {
+        if (recSection) recSection.style.display = 'block';
+        if (titleEl) titleEl.textContent = '⚡ Cobro por Servicios Públicos';
+        if (subtitleEl) subtitleEl.textContent = 'Calcula el prorrateo de servicios públicos (agua, luz, gas) entre propietario e inquilino.';
+    } else {
+        if (secConceptos) secConceptos.style.display = 'block';
+        if (titleEl) titleEl.textContent = '📝 Cobro por Otros Conceptos';
+        if (subtitleEl) subtitleEl.textContent = 'Registra cobros por conceptos varios al propietario.';
+        if (conceptosLabel) conceptosLabel.textContent = '📝 Detalle de Conceptos';
+    }
+}
+
+// ── Cobrar a: Propietario / Inquilino ──
+function updateCobrarAStyle() {
+    var propLabel = document.getElementById('ot_cobrar_prop_label');
+    var inqLabel = document.getElementById('ot_cobrar_inq_label');
+    var buscarLabel = document.getElementById('ot_buscar_label');
+    var buscarInput = document.getElementById('ot_buscar_input');
+    var totalLabel = document.getElementById('ot_total_label');
+    var tipo = document.querySelector('input[name="ot_cobrar_a"]:checked')?.value || 'propietario';
+
+    if (propLabel) {
+        var propChecked = tipo === 'propietario';
+        propLabel.style.background = propChecked ? '#7c3aed' : '#fff';
+        propLabel.style.color = propChecked ? '#fff' : '#374151';
+        propLabel.style.borderColor = propChecked ? '#7c3aed' : '#e9d5ff';
+    }
+    if (inqLabel) {
+        var inqChecked = tipo === 'inquilino';
+        inqLabel.style.background = inqChecked ? '#7c3aed' : '#fff';
+        inqLabel.style.color = inqChecked ? '#fff' : '#374151';
+        inqLabel.style.borderColor = inqChecked ? '#7c3aed' : '#e9d5ff';
+    }
+    if (buscarLabel) buscarLabel.textContent = tipo === 'propietario' ? '🔍 Buscar Propietario' : '🔍 Buscar Inquilino';
+    if (buscarInput) buscarInput.placeholder = tipo === 'propietario' ? 'Buscar propietario por nombre, cédula o teléfono...' : 'Buscar inquilino por nombre, cédula o teléfono...';
+    if (totalLabel) totalLabel.textContent = tipo === 'propietario' ? 'TOTAL A COBRAR AL PROPIETARIO:' : 'TOTAL A COBRAR AL INQUILINO:';
+
+    // Limpiar selección anterior
+    clearPersonaCobro();
+}
+
+function buscarPersonaCobro(query) {
+    var resultsDiv = document.getElementById('ot_buscar_results');
+    if (!query || query.length < 2) { resultsDiv.innerHTML = ''; return; }
+
+    var tipo = document.querySelector('input[name="ot_cobrar_a"]:checked')?.value || 'propietario';
+    var q = query.toLowerCase();
+
+    if (tipo === 'propietario') {
+        // Buscar en propiedades (propietarios)
+        var props = window._propertiesData || [];
+        var matches = props.filter(function(p) {
+            var ownerName = (p.ownerName || '').toLowerCase();
+            var supplier = (p.supplier || '').toLowerCase();
+            return ownerName.includes(q) || supplier.includes(q);
+        });
+        if (!matches.length) { resultsDiv.innerHTML = '<div style="font-size:0.78rem; color:#9ca3af; padding:6px">No se encontraron propietarios</div>'; return; }
+        var html = '';
+        matches.forEach(function(p) {
+            var supData = p.supplier || '';
+            var cedulaMatch = supData.match(/CC:([^|]+)/);
+            var cedula = cedulaMatch ? cedulaMatch[1].trim() : '—';
+            var phone = supData.replace(/CC:[^|]+\|?\s*/, '').trim() || '—';
+            html += '<div onclick="selectPersonaCobro(\'' + (p.ownerName || '').replace(/'/g, "\\'") + '\', \'' + cedula.replace(/'/g, "\\'") + '\', \'' + phone.replace(/'/g, "\\'") + '\', \'propietario\')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-bottom:4px; transition:background 0.2s" onmouseover="this.style.background=\'#f5f3ff\'" onmouseout="this.style.background=\'#fff\'"><strong>' + (p.ownerName || '—') + '</strong> <span style="color:#6b7280">— CC ' + cedula + ' — 📞 ' + phone + '</span><br><span style="font-size:0.7rem; color:#9ca3af">📍 ' + (p.propertyAddress || p.name || '') + '</span></div>';
+        });
+        resultsDiv.innerHTML = html;
+    } else {
+        // Buscar en clientes (inquilinos)
+        var clients = JSON.parse(localStorage.getItem('zentrix_clients') || '[]');
+        var matches = clients.filter(function(c) {
+            var name = (c.name || '').toLowerCase();
+            var doc = (c.document || '').toLowerCase();
+            var phone = (c.phone || '').toLowerCase();
+            return name.includes(q) || doc.includes(q) || phone.includes(q);
+        });
+        if (!matches.length) { resultsDiv.innerHTML = '<div style="font-size:0.78rem; color:#9ca3af; padding:6px">No se encontraron inquilinos</div>'; return; }
+        var html = '';
+        matches.forEach(function(c) {
+            html += '<div onclick="selectPersonaCobro(\'' + (c.name || '').replace(/'/g, "\\'") + '\', \'' + (c.document || '').replace(/'/g, "\\'") + '\', \'' + (c.phone || '').replace(/'/g, "\\'") + '\', \'inquilino\')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-bottom:4px; transition:background 0.2s" onmouseover="this.style.background=\'#f5f3ff\'" onmouseout="this.style.background=\'#fff\'"><strong>' + (c.name || '—') + '</strong> <span style="color:#6b7280">— ' + (c.documentType || 'CC') + ' ' + (c.document || '—') + ' — 📞 ' + (c.phone || '—') + '</span></div>';
+        });
+        resultsDiv.innerHTML = html;
+    }
+}
+
+function selectPersonaCobro(nombre, cedula, telefono, tipo) {
+    document.getElementById('ot_buscar_results').innerHTML = '';
+    document.getElementById('ot_buscar_input').style.display = 'none';
+    document.getElementById('ot_persona_selected').style.display = 'block';
+    document.getElementById('ot_persona_nombre').textContent = nombre;
+    document.getElementById('ot_persona_detalle').textContent = 'CC ' + cedula + ' — Tel: ' + telefono;
+    // Guardar datos para la factura
+    window._personaCobro = { nombre: nombre, cedula: cedula, telefono: telefono, tipo: tipo };
+}
+
+function clearPersonaCobro() {
+    document.getElementById('ot_buscar_input').style.display = '';
+    document.getElementById('ot_buscar_input').value = '';
+    document.getElementById('ot_persona_selected').style.display = 'none';
+    document.getElementById('ot_buscar_results').innerHTML = '';
+    window._personaCobro = null;
 }
 
 function addOtrosConcepto() {
@@ -1888,29 +2081,38 @@ function submitOtrosInvoice(e) {
     e.preventDefault();
     var tipo = document.querySelector('input[name="otros_tipo"]:checked').value;
     var esInmobiliaria = document.getElementById('ot_es_inmobiliaria').checked;
-    var proveedor = esInmobiliaria ? (localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria') : document.getElementById('ot_proveedor').value;
+    var proveedor = esInmobiliaria ? (localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria') : (document.getElementById('ot_proveedor')?.value || '');
     var obs = document.getElementById('ot_obs').value;
     var propId = document.getElementById('ot_propiedad').value;
     var props = window._propertiesData || [];
     var prop = propId ? props.find(function(p) { return p.id == propId; }) : null;
+    var personaCobro = window._personaCobro || null;
+    var cobrarA = document.querySelector('input[name="ot_cobrar_a"]:checked')?.value || 'propietario';
+    var cobrarNombre = personaCobro ? personaCobro.nombre : (prop ? prop.ownerName : '');
+    var cobrarCedula = personaCobro ? personaCobro.cedula : '';
     var conceptos = []; var total = 0;
     document.querySelectorAll('#otrosConceptosContainer > div').forEach(function(row) {
-        var desc = row.querySelector('.ot-desc').value;
-        var val = Number(row.querySelector('.ot-valor').value.replace(/[^\d]/g, '')) || 0;
+        var desc = row.querySelector('.ot-desc')?.value;
+        var val = Number((row.querySelector('.ot-valor')?.value || '').replace(/[^\d]/g, '')) || 0;
         if (desc && val > 0) { conceptos.push({ desc: desc, val: val }); total += val; }
     });
-    if (!conceptos.length) { alert('Agrega al menos un concepto con valor'); return; }
-    if (!esInmobiliaria && !proveedor) { alert('Ingresa el nombre del proveedor o marca "Trabajo propio"'); return; }
+    if (tipo !== 'Servicios' && !conceptos.length) { alert('Agrega al menos un concepto con valor'); return; }
+    if ((tipo === 'Mantenimiento' || tipo === 'Reparación') && !esInmobiliaria && !proveedor) { alert('Ingresa el nombre del proveedor o marca "Trabajo propio"'); return; }
     var fecha = new Date().toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
     var numFac = 'FAC-SRV-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
     var logo = localStorage.getItem('zentrix_biz_logo') || '';
     var bizName = localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria';
     var logoHtml = logo ? '<img src="' + logo + '" style="width:60px; height:60px; border-radius:50%; object-fit:cover">' : '<div style="width:60px; height:60px; border-radius:50%; background:#f5f3ff; display:flex; align-items:center; justify-content:center; font-size:1.5rem">📋</div>';
     var conceptosHtml = conceptos.map(function(c) { return '<tr><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb">' + c.desc + '</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + c.val.toLocaleString('es-CO') + '</td></tr>'; }).join('');
-    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura ' + numFac + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:650px; margin:0 auto"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #7c3aed"><div style="display:flex; align-items:center; gap:12px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.8rem">Administracion Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#7c3aed; font-size:1rem">COBRO POR ' + tipo.toUpperCase() + '</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numFac + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div>' + (prop ? '<div style="background:#f9fafb; padding:14px; border-radius:10px; border:1px solid #e5e7eb; margin-bottom:16px"><h3 style="margin:0 0 6px; font-size:0.78rem; color:#6b7280">COBRAR A: ' + (prop.ownerName || '') + '</h3><p style="margin:0; font-size:0.85rem">Inmueble: ' + (prop.propertyAddress || prop.name) + '</p></div>' : '') + '<table style="width:100%; border-collapse:collapse; margin-bottom:16px"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Concepto</th><th style="padding:10px 12px; text-align:right">Valor</th></tr></thead><tbody>' + conceptosHtml + '</tbody></table><div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center"><span style="font-weight:800">TOTAL:</span><span style="font-weight:800; font-size:1.3rem; color:#16a34a">$' + total.toLocaleString('es-CO') + '</span></div><div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#7c3aed; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">Descargar PDF</button></div></div></body></html>';
+    var cobrarALabel = cobrarA === 'inquilino' ? 'COBRAR A (INQUILINO)' : 'COBRAR A (PROPIETARIO)';
+    var cobrarTelefono = personaCobro ? personaCobro.telefono : '';
+    var propDireccion = prop ? (prop.propertyAddress || prop.name || '') : '';
+    var cobrarInfo = cobrarNombre ? '<div style="background:#f9fafb; padding:16px; border-radius:10px; border:1px solid #e5e7eb; margin-bottom:16px"><h3 style="margin:0 0 10px; font-size:0.85rem; font-weight:800; color:#111827; border-bottom:1px solid #e5e7eb; padding-bottom:8px">Datos del Cliente</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.82rem"><div><span style="color:#6b7280; font-size:0.72rem; display:block">Nombre</span><strong>' + cobrarNombre + '</strong></div><div><span style="color:#6b7280; font-size:0.72rem; display:block">Cédula</span><strong>' + (cobrarCedula || '—') + '</strong></div><div><span style="color:#6b7280; font-size:0.72rem; display:block">Teléfono</span><strong>' + (cobrarTelefono || '—') + '</strong></div><div><span style="color:#6b7280; font-size:0.72rem; display:block">Ubicación del Inmueble</span><strong>' + (propDireccion || '—') + '</strong></div></div></div>' : '';
+    var footerHtml = '<div style="text-align:center; margin-top:32px; padding-top:16px; border-top:1px solid #e5e7eb"><p style="margin:0; font-size:0.72rem; color:#9ca3af">Factura desarrollada por <strong style="color:#6366f1">Red Matrix Solutions</strong></p></div>';
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura ' + numFac + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:650px; margin:0 auto"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #7c3aed"><div style="display:flex; align-items:center; gap:12px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.8rem">Administracion Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#7c3aed; font-size:1rem">COBRO POR ' + tipo.toUpperCase() + '</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numFac + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div>' + cobrarInfo + '<table style="width:100%; border-collapse:collapse; margin-bottom:16px"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Concepto</th><th style="padding:10px 12px; text-align:right">Valor</th></tr></thead><tbody>' + conceptosHtml + '</tbody></table><div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center"><span style="font-weight:800">TOTAL:</span><span style="font-weight:800; font-size:1.3rem; color:#16a34a">$' + total.toLocaleString('es-CO') + '</span></div><div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#7c3aed; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">Descargar PDF</button></div>' + footerHtml + '</div></body></html>';
     var w = window.open('', '_blank');
     if (w) { w.document.write(html); w.document.close(); }
-    saveInvoiceToHistory({ invoiceNumber: numFac, tipo: tipo, clientName: (prop ? prop.ownerName : proveedor), ownerName: prop ? prop.ownerName : '', totalAmount: total, totalPropietario: total, date: fecha, propertyAddress: prop ? prop.propertyAddress : '' });
+    saveInvoiceToHistory({ invoiceNumber: numFac, tipo: tipo, clientName: cobrarNombre || (prop ? prop.ownerName : proveedor), ownerName: cobrarNombre || (prop ? prop.ownerName : ''), totalAmount: total, totalPropietario: total, date: fecha, propertyAddress: prop ? prop.propertyAddress : '', cobrarA: cobrarA });
     document.getElementById("invoiceOtrosPanel").style.display = "none";
     loadInvoices();
 }
@@ -1999,6 +2201,21 @@ function selectProperty() {
     document.getElementById("inv_pi_desc").textContent = selectedPropertyData.description || "—";
     document.getElementById("inv_pi_status").textContent = selectedPropertyData.active ? "Activo" : "Inactivo";
     document.getElementById("inv_pi_factura_nombre").textContent = selectedPropertyData.ownerName || "Sin propietario asignado";
+
+    // Si es modo propietario, auto-asignar propietario como cliente
+    if (invoiceClientType === "propietario" && selectedPropertyData.ownerName) {
+        var supData = selectedPropertyData.supplier || '';
+        var cedulaMatch = supData.match(/CC:([^|]+)/);
+        var cedula = cedulaMatch ? cedulaMatch[1].trim() : '';
+        var phone = supData.replace(/CC:[^|]+\|?\s*/, '').trim() || '';
+        selectedClientData = {
+            id: selectedPropertyData.id,
+            name: selectedPropertyData.ownerName,
+            document: cedula,
+            phone: phone
+        };
+    }
+
     calculateInvoice();
 }
 
@@ -2014,15 +2231,91 @@ function calculateInvoice() {
     const rent = selectedPropertyData ? Number(selectedPropertyData.rentValue || selectedPropertyData.salePrice || 0) : 0;
     const pct = Number(document.getElementById("inv_comision_pct").value) || 11;
     const comision = Math.round(rent * (pct / 100));
-    let totalAdicionales = 0;
-    document.querySelectorAll(".adic-valor").forEach(el => { totalAdicionales += Number(el.value) || 0; });
-    const valorPropietario = rent - comision - totalAdicionales;
 
-    document.getElementById("inv_r_rent").textContent = "$" + rent.toLocaleString('es-CO');
-    document.getElementById("inv_r_comision").textContent = "-$" + comision.toLocaleString('es-CO') + " (" + pct + "%)";
-    document.getElementById("inv_r_adicionales").textContent = "-$" + totalAdicionales.toLocaleString('es-CO');
-    document.getElementById("inv_r_propietario").textContent = "$" + valorPropietario.toLocaleString('es-CO');
-    document.getElementById("inv_r_ganancia").textContent = "$" + comision.toLocaleString('es-CO');
+    // Calcular intereses desde las filas de días
+    let totalIntereses = 0;
+    let diasMora = 0;
+    document.querySelectorAll('#inv_intereses_rows .interes-row').forEach(function(row) {
+        const val = Number((row.querySelector('.interes-valor').value || '').replace(/\./g, '')) || 0;
+        if (val > 0) { totalIntereses += val; diasMora++; }
+    });
+
+    const totalInquilino = rent + totalIntereses;
+    const valorPropietario = rent - comision;
+    const gananciaTotal = comision + totalIntereses;
+
+    // Resumen Inquilino
+    var rentEl = document.getElementById("inv_r_rent");
+    if (rentEl) rentEl.textContent = "$" + rent.toLocaleString('es-CO');
+    var interesesEl = document.getElementById("inv_r_intereses");
+    if (interesesEl) interesesEl.textContent = totalIntereses > 0 ? "+$" + totalIntereses.toLocaleString('es-CO') : "$0";
+    var diasEl = document.getElementById("inv_r_dias_mora");
+    if (diasEl) diasEl.textContent = diasMora;
+    var totalInqEl = document.getElementById("inv_r_total_inquilino");
+    if (totalInqEl) totalInqEl.textContent = "$" + totalInquilino.toLocaleString('es-CO');
+    var comisionEl = document.getElementById("inv_r_comision");
+    if (comisionEl) comisionEl.textContent = "$" + gananciaTotal.toLocaleString('es-CO');
+    var propEl = document.getElementById("inv_r_propietario");
+    if (propEl) propEl.textContent = "$" + valorPropietario.toLocaleString('es-CO');
+    var gananciaEl = document.getElementById("inv_r_ganancia");
+    if (gananciaEl) gananciaEl.textContent = "$" + gananciaTotal.toLocaleString('es-CO');
+
+    // Resumen Propietario
+    var rentPropEl = document.getElementById("inv_r_rent_prop");
+    if (rentPropEl) rentPropEl.textContent = "$" + rent.toLocaleString('es-CO');
+    var pctPropEl = document.getElementById("inv_r_pct_prop");
+    if (pctPropEl) pctPropEl.textContent = pct;
+    var comisionPropEl = document.getElementById("inv_r_comision_prop");
+    if (comisionPropEl) comisionPropEl.textContent = "-$" + comision.toLocaleString('es-CO');
+    var totalPropEl = document.getElementById("inv_r_total_propietario");
+    if (totalPropEl) totalPropEl.textContent = "$" + valorPropietario.toLocaleString('es-CO');
+
+    // Mostrar total de intereses
+    var totalDiv = document.getElementById('inv_intereses_total');
+    if (totalDiv) {
+        if (totalIntereses > 0) {
+            totalDiv.style.display = 'block';
+            totalDiv.textContent = 'Total intereses: $' + totalIntereses.toLocaleString('es-CO') + ' (' + diasMora + ' día' + (diasMora > 1 ? 's' : '') + ')';
+        } else {
+            totalDiv.style.display = 'none';
+        }
+    }
+}
+
+function formatInteresInput(input) {
+    // Guardar posición del cursor
+    var val = input.value.replace(/\./g, '').replace(/[^\d]/g, '');
+    if (!val) { input.value = ''; return; }
+    input.value = Number(val).toLocaleString('es-CO');
+}
+
+function removeInteresRow(btn) {
+    var row = btn.closest('.interes-row');
+    if (row) row.remove();
+    calculateInvoice();
+}
+
+function addInteresRow() {
+    var container = document.getElementById('inv_intereses_rows');
+    var row = document.createElement('div');
+    row.className = 'interes-row';
+    row.style.cssText = 'display:grid; grid-template-columns:1fr 1fr 40px; gap:8px; margin-bottom:6px; align-items:center';
+    row.innerHTML = '<div><input type="date" class="interes-fecha" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.78rem; color:#6b7280">$</span><input type="text" class="interes-valor" placeholder="10.000" style="width:100%; padding:8px 8px 8px 22px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; font-weight:700" oninput="formatInteresInput(this); calculateInvoice()"></div><div><button type="button" onclick="removeInteresRow(this)" style="width:100%; background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:8px 0; cursor:pointer; font-size:0.82rem">🗑️</button></div>';
+    container.appendChild(row);
+}
+
+function getInteresesDetalle() {
+    var rows = [];
+    document.querySelectorAll('#inv_intereses_rows .interes-row').forEach(function(row) {
+        var fecha = row.querySelector('.interes-fecha').value;
+        var valor = Number((row.querySelector('.interes-valor').value || '').replace(/\./g, '').replace(/[^\d]/g, '')) || 0;
+        if (fecha && valor > 0) {
+            var dateObj = new Date(fecha + 'T12:00:00');
+            var dayName = dateObj.toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'short' });
+            rows.push({ fecha: fecha, dayName: dayName, valor: valor });
+        }
+    });
+    return rows;
 }
 
 async function submitRentInvoice() {
@@ -2032,23 +2325,22 @@ async function submitRentInvoice() {
     const rent = Number(selectedPropertyData.rentValue || selectedPropertyData.salePrice || 0);
     const pct = Number(document.getElementById("inv_comision_pct").value) || 11;
     const comision = Math.round(rent * (pct / 100));
-    let adicionales = [];
-    document.querySelectorAll("#inv_adicionales > div").forEach(row => {
-        const concepto = row.querySelector(".adic-concepto").value;
-        const valor = Number(row.querySelector(".adic-valor").value) || 0;
-        if (concepto && valor > 0) adicionales.push({ productName: concepto, quantity: 1, unitPrice: valor });
-    });
+    const interesesDetalle = getInteresesDetalle();
+    const totalIntereses = interesesDetalle.reduce(function(s, i) { return s + i.valor; }, 0);
+    const totalInquilino = rent + totalIntereses;
+    const valorPropietario = rent - comision;
 
     const items = [
-        { productName: "Arriendo — " + (selectedPropertyData.propertyAddress || selectedPropertyData.name), quantity: 1, unitPrice: rent, productId: selectedPropertyData.id },
-        { productName: "Comisión Inmobiliaria (11%)", quantity: 1, unitPrice: -comision },
-        ...adicionales.map(a => ({ ...a, unitPrice: -a.unitPrice }))
+        { productName: "Canon de Arriendo — " + (selectedPropertyData.propertyAddress || selectedPropertyData.name), quantity: 1, unitPrice: rent, productId: selectedPropertyData.id }
     ];
+    if (totalIntereses > 0) {
+        items.push({ productName: "Intereses por demora (" + interesesDetalle.length + " días)", quantity: 1, unitPrice: totalIntereses });
+    }
 
     const body = {
         clientId: selectedClientData.id,
         clientName: selectedClientData.name,
-        paymentMethod: document.getElementById("inv_method").value,
+        paymentMethod: 'TRANSFERENCIA',
         observations: document.getElementById("inv_obs").value + " | Mes: " + document.getElementById("inv_month").value + " | Propietario: " + (selectedPropertyData.ownerName || "—"),
         discount: 0,
         items: items.map(i => ({ productName: i.productName, quantity: i.quantity, unitPrice: Math.abs(i.unitPrice), productId: i.productId }))
@@ -2061,7 +2353,6 @@ async function submitRentInvoice() {
         // Guardar datos antes de limpiar el formulario
         const savedClient = selectedClientData ? { ...selectedClientData } : { name: '—', document: '' };
         const savedProperty = selectedPropertyData ? { ...selectedPropertyData } : { propertyAddress: '—', ownerName: '—', name: '—' };
-        const savedMethod = document.getElementById("inv_method").value;
         const savedMonth = document.getElementById("inv_month").value;
         hideInvoiceForm();
         loadInvoices();
@@ -2075,9 +2366,12 @@ async function submitRentInvoice() {
             ownerName: savedProperty.ownerName || '—',
             rentValue: rent,
             comision: comision,
-            adicionales: adicionales,
-            totalPropietario: rent - comision - adicionales.reduce((s,a) => s + Number(a.unitPrice), 0),
-            paymentMethod: savedMethod,
+            intereses: totalIntereses,
+            interesesDetalle: interesesDetalle,
+            adicionales: [],
+            totalInquilino: totalInquilino,
+            totalPropietario: valorPropietario,
+            paymentMethod: '',
             month: savedMonth,
             tipo: invoiceClientType === 'propietario' ? 'Propietario' : 'Inquilino'
         };
@@ -2761,9 +3055,12 @@ function toggleSidebar() {
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
     const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
-    // Si es ADMIN, redirigir al admin dashboard
+    // Si es ADMIN, redirigir al admin dashboard (verificar desde localStorage Y desde el JWT)
     const userRole = user.role?.name || user.role || user.tenantRole || "";
-    if (userRole === "ROLE_ADMIN") { window.location.href = "admin-dashboard.html"; return; }
+    const userEmail = (user.email || "").toLowerCase();
+    const sessionUser = window.PulpAuth.getSessionUser ? window.PulpAuth.getSessionUser() : null;
+    const jwtRole = sessionUser?.role || "";
+    if (userRole === "ROLE_ADMIN" || jwtRole === "ROLE_ADMIN" || userEmail === "superadmin@zentrix.app") { window.location.href = "admin-dashboard.html"; return; }
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
     document.getElementById("userEmail").textContent = user.email || "";
     document.getElementById("welcomeBizName").textContent = localStorage.getItem("zentrix_biz_name") || "Mi Inmobiliaria";
@@ -2881,7 +3178,7 @@ function generarComprobantePago(nombre, cargo, valor) {
     const logoHtml = logo ? '<img src="' + logo + '" style="width:70px; height:70px; border-radius:50%; object-fit:cover">' : '<div style="width:70px; height:70px; border-radius:50%; background:#eef2ff; display:flex; align-items:center; justify-content:center; font-size:1.8rem">🏠</div>';
     const fecha = new Date().toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
     const numComprobante = 'CP-' + new Date().getFullYear() + '-' + String(Date.now()).slice(-6);
-    const htmlContent = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Comprobante ' + numComprobante + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:600px; margin:0 auto; border:2px solid #e5e7eb; border-radius:16px; padding:32px"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #6366f1"><div style="display:flex; align-items:center; gap:14px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.82rem">Administracion Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#6366f1; font-size:1rem">COMPROBANTE DE PAGO</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numComprobante + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div><div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:20px; margin-bottom:20px"><h3 style="margin:0 0 12px; font-size:0.85rem; color:#6b7280; text-transform:uppercase">Datos del Colaborador</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div><span style="font-size:0.75rem; color:#6b7280; display:block">Nombre</span><strong style="font-size:1rem">' + nombre + '</strong></div><div><span style="font-size:0.75rem; color:#6b7280; display:block">Cargo</span><strong style="font-size:1rem">' + cargo + '</strong></div></div></div><div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:20px; margin-bottom:20px; text-align:center"><span style="font-size:0.82rem; color:#065f46; display:block; margin-bottom:4px">Valor Pagado</span><div style="font-size:2rem; font-weight:800; color:#16a34a">$' + valor.toLocaleString('es-CO') + '</div><span style="font-size:0.78rem; color:#6b7280; margin-top:4px; display:block">Pesos Colombianos</span></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:24px; padding-top:16px; border-top:1px dashed #e5e7eb"><div style="text-align:center"><div style="border-top:1px solid #111827; padding-top:8px; font-size:0.78rem; color:#6b7280">Firma Empleador</div></div><div style="text-align:center"><div style="border-top:1px solid #111827; padding-top:8px; font-size:0.78rem; color:#6b7280">Firma Colaborador</div></div></div><div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">📄 Descargar PDF (Imprimir)</button></div></div></body></html>';
+    const htmlContent = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Comprobante ' + numComprobante + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:600px; margin:0 auto; border:2px solid #e5e7eb; border-radius:16px; padding:32px"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #6366f1"><div style="display:flex; align-items:center; gap:14px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.82rem">Administracion Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#6366f1; font-size:1rem">COMPROBANTE DE PAGO</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numComprobante + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div><div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:20px; margin-bottom:20px"><h3 style="margin:0 0 12px; font-size:0.85rem; color:#6b7280; text-transform:uppercase">Datos del Colaborador</h3><div style="display:grid; grid-template-columns:1fr 1fr; gap:12px"><div><span style="font-size:0.75rem; color:#6b7280; display:block">Nombre</span><strong style="font-size:1rem">' + nombre + '</strong></div><div><span style="font-size:0.75rem; color:#6b7280; display:block">Cargo</span><strong style="font-size:1rem">' + cargo + '</strong></div></div></div><div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:20px; margin-bottom:20px; text-align:center"><span style="font-size:0.82rem; color:#065f46; display:block; margin-bottom:4px">Valor Pagado</span><div style="font-size:2rem; font-weight:800; color:#16a34a">$' + valor.toLocaleString('es-CO') + '</div><span style="font-size:0.78rem; color:#6b7280; margin-top:4px; display:block">Pesos Colombianos</span></div><div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:24px; padding-top:16px; border-top:1px dashed #e5e7eb"><div style="text-align:center"><div style="border-top:1px solid #111827; padding-top:8px; font-size:0.78rem; color:#6b7280">Firma Empleador</div></div><div style="text-align:center"><div style="border-top:1px solid #111827; padding-top:8px; font-size:0.78rem; color:#6b7280">Firma Colaborador</div></div></div><div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">📄 Descargar PDF (Imprimir)</button></div><div style="text-align:center; margin-top:32px; padding-top:16px; border-top:1px solid #e5e7eb"><p style="margin:0; font-size:0.72rem; color:#9ca3af">Factura desarrollada por <strong style="color:#6366f1">Red Matrix Solutions</strong></p></div></div></body></html>';
     const w = window.open('', '_blank');
     if (w) { w.document.write(htmlContent); w.document.close(); }
     else { alert('Permite ventanas emergentes para generar el comprobante.'); }
@@ -3214,30 +3511,63 @@ function generateInvoicePDF(invoiceData) {
     const bizName = localStorage.getItem('zentrix_biz_name') || 'Mi Inmobiliaria';
     const logoHtml = logo ? '<img src="' + logo + '" style="width:80px; height:80px; border-radius:50%; object-fit:cover">' : '<div style="width:80px; height:80px; border-radius:50%; background:#eef2ff; display:flex; align-items:center; justify-content:center; font-size:2rem">🏠</div>';
 
-    const adicionalesHtml = (invoiceData.adicionales && invoiceData.adicionales.length) ? invoiceData.adicionales.map(a => '<tr><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb">' + a.productName + '</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; color:#ef4444">-$' + Number(a.unitPrice).toLocaleString('es-CO') + '</td></tr>').join('') : '';
+    const esPropietario = invoiceData.tipo === 'Propietario';
+    const rent = Number(invoiceData.rentValue || 0);
+    const comision = Number(invoiceData.comision || 0);
+    const intereses = Number(invoiceData.intereses || 0);
+    const interesesDetalle = invoiceData.interesesDetalle || [];
+    const valorPropietario = rent - comision;
+    const totalInquilino = rent + intereses;
 
-    const totalAdicionales = (invoiceData.adicionales || []).reduce((s, a) => s + Number(a.unitPrice || 0), 0);
+    var conceptosRows = '';
+    var totalFinal = 0;
+    var totalLabel = '';
+
+    if (esPropietario) {
+        // Factura Propietario: Canon - Comisión = Total a enviar
+        conceptosRows = '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Canon de Arriendo — ' + invoiceData.propertyAddress + '</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td></tr>';
+        conceptosRows += '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; color:#ef4444">Comisión Inmobiliaria (11%)</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#ef4444">-$' + comision.toLocaleString('es-CO') + '</td></tr>';
+        totalFinal = valorPropietario;
+        totalLabel = 'TOTAL A ENVIAR AL PROPIETARIO:';
+    } else {
+        // Factura Inquilino: Canon + Intereses = Total a cobrar
+        conceptosRows = '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Canon de Arriendo — ' + invoiceData.propertyAddress + '</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td></tr>';
+        if (interesesDetalle.length > 0) {
+            interesesDetalle.forEach(function(i) {
+                conceptosRows += '<tr><td style="padding:8px 12px; border-bottom:1px solid #f3f4f6; padding-left:24px; font-size:0.82rem; color:#92400e">⏰ Interés — ' + i.dayName + '</td><td style="padding:8px 12px; border-bottom:1px solid #f3f4f6; text-align:right; font-weight:600; color:#92400e">+$' + i.valor.toLocaleString('es-CO') + '</td></tr>';
+            });
+            conceptosRows += '<tr style="background:#fffbeb"><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; font-weight:700; font-size:0.82rem">Total Intereses (' + interesesDetalle.length + ' día' + (interesesDetalle.length > 1 ? 's' : '') + ')</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#92400e">+$' + intereses.toLocaleString('es-CO') + '</td></tr>';
+        } else if (intereses > 0) {
+            conceptosRows += '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Intereses por demora en pago</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#92400e">+$' + intereses.toLocaleString('es-CO') + '</td></tr>';
+        }
+        totalFinal = totalInquilino;
+        totalLabel = 'TOTAL A PAGAR:';
+    }
 
     const htmlContent = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura ' + invoiceData.invoiceNumber + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body>' +
         '<div style="max-width:700px; margin:0 auto">' +
         '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px; padding-bottom:20px; border-bottom:2px solid #6366f1">' +
         '<div style="display:flex; align-items:center; gap:16px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.4rem; color:#111827">' + bizName + '</h1><p style="margin:4px 0 0; color:#6b7280; font-size:0.85rem">Administración Inmobiliaria</p></div></div>' +
-        '<div style="text-align:right"><h2 style="margin:0; color:#6366f1; font-size:1.2rem">FACTURA</h2><p style="margin:4px 0 0; font-size:0.9rem; font-weight:700">' + invoiceData.invoiceNumber + '</p><p style="margin:4px 0 0; font-size:0.82rem; color:#6b7280">' + invoiceData.date + '</p></div></div>' +
-        '<div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:24px">' +
-        '<div style="background:#f9fafb; padding:16px; border-radius:10px; border:1px solid #e5e7eb"><h3 style="margin:0 0 8px; font-size:0.82rem; color:#6b7280; text-transform:uppercase">' + (invoiceData.tipo === 'Propietario' ? 'PROPIETARIO' : invoiceData.tipo === 'Inquilino' ? 'INQUILINO' : 'FACTURAR A') + '</h3><p style="margin:0; font-weight:700; font-size:0.95rem">' + invoiceData.clientName + '</p><p style="margin:4px 0 0; font-size:0.82rem; color:#6b7280">' + (invoiceData.clientDoc ? 'Doc: ' + invoiceData.clientDoc : '') + '</p></div>' +
-        '<div style="background:#f9fafb; padding:16px; border-radius:10px; border:1px solid #e5e7eb"><h3 style="margin:0 0 8px; font-size:0.82rem; color:#6b7280; text-transform:uppercase">Propiedad</h3><p style="margin:0; font-weight:700; font-size:0.95rem">' + invoiceData.propertyAddress + '</p></div></div>' +
+        '<div style="text-align:right"><h2 style="margin:0; color:#6366f1; font-size:1.2rem">' + (esPropietario ? 'LIQUIDACIÓN PROPIETARIO' : 'FACTURA DE ARRIENDO') + '</h2><p style="margin:4px 0 0; font-size:0.9rem; font-weight:700">' + invoiceData.invoiceNumber + '</p><p style="margin:4px 0 0; font-size:0.82rem; color:#6b7280">' + invoiceData.date + '</p></div></div>' +
+        // Datos del cliente
+        '<div style="background:#f9fafb; padding:16px; border-radius:10px; border:1px solid #e5e7eb; margin-bottom:24px"><h3 style="margin:0 0 10px; font-size:0.85rem; font-weight:800; color:#111827; border-bottom:1px solid #e5e7eb; padding-bottom:8px">' + (esPropietario ? 'Datos del Propietario' : 'Datos del Cliente') + '</h3>' +
+        '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:0.82rem">' +
+        '<div><span style="color:#6b7280; font-size:0.72rem; display:block">Nombre</span><strong>' + invoiceData.clientName + '</strong></div>' +
+        '<div><span style="color:#6b7280; font-size:0.72rem; display:block">Cédula</span><strong>' + (invoiceData.clientDoc || '—') + '</strong></div>' +
+        '<div><span style="color:#6b7280; font-size:0.72rem; display:block">Ubicación del Inmueble</span><strong>' + invoiceData.propertyAddress + '</strong></div>' +
+        '<div><span style="color:#6b7280; font-size:0.72rem; display:block">Mes Facturado</span><strong>' + (invoiceData.month || '—') + '</strong></div>' +
+        '</div></div>' +
+        // Tabla de conceptos
         '<table style="width:100%; border-collapse:collapse; margin-bottom:20px"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left; font-size:0.82rem">Concepto</th><th style="padding:10px 12px; text-align:right; font-size:0.82rem">Valor</th></tr></thead><tbody>' +
-        '<tr><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb">Arriendo mensual — ' + invoiceData.propertyAddress + '</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + Number(invoiceData.rentValue).toLocaleString('es-CO') + '</td></tr>' +
-        '<tr><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb">Comisión Inmobiliaria (11%)</td><td style="padding:8px 12px; border-bottom:1px solid #e5e7eb; text-align:right; color:#ef4444">-$' + Number(invoiceData.comision).toLocaleString('es-CO') + '</td></tr>' +
-        adicionalesHtml +
+        conceptosRows +
         '</tbody></table>' +
-        '<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:16px; margin-bottom:20px">' +
-        '<div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:6px"><span>Valor Arriendo:</span><span style="font-weight:700">$' + Number(invoiceData.rentValue).toLocaleString('es-CO') + '</span></div>' +
-        '<div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:6px"><span>Comisión:</span><span style="font-weight:700; color:#ef4444">-$' + Number(invoiceData.comision).toLocaleString('es-CO') + '</span></div>' +
-        (totalAdicionales > 0 ? '<div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:6px"><span>Adicionales:</span><span style="font-weight:700; color:#ef4444">-$' + totalAdicionales.toLocaleString('es-CO') + '</span></div>' : '') +
-        '<div style="border-top:1px solid #bbf7d0; padding-top:8px; margin-top:8px; display:flex; justify-content:space-between; font-size:1rem"><span style="font-weight:800">TOTAL A PROPIETARIO:</span><span style="font-weight:800; color:#065f46">$' + Number(invoiceData.totalPropietario).toLocaleString('es-CO') + '</span></div></div>' +
-        '<div style="display:flex; justify-content:space-between; font-size:0.82rem; color:#6b7280; margin-bottom:20px"><span>Método de pago: ' + (invoiceData.paymentMethod || '—') + '</span><span>Mes facturado: ' + (invoiceData.month || '—') + '</span></div>' +
-        '<div class="no-print" style="text-align:center; margin-top:30px"><button onclick="window.print()" style="padding:12px 32px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Descargar PDF (Imprimir)</button></div>' +
+        // Total
+        '<div style="background:#f0fdf4; border:2px solid #16a34a; border-radius:10px; padding:16px; margin-bottom:20px">' +
+        '<div style="display:flex; justify-content:space-between; align-items:center"><span style="font-weight:800; font-size:1rem">' + totalLabel + '</span><span style="font-weight:800; font-size:1.4rem; color:#16a34a">$' + totalFinal.toLocaleString('es-CO') + '</span></div></div>' +
+        // Botón PDF
+        '<div class="no-print" style="text-align:center; margin-top:30px"><button onclick="window.print()" style="padding:12px 32px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Descargar PDF</button></div>' +
+        // Footer
+        '<div style="text-align:center; margin-top:32px; padding-top:16px; border-top:1px solid #e5e7eb"><p style="margin:0; font-size:0.72rem; color:#9ca3af">Factura desarrollada por <strong style="color:#6366f1">Red Matrix Solutions</strong></p></div>' +
         '</div></body></html>';
 
     const pdfWindow = window.open('', '_blank');

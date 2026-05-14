@@ -50,4 +50,17 @@ public class AuthController {
     public java.util.Map<String, String> resetPassword(@RequestParam Long userId) {
         return authService.resetPassword(userId);
     }
+
+    /**
+     * POST /auth/create-admin
+     * Admin-only: creates a new super administrator user.
+     * Body: { "cedula": "...", "telefono": "...", "name": "...",
+     *         "email": "...", "password": "...", "direccion": "..." }
+     * Response: { "token": "...", "email": "...", "name": "...", "role": "ROLE_ADMIN" }
+     */
+    @PostMapping("/create-admin")
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthResponseDTO createAdmin(@Valid @RequestBody RegisterRequestDTO request) {
+        return authService.createAdmin(request);
+    }
 }

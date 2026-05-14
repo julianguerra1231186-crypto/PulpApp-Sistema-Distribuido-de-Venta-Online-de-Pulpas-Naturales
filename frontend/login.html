@@ -100,6 +100,13 @@
 (function() {
     document.addEventListener("DOMContentLoaded", () => {
         if (window.PulpAuth?.isTokenValid()) {
+            const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+            const role = user.role?.name || user.role || user.tenantRole || "";
+            const userEmail = (user.email || "").toLowerCase();
+            if (role === "ROLE_ADMIN" || userEmail === "superadmin@zentrix.app") {
+                window.location.href = "admin-dashboard.html";
+                return;
+            }
             const biz = localStorage.getItem("zentrix_biz_type");
             const bizMap = { inmobiliaria:"dashboard-inmobiliaria.html", restaurante:"dashboard-restaurante.html" };
             window.location.href = bizMap[biz] || "dashboard-inmobiliaria.html";
@@ -144,9 +151,10 @@
             localStorage.setItem("user", JSON.stringify(fullData));
             toast("Sesión iniciada ✓");
 
-            const role = fullData.role?.name || fullData.role || "";
+            const role = fullData.role?.name || fullData.role || fullData.tenantRole || "";
+            const userEmail = (fullData.email || "").toLowerCase();
             let redirect;
-            if (role === "ROLE_ADMIN") {
+            if (role === "ROLE_ADMIN" || userEmail === "superadmin@zentrix.app") {
                 redirect = "admin-dashboard.html";
                 localStorage.removeItem("zentrix_biz_type");
             } else {
