@@ -16,4 +16,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
     @Query("SELECT COALESCE(MAX(i.id), 0) FROM Invoice i WHERE i.tenantId = :tenantId")
     Long findMaxIdByTenantId(@Param("tenantId") Long tenantId);
+
+    long countByTenantId(Long tenantId);
 }

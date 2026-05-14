@@ -93,8 +93,9 @@ public class InvoiceService {
     }
 
     private String generateInvoiceNumber(Long tenantId) {
-        Long maxId = invoiceRepository.findMaxIdByTenantId(tenantId);
-        long next = maxId + 1;
+        // Usar count + timestamp para evitar colisiones
+        long count = invoiceRepository.countByTenantId(tenantId);
+        long next = count + 1;
         return String.format("FAC-%d-%06d", Year.now().getValue(), next);
     }
 
