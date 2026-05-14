@@ -1947,25 +1947,32 @@ async function submitRentInvoice() {
         const res = await fetch(API + "/invoices", { method:"POST", headers: authHeaders(), body: JSON.stringify(body) });
         if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.message || err.error || "Error"); }
         const data = await res.json();
+        // Guardar datos antes de limpiar el formulario
+        const savedClient = selectedClientData ? { ...selectedClientData } : { name: '—', document: '' };
+        const savedProperty = selectedPropertyData ? { ...selectedPropertyData } : { propertyAddress: '—', ownerName: '—', name: '—' };
+        const savedMethod = document.getElementById("inv_method").value;
+        const savedMonth = document.getElementById("inv_month").value;
         hideInvoiceForm();
         loadInvoices();
         // Generate PDF
         const invoiceData = {
             invoiceNumber: data.invoiceNumber,
             date: new Date().toLocaleDateString('es-CO'),
-            clientName: selectedClientData.name,
-            clientDoc: selectedClientData.document,
-            propertyAddress: selectedPropertyData.propertyAddress || selectedPropertyData.name,
-            ownerName: selectedPropertyData.ownerName || '—',
+            clientName: savedClient.name,
+            clientDoc: savedClient.document,
+            propertyAddress: savedProperty.propertyAddress || savedProperty.name,
+            ownerName: savedProperty.ownerName || '—',
             rentValue: rent,
             comision: comision,
             adicionales: adicionales,
             totalPropietario: rent - comision - adicionales.reduce((s,a) => s + Number(a.unitPrice), 0),
-            paymentMethod: document.getElementById("inv_method").value,
-            month: document.getElementById("inv_month").value
+            paymentMethod: savedMethod,
+            month: savedMonth,
+            tipo: invoiceClientType === 'propietario' ? 'Propietario' : 'Inquilino'
         };
         generateInvoicePDF(invoiceData);
-        alert("✓ Factura " + data.invoiceNumber + " generada\n\nValor a enviar propietario: $" + (rent - comision - adicionales.reduce((s,a) => s + Number(a.unitPrice), 0)).toLocaleString('es-CO') + "\nComisión inmobiliaria: $" + comision.toLocaleString('es-CO'));
+        saveInvoiceToHistory(invoiceData);
+        alert("✓ Tu Factura Fue Generada");
     } catch (e) { alert("Error: " + e.message); }
 }
 
