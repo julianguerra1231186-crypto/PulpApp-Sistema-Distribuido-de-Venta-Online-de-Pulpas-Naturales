@@ -2761,6 +2761,9 @@ function toggleSidebar() {
 document.addEventListener("DOMContentLoaded", () => {
     if (!window.PulpAuth?.isTokenValid()) { window.location.href = "login.html"; return; }
     const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
+    // Si es ADMIN, redirigir al admin dashboard
+    const userRole = user.role?.name || user.role || user.tenantRole || "";
+    if (userRole === "ROLE_ADMIN") { window.location.href = "admin-dashboard.html"; return; }
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
     document.getElementById("userEmail").textContent = user.email || "";
     document.getElementById("welcomeBizName").textContent = localStorage.getItem("zentrix_biz_name") || "Mi Inmobiliaria";
