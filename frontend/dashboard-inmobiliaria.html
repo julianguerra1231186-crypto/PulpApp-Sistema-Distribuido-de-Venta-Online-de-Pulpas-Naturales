@@ -1648,6 +1648,10 @@ async function loadInvoices() {
         var metodoBadge = '<span style="background:#eef2ff; color:#4f46e5; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">' + metodo.toUpperCase() + '</span>';
         var propietario = inv.clientName || inv.propietario || '—';
         var total = inv.total || inv.totalAmount || 0;
+        // Para facturas del API, el total incluye el arriendo bruto. Mostrar neto (- 11% comisión)
+        if (inv.source === 'api' && Number(total) > 0) {
+            total = Number(total) - Math.round(Number(total) * 0.11);
+        }
         var fechaStr = inv.createdAt ? new Date(inv.createdAt).toLocaleString('es-CO') : (inv.date || '—');
         var numFactura = inv.invoiceNumber || inv.numero || '—';
         var deleteBtn = inv.source === 'local' ? '<button onclick="deleteLocalInvoice(' + idx + ')" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.72rem">🗑️</button>' : '';
