@@ -1680,18 +1680,15 @@ function deleteInvoice(idx) {
         var li = history.findIndex(function(h) { return h.numero === inv.numero || h.invoiceNumber === inv.invoiceNumber; });
         if (li >= 0) history.splice(li, 1);
         localStorage.setItem('zentrix_invoice_history', JSON.stringify(history));
-        alert('✓ Factura eliminada del historial');
     } else {
-        // Factura del API — intentar eliminar via API
-        fetch(API + '/invoices/' + inv.id, { method: 'DELETE', headers: authHeaders() }).then(function(res) {
-            if (!res.ok) { alert('No se pudo eliminar del servidor. Se ocultará del historial local.'); }
-        }).catch(function() {});
-        // También ocultar localmente
-        var hidden = JSON.parse(localStorage.getItem('zentrix_hidden_invoices') || '[]');
-        hidden.push(inv.id || inv.invoiceNumber);
-        localStorage.setItem('zentrix_hidden_invoices', JSON.stringify(hidden));
-        alert('✓ Factura eliminada');
+        // Intentar eliminar del servidor silenciosamente
+        fetch(API + '/invoices/' + inv.id, { method: 'DELETE', headers: authHeaders() }).catch(function() {});
     }
+    // Ocultar del historial
+    var hidden = JSON.parse(localStorage.getItem('zentrix_hidden_invoices') || '[]');
+    hidden.push(inv.id || inv.invoiceNumber || inv.numero);
+    localStorage.setItem('zentrix_hidden_invoices', JSON.stringify(hidden));
+    alert('✓ Factura eliminada');
     loadInvoices();
 }
 
