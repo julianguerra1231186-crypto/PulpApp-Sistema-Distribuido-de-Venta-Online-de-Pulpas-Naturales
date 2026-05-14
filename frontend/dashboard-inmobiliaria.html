@@ -1640,6 +1640,9 @@ async function loadInvoices() {
     try { const res = await fetch(API + "/invoices", { headers: authHeaders() }); if (res.ok) { const data = await res.json(); data.forEach(inv => { allInvoices.push({ ...inv, source: 'api', tipo: inv.paymentMethod || 'Arriendo' }); }); } } catch(e) {}
     const localHistory = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]');
     localHistory.forEach(inv => { allInvoices.push({ ...inv, source: 'local' }); });
+    // Filtrar facturas ocultas/eliminadas
+    var hidden = JSON.parse(localStorage.getItem('zentrix_hidden_invoices') || '[]');
+    allInvoices = allInvoices.filter(function(inv) { return !hidden.includes(inv.id) && !hidden.includes(inv.invoiceNumber) && !hidden.includes(inv.numero); });
     allInvoices.sort((a, b) => new Date(b.createdAt || b.date || 0) - new Date(a.createdAt || a.date || 0));
     if (!allInvoices.length) { document.getElementById("invoicesTableContainer").innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay facturas. Crea la primera!</div>'; return; }
     let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px">N° Factura</th><th style="padding:10px 12px">Método Pago</th><th style="padding:10px 12px">Propietario</th><th style="padding:10px 12px; text-align:right">Total</th><th style="padding:10px 12px; text-align:center">Fecha / Hora</th><th style="padding:10px 12px; text-align:center">Ver PDF</th><th style="padding:10px 12px; text-align:center">Eliminar</th></tr></thead><tbody>';
@@ -1654,7 +1657,7 @@ async function loadInvoices() {
         }
         var fechaStr = inv.createdAt ? new Date(inv.createdAt).toLocaleString('es-CO') : (inv.date || '—');
         var numFactura = inv.invoiceNumber || inv.numero || '—';
-        var deleteBtn = inv.source === 'local' ? '<button onclick="deleteLocalInvoice(' + idx + ')" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.72rem">🗑️</button>' : '';
+        var deleteBtn = '<button onclick="deleteInvoice(' + idx + ')" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.72rem">🗑️</button>';
         html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px; font-weight:700; color:#6366f1">' + numFactura + '</td><td style="padding:10px 12px">' + metodoBadge + '</td><td style="padding:10px 12px; font-weight:600">' + propietario + '</td><td style="padding:10px 12px; text-align:right; font-weight:700">$' + Number(total).toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:center; font-size:0.75rem; color:#6b7280">' + fechaStr + '</td><td style="padding:10px 12px; text-align:center"><button onclick="viewInvoicePDF(' + idx + ')" style="padding:4px 10px; background:#eef2ff; color:#4f46e5; border:1px solid #c7d2fe; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer; font-family:inherit">📄 Ver</button></td><td style="padding:10px 12px; text-align:center">' + deleteBtn + '</td></tr>';
     });
     html += '</tbody></table><div style="color:#9ca3af; font-size:0.75rem; margin-top:10px">Total: ' + allInvoices.length + ' factura(s)</div>';
@@ -1664,7 +1667,33 @@ async function loadInvoices() {
 
 function viewInvoicePDF(idx) { var inv = window._allInvoicesCache[idx]; if (!inv) return; if (inv.pdfData) generateInvoicePDF(inv.pdfData); else generateInvoicePDFFromData(inv); }
 
-function deleteLocalInvoice(idx) { if (!confirm('Eliminar esta factura del historial?')) return; var history = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]'); var inv = window._allInvoicesCache[idx]; if (inv && inv.source === 'local') { var li = history.findIndex(function(h) { return h.numero === inv.numero; }); if (li >= 0) history.splice(li, 1); localStorage.setItem('zentrix_invoice_history', JSON.stringify(history)); } loadInvoices(); }
+function deleteLocalInvoice(idx) { deleteInvoice(idx); }
+
+function deleteInvoice(idx) {
+    var inv = window._allInvoicesCache[idx];
+    if (!inv) return;
+    var confirmText = prompt('⚠️ Para eliminar la factura ' + (inv.invoiceNumber || inv.numero) + ' escribe "ELIMINAR" para confirmar:');
+    if (confirmText !== 'ELIMINAR') { if (confirmText !== null) alert('Texto incorrecto. La factura NO fue eliminada.'); return; }
+
+    if (inv.source === 'local') {
+        var history = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]');
+        var li = history.findIndex(function(h) { return h.numero === inv.numero || h.invoiceNumber === inv.invoiceNumber; });
+        if (li >= 0) history.splice(li, 1);
+        localStorage.setItem('zentrix_invoice_history', JSON.stringify(history));
+        alert('✓ Factura eliminada del historial');
+    } else {
+        // Factura del API — intentar eliminar via API
+        fetch(API + '/invoices/' + inv.id, { method: 'DELETE', headers: authHeaders() }).then(function(res) {
+            if (!res.ok) { alert('No se pudo eliminar del servidor. Se ocultará del historial local.'); }
+        }).catch(function() {});
+        // También ocultar localmente
+        var hidden = JSON.parse(localStorage.getItem('zentrix_hidden_invoices') || '[]');
+        hidden.push(inv.id || inv.invoiceNumber);
+        localStorage.setItem('zentrix_hidden_invoices', JSON.stringify(hidden));
+        alert('✓ Factura eliminada');
+    }
+    loadInvoices();
+}
 
 function saveInvoiceToHistory(invoiceData) { var history = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]'); history.unshift({ numero: invoiceData.invoiceNumber, invoiceNumber: invoiceData.invoiceNumber, tipo: invoiceData.tipo || 'Otro', clientName: invoiceData.clientName || '', propietario: invoiceData.ownerName || '', total: invoiceData.totalAmount || invoiceData.totalPropietario || invoiceData.rentValue || 0, totalAmount: invoiceData.totalAmount || invoiceData.totalPropietario || 0, date: invoiceData.date, createdAt: new Date().toISOString(), source: 'local', pdfData: invoiceData }); localStorage.setItem('zentrix_invoice_history', JSON.stringify(history)); }
 
