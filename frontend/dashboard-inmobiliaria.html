@@ -1728,6 +1728,8 @@ function selectInvoiceType(type) {
 
 async function showInvoiceForm() {
     document.getElementById("invoiceFormPanel").style.display = "block";
+    document.getElementById("invoicesTableContainer").style.display = "none";
+    document.getElementById("invoiceTypeSelector").style.display = "none";
     try {
         const res = await fetch(API + "/inventory", { headers: authHeaders() });
         propertiesList = await res.json();
@@ -1741,6 +1743,8 @@ async function showInvoiceForm() {
 
 function showOtrosForm() {
     document.getElementById("invoiceOtrosPanel").style.display = "block";
+    document.getElementById("invoicesTableContainer").style.display = "none";
+    document.getElementById("invoiceTypeSelector").style.display = "none";
     document.getElementById("otrosForm").reset();
     document.getElementById("otrosConceptosContainer").innerHTML = "";
     document.getElementById("ot_proveedor_fields").style.display = "grid";
@@ -1753,7 +1757,7 @@ function showOtrosForm() {
     updateOtrosTipoStyle();
 }
 
-function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; }
+function hideOtrosForm() { document.getElementById("invoiceOtrosPanel").style.display = "none"; document.getElementById("invoicesTableContainer").style.display = "block"; }
 
 function selectOtrosProperty() {
     var propId = document.getElementById('ot_propiedad').value;
@@ -1911,7 +1915,7 @@ function submitOtrosInvoice(e) {
     loadInvoices();
 }
 
-function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "none"; selectedClientData = null; selectedPropertyData = null; }
+function hideInvoiceForm() { document.getElementById("invoiceFormPanel").style.display = "none"; document.getElementById("invoicesTableContainer").style.display = "block"; selectedClientData = null; selectedPropertyData = null; }
 
 async function searchClientForInvoice(query) {
     if (query.length < 2) { document.getElementById("inv_client_results").innerHTML = ""; return; }
