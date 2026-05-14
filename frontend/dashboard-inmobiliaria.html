@@ -617,6 +617,19 @@
                         <div id="ot_inmobiliaria_msg" style="display:none; padding:10px; background:#dcfce7; border-radius:8px; text-align:center; font-size:0.82rem; color:#065f46; font-weight:600">🏢 Trabajo realizado directamente por la inmobiliaria</div>
                     </div>
 
+                    <!-- Sección Recibos (solo visible cuando tipo = Servicios) -->
+                    <div id="recibosSection" style="display:none; background:#f0f9ff; border:1px solid #bae6fd; border-radius:10px; padding:14px; margin-bottom:14px">
+                        <div style="font-size:0.82rem; font-weight:700; color:#0369a1; margin-bottom:10px">⚡ Recibos de Servicios Públicos — Prorrateo por Días</div>
+                        <p style="font-size:0.72rem; color:#6b7280; margin:0 0 10px">Ingresa la fecha de alojamiento del inquilino y los datos del recibo. El sistema calcula automáticamente cuánto paga cada parte.</p>
+                        <div style="margin-bottom:10px">
+                            <label style="font-size:0.74rem; font-weight:600; display:block; margin-bottom:3px">📅 Fecha de Alojamiento del Inquilino</label>
+                            <input type="date" id="rec_fecha_alojamiento" style="width:100%; padding:8px 10px; border:1px solid #e5e7eb; border-radius:7px; font-family:inherit; font-size:0.83rem" onchange="calcAllRecibos()">
+                        </div>
+                        <div id="recibosRows"></div>
+                        <button type="button" onclick="addReciboRow()" style="padding:5px 12px; background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; border-radius:6px; font-size:0.73rem; font-weight:700; cursor:pointer; font-family:inherit; margin-top:6px">+ Añadir recibo</button>
+                        <div id="recibosResumen" style="display:none; margin-top:12px; background:#fff; border:1px solid #bae6fd; border-radius:8px; padding:12px"></div>
+                    </div>
+
                     <!-- Conceptos -->
                     <div style="background:#fffbeb; border:1px solid #fde68a; border-radius:10px; padding:14px; margin-bottom:14px">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
@@ -1774,6 +1787,10 @@ function updateOtrosTipoStyle() {
         el.style.color = checked ? '#fff' : '#374151';
         el.style.borderColor = checked ? '#7c3aed' : '#ddd6fe';
     });
+    // Mostrar/ocultar sección de recibos según tipo
+    var tipoServ = document.querySelector('input[name="otros_tipo"][value="Servicios"]') || document.querySelector('input[name="otros_tipo"][value="Servicio"]');
+    var recSection = document.getElementById('recibosSection');
+    if (recSection) recSection.style.display = (tipoServ && tipoServ.checked) ? 'block' : 'none';
 }
 
 function addOtrosConcepto() {
@@ -1782,6 +1799,79 @@ function addOtrosConcepto() {
     row.style.cssText = "display:grid; grid-template-columns:2fr 1fr auto; gap:8px; margin-bottom:8px; align-items:end";
     row.innerHTML = '<div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Descripción</label><input type="text" class="ot-desc" placeholder="Ej: Cambio de grifo" style="width:100%; padding:7px 10px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem"></div><div><label style="font-size:0.72rem; font-weight:600; display:block; margin-bottom:2px">Valor</label><div style="position:relative"><span style="position:absolute; left:8px; top:50%; transform:translateY(-50%); font-size:0.78rem; color:#6b7280">$</span><input type="text" class="ot-valor" placeholder="150.000" style="width:100%; padding:7px 10px 7px 20px; border:1px solid #e5e7eb; border-radius:6px; font-family:inherit; font-size:0.82rem; font-weight:700" oninput="formatCurrency(this); calcOtrosTotal()"></div></div><button type="button" onclick="this.parentElement.remove(); calcOtrosTotal()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:7px 10px; cursor:pointer; font-size:0.78rem; margin-bottom:1px">🗑️</button>';
     container.appendChild(row);
+}
+
+// ── Recibos de Servicios Públicos ──
+function addReciboRow() {
+    var container = document.getElementById('recibosRows');
+    var row = document.createElement('div');
+    row.className = 'recibo-row';
+    row.style.cssText = 'background:#fff; border:1px solid #e0f2fe; border-radius:8px; padding:12px; margin-bottom:8px';
+    row.innerHTML = '<div style="display:grid; grid-template-columns:auto 1fr 1fr 1fr 1fr auto; gap:8px; align-items:end">' +
+        '<div><label style="font-size:0.7rem; font-weight:600; display:block; margin-bottom:2px">Tipo</label><select class="rec-tipo" style="padding:7px 8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.8rem; background:#fff"><option value="Energía">⚡ Energía</option><option value="Agua">💧 Agua</option><option value="Gas">🔥 Gas</option></select></div>' +
+        '<div><label style="font-size:0.7rem; font-weight:600; display:block; margin-bottom:2px">Fecha Inicio Recibo</label><input type="date" class="rec-inicio" style="padding:7px 8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.8rem; width:100%" onchange="calcAllRecibos()"></div>' +
+        '<div><label style="font-size:0.7rem; font-weight:600; display:block; margin-bottom:2px">Fecha Fin Recibo</label><input type="date" class="rec-fin" style="padding:7px 8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.8rem; width:100%" onchange="calcAllRecibos()"></div>' +
+        '<div><label style="font-size:0.7rem; font-weight:600; display:block; margin-bottom:2px">Valor Recibo $</label><input type="text" class="rec-valor" placeholder="46.680" style="padding:7px 8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.8rem; font-weight:700; width:100%" oninput="formatCurrency(this); calcAllRecibos()"></div>' +
+        '<div><label style="font-size:0.7rem; font-weight:600; display:block; margin-bottom:2px">Saldo Moroso $</label><input type="text" class="rec-moroso" placeholder="0" style="padding:7px 8px; border:1px solid #e5e7eb; border-radius:6px; font-size:0.8rem; width:100%" oninput="formatCurrency(this); calcAllRecibos()"></div>' +
+        '<button type="button" onclick="this.closest(\'.recibo-row\').remove(); calcAllRecibos()" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:7px 10px; cursor:pointer; font-size:0.78rem; margin-bottom:1px">🗑️</button>' +
+        '</div><div class="rec-result" style="margin-top:6px; font-size:0.72rem; color:#6b7280"></div>';
+    container.appendChild(row);
+}
+
+function calcAllRecibos() {
+    var fechaAloj = document.getElementById('rec_fecha_alojamiento')?.value;
+    if (!fechaAloj) return;
+    var alojDate = new Date(fechaAloj + 'T12:00:00');
+    var totalInmob = 0, totalInquilino = 0;
+    var resumenHtml = '<table style="width:100%; border-collapse:collapse; font-size:0.78rem"><thead><tr style="background:#f0f9ff"><th style="padding:6px 8px; text-align:left">Servicio</th><th style="padding:6px 8px; text-align:right">Días Inmob.</th><th style="padding:6px 8px; text-align:right">Días Inquil.</th><th style="padding:6px 8px; text-align:right">Total Días</th><th style="padding:6px 8px; text-align:right">$/Día</th><th style="padding:6px 8px; text-align:right">Paga Inmob.</th><th style="padding:6px 8px; text-align:right; color:#065f46; font-weight:700">Paga Inquilino</th></tr></thead><tbody>';
+
+    document.querySelectorAll('#recibosRows .recibo-row').forEach(function(row) {
+        var tipo = row.querySelector('.rec-tipo').value;
+        var inicioStr = row.querySelector('.rec-inicio').value;
+        var finStr = row.querySelector('.rec-fin').value;
+        var valorStr = row.querySelector('.rec-valor').value;
+        var morosoStr = row.querySelector('.rec-moroso').value;
+        if (!inicioStr || !finStr || !valorStr) { row.querySelector('.rec-result').innerHTML = ''; return; }
+
+        var inicio = new Date(inicioStr + 'T12:00:00');
+        var fin = new Date(finStr + 'T12:00:00');
+        var valorRecibo = Number(valorStr.replace(/[^\d]/g, '')) || 0;
+        var saldoMoroso = Number((morosoStr || '0').replace(/[^\d]/g, '')) || 0;
+        var valorSinMoroso = valorRecibo - saldoMoroso;
+
+        // Calcular días
+        var diasTotales = Math.round((fin - inicio) / 86400000);
+        if (diasTotales <= 0) { row.querySelector('.rec-result').innerHTML = '<span style="color:#ef4444">Fechas inválidas</span>'; return; }
+
+        var diasInmob = 0, diasInquilino = 0;
+        if (alojDate <= inicio) {
+            diasInquilino = diasTotales;
+            diasInmob = 0;
+        } else if (alojDate >= fin) {
+            diasInmob = diasTotales;
+            diasInquilino = 0;
+        } else {
+            diasInmob = Math.round((alojDate - inicio) / 86400000);
+            diasInquilino = diasTotales - diasInmob;
+        }
+
+        var valorPorDia = valorSinMoroso / diasTotales;
+        var pagoInmob = Math.round(valorPorDia * diasInmob);
+        var pagoInquilino = Math.round(valorPorDia * diasInquilino);
+
+        totalInmob += pagoInmob;
+        totalInquilino += pagoInquilino;
+
+        row.querySelector('.rec-result').innerHTML = '<span style="color:#0369a1; font-weight:600">Inmob: $' + pagoInmob.toLocaleString('es-CO') + ' (' + diasInmob + ' días)</span> | <span style="color:#065f46; font-weight:600">Inquilino: $' + pagoInquilino.toLocaleString('es-CO') + ' (' + diasInquilino + ' días)</span>';
+
+        resumenHtml += '<tr><td style="padding:4px 8px">' + tipo + '</td><td style="padding:4px 8px; text-align:right">' + diasInmob + '</td><td style="padding:4px 8px; text-align:right">' + diasInquilino + '</td><td style="padding:4px 8px; text-align:right">' + diasTotales + '</td><td style="padding:4px 8px; text-align:right">$' + Math.round(valorPorDia).toLocaleString('es-CO') + '</td><td style="padding:4px 8px; text-align:right">$' + pagoInmob.toLocaleString('es-CO') + '</td><td style="padding:4px 8px; text-align:right; color:#065f46; font-weight:700">$' + pagoInquilino.toLocaleString('es-CO') + '</td></tr>';
+    });
+
+    resumenHtml += '</tbody></table>';
+    resumenHtml += '<div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid #bae6fd; font-size:0.82rem; font-weight:800"><span>Total Inmobiliaria: <span style="color:#0369a1">$' + totalInmob.toLocaleString('es-CO') + '</span></span><span>Total Inquilino: <span style="color:#065f46">$' + totalInquilino.toLocaleString('es-CO') + '</span></span></div>';
+
+    var resumenDiv = document.getElementById('recibosResumen');
+    if (resumenDiv && (totalInmob > 0 || totalInquilino > 0)) { resumenDiv.style.display = 'block'; resumenDiv.innerHTML = resumenHtml; }
 }
 
 function calcOtrosTotal() {
