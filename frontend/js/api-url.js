@@ -83,10 +83,10 @@
         (protocol === "https:" && !hostname.includes("localhost"))  // HTTPS no-local
     );
 
-    // Determinar si estamos en Docker Compose (nginx en puerto 80/3000)
+    // Determinar si estamos en Docker Compose (nginx en puerto 3000 del host)
     var isDocker = (
         hostname === "localhost" &&
-        (!port || port === "80" || port === "3000")
+        (!port || port === "80" || port === "3000" || port === "8080")
     );
 
     // ─────────────────────────────────────────────────────────
