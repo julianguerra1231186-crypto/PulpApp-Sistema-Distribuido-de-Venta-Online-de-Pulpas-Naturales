@@ -59,15 +59,13 @@ spring:
       # =========================================================
       # FILTROS GLOBALES
       # =========================================================
-      # Fuerza headers CORS en TODAS las respuestas.
-      # Esto asegura que incluso si el backend no responde CORS,
-      # el gateway lo agrega.
+      # DedupeResponseHeader elimina headers CORS duplicados.
+      # Esto ocurre porque ms-users también agrega sus propios
+      # headers CORS. El gateway deduplica para que el navegador
+      # solo reciba UN valor por header.
       # =========================================================
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Access-Control-Allow-Methods Access-Control-Allow-Headers, RETAIN_UNIQUE
-        - AddResponseHeader=Access-Control-Allow-Origin, *
-        - AddResponseHeader=Access-Control-Allow-Methods, GET, POST, PUT, DELETE, PATCH, OPTIONS
-        - AddResponseHeader=Access-Control-Allow-Headers, *
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Methods Access-Control-Allow-Headers Access-Control-Allow-Credentials, RETAIN_FIRST
 
       # =========================================================
       # CONFIGURACIÓN GLOBAL CORS
