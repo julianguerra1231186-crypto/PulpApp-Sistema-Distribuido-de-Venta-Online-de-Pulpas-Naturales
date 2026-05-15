@@ -59,39 +59,40 @@ spring:
       # =========================================================
       # FILTROS GLOBALES
       # =========================================================
-      # Evita headers CORS duplicados.
+      # Evita headers CORS duplicados entre gateway y ms-users.
       # =========================================================
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Access-Control-Allow-Methods Access-Control-Allow-Headers, RETAIN_UNIQUE
 
       # =========================================================
       # CONFIGURACIÓN GLOBAL CORS
       # =========================================================
+      # Cloud Run: el frontend está en un dominio diferente al gateway.
+      # Se deben permitir explícitamente los orígenes y headers.
+      # =========================================================
       globalcors:
         cors-configurations:
           '[/**]':
-
-            # =====================================================
-            # DESARROLLO
-            # =====================================================
-            # En producción debes usar:
-            #
-            # allowedOrigins:
-            #   - https://tudominio.com
-            # =====================================================
-            allowedOrigins: "*"
+            allowedOriginPatterns:
+              - "*"
 
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
+              - PATCH
               - OPTIONS
 
-            allowedHeaders: "*"
+            allowedHeaders:
+              - "*"
 
-            # JWT Stateless
-            allowCredentials: false
+            exposedHeaders:
+              - "Authorization"
+
+            allowCredentials: true
+
+            maxAge: 3600
 
       # =========================================================
       # RUTAS MICROSERVICIOS
