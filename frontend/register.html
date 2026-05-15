@@ -151,6 +151,7 @@
 <div id="appToast" class="z-toast" role="status"></div>
 
 <script src="js/config.js"></script>
+<script src="js/api-url.js"></script>
 <script src="services.js"></script>
 <script src="auth.js"></script>
 <script>
@@ -187,7 +188,18 @@ function selectBizType(el) {
         const negocio = document.getElementById("regNegocio").value.trim();
 
         if (!cedula || !telefono || !name || !email || !password || !direccion) { toast("Completa todos los campos", "error"); return; }
-        if (password.length < 6) { toast("La contraseña debe tener mínimo 6 caracteres", "error"); return; }
+
+        // Validación de email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) { toast("Ingresa un correo electrónico válido", "error"); return; }
+
+        // Validación de contraseña segura
+        if (password.length < 8) { toast("La contraseña debe tener mínimo 8 caracteres", "error"); return; }
+        if (!/[A-Z]/.test(password)) { toast("La contraseña debe tener al menos una mayúscula", "error"); return; }
+        if (!/[a-z]/.test(password)) { toast("La contraseña debe tener al menos una minúscula", "error"); return; }
+        if (!/[0-9]/.test(password)) { toast("La contraseña debe tener al menos un número", "error"); return; }
+        if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) { toast("La contraseña debe tener al menos un carácter especial (!@#$%...)", "error"); return; }
+
         if (!negocio) { toast("Ingresa el nombre de tu negocio", "error"); return; }
         if (!selectedBizType) { toast("Selecciona el tipo de negocio", "error"); return; }
 
