@@ -59,41 +59,12 @@ spring:
       # =========================================================
       # FILTROS GLOBALES
       # =========================================================
-      # DedupeResponseHeader elimina headers CORS duplicados.
-      # Esto ocurre porque ms-users también agrega sus propios
-      # headers CORS. El gateway deduplica para que el navegador
-      # solo reciba UN valor por header.
+      # DedupeResponseHeader elimina headers CORS duplicados
+      # que puedan venir del backend (ms-users tiene su propio CORS).
+      # El WebFilter CorsWebFilter.java maneja CORS a nivel gateway.
       # =========================================================
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Methods Access-Control-Allow-Headers Access-Control-Allow-Credentials, RETAIN_FIRST
-
-      # =========================================================
-      # CONFIGURACIÓN GLOBAL CORS
-      # =========================================================
-      # Permite peticiones cross-origin desde cualquier frontend.
-      # allowedOrigins: "*" funciona sin allowCredentials.
-      # El token JWT se envía via header Authorization (no cookies).
-      # =========================================================
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "*"
-
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - PATCH
-              - OPTIONS
-
-            allowedHeaders:
-              - "*"
-
-            allowCredentials: false
-
-            maxAge: 3600
 
       # =========================================================
       # RUTAS MICROSERVICIOS
