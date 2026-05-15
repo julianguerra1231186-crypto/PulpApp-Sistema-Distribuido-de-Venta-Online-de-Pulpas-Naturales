@@ -83,12 +83,6 @@
         (protocol === "https:" && !hostname.includes("localhost"))  // HTTPS no-local
     );
 
-    // Determinar si estamos en Docker Compose (nginx en puerto 3000 del host)
-    var isDocker = (
-        hostname === "localhost" &&
-        (!port || port === "80" || port === "3000" || port === "8080")
-    );
-
     // ─────────────────────────────────────────────────────────
     // RESOLUCIÓN FINAL DE URL
     // ─────────────────────────────────────────────────────────
@@ -100,11 +94,8 @@
     } else if (isProduction) {
         // 2. Producción: Cloud Run gateway
         resolvedUrl = PRODUCTION_GATEWAY;
-    } else if (isDocker) {
-        // 3. Docker Compose: nginx proxy
-        resolvedUrl = "/api";
     } else {
-        // 4. Desarrollo local sin Docker
+        // 3. Desarrollo local / Docker Compose: gateway en localhost:8090
         resolvedUrl = "http://localhost:8090";
     }
 
@@ -113,7 +104,7 @@
 
     // Log para debugging (solo en desarrollo)
     if (!isProduction) {
-        console.log("[Zentrix] API Gateway:", resolvedUrl, "| Env:", isProduction ? "PROD" : isDocker ? "DOCKER" : "LOCAL");
+        console.log("[Zentrix] API Gateway:", resolvedUrl, "| Env:", isProduction ? "PROD" : "LOCAL/DOCKER");
     }
 
 })(window);
