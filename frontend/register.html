@@ -94,7 +94,15 @@
                 <div class="form-row">
                     <div class="z-form-group">
                         <label for="regPassword">Contraseña</label>
-                        <input type="password" id="regPassword" class="z-input" placeholder="Mínimo 6 caracteres" required>
+                        <input type="password" id="regPassword" class="z-input" placeholder="Contraseña segura" required oninput="checkPasswordStrength(this.value)">
+                        <div id="passwordRequirements" style="margin-top:8px; padding:10px 12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; font-size:0.75rem; line-height:1.8">
+                            <div style="font-weight:700; color:#374151; margin-bottom:4px; font-size:0.78rem">🔒 Requisitos de contraseña:</div>
+                            <div id="req-length" style="color:#9ca3af">○ Mínimo 8 caracteres</div>
+                            <div id="req-upper" style="color:#9ca3af">○ Al menos una mayúscula (A-Z)</div>
+                            <div id="req-lower" style="color:#9ca3af">○ Al menos una minúscula (a-z)</div>
+                            <div id="req-number" style="color:#9ca3af">○ Al menos un número (0-9)</div>
+                            <div id="req-special" style="color:#9ca3af">○ Al menos un carácter especial (!@#$%...)</div>
+                        </div>
                     </div>
                     <div class="z-form-group">
                         <label for="regDireccion">Dirección</label>
@@ -156,6 +164,21 @@
 <script src="auth.js"></script>
 <script>
 let selectedBizType = null;
+
+function checkPasswordStrength(pwd) {
+    const checks = [
+        { id: 'req-length', test: pwd.length >= 8 },
+        { id: 'req-upper', test: /[A-Z]/.test(pwd) },
+        { id: 'req-lower', test: /[a-z]/.test(pwd) },
+        { id: 'req-number', test: /[0-9]/.test(pwd) },
+        { id: 'req-special', test: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) }
+    ];
+    checks.forEach(function(c) {
+        var el = document.getElementById(c.id);
+        if (c.test) { el.style.color = '#16a34a'; el.textContent = '✓ ' + el.textContent.replace(/^[○✓]\s*/, ''); }
+        else { el.style.color = '#9ca3af'; el.textContent = '○ ' + el.textContent.replace(/^[○✓]\s*/, ''); }
+    });
+}
 
 function selectBizType(el) {
     document.querySelectorAll(".biz-type-card").forEach(c => c.classList.remove("selected"));
