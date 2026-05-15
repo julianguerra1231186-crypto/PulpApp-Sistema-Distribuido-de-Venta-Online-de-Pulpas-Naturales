@@ -59,21 +59,27 @@ spring:
       # =========================================================
       # FILTROS GLOBALES
       # =========================================================
-      # Evita headers CORS duplicados entre gateway y ms-users.
+      # Fuerza headers CORS en TODAS las respuestas.
+      # Esto asegura que incluso si el backend no responde CORS,
+      # el gateway lo agrega.
       # =========================================================
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials Access-Control-Allow-Methods Access-Control-Allow-Headers, RETAIN_UNIQUE
+        - AddResponseHeader=Access-Control-Allow-Origin, *
+        - AddResponseHeader=Access-Control-Allow-Methods, GET, POST, PUT, DELETE, PATCH, OPTIONS
+        - AddResponseHeader=Access-Control-Allow-Headers, *
 
       # =========================================================
       # CONFIGURACIÓN GLOBAL CORS
       # =========================================================
-      # Cloud Run: el frontend está en un dominio diferente al gateway.
-      # Se deben permitir explícitamente los orígenes y headers.
+      # Permite peticiones cross-origin desde cualquier frontend.
+      # allowedOrigins: "*" funciona sin allowCredentials.
+      # El token JWT se envía via header Authorization (no cookies).
       # =========================================================
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns:
+            allowedOrigins:
               - "*"
 
             allowedMethods:
@@ -87,10 +93,7 @@ spring:
             allowedHeaders:
               - "*"
 
-            exposedHeaders:
-              - "Authorization"
-
-            allowCredentials: true
+            allowCredentials: false
 
             maxAge: 3600
 
