@@ -4,8 +4,25 @@
 
 (function initializeServices(global) {
 
-    const API_BASE_URL = "http://localhost:8090";
-    const API_URL = "http://localhost:8090/products";
+    // =========================================================
+    // CONFIGURACIÓN DE API — Cloud-Native
+    // =========================================================
+    // ANTES: URLs hardcoded a http://localhost:8090
+    // PROBLEMA: No funciona en Docker ni Cloud Run.
+    //
+    // AHORA: Detección automática del entorno:
+    //   - Docker/Cloud (nginx proxy): usa "/api" (ruta relativa)
+    //   - Desarrollo local: usa "http://localhost:8090" (gateway directo)
+    //
+    // CÓMO FUNCIONA:
+    //   Si el frontend se sirve desde nginx (puerto 80, 3000, o sin puerto),
+    //   las peticiones van a /api/* y nginx las redirige al gateway.
+    //   Si se abre directamente en el navegador, usa localhost:8090.
+    // =========================================================
+    const _port = window.location.port;
+    const _isNginx = (!_port || _port === "80" || _port === "3000");
+    const API_BASE_URL = window.ZENTRIX_API_URL || (_isNginx ? "/api" : "http://localhost:8090");
+    const API_URL = `${API_BASE_URL}/products`;
     const USERS_API_URL = `${API_BASE_URL}/users`;
     const ORDERS_API_URL = `${API_BASE_URL}/orders`;
 

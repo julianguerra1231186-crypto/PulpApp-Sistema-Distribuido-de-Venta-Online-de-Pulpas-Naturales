@@ -1,12 +1,19 @@
 # ============================================
-# API GATEWAY - CONFIGURACIÓN PRINCIPAL
+# API GATEWAY — Configuración Cloud-Native
 # ============================================
-# Punto de entrada único para todos los microservicios
-# (users, products, orders)
-# Puerto interno del contenedor
+# Punto de entrada único para todos los microservicios.
+#
+# ANTES: server.port: 8080 (hardcoded)
+# AHORA: ${PORT:8080} — Cloud Run inyecta PORT automáticamente.
+#
+# COMPATIBILIDAD:
+#   - Local: usa 8080 por defecto
+#   - Docker: docker-compose inyecta PORT=8080
+#   - Cloud Run: PORT se inyecta automáticamente
+# ============================================
 
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   cloud:

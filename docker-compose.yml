@@ -1,6 +1,27 @@
+# =========================================================
+# Docker Compose — Zentrix SaaS (Desarrollo Local)
+# =========================================================
+# Este archivo está configurado para DESARROLLO LOCAL.
+# Usa el contenedor postgres local (NO la IP de Cloud SQL).
+#
+# Para producción/cloud, cada microservicio se despliega
+# individualmente en Cloud Run con sus propias variables
+# de entorno (SPRING_DATASOURCE_URL apuntando a Cloud SQL).
+#
+# USO:
+#   docker compose up --build
+#   docker compose down -v   (elimina volúmenes)
+#
+# PUERTOS EXPUESTOS AL HOST:
+#   - Frontend:     http://localhost:3000
+#   - API Gateway:  http://localhost:8090
+#   - pgAdmin:      http://localhost:5050
+#   - PostgreSQL:   localhost:5434 (para herramientas externas)
+# =========================================================
 
 services:
 
+  # ── Base de Datos ──────────────────────────────────────
   postgres:
     image: postgres:15
     restart: always
@@ -8,9 +29,6 @@ services:
       POSTGRES_DB: pulpapp_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 1234
-    # Este mapeo expone PostgreSQL al host sin cambiar la red interna de Docker.
-    # Dentro de Docker los microservicios siguen usando "postgres:5432", pero desde el host
-    # herramientas externas como pgAdmin pueden entrar por "localhost:5434".
     ports:
       - "5434:5432"
     volumes:
@@ -23,6 +41,7 @@ services:
     networks:
       - pulpapp-network
 
+  # ── pgAdmin (opcional, para administración visual) ─────
   pgadmin:
     image: dpage/pgadmin4
     restart: always
@@ -37,6 +56,7 @@ services:
     networks:
       - pulpapp-network
 
+  # ── Microservicio: Usuarios ────────────────────────────
   ms-users:
     build:
       context: ./ms-users
@@ -51,14 +71,20 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
-      SERVER_PORT: 8081
-      # Directorio de CVs dentro del contenedor, mapeado al host via volumen
+      PORT: 8081
       UPLOADS_DIR: /app/uploads/cv
     volumes:
       - cv_uploads:/app/uploads/cv
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
     networks:
       - pulpapp-network
 
+  # ── Microservicio: Productos ───────────────────────────
   ms-products:
     build:
       context: ./ms-products
@@ -73,17 +99,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
-      SERVER_PORT: 8082
+      PORT: 8082
       APP_BASE_URL: http://localhost:8090
       APP_UPLOAD_DIR: /app/uploads/products
-      # Fase 2 Multi-Tenant: misma clave JWT que ms-users para decodificar tenantId
       JWT_SECRET: ${JWT_SECRET:-cGVwcGVyTWludFB1bHBBcHBTZWNyZXRLZXkyMDI2IVhZWg==}
       TENANT_DEFAULT_ID: ${TENANT_DEFAULT_ID:-1}
     volumes:
       - product_images:/app/uploads/products
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
     networks:
       - pulpapp-network
 
+  # ── Microservicio: Órdenes ─────────────────────────────
   ms-orders:
     build:
       context: ./ms-orders
@@ -100,34 +132,23 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pulpapp_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
-      SERVER_PORT: 8083
+      PORT: 8083
       MS_PRODUCTS_BASE_URL: http://ms-products:8082
       MS_USERS_BASE_URL: http://ms-users:8081
-      # Fase 3 Multi-Tenant: misma clave JWT que ms-users para decodificar tenantId
       JWT_SECRET: ${JWT_SECRET:-cGVwcGVyTWludFB1bHBBcHBTZWNyZXRLZXkyMDI2IVhZWg==}
       TENANT_DEFAULT_ID: ${TENANT_DEFAULT_ID:-1}
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
     networks:
       - pulpapp-network
 
-  # Punto de entrada HTTP unico: desde el host usar localhost:8090 (mapeado al 8080 del contenedor).
-  # En la red interna pulpapp-network el gateway resuelve ms-users, ms-products y ms-orders
-  # por DNS de Docker (no usar localhost dentro del contenedor para llegar a otros servicios).
-  # Host 8090 -> container 8080: el gateway sigue escuchando en 8080 DENTRO del contenedor
-  # (SERVER_PORT / Spring). El puerto 8080 en el HOST suele estar ocupado (otra app, IDE, etc.),
-  # lo que provoca "Only one usage of each socket address...". Publicamos 8090 en el host para
-  # evitar el conflicto sin tocar application.yml ni el puerto interno del servicio.
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - "3000:80"
-    depends_on:
-      - api-gateway
-    networks:
-      - pulpapp-network
-
+  # ── API Gateway ────────────────────────────────────────
+  # Punto de entrada HTTP único.
+  # Host 8090 -> container 8080 (evita conflicto con puerto 8080 del host)
   api-gateway:
     build:
       context: ./api-gateway
@@ -143,10 +164,29 @@ services:
       ms-orders:
         condition: service_started
     environment:
-      SERVER_PORT: 8080
+      PORT: 8080
       GATEWAY_MS_USERS_URI: http://ms-users:8081
       GATEWAY_MS_PRODUCTS_URI: http://ms-products:8082
       GATEWAY_MS_ORDERS_URI: http://ms-orders:8083
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 40s
+      retries: 3
+    networks:
+      - pulpapp-network
+
+  # ── Frontend (Nginx) ───────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
     networks:
       - pulpapp-network
 

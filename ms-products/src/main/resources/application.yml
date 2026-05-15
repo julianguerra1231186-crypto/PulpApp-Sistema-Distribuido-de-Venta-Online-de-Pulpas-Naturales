@@ -1,14 +1,37 @@
-server:
-  # Antes:
-  # port: ${SERVER_PORT:8081}
+# =========================================================
+# ms-products — Configuración Cloud-Native
+# =========================================================
+#
+# ANTES:
+#   application.properties con valores hardcoded a localhost:
+#   spring.datasource.url=jdbc:postgresql://localhost:5434/pulpapp_db
+#   spring.datasource.username=postgres
+#   spring.datasource.password=1234
+#
+# PROBLEMA:
+#   Incompatible con Cloud Run y Docker. Los valores localhost
+#   no funcionan en contenedores ni en entornos cloud.
+#
+# AHORA:
+#   Se usan variables de entorno SIN fallback hardcoded para
+#   datasource. Esto obliga a configurar el entorno correctamente.
+#
+# COMPATIBILIDAD:
+#   - Local: definir variables en .env o usar docker-compose
+#   - Docker: docker-compose.yml inyecta las variables
+#   - Cloud Run: las variables se configuran en el servicio
+# =========================================================
 
+server:
   # Cloud Run utiliza automáticamente la variable PORT.
-  # Si estás en local y no existe PORT, usará 8081.
-  port: ${PORT:8081}
+  # Si estás en local y no existe PORT, usará 8082.
+  port: ${PORT:8082}
 
 spring:
-  datasource:
+  application:
+    name: ms-products
 
+  datasource:
     # =========================================================
     # CONFIGURACIÓN ANTIGUA (LOCALHOST)
     # =========================================================
@@ -47,18 +70,28 @@ spring:
 
   servlet:
     multipart:
-      max-file-size: 5MB
+      max-file-size: 10MB
       max-request-size: 10MB
 
 # =========================================================
 # JWT CONFIG
 # =========================================================
+# Misma clave que ms-users para decodificar tenantId del token
 jwt:
   secret: ${JWT_SECRET:cGVwcGVyTWludFB1bHBBcHBTZWNyZXRLZXkyMDI2IVhZWg==}
-  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+# =========================================================
+# TENANT CONFIG
+# =========================================================
+# ID del tenant "PulpApp" creado por ms-users.
+# Se usa para asignar productos/categorías cuando no hay JWT en el request.
+tenant:
+  default-id: ${TENANT_DEFAULT_ID:1}
 
 # =========================================================
 # APP CONFIG
 # =========================================================
 app:
-  uploads-dir: ${UPLOADS_DIR:uploads/cv}
+  upload:
+    dir: ${APP_UPLOAD_DIR:uploads/products}
+  base-url: ${APP_BASE_URL:http://localhost:8082}

@@ -1,5 +1,8 @@
+target/
 .git
 .idea
-.vscode
-target
-HELP.md
+*.iml
+.mvn/wrapper/maven-wrapper.jar
+node_modules/
+.env
+*.log

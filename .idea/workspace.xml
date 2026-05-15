@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="89256da1-e398-401a-a9cd-ae02780b6b6d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ms-users/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/ms-users/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,6 +27,11 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="feature/inmobiliaria-dashboard" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
@@ -152,6 +159,9 @@
       <workItem from="1778002334994" duration="5381000" />
       <workItem from="1778096253579" duration="7635000" />
       <workItem from="1778109231457" duration="3608000" />
+      <workItem from="1778715813429" duration="16196000" />
+      <workItem from="1778742291344" duration="1681000" />
+      <workItem from="1778811622381" duration="844000" />
     </task>
     <servers />
   </component>
