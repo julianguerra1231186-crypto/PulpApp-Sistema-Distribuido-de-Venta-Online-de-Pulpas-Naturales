@@ -120,6 +120,62 @@ spring:
             - Path=/suppliers/**
 
         # =====================================================
+        # INVOICES (Facturación ERP)
+        # =====================================================
+        - id: ms-invoices
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/invoices/**
+
+        # =====================================================
+        # CASH MOVEMENTS (Caja ERP)
+        # =====================================================
+        - id: ms-cash
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/cash/**
+
+        # =====================================================
+        # AUDIT & REPORTS (ERP)
+        # =====================================================
+        - id: ms-audit
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/audit/**,/reports/**
+
+        # =====================================================
+        # ADMIN (config, payments, notifications)
+        # =====================================================
+        - id: ms-admin
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/admin/**
+
+        # =====================================================
+        # NOTIFICATIONS
+        # =====================================================
+        - id: ms-notifications
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/notifications/**
+
+        # =====================================================
+        # JOB APPLICATIONS
+        # =====================================================
+        - id: ms-job-applications
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/job-applications/**
+
+        # =====================================================
+        # TENANT CONFIG
+        # =====================================================
+        - id: ms-tenant-config
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/tenant/**
+
+        # =====================================================
         # PAYMENTS
         # =====================================================
         - id: ms-payments
