@@ -1,15 +1,16 @@
 # =========================================================
-# Dockerfile — ms-users
+# Dockerfile — ms-users (Cloud Run Ready)
 # =========================================================
-# Multi-stage build optimizado para Cloud Run y Docker.
+# PROBLEMA ANTERIOR:
+#   eclipse-temurin:17-jre-alpine causaba fallos de startup
+#   en Cloud Run. Alpine usa musl libc que puede ser
+#   incompatible con algunas dependencias de Spring Boot 4.x.
+#   Además, HEALTHCHECK de Docker no funciona en Cloud Run.
 #
-# ANTES: Usaba eclipse-temurin:17-jdk (imagen pesada ~400MB)
-# AHORA: Usa eclipse-temurin:17-jre-alpine (imagen ligera ~150MB)
-#
-# COMPATIBILIDAD:
-#   - Docker Compose: SERVER_PORT se inyecta desde docker-compose.yml
-#   - Cloud Run: PORT se inyecta automáticamente por la plataforma
-#   - Local: usa el puerto por defecto definido en application.yml
+# SOLUCIÓN:
+#   Usar eclipse-temurin:17-jre (Debian-based, estable).
+#   Sin HEALTHCHECK (Cloud Run usa su propio readiness probe).
+#   Puerto dinámico via variable PORT.
 # =========================================================
 
 FROM maven:3.9.9-eclipse-temurin-17 AS builder
@@ -19,15 +20,8 @@ RUN mvn dependency:go-offline -q
 COPY src src
 RUN mvn -q -DskipTests package
 
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=builder /build/target/*.jar app.jar
-
-# Cloud Run inyecta PORT automáticamente
-ENV PORT=8081
-EXPOSE ${PORT}
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=40s \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/actuator/health || exit 1
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
