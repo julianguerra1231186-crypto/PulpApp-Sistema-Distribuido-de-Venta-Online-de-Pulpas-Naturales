@@ -326,13 +326,14 @@
 </a>
 
 <script src="services.js"></script>
+<script src="js/api-url.js"></script>
 <script src="auth.js"></script>
 <script src="whatsapp.js"></script>
 <script>
 (function () {
     "use strict";
 
-    const BASE = "http://localhost:8090";
+    const BASE = window.ZENTRIX_API;
 
     // ─────────────────────────────────────────────────────────────
     // Utilidades
@@ -914,7 +915,7 @@
 
     async function downloadCv(id, filename) {
         try {
-            const res = await fetch(`http://localhost:8090/job-applications/${id}/download`, {
+            const res = await fetch(`${BASE}/job-applications/${id}/download`, {
                 headers: { "Authorization": `Bearer ${window.PulpAuth.getToken()}` }
             });
 

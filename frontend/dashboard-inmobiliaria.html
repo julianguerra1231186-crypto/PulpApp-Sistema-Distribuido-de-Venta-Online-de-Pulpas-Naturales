@@ -1042,6 +1042,7 @@
 </div>
 
 <script src="js/config.js"></script>
+<script src="js/api-url.js"></script>
 <script src="auth.js"></script>
 <script>
 function showTab(name) {
@@ -1070,7 +1071,7 @@ function showTab(name) {
 }
 
 // ── Clientes API ──
-const API = "http://localhost:8090";
+const API = window.ZENTRIX_API;
 const getToken = () => localStorage.getItem("pulpapp_jwt");
 const authHeaders = () => ({ "Content-Type":"application/json", "Authorization":"Bearer " + getToken() });
 

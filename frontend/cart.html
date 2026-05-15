@@ -183,6 +183,7 @@
 <link rel="stylesheet" href="css/dashboard.css">
 <script src="services.js"></script>
 <script src="auth.js"></script>
+<script src="js/api-url.js"></script>
 <script src="app.js"></script>
 <script>
 /* ─────────────────────────────────────────────────────────────
@@ -227,7 +228,7 @@
     // Intenta completar el perfil desde el backend si faltan campos clave
     async function fetchAndStoreFullProfile(email) {
         try {
-            const res = await fetch(`http://localhost:8090/users/email?email=${encodeURIComponent(email)}`, {
+            const res = await fetch(`${window.ZENTRIX_API}/users/email?email=${encodeURIComponent(email)}`, {
                 headers: { "Authorization": `Bearer ${window.PulpAuth?.getToken()}` }
             });
             if (!res.ok) return null;
@@ -393,7 +394,7 @@
                 // Si no hay id, intenta recuperarlo desde el backend por email
                 if (!stored?.id && stored?.email) {
                     try {
-                        const res = await fetch(`http://localhost:8090/users/email?email=${encodeURIComponent(stored.email)}`);
+                        const res = await fetch(`${window.ZENTRIX_API}/users/email?email=${encodeURIComponent(stored.email)}`);
                         if (res.ok) {
                             const profile = await res.json();
                             stored = { ...stored, ...profile };
@@ -423,7 +424,7 @@
                 saveBtn.textContent = "Guardando...";
 
                 try {
-                    const res = await fetch(`http://localhost:8090/users/${stored.id}`, {
+                    const res = await fetch(`${window.ZENTRIX_API}/users/${stored.id}`, {
                         method: "PUT",
                         headers: {
                             "Content-Type": "application/json"

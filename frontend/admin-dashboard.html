@@ -281,9 +281,10 @@
 <div id="appToast" class="z-toast"></div>
 
 <script src="js/config.js"></script>
+<script src="js/api-url.js"></script>
 <script src="auth.js"></script>
 <script>
-const API = "http://localhost:8090";
+const API = window.ZENTRIX_API;
 const token = () => localStorage.getItem("pulpapp_jwt");
 const headers = () => ({ "Content-Type":"application/json", "Authorization":`Bearer ${token()}` });
 
