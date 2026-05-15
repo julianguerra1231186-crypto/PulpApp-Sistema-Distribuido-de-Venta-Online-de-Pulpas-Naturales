@@ -1,43 +1,84 @@
-# ============================================
-# API GATEWAY — Configuración Cloud-Native
-# ============================================
+# =========================================================
+# API GATEWAY — ZENTRIX CLOUD NATIVE
+# =========================================================
 # Punto de entrada único para todos los microservicios.
 #
-# ANTES: server.port: 8080 (hardcoded)
-# AHORA: ${PORT:8080} — Cloud Run inyecta PORT automáticamente.
+# Arquitectura:
+# Frontend
+#    ↓
+# API Gateway
+#    ↓
+# ms-users
+# ms-products
+# ms-orders
 #
-# COMPATIBILIDAD:
-#   - Local: usa 8080 por defecto
-#   - Docker: docker-compose inyecta PORT=8080
-#   - Cloud Run: PORT se inyecta automáticamente
-# ============================================
+# =========================================================
 
 server:
+  # =========================================================
+  # CLOUD RUN
+  # =========================================================
+  # Cloud Run inyecta automáticamente PORT.
+  #
+  # LOCAL:
+  # usa 8080 si PORT no existe.
+  # =========================================================
   port: ${PORT:8080}
 
 spring:
+
+  # =========================================================
+  # IMPORTANTE — WEBFLUX
+  # =========================================================
+  # Spring Cloud Gateway funciona con WebFlux.
+  #
+  # Esto evita conflictos con Tomcat tradicional
+  # y mejora compatibilidad con Cloud Run.
+  # =========================================================
+  main:
+    web-application-type: reactive
+
   cloud:
+
     gateway:
 
-      # ============================================
-      # SOLUCIÓN A CORS DUPLICADO
-      # ============================================
-      # Evita headers duplicados como "* , *"
-      # RemoveRequestHeader: NO se elimina Authorization
-      # para que el JWT llegue intacto a cada microservicio.
+      # =========================================================
+      # DESACTIVAR JSON → GRPC
+      # =========================================================
+      # Evita errores internos:
+      #
+      # ClassNotFoundException:
+      # io.grpc.netty.NettyChannelBuilder
+      #
+      # NO usamos GRPC.
+      # =========================================================
+      filter:
+        json-to-grpc:
+          enabled: false
+
+      # =========================================================
+      # FILTROS GLOBALES
+      # =========================================================
+      # Evita headers CORS duplicados.
+      # =========================================================
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
 
-      # ============================================
-      # CONFIGURACIÓN GLOBAL DE CORS
-      # ============================================
-      # Permite que el frontend (localhost:5500)
-      # consuma el gateway sin bloqueos del navegador
+      # =========================================================
+      # CONFIGURACIÓN GLOBAL CORS
+      # =========================================================
       globalcors:
         cors-configurations:
           '[/**]':
-            # ⚠ En producción usa:
-            # "http://localhost:5500"
+
+            # =====================================================
+            # DESARROLLO
+            # =====================================================
+            # En producción debes usar:
+            #
+            # allowedOrigins:
+            #   - https://tudominio.com
+            # =====================================================
             allowedOrigins: "*"
 
             allowedMethods:
@@ -49,161 +90,92 @@ spring:
 
             allowedHeaders: "*"
 
-            # No usar cookies / sesiones
+            # JWT Stateless
             allowCredentials: false
 
-      # ============================================
-      # RUTAS HACIA MICROSERVICIOS
-      # ============================================
+      # =========================================================
+      # RUTAS MICROSERVICIOS
+      # =========================================================
       routes:
 
-        # --------------------------------------------
-        # POSTULACIONES LABORALES — PÚBLICO POST / ADMIN GET
-        # --------------------------------------------
-        - id: ms-job-applications
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/job-applications, /job-applications/**
-
-        # --------------------------------------------
-        # AUTENTICACIÓN (login / register) — PÚBLICO
-        # Debe ir ANTES que ms-users para que el
-        # predicado más específico tome precedencia.
-        # --------------------------------------------
+        # =====================================================
+        # AUTH
+        # =====================================================
         - id: ms-auth
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          uri: ${GATEWAY_MS_USERS_URI}
           predicates:
-            - Path=/auth, /auth/**
+            - Path=/auth/**
 
-        # --------------------------------------------
-        # GESTIÓN DE TENANTS — SOLO ADMIN (Fase 1 Multi-Tenant)
-        # --------------------------------------------
-        - id: ms-tenants
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/tenants, /tenants/**
-
-        # --------------------------------------------
-        # PAGOS ONBOARDING SAAS (Fase 4)
-        # --------------------------------------------
-        - id: ms-payments
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/payments, /payments/**
-
-        # --------------------------------------------
-        # ADMIN PAGOS ONBOARDING (Fase 4)
-        # --------------------------------------------
-        - id: ms-admin-payments
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/admin/payments, /admin/payments/**
-
-        # --------------------------------------------
-        # CONFIGURACIÓN VISUAL POR TENANT (Fase 4)
-        # --------------------------------------------
-        - id: ms-tenant-config
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/tenant/config, /tenant/config/**
-
-        # --------------------------------------------
-        # GESTIÓN DE USUARIOS POR TENANT (Fase 5 RBAC)
-        # --------------------------------------------
-        - id: ms-tenant-users
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/tenant/users, /tenant/users/**
-
-        # --------------------------------------------
-        # CLIENTES DEL NEGOCIO (ERP Fase A)
-        # --------------------------------------------
-        - id: ms-clients
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/clients, /clients/**
-
-        # --------------------------------------------
-        # INVENTARIO (ERP Fase B)
-        # --------------------------------------------
-        - id: ms-inventory
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/inventory, /inventory/**
-
-        # --------------------------------------------
-        # PROVEEDORES (ERP Fase C)
-        # --------------------------------------------
-        - id: ms-suppliers
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/suppliers, /suppliers/**
-
-        # --------------------------------------------
-        # FACTURACIÓN (ERP Fase D)
-        # --------------------------------------------
-        - id: ms-invoices
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/invoices, /invoices/**
-
-        # --------------------------------------------
-        # CAJA Y MOVIMIENTOS (ERP Fase E)
-        # --------------------------------------------
-        - id: ms-cash
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/cash, /cash/**
-
-        # --------------------------------------------
-        # REPORTES Y AUDITORÍA (ERP Fase F)
-        # --------------------------------------------
-        - id: ms-reports
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/reports, /reports/**
-
-        - id: ms-audit
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/audit, /audit/**
-
-        # --------------------------------------------
-        # MICROSERVICIO DE USUARIOS
-        # --------------------------------------------
+        # =====================================================
+        # USERS
+        # =====================================================
         - id: ms-users
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
+          uri: ${GATEWAY_MS_USERS_URI}
           predicates:
-            - Path=/users, /users/**
+            - Path=/users/**
 
-        # --------------------------------------------
-        # MICROSERVICIO DE PRODUCTOS (CATÁLOGO)
-        # --------------------------------------------
+        # =====================================================
+        # TENANTS
+        # =====================================================
+        - id: ms-tenants
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/tenants/**
+
+        # =====================================================
+        # CLIENTS
+        # =====================================================
+        - id: ms-clients
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/clients/**
+
+        # =====================================================
+        # INVENTORY
+        # =====================================================
+        - id: ms-inventory
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/inventory/**
+
+        # =====================================================
+        # SUPPLIERS
+        # =====================================================
+        - id: ms-suppliers
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/suppliers/**
+
+        # =====================================================
+        # PAYMENTS
+        # =====================================================
+        - id: ms-payments
+          uri: ${GATEWAY_MS_USERS_URI}
+          predicates:
+            - Path=/payments/**
+
+        # =====================================================
+        # PRODUCTS
+        # =====================================================
         - id: ms-products
-          uri: ${GATEWAY_MS_PRODUCTS_URI:http://localhost:8082}
+          uri: ${GATEWAY_MS_PRODUCTS_URI}
           predicates:
-            #  IMPORTANTE:
-            # Incluye /products y /products/**
-            - Path=/products, /products/**, /images/**
+            - Path=/products/**,/images/**
 
-        # --------------------------------------------
-        # CONFIGURACIÓN DINÁMICA Y NOTIFICACIONES ADMIN (Fase 2)
-        # Rutas /admin/** y /notifications van a ms-users
-        # --------------------------------------------
-        - id: ms-admin-config
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/admin/config, /admin/config/**
-
-        - id: ms-notifications
-          uri: ${GATEWAY_MS_USERS_URI:http://localhost:8081}
-          predicates:
-            - Path=/notifications, /notifications/**, /admin/notifications, /admin/notifications/**
-
-        # --------------------------------------------
-        # MICROSERVICIO DE PEDIDOS
-        # --------------------------------------------
+        # =====================================================
+        # ORDERS
+        # =====================================================
         - id: ms-orders
-          uri: ${GATEWAY_MS_ORDERS_URI:http://localhost:8083}
+          uri: ${GATEWAY_MS_ORDERS_URI}
           predicates:
-            - Path=/orders, /orders/**
+            - Path=/orders/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO

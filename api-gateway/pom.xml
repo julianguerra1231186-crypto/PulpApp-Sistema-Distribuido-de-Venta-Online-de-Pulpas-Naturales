@@ -25,6 +25,12 @@
 	</properties>
 
 	<dependencies>
+		<!--  Google cloud Plataform -->
+		<dependency>
+			<groupId>com.google.cloud.sql</groupId>
+			<artifactId>postgres-socket-factory</artifactId>
+			<version>1.20.1</version>
+		</dependency>
 
 		<!-- SPRING CLOUD GATEWAY (REACTIVO - NETTY) -->
 		<dependency>
