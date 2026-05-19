@@ -1779,11 +1779,23 @@ async function loadInvoices() {
         if (res.ok) {
             const apiInvoices = await res.json();
             apiInvoices.forEach(inv => {
+                // Determinar tipo de factura desde observations o paymentMethod
+                var tipoDetected = 'Otro';
+                var obs = inv.observations || '';
+                var pm = inv.paymentMethod || '';
+                if (obs.includes('Propietario:') || pm === 'TRANSFERENCIA') tipoDetected = 'Propietario';
+                if (obs.includes('Inquilino') || obs.includes('Mes:')) tipoDetected = 'Inquilino';
+                if (pm === 'Mantenimiento' || obs.includes('Mantenimiento')) tipoDetected = 'Mantenimiento';
+                if (pm === 'Servicios' || obs.includes('Servicios')) tipoDetected = 'Servicios';
+                if (pm === 'Otro' || obs.includes('Otro')) tipoDetected = 'Otro';
+                // Si observations tiene "Propietario:" al final, es factura de arriendo
+                if (obs.includes('| Propietario:') && !obs.startsWith('Mantenimiento')) tipoDetected = obs.includes('Inquilino') ? 'Inquilino' : 'Propietario';
+
                 allInvoices.push({
                     id: inv.id,
                     invoiceNumber: inv.invoiceNumber,
                     numero: inv.invoiceNumber,
-                    tipo: inv.observations && inv.observations.includes('Propietario') ? 'Propietario' : 'Inquilino',
+                    tipo: tipoDetected,
                     clientName: inv.clientName || '—',
                     propietario: inv.clientName || '—',
                     total: inv.total || 0,
@@ -1798,9 +1810,9 @@ async function loadInvoices() {
                         rentValue: inv.total,
                         totalInquilino: inv.total,
                         totalPropietario: inv.total,
-                        propertyAddress: (inv.observations || '').replace(/.*Propietario:\s*/, '').trim() || '—',
+                        propertyAddress: '—',
                         date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('es-CO') : '—',
-                        tipo: inv.observations && inv.observations.includes('Propietario') ? 'Propietario' : 'Inquilino'
+                        tipo: tipoDetected
                     }
                 });
             });
@@ -2213,6 +2225,20 @@ function submitOtrosInvoice(e) {
     var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Factura ' + numFac + '</title><style>body{font-family:Inter,system-ui,sans-serif;margin:0;padding:40px;color:#111827}@media print{body{padding:20px}.no-print{display:none!important}}</style></head><body><div style="max-width:650px; margin:0 auto"><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:2px solid #7c3aed"><div style="display:flex; align-items:center; gap:12px">' + logoHtml + '<div><h1 style="margin:0; font-size:1.2rem">' + bizName + '</h1><p style="margin:2px 0 0; color:#6b7280; font-size:0.8rem">Administracion Inmobiliaria</p></div></div><div style="text-align:right"><h2 style="margin:0; color:#7c3aed; font-size:1rem">COBRO POR ' + tipo.toUpperCase() + '</h2><p style="margin:4px 0 0; font-size:0.85rem; font-weight:700">' + numFac + '</p><p style="margin:4px 0 0; font-size:0.8rem; color:#6b7280">' + fecha + '</p></div></div>' + cobrarInfo + '<table style="width:100%; border-collapse:collapse; margin-bottom:16px"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px; text-align:left">Concepto</th><th style="padding:10px 12px; text-align:right">Valor</th></tr></thead><tbody>' + conceptosHtml + '</tbody></table><div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center"><span style="font-weight:800">TOTAL:</span><span style="font-weight:800; font-size:1.3rem; color:#16a34a">$' + total.toLocaleString('es-CO') + '</span></div><div class="no-print" style="text-align:center; margin-top:24px"><button onclick="window.print()" style="padding:12px 32px; background:#7c3aed; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">Descargar PDF</button></div>' + footerHtml + '</div></body></html>';
     var w = window.open('', '_blank');
     if (w) { w.document.write(html); w.document.close(); }
+
+    // Guardar en la API (base de datos) para persistencia en la nube
+    try {
+        var apiBody = {
+            clientName: cobrarNombre || (prop ? prop.ownerName : proveedor),
+            paymentMethod: tipo,
+            observations: tipo + ' | ' + (cobrarA === 'inquilino' ? 'Inquilino' : 'Propietario') + ': ' + (cobrarNombre || '—') + ' | Inmueble: ' + (propDireccion || '—') + (obs ? ' | ' + obs : ''),
+            discount: 0,
+            items: conceptos.map(function(c) { return { productName: c.desc, quantity: 1, unitPrice: c.val }; })
+        };
+        fetch(API + "/invoices", { method: "POST", headers: authHeaders(), body: JSON.stringify(apiBody) }).catch(function() {});
+    } catch(e) {}
+
+    // También guardar local como respaldo
     saveInvoiceToHistory({ invoiceNumber: numFac, tipo: tipo, clientName: cobrarNombre || (prop ? prop.ownerName : proveedor), ownerName: cobrarNombre || (prop ? prop.ownerName : ''), totalAmount: total, totalPropietario: total, date: fecha, propertyAddress: prop ? prop.propertyAddress : '', cobrarA: cobrarA });
     document.getElementById("invoiceOtrosPanel").style.display = "none";
     loadInvoices();
