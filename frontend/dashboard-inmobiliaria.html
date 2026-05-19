@@ -1782,7 +1782,11 @@ async function loadInvoices() {
         var metodo = inv.paymentMethod || inv.tipo || '—';
         var metodoBadge = '<span style="background:#eef2ff; color:#4f46e5; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">' + metodo.toUpperCase() + '</span>';
         var propietario = inv.clientName || inv.propietario || '—';
+        // Para inquilinos: mostrar el canon completo (sin deducción)
         var total = inv.total || inv.totalAmount || 0;
+        if ((inv.tipo === 'Inquilino' || inv.tipo === 'INQUILINO') && inv.pdfData && inv.pdfData.rentValue) {
+            total = Number(inv.pdfData.totalInquilino || inv.pdfData.rentValue || total);
+        }
         var fechaStr = inv.createdAt ? new Date(inv.createdAt).toLocaleString('es-CO') : (inv.date || '—');
         var numFactura = inv.invoiceNumber || inv.numero || '—';
         var deleteBtn = '<button onclick="deleteInvoice(' + idx + ')" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.72rem">🗑️</button>';
@@ -3397,6 +3401,7 @@ function generarFacturaInquilino(propId) {
         rentValue: rent,
         comision: 0,
         adicionales: [],
+        totalInquilino: rent,
         totalPropietario: rent,
         paymentMethod: 'Transferencia / Efectivo',
         month: mes,
