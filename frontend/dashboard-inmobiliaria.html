@@ -354,7 +354,51 @@
         </div>
 
         <!-- Contracts -->
-        <div id="tab-contracts" style="display:none"><div class="panel"><h2>📝 Contratos</h2><div class="empty-msg">Gestiona contratos de arriendo y venta desde aquí.</div></div></div>
+        <div id="tab-contracts" style="display:none"><div class="panel">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
+                <h2 style="margin:0">📝 Contratos</h2>
+                <button onclick="document.getElementById('contractUploadForm').style.display='block'" style="padding:8px 18px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">+ Subir Contrato</button>
+            </div>
+
+            <!-- Formulario subir contrato -->
+            <div id="contractUploadForm" style="display:none; background:#f9fafb; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:20px">
+                <h3 style="margin:0 0 16px; font-size:0.95rem; font-weight:700; color:#111827">📄 Subir Contrato PDF</h3>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px">
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Tipo *</label>
+                        <select id="contract_tipo" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                            <option value="Propietario">Propietario</option>
+                            <option value="Inquilino">Inquilino</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Nombre Completo *</label>
+                        <input type="text" id="contract_nombre" placeholder="Nombre del propietario o inquilino" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Cédula *</label>
+                        <input type="text" id="contract_cedula" placeholder="Número de cédula" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                    </div>
+                    <div>
+                        <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Inmueble *</label>
+                        <select id="contract_inmueble" style="width:100%; padding:9px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.85rem">
+                            <option value="">Seleccione...</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-bottom:14px">
+                    <label style="font-size:0.78rem; font-weight:600; display:block; margin-bottom:4px">Archivo PDF *</label>
+                    <input type="file" id="contract_file" accept=".pdf" style="width:100%; padding:8px; border:1px solid #e5e7eb; border-radius:8px; font-family:inherit; font-size:0.82rem; background:#fff">
+                </div>
+                <div style="display:flex; gap:10px; justify-content:flex-end">
+                    <button onclick="document.getElementById('contractUploadForm').style.display='none'" style="padding:8px 16px; background:#fff; color:#374151; border:1px solid #e5e7eb; border-radius:8px; font-size:0.82rem; font-weight:600; cursor:pointer; font-family:inherit">Cancelar</button>
+                    <button onclick="saveContract()" style="padding:8px 16px; background:#16a34a; color:#fff; border:none; border-radius:8px; font-size:0.82rem; font-weight:700; cursor:pointer; font-family:inherit">📄 Guardar Contrato</button>
+                </div>
+            </div>
+
+            <!-- Lista de contratos -->
+            <div id="contractsList"></div>
+        </div></div>
 
         <!-- Visits -->
         <div id="tab-visits" style="display:none">
@@ -1057,6 +1101,7 @@ function showTab(name) {
     document.getElementById("pageTitle").textContent = titles[name] || name;
     if (name === "overview") loadDashboardStats();
     if (name === "clients") loadClients();
+    if (name === "contracts") loadContracts();
     if (name === "inventory") loadInventory();
     if (name === "suppliers") loadSuppliers();
     if (name === "invoices") loadInvoices();
@@ -1775,7 +1820,7 @@ function deleteInvoice(idx) {
     loadInvoices();
 }
 
-function saveInvoiceToHistory(invoiceData) { var history = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]'); history.unshift({ numero: invoiceData.invoiceNumber, invoiceNumber: invoiceData.invoiceNumber, tipo: invoiceData.tipo || 'Otro', clientName: invoiceData.clientName || '', propietario: invoiceData.ownerName || '', total: invoiceData.totalAmount || invoiceData.totalPropietario || invoiceData.rentValue || 0, totalAmount: invoiceData.totalAmount || invoiceData.totalPropietario || 0, date: invoiceData.date, createdAt: new Date().toISOString(), source: 'local', pdfData: invoiceData }); localStorage.setItem('zentrix_invoice_history', JSON.stringify(history)); }
+function saveInvoiceToHistory(invoiceData) { var history = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]'); var totalDisplay = invoiceData.tipo === 'Inquilino' ? (invoiceData.totalInquilino || invoiceData.rentValue || 0) : (invoiceData.totalAmount || invoiceData.totalPropietario || invoiceData.rentValue || 0); history.unshift({ numero: invoiceData.invoiceNumber, invoiceNumber: invoiceData.invoiceNumber, tipo: invoiceData.tipo || 'Otro', clientName: invoiceData.clientName || '', propietario: invoiceData.ownerName || '', total: totalDisplay, totalAmount: totalDisplay, date: invoiceData.date, createdAt: new Date().toISOString(), source: 'local', pdfData: invoiceData }); localStorage.setItem('zentrix_invoice_history', JSON.stringify(history)); }
 
 // ── Facturación: Selector y Formularios ──
 function showInvoiceTypeSelector() {
@@ -1956,20 +2001,18 @@ function buscarPersonaCobro(query) {
         });
         resultsDiv.innerHTML = html;
     } else {
-        // Buscar en clientes (inquilinos)
-        var clients = JSON.parse(localStorage.getItem('zentrix_clients') || '[]');
-        var matches = clients.filter(function(c) {
-            var name = (c.name || '').toLowerCase();
-            var doc = (c.document || '').toLowerCase();
-            var phone = (c.phone || '').toLowerCase();
-            return name.includes(q) || doc.includes(q) || phone.includes(q);
-        });
-        if (!matches.length) { resultsDiv.innerHTML = '<div style="font-size:0.78rem; color:#9ca3af; padding:6px">No se encontraron inquilinos</div>'; return; }
-        var html = '';
-        matches.forEach(function(c) {
-            html += '<div onclick="selectPersonaCobro(\'' + (c.name || '').replace(/'/g, "\\'") + '\', \'' + (c.document || '').replace(/'/g, "\\'") + '\', \'' + (c.phone || '').replace(/'/g, "\\'") + '\', \'inquilino\')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-bottom:4px; transition:background 0.2s" onmouseover="this.style.background=\'#f5f3ff\'" onmouseout="this.style.background=\'#fff\'"><strong>' + (c.name || '—') + '</strong> <span style="color:#6b7280">— ' + (c.documentType || 'CC') + ' ' + (c.document || '—') + ' — 📞 ' + (c.phone || '—') + '</span></div>';
-        });
-        resultsDiv.innerHTML = html;
+        // Buscar en clientes (inquilinos) via API
+        fetch(API + "/clients/search?q=" + encodeURIComponent(query), { headers: authHeaders() })
+            .then(function(res) { return res.ok ? res.json() : []; })
+            .then(function(clients) {
+                if (!clients.length) { resultsDiv.innerHTML = '<div style="font-size:0.78rem; color:#9ca3af; padding:6px">No se encontraron inquilinos</div>'; return; }
+                var html = '';
+                clients.forEach(function(c) {
+                    html += '<div onclick="selectPersonaCobro(\'' + (c.name || '').replace(/'/g, "\\'") + '\', \'' + (c.document || '').replace(/'/g, "\\'") + '\', \'' + (c.phone || '').replace(/'/g, "\\'") + '\', \'inquilino\')" style="padding:8px 12px; background:#fff; border:1px solid #e5e7eb; border-radius:6px; cursor:pointer; font-size:0.8rem; margin-bottom:4px; transition:background 0.2s" onmouseover="this.style.background=\'#f5f3ff\'" onmouseout="this.style.background=\'#fff\'"><strong>' + (c.name || '—') + '</strong> <span style="color:#6b7280">— ' + (c.documentType || 'CC') + ' ' + (c.document || '—') + ' — 📞 ' + (c.phone || '—') + '</span></div>';
+                });
+                resultsDiv.innerHTML = html;
+            })
+            .catch(function() { resultsDiv.innerHTML = '<div style="font-size:0.78rem; color:#9ca3af; padding:6px">Error al buscar inquilinos</div>'; });
     }
 }
 
@@ -2502,6 +2545,9 @@ function loadSettings() {
     const user = JSON.parse(localStorage.getItem("pulpapp_user") || "{}");
     document.getElementById("cfg_user").value = user.email || "";
     document.getElementById("cfg_name").value = localStorage.getItem("zentrix_biz_name") || "";
+    document.getElementById("cfg_nit").value = localStorage.getItem("zentrix_biz_nit") || "";
+    document.getElementById("cfg_address").value = localStorage.getItem("zentrix_biz_address") || "";
+    document.getElementById("cfg_phone").value = localStorage.getItem("zentrix_biz_phone") || "";
     // Load logo preview
     const savedLogo = localStorage.getItem('zentrix_biz_logo');
     if (savedLogo) {
@@ -2512,7 +2558,14 @@ function loadSettings() {
 
 function saveConfig() {
     const name = document.getElementById("cfg_name").value;
+    const nit = document.getElementById("cfg_nit").value;
+    const address = document.getElementById("cfg_address").value;
+    const phone = document.getElementById("cfg_phone").value;
     if (name) localStorage.setItem("zentrix_biz_name", name);
+    if (nit) localStorage.setItem("zentrix_biz_nit", nit);
+    if (address) localStorage.setItem("zentrix_biz_address", address);
+    if (phone) localStorage.setItem("zentrix_biz_phone", phone);
+    document.getElementById("userName").textContent = name || "Mi Inmobiliaria";
     alert("✓ Configuración guardada");
 }
 
@@ -3034,14 +3087,22 @@ function deleteVisit(id) {
 }
 
 function logout() {
-    // Preservar logo y nombre de empresa al cerrar sesión
+    // Preservar datos de empresa al cerrar sesión
     const logo = localStorage.getItem('zentrix_biz_logo');
     const bizName = localStorage.getItem('zentrix_biz_name');
     const bizType = localStorage.getItem('zentrix_biz_type');
+    const bizNit = localStorage.getItem('zentrix_biz_nit');
+    const bizAddress = localStorage.getItem('zentrix_biz_address');
+    const bizPhone = localStorage.getItem('zentrix_biz_phone');
+    const contracts = localStorage.getItem('zentrix_contracts');
     localStorage.clear();
     if (logo) localStorage.setItem('zentrix_biz_logo', logo);
     if (bizName) localStorage.setItem('zentrix_biz_name', bizName);
     if (bizType) localStorage.setItem('zentrix_biz_type', bizType);
+    if (bizNit) localStorage.setItem('zentrix_biz_nit', bizNit);
+    if (bizAddress) localStorage.setItem('zentrix_biz_address', bizAddress);
+    if (bizPhone) localStorage.setItem('zentrix_biz_phone', bizPhone);
+    if (contracts) localStorage.setItem('zentrix_contracts', contracts);
     window.location.href = "login.html";
 }
 
@@ -3474,6 +3535,77 @@ function checkTenantNotifications() {
     // Limpiar notificaciones mostradas
     notifications[tenantId] = [];
     localStorage.setItem('zentrix_tenant_notifications', JSON.stringify(notifications));
+}
+
+// ── CONTRATOS ──
+function saveContract() {
+    var tipo = document.getElementById('contract_tipo').value;
+    var nombre = document.getElementById('contract_nombre').value.trim();
+    var cedula = document.getElementById('contract_cedula').value.trim();
+    var inmuebleSelect = document.getElementById('contract_inmueble');
+    var inmueble = inmuebleSelect.options[inmuebleSelect.selectedIndex]?.text || '';
+    var fileInput = document.getElementById('contract_file');
+
+    if (!nombre || !cedula || !inmueble || inmueble === 'Seleccione...') { alert('Completa todos los campos'); return; }
+    if (!fileInput.files.length) { alert('Selecciona un archivo PDF'); return; }
+
+    var file = fileInput.files[0];
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var contracts = JSON.parse(localStorage.getItem('zentrix_contracts') || '[]');
+        contracts.unshift({
+            id: Date.now(),
+            tipo: tipo,
+            nombre: nombre,
+            cedula: cedula,
+            inmueble: inmueble,
+            fileName: file.name,
+            fileData: e.target.result,
+            date: new Date().toLocaleDateString('es-CO'),
+            createdAt: new Date().toISOString()
+        });
+        localStorage.setItem('zentrix_contracts', JSON.stringify(contracts));
+        document.getElementById('contractUploadForm').style.display = 'none';
+        document.getElementById('contract_nombre').value = '';
+        document.getElementById('contract_cedula').value = '';
+        document.getElementById('contract_file').value = '';
+        loadContracts();
+        alert('✓ Contrato guardado correctamente');
+    };
+    reader.readAsDataURL(file);
+}
+
+function loadContracts() {
+    var contracts = JSON.parse(localStorage.getItem('zentrix_contracts') || '[]');
+    var container = document.getElementById('contractsList');
+    if (!container) return;
+
+    // Cargar inmuebles en el select
+    var select = document.getElementById('contract_inmueble');
+    if (select && window._propertiesData) {
+        select.innerHTML = '<option value="">Seleccione...</option>';
+        window._propertiesData.forEach(function(p) {
+            select.innerHTML += '<option value="' + p.id + '">' + (p.name || '') + ' — ' + (p.propertyAddress || '') + '</option>';
+        });
+    }
+
+    if (!contracts.length) { container.innerHTML = '<div style="text-align:center; padding:32px; color:#9ca3af">No hay contratos. Sube el primero.</div>'; return; }
+
+    var html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px">Tipo</th><th style="padding:10px 12px">Nombre</th><th style="padding:10px 12px">Cédula</th><th style="padding:10px 12px">Inmueble</th><th style="padding:10px 12px">Fecha</th><th style="padding:10px 12px">Ver</th><th style="padding:10px 12px">Eliminar</th></tr></thead><tbody>';
+    contracts.forEach(function(c, idx) {
+        var tipoBadge = c.tipo === 'Propietario' ? '<span style="background:#dbeafe; color:#1e40af; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">PROPIETARIO</span>' : '<span style="background:#dcfce7; color:#065f46; padding:2px 8px; border-radius:999px; font-size:0.68rem; font-weight:600">INQUILINO</span>';
+        html += '<tr><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6">' + tipoBadge + '</td><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6; font-weight:600">' + c.nombre + '</td><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6">' + c.cedula + '</td><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6; font-size:0.75rem">' + (c.inmueble || '—') + '</td><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6">' + c.date + '</td><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6"><a href="' + c.fileData + '" target="_blank" style="color:#6366f1; font-weight:600; text-decoration:none">📄 Ver</a></td><td style="padding:10px 12px; border-bottom:1px solid #f3f4f6"><button onclick="deleteContract(' + idx + ')" style="background:#fee2e2; color:#991b1b; border:none; border-radius:6px; padding:4px 10px; font-size:0.72rem; cursor:pointer">🗑️</button></td></tr>';
+    });
+    html += '</tbody></table>';
+    container.innerHTML = html;
+}
+
+function deleteContract(idx) {
+    if (!confirm('¿Eliminar este contrato?')) return;
+    var contracts = JSON.parse(localStorage.getItem('zentrix_contracts') || '[]');
+    contracts.splice(idx, 1);
+    localStorage.setItem('zentrix_contracts', JSON.stringify(contracts));
+    loadContracts();
 }
 
 // ── TASK 3: Dynamic Dashboard Stats ──
