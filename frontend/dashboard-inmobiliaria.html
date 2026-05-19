@@ -1769,9 +1769,53 @@ function setClientType(type) {
 
 async function loadInvoices() {
     let allInvoices = [];
-    // Solo cargar del historial local (tiene los datos correctos con totalPropietario)
+    // =========================================================
+    // Cargar facturas desde la API (base de datos)
+    // Esto permite que las facturas se vean desde cualquier
+    // dispositivo y no se pierdan al borrar caché.
+    // =========================================================
+    try {
+        const res = await fetch(API + "/invoices", { headers: authHeaders() });
+        if (res.ok) {
+            const apiInvoices = await res.json();
+            apiInvoices.forEach(inv => {
+                allInvoices.push({
+                    id: inv.id,
+                    invoiceNumber: inv.invoiceNumber,
+                    numero: inv.invoiceNumber,
+                    tipo: inv.observations && inv.observations.includes('Propietario') ? 'Propietario' : 'Inquilino',
+                    clientName: inv.clientName || '—',
+                    propietario: inv.clientName || '—',
+                    total: inv.total || 0,
+                    totalAmount: inv.total || 0,
+                    paymentMethod: inv.paymentMethod || '',
+                    date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('es-CO') : '—',
+                    createdAt: inv.createdAt,
+                    source: 'api',
+                    pdfData: {
+                        invoiceNumber: inv.invoiceNumber,
+                        clientName: inv.clientName,
+                        rentValue: inv.total,
+                        totalInquilino: inv.total,
+                        totalPropietario: inv.total,
+                        propertyAddress: (inv.observations || '').replace(/.*Propietario:\s*/, '').trim() || '—',
+                        date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('es-CO') : '—',
+                        tipo: inv.observations && inv.observations.includes('Propietario') ? 'Propietario' : 'Inquilino'
+                    }
+                });
+            });
+        }
+    } catch (e) { console.warn("No se pudo cargar facturas de la API:", e.message); }
+
+    // También cargar facturas locales (cobros por mantenimiento, servicios, etc.)
     const localHistory = JSON.parse(localStorage.getItem('zentrix_invoice_history') || '[]');
-    localHistory.forEach(inv => { allInvoices.push({ ...inv, source: 'local' }); });
+    localHistory.forEach(inv => {
+        // Evitar duplicados: si ya existe en API por invoiceNumber, no agregar
+        if (!allInvoices.find(a => a.invoiceNumber === inv.invoiceNumber)) {
+            allInvoices.push({ ...inv, source: 'local' });
+        }
+    });
+
     // Filtrar facturas ocultas/eliminadas
     var hidden = JSON.parse(localStorage.getItem('zentrix_hidden_invoices') || '[]');
     allInvoices = allInvoices.filter(function(inv) { return !hidden.includes(inv.id) && !hidden.includes(inv.invoiceNumber) && !hidden.includes(inv.numero); });
