@@ -1877,7 +1877,12 @@ async function loadInvoices() {
         if ((inv.tipo === 'Inquilino' || inv.tipo === 'INQUILINO') && inv.pdfData && inv.pdfData.rentValue) {
             total = Number(inv.pdfData.totalInquilino || inv.pdfData.rentValue || total);
         }
-        var fechaStr = inv.createdAt ? new Date(inv.createdAt).toLocaleString('es-CO', { timeZone: 'America/Bogota' }) : (inv.date || '—');
+        var fechaStr = '—';
+        if (inv.createdAt) {
+            var d = new Date(inv.createdAt);
+            d.setHours(d.getHours() - 5); // UTC a Colombia (UTC-5)
+            fechaStr = d.toLocaleString('es-CO');
+        } else if (inv.date) { fechaStr = inv.date; }
         var numFactura = inv.invoiceNumber || inv.numero || '—';
         var deleteBtn = '<button onclick="deleteInvoice(' + idx + ')" style="background:#fef2f2; color:#dc2626; border:1px solid #fecaca; border-radius:6px; padding:4px 8px; cursor:pointer; font-size:0.72rem">🗑️</button>';
         html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:10px 12px; font-weight:700; color:#6366f1">' + numFactura + '</td><td style="padding:10px 12px">' + tipoBadge + '</td><td style="padding:10px 12px; font-weight:600">' + propietario + '</td><td style="padding:10px 12px; text-align:right; font-weight:700">$' + Number(total).toLocaleString('es-CO') + '</td><td style="padding:10px 12px; text-align:center; font-size:0.75rem; color:#6b7280">' + fechaStr + '</td><td style="padding:10px 12px; text-align:center"><button onclick="viewInvoicePDF(' + idx + ')" style="padding:4px 10px; background:#eef2ff; color:#4f46e5; border:1px solid #c7d2fe; border-radius:6px; font-size:0.7rem; font-weight:600; cursor:pointer; font-family:inherit">📄 Ver</button></td><td style="padding:10px 12px; text-align:center">' + deleteBtn + '</td></tr>';
@@ -1887,7 +1892,27 @@ async function loadInvoices() {
     window._allInvoicesCache = allInvoices;
 }
 
-function viewInvoicePDF(idx) { var inv = window._allInvoicesCache[idx]; if (!inv) return; if (inv.pdfData) generateInvoicePDF(inv.pdfData); else generateInvoicePDFFromData(inv); }
+function viewInvoicePDF(idx) {
+    var inv = window._allInvoicesCache[idx];
+    if (!inv) return;
+    var data = inv.pdfData || inv;
+
+    // Enriquecer datos faltantes desde propiedades cargadas
+    if (data.propertyAddress === '—' || !data.propertyAddress) {
+        var props = window._propertiesData || [];
+        var match = props.find(function(p) { return p.ownerName === data.clientName || p.ownerName === data.ownerName; });
+        if (match) {
+            data.propertyAddress = match.propertyAddress || match.name || '—';
+            if (!data.clientDoc) {
+                var supData = match.supplier || '';
+                var cedulaMatch = supData.match(/CC:([^|]+)/);
+                if (cedulaMatch) data.clientDoc = cedulaMatch[1].trim();
+            }
+        }
+    }
+
+    generateInvoicePDF(data);
+}
 
 function deleteLocalInvoice(idx) { deleteInvoice(idx); }
 
