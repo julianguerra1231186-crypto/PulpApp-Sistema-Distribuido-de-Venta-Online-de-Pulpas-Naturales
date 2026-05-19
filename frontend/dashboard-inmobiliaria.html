@@ -1779,17 +1779,33 @@ async function loadInvoices() {
         if (res.ok) {
             const apiInvoices = await res.json();
             apiInvoices.forEach(inv => {
-                // Determinar tipo de factura desde observations o paymentMethod
+                // Determinar tipo de factura
                 var tipoDetected = 'Otro';
                 var obs = inv.observations || '';
-                var pm = inv.paymentMethod || '';
-                if (obs.includes('Propietario:') || pm === 'TRANSFERENCIA') tipoDetected = 'Propietario';
-                if (obs.includes('Inquilino') || obs.includes('Mes:')) tipoDetected = 'Inquilino';
-                if (pm === 'Mantenimiento' || obs.includes('Mantenimiento')) tipoDetected = 'Mantenimiento';
-                if (pm === 'Servicios' || obs.includes('Servicios')) tipoDetected = 'Servicios';
-                if (pm === 'Otro' || obs.includes('Otro')) tipoDetected = 'Otro';
-                // Si observations tiene "Propietario:" al final, es factura de arriendo
-                if (obs.includes('| Propietario:') && !obs.startsWith('Mantenimiento')) tipoDetected = obs.includes('Inquilino') ? 'Inquilino' : 'Propietario';
+                var pm = (inv.paymentMethod || '').toUpperCase();
+                var clientName = inv.clientName || '';
+
+                // Detectar por observations (más confiable)
+                if (obs.includes('Mantenimiento')) tipoDetected = 'Mantenimiento';
+                else if (obs.includes('Servicios')) tipoDetected = 'Servicios';
+                else if (obs.includes('Otro |')) tipoDetected = 'Otro';
+                else if (clientName.includes('(Inquilino)') || obs.includes('Inquilino')) tipoDetected = 'Inquilino';
+                else if (pm === 'TRANSFERENCIA' || obs.includes('Propietario:')) tipoDetected = 'Propietario';
+                else if (pm === 'MANTENIMIENTO') tipoDetected = 'Mantenimiento';
+                else if (pm === 'SERVICIOS') tipoDetected = 'Servicios';
+
+                // Extraer datos de observations para el PDF
+                var propMatch = obs.match(/Propietario:\s*([^|]*)/);
+                var mesMatch = obs.match(/Mes:\s*([^|]*)/);
+                var inmuebleMatch = obs.match(/Inmueble:\s*([^|]*)/);
+                var propietarioName = propMatch ? propMatch[1].trim() : '';
+                var mesFact = mesMatch ? mesMatch[1].trim() : '';
+                var inmuebleAddr = inmuebleMatch ? inmuebleMatch[1].trim() : '';
+
+                // Extraer items para saber el desglose
+                var items = inv.items || [];
+                var rentItem = items.find(function(i) { return i.productName && i.productName.includes('Arriendo'); });
+                var rentValue = rentItem ? rentItem.unitPrice : inv.total;
 
                 allInvoices.push({
                     id: inv.id,
@@ -1806,13 +1822,17 @@ async function loadInvoices() {
                     source: 'api',
                     pdfData: {
                         invoiceNumber: inv.invoiceNumber,
-                        clientName: inv.clientName,
-                        rentValue: inv.total,
+                        clientName: inv.clientName || '—',
+                        clientDoc: '',
+                        rentValue: rentValue || inv.total,
+                        comision: tipoDetected === 'Propietario' ? Math.round((rentValue || inv.total) * 0.11) : 0,
                         totalInquilino: inv.total,
-                        totalPropietario: inv.total,
-                        propertyAddress: '—',
+                        totalPropietario: tipoDetected === 'Propietario' ? inv.total : (rentValue || inv.total),
+                        propertyAddress: inmuebleAddr || '—',
+                        month: mesFact || '—',
                         date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('es-CO') : '—',
-                        tipo: tipoDetected
+                        tipo: tipoDetected,
+                        ownerName: propietarioName || inv.clientName || '—'
                     }
                 });
             });
@@ -1836,7 +1856,10 @@ async function loadInvoices() {
     let html = '<table style="width:100%; border-collapse:collapse; font-size:0.82rem"><thead><tr style="background:#1e293b; color:#fff"><th style="padding:10px 12px">N° Factura</th><th style="padding:10px 12px">Tipo</th><th style="padding:10px 12px">Cliente</th><th style="padding:10px 12px; text-align:right">Total</th><th style="padding:10px 12px; text-align:center">Fecha / Hora</th><th style="padding:10px 12px; text-align:center">Ver PDF</th><th style="padding:10px 12px; text-align:center">Eliminar</th></tr></thead><tbody>';
     allInvoices.forEach(function(inv, idx) {
         // Tipo de factura
-        var tipoRaw = inv.tipo || inv.paymentMethod || '—';
+        var tipoRaw = inv.tipo || '';
+        var clientNameLower = (inv.clientName || '').toLowerCase();
+        // Si el tipo no se detectó bien, usar el nombre del cliente como pista
+        if (tipoRaw === 'Propietario' && clientNameLower.includes('inquilino')) tipoRaw = 'Inquilino';
         var tipoLabel = tipoRaw;
         if (tipoRaw === 'Inquilino' || tipoRaw === 'INQUILINO') tipoLabel = 'Arriendo Inquilino';
         else if (tipoRaw === 'Propietario' || tipoRaw === 'PROPIETARIO') tipoLabel = 'Liquidación Propietario';
