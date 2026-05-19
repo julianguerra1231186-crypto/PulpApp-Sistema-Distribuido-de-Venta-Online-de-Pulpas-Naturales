@@ -1874,6 +1874,13 @@ async function loadInvoices() {
         var propietario = inv.clientName || inv.propietario || '—';
         // Para inquilinos: mostrar el canon completo (sin deducción)
         var total = inv.total || inv.totalAmount || 0;
+        // Para propietario: mostrar valor con deducción del 11%
+        if (inv.tipo === 'Propietario' || inv.tipo === 'PROPIETARIO' || inv.tipo === 'Liquidación Propietario') {
+            var rentBase = Number(inv.pdfData && inv.pdfData.rentValue ? inv.pdfData.rentValue : total);
+            var comisionPct = 0.11;
+            total = Math.round(rentBase - (rentBase * comisionPct));
+        }
+        // Para inquilino: mostrar canon completo
         if ((inv.tipo === 'Inquilino' || inv.tipo === 'INQUILINO') && inv.pdfData && inv.pdfData.rentValue) {
             total = Number(inv.pdfData.totalInquilino || inv.pdfData.rentValue || total);
         }
