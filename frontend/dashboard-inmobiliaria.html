@@ -1798,9 +1798,11 @@ async function loadInvoices() {
                 var propMatch = obs.match(/Propietario:\s*([^|]*)/);
                 var mesMatch = obs.match(/Mes:\s*([^|]*)/);
                 var inmuebleMatch = obs.match(/Inmueble:\s*([^|]*)/);
+                var cedulaMatch = obs.match(/Cedula:\s*([^|]*)/);
                 var propietarioName = propMatch ? propMatch[1].trim() : '';
                 var mesFact = mesMatch ? mesMatch[1].trim() : '';
                 var inmuebleAddr = inmuebleMatch ? inmuebleMatch[1].trim() : '';
+                var clientCedula = cedulaMatch ? cedulaMatch[1].trim() : '';
 
                 // Extraer items para saber el desglose
                 var items = inv.items || [];
@@ -1823,14 +1825,14 @@ async function loadInvoices() {
                     pdfData: {
                         invoiceNumber: inv.invoiceNumber,
                         clientName: inv.clientName || '—',
-                        clientDoc: '',
+                        clientDoc: clientCedula || '',
                         rentValue: rentValue || inv.total,
                         comision: tipoDetected === 'Propietario' ? Math.round((rentValue || inv.total) * 0.11) : 0,
                         totalInquilino: inv.total,
                         totalPropietario: tipoDetected === 'Propietario' ? inv.total : (rentValue || inv.total),
                         propertyAddress: inmuebleAddr || '—',
                         month: mesFact || '—',
-                        date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('es-CO') : '—',
+                        date: inv.createdAt ? new Date(inv.createdAt).toLocaleDateString('es-CO', { timeZone: 'America/Bogota' }) : '—',
                         tipo: tipoDetected,
                         ownerName: propietarioName || inv.clientName || '—'
                     }
@@ -2491,7 +2493,7 @@ async function submitRentInvoice() {
         clientId: selectedClientData.id,
         clientName: selectedClientData.name,
         paymentMethod: 'TRANSFERENCIA',
-        observations: document.getElementById("inv_obs").value + " | Mes: " + document.getElementById("inv_month").value + " | Propietario: " + (selectedPropertyData.ownerName || "—"),
+        observations: document.getElementById("inv_obs").value + " | Mes: " + document.getElementById("inv_month").value + " | Propietario: " + (selectedPropertyData.ownerName || "—") + " | Inmueble: " + (selectedPropertyData.propertyAddress || selectedPropertyData.name || "—") + " | Cedula: " + (selectedClientData.document || "—"),
         discount: 0,
         items: items.map(i => ({ productName: i.productName, quantity: i.quantity, unitPrice: Math.abs(i.unitPrice), productId: i.productId }))
     };
@@ -3844,13 +3846,15 @@ function generateInvoicePDF(invoiceData) {
 
     if (esPropietario) {
         // Factura Propietario: Canon - Comisión = Total a enviar
-        conceptosRows = '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Canon de Arriendo — ' + invoiceData.propertyAddress + '</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td></tr>';
+        var propAddr = invoiceData.propertyAddress && invoiceData.propertyAddress !== '—' ? ' — ' + invoiceData.propertyAddress : '';
+        conceptosRows = '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Canon de Arriendo' + propAddr + '</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td></tr>';
         conceptosRows += '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; color:#ef4444">Comisión Inmobiliaria (11%)</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#ef4444">-$' + comision.toLocaleString('es-CO') + '</td></tr>';
         totalFinal = valorPropietario;
         totalLabel = 'TOTAL A ENVIAR AL PROPIETARIO:';
     } else {
         // Factura Inquilino: Canon + Intereses = Total a cobrar
-        conceptosRows = '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Canon de Arriendo — ' + invoiceData.propertyAddress + '</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td></tr>';
+        var inqAddr = invoiceData.propertyAddress && invoiceData.propertyAddress !== '—' ? ' — ' + invoiceData.propertyAddress : '';
+        conceptosRows = '<tr><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb">Canon de Arriendo' + inqAddr + '</td><td style="padding:10px 12px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700">$' + rent.toLocaleString('es-CO') + '</td></tr>';
         if (interesesDetalle.length > 0) {
             interesesDetalle.forEach(function(i) {
                 conceptosRows += '<tr><td style="padding:8px 12px; border-bottom:1px solid #f3f4f6; padding-left:24px; font-size:0.82rem; color:#92400e">⏰ Interés — ' + i.dayName + '</td><td style="padding:8px 12px; border-bottom:1px solid #f3f4f6; text-align:right; font-weight:600; color:#92400e">+$' + i.valor.toLocaleString('es-CO') + '</td></tr>';
