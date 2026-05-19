@@ -2637,6 +2637,25 @@ function loadSettings() {
         const preview = document.getElementById('logoPreview');
         if (preview) preview.src = savedLogo;
     }
+
+    // Cargar desde la nube (sobreescribe local si hay datos)
+    fetch(API + "/tenant/config", { headers: authHeaders() })
+        .then(function(res) { return res.ok ? res.json() : null; })
+        .then(function(config) {
+            if (!config) return;
+            // primaryColor = nombre, secondaryColor = nit, bannerUrl = address|phone
+            if (config.primaryColor) { localStorage.setItem("zentrix_biz_name", config.primaryColor); document.getElementById("cfg_name").value = config.primaryColor; document.getElementById("userName").textContent = config.primaryColor; }
+            if (config.secondaryColor) { localStorage.setItem("zentrix_biz_nit", config.secondaryColor); document.getElementById("cfg_nit").value = config.secondaryColor; }
+            if (config.bannerUrl) {
+                var parts = config.bannerUrl.split('|');
+                if (parts[0]) { localStorage.setItem("zentrix_biz_address", parts[0]); document.getElementById("cfg_address").value = parts[0]; }
+                if (parts[1]) { localStorage.setItem("zentrix_biz_phone", parts[1]); document.getElementById("cfg_phone").value = parts[1]; }
+            }
+            if (config.logoUrl && config.logoUrl.startsWith('data:image')) {
+                localStorage.setItem('zentrix_biz_logo', config.logoUrl);
+                applyLogo(config.logoUrl);
+            }
+        }).catch(function() {});
 }
 
 function saveConfig() {
@@ -2649,7 +2668,18 @@ function saveConfig() {
     if (address) localStorage.setItem("zentrix_biz_address", address);
     if (phone) localStorage.setItem("zentrix_biz_phone", phone);
     document.getElementById("userName").textContent = name || "Mi Inmobiliaria";
-    alert("✓ Configuración guardada");
+
+    // Guardar en la nube via API para persistencia multi-dispositivo
+    var logo = localStorage.getItem('zentrix_biz_logo') || '';
+    fetch(API + "/tenant/config", {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({ logoUrl: logo, primaryColor: name, secondaryColor: nit, bannerUrl: address + '|' + phone })
+    }).then(function() {
+        alert("✓ Configuración guardada en la nube");
+    }).catch(function() {
+        alert("✓ Configuración guardada localmente");
+    });
 }
 
 // ── Propiedades ──
@@ -3592,6 +3622,17 @@ function handleLogoUpload(event) {
         const base64 = e.target.result;
         localStorage.setItem('zentrix_biz_logo', base64);
         applyLogo(base64);
+
+        // Guardar logo en la nube para persistencia multi-dispositivo
+        var name = localStorage.getItem('zentrix_biz_name') || '';
+        var nit = localStorage.getItem('zentrix_biz_nit') || '';
+        var address = localStorage.getItem('zentrix_biz_address') || '';
+        var phone = localStorage.getItem('zentrix_biz_phone') || '';
+        fetch(API + "/tenant/config", {
+            method: "POST",
+            headers: authHeaders(),
+            body: JSON.stringify({ logoUrl: base64, primaryColor: name, secondaryColor: nit, bannerUrl: address + '|' + phone })
+        }).catch(function() {});
     };
     reader.readAsDataURL(file);
 }
@@ -3613,6 +3654,30 @@ function applyLogo(src) {
 function loadSavedLogo() {
     const savedLogo = localStorage.getItem('zentrix_biz_logo');
     if (savedLogo) applyLogo(savedLogo);
+
+    // Cargar configuración desde la nube (logo + datos empresa)
+    fetch(API + "/tenant/config", { headers: authHeaders() })
+        .then(function(res) { return res.ok ? res.json() : null; })
+        .then(function(config) {
+            if (!config) return;
+            if (config.logoUrl && config.logoUrl.startsWith('data:image')) {
+                localStorage.setItem('zentrix_biz_logo', config.logoUrl);
+                applyLogo(config.logoUrl);
+            }
+            if (config.primaryColor) {
+                localStorage.setItem('zentrix_biz_name', config.primaryColor);
+                var nameEl = document.getElementById("userName");
+                var welcomeEl = document.getElementById("welcomeBizName");
+                if (nameEl) nameEl.textContent = config.primaryColor;
+                if (welcomeEl) welcomeEl.textContent = config.primaryColor;
+            }
+            if (config.secondaryColor) localStorage.setItem('zentrix_biz_nit', config.secondaryColor);
+            if (config.bannerUrl) {
+                var parts = config.bannerUrl.split('|');
+                if (parts[0]) localStorage.setItem('zentrix_biz_address', parts[0]);
+                if (parts[1]) localStorage.setItem('zentrix_biz_phone', parts[1]);
+            }
+        }).catch(function() {});
 }
 
 function checkTenantNotifications() {
