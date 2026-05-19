@@ -3100,22 +3100,36 @@ function deleteVisit(id) {
 }
 
 function logout() {
-    // Preservar datos de empresa al cerrar sesión
-    const logo = localStorage.getItem('zentrix_biz_logo');
-    const bizName = localStorage.getItem('zentrix_biz_name');
-    const bizType = localStorage.getItem('zentrix_biz_type');
-    const bizNit = localStorage.getItem('zentrix_biz_nit');
-    const bizAddress = localStorage.getItem('zentrix_biz_address');
-    const bizPhone = localStorage.getItem('zentrix_biz_phone');
-    const contracts = localStorage.getItem('zentrix_contracts');
+    // =========================================================
+    // Preservar datos del negocio al cerrar sesión.
+    // localStorage.clear() borra TODO — se guardan antes y
+    // se restauran después para no perder información crítica.
+    // =========================================================
+    const preserve = {};
+    const keysToKeep = [
+        'zentrix_biz_logo',
+        'zentrix_biz_name',
+        'zentrix_biz_type',
+        'zentrix_biz_nit',
+        'zentrix_biz_address',
+        'zentrix_biz_phone',
+        'zentrix_contracts',
+        'zentrix_invoice_history',
+        'zentrix_hidden_invoices',
+        'zentrix_clients',
+        'zentrix_admin_plans',
+        'zentrix_paused_plans',
+        'zentrix_tenant_notifications',
+        'zentrix_visits'
+    ];
+    keysToKeep.forEach(function(key) {
+        var val = localStorage.getItem(key);
+        if (val) preserve[key] = val;
+    });
     localStorage.clear();
-    if (logo) localStorage.setItem('zentrix_biz_logo', logo);
-    if (bizName) localStorage.setItem('zentrix_biz_name', bizName);
-    if (bizType) localStorage.setItem('zentrix_biz_type', bizType);
-    if (bizNit) localStorage.setItem('zentrix_biz_nit', bizNit);
-    if (bizAddress) localStorage.setItem('zentrix_biz_address', bizAddress);
-    if (bizPhone) localStorage.setItem('zentrix_biz_phone', bizPhone);
-    if (contracts) localStorage.setItem('zentrix_contracts', contracts);
+    Object.keys(preserve).forEach(function(key) {
+        localStorage.setItem(key, preserve[key]);
+    });
     window.location.href = "login.html";
 }
 
