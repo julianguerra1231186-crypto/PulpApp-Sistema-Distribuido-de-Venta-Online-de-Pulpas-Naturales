@@ -1120,17 +1120,17 @@ const API = window.ZENTRIX_API;
 const getToken = () => localStorage.getItem("pulpapp_jwt");
 const authHeaders = () => ({ "Content-Type":"application/json", "Authorization":"Bearer " + getToken() });
 
-// Interceptor global: si cualquier fetch devuelve 401/403, redirigir a login
+// Interceptor global: si cualquier fetch devuelve 401/403, mostrar mensaje amigable
 const originalFetch = window.fetch;
 window.fetch = async function(...args) {
     const response = await originalFetch.apply(this, args);
     if ((response.status === 401 || response.status === 403) && args[0] && args[0].toString().includes(API)) {
-        // No interceptar si es la verificación de tenant (la maneja el check de suspensión)
+        // No interceptar si es la verificación de tenant
         if (args[0].toString().includes('/tenants/')) return response;
-        // Token expirado o inválido
+        // Token expirado o inválido — mostrar mensaje amigable
         localStorage.removeItem("pulpapp_jwt");
         localStorage.removeItem("pulpapp_user");
-        window.location.href = "login.html";
+        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;font-family:Inter,system-ui,sans-serif"><div style="text-align:center;max-width:500px;padding:40px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><div style="font-size:3rem;margin-bottom:16px">🔄</div><h1 style="margin:0 0 12px;font-size:1.5rem;color:#111827">Sesion actualizada</h1><p style="color:#6b7280;margin:0 0 24px;line-height:1.6">Tu cuenta ha sido reactivada o tu sesion necesita renovarse. Por favor inicia sesion para continuar.</p><button onclick="window.location.href=\'login.html\'" style="padding:12px 24px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer">Iniciar sesion</button></div></div>';
         return response;
     }
     return response;
@@ -3322,12 +3322,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;font-family:Inter,system-ui,sans-serif"><div style="text-align:center;max-width:500px;padding:40px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><div style="font-size:3rem;margin-bottom:16px">🚫</div><h1 style="margin:0 0 12px;font-size:1.5rem;color:#111827">Cuenta Suspendida</h1><p style="color:#6b7280;margin:0 0 24px;line-height:1.6">Tu cuenta ha sido suspendida por el administrador. No puedes acceder al sistema. Contacta soporte para mas informacion.</p><button onclick="localStorage.removeItem(\'pulpapp_jwt\');localStorage.removeItem(\'pulpapp_user\');window.location.href=\'login.html\'" style="padding:12px 24px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer">Cerrar sesion</button></div></div>';
                 }
             }).catch(function() {});
-    }
-    // Verificar pausa local (control del admin)
-    var pausedPlans = JSON.parse(localStorage.getItem('zentrix_paused_plans') || '{}');
-    if (user.tenantId && pausedPlans[user.tenantId] === true) {
-        document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f8fafc;font-family:Inter,system-ui,sans-serif"><div style="text-align:center;max-width:500px;padding:40px;background:#fff;border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.08)"><div style="font-size:3rem;margin-bottom:16px">⏸️</div><h1 style="margin:0 0 12px;font-size:1.5rem;color:#111827">Plan Pausado</h1><p style="color:#6b7280;margin:0 0 24px;line-height:1.6">Tu plan ha sido pausado por el administrador. No puedes usar el sistema hasta que sea reactivado. Contacta soporte.</p><button onclick="localStorage.removeItem(\'pulpapp_jwt\');localStorage.removeItem(\'pulpapp_user\');window.location.href=\'login.html\'" style="padding:12px 24px;background:#6366f1;color:#fff;border:none;border-radius:8px;font-size:0.9rem;font-weight:700;cursor:pointer">Cerrar sesion</button></div></div>';
-        return;
     }
 
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
