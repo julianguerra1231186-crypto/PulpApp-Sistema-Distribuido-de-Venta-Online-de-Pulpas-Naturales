@@ -1,15 +1,15 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
-<head>
+<head>`n    <link rel="icon" type="image/png" href="img/logoZentrix-sinfondo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix — La plataforma para lanzar tu negocio online</title>
-    <meta name="description" content="Zentrix, la plataforma SaaS para crear y escalar tiendas online sin código. Centraliza productos, pedidos, marca y control administrativo con total eficiencia.">
+    <title>Zentrix � La plataforma para lanzar tu negocio online</title>
+    <meta name="description" content="Zentrix, la plataforma SaaS para crear y escalar tiendas online sin c�digo. Centraliza productos, pedidos, marca y control administrativo con total eficiencia.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/saas.css">
     <style>
-        /* ── Override: paleta clara y luminosa ── */
+        /* -- Override: paleta clara y luminosa -- */
         :root {
             --z-primary: #6366f1;
             --z-primary-dark: #4f46e5;
@@ -22,7 +22,7 @@
 
         body { background: #ffffff; }
 
-        /* ── Navbar con logo ── */
+        /* -- Navbar con logo -- */
         .z-nav { background: rgba(255,255,255,0.95); box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .z-nav-inner { height: 72px; }
         .z-nav .z-nav-links a { color: #111827; }
@@ -31,7 +31,7 @@
         .z-logo-img { height: 40px; width: auto; object-fit: contain; }
         .z-logo-text { font-size: 1.5rem; font-weight: 900; color: #111827; letter-spacing: -0.03em; }
 
-        /* ── Hero luminoso ── */
+        /* -- Hero luminoso -- */
         .z-hero-section {
             background: linear-gradient(180deg, #f8faff 0%, #ffffff 100%);
             padding: 100px 24px 72px;
@@ -52,13 +52,13 @@
             color: #9ca3af; font-size: 0.82rem; margin-top: 20px;
         }
 
-        /* ── Trust bar ── */
+        /* -- Trust bar -- */
         .trust-bar { padding: 24px 24px 56px; text-align: center; background: #fff; }
         .trust-bar p { color: #9ca3af; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; font-weight: 600; margin: 0 0 20px; }
         .trust-logos { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; align-items: center; }
         .trust-logos span { font-size: 1.1rem; font-weight: 700; color: #d1d5db; letter-spacing: -0.01em; }
 
-        /* ── Feature grid horizontal con mockups funcionales ── */
+        /* -- Feature grid horizontal con mockups funcionales -- */
         .feat-grid { display:grid; grid-template-columns:repeat(5, 1fr); gap:20px; }
         .feat-card { border:1px solid #e5e7eb; border-radius:14px; overflow:hidden; background:#fff; transition:all 0.3s ease; }
         .feat-card:hover { border-color:#c7d2fe; box-shadow:0 12px 32px rgba(99,102,241,0.1); transform:translateY(-4px); }
@@ -72,7 +72,7 @@
         .fm-bar span:nth-child(3) { background:#22c55e; }
         .fm-body { padding:12px; min-height:180px; }
 
-        /* Catálogo mockup */
+        /* Cat�logo mockup */
         .fm-search { display:flex; align-items:center; gap:6px; padding:6px 10px; background:#f3f4f6; border-radius:6px; margin-bottom:10px; font-size:0.7rem; }
         .fm-products { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
         .fm-prod { background:#f9fafb; border-radius:8px; padding:8px; text-align:center; }
@@ -134,9 +134,9 @@
         .fm-rb:nth-child(4) { animation-delay:0.9s; }
         @keyframes barGrow { 0%{transform:scaleX(0)} 30%{transform:scaleX(1.05)} 40%{transform:scaleX(1)} 80%{transform:scaleX(1)} 100%{transform:scaleX(0)} }
 
-        /* ── Micro-animaciones de demo en cada tarjeta ── */
+        /* -- Micro-animaciones de demo en cada tarjeta -- */
 
-        /* Catálogo: productos aparecen uno a uno en loop */
+        /* Cat�logo: productos aparecen uno a uno en loop */
         .fm-prod {
             opacity:0; transform:translateY(8px) scale(0.95);
             animation: prodAppear 4s ease infinite;
@@ -150,7 +150,7 @@
             25%,85% { opacity:1; transform:translateY(0) scale(1); }
             95%,100% { opacity:0; transform:translateY(-4px) scale(0.98); }
         }
-        /* Barra de búsqueda: cursor parpadeante */
+        /* Barra de b�squeda: cursor parpadeante */
         .fm-search::after {
             content:""; display:inline-block; width:1px; height:10px;
             background:#6366f1; margin-left:2px;
@@ -223,7 +223,7 @@
         /* Hover: acelera todas las animaciones */
         .feat-card:hover * { animation-duration:1.5s !important; }
 
-        /* ── Reasons carousel ── */
+        /* -- Reasons carousel -- */
         .carousel-arrow {
             width:40px; height:40px; border-radius:50%; border:1.5px solid #e5e7eb;
             background:#fff; cursor:pointer; font-size:1rem; color:#111827;
@@ -249,11 +249,11 @@
         .reason-detail { font-size:0.88rem; color:#9ca3af; line-height:1.7; margin:0 24px 24px !important; }
         .reason-detail strong { color:#374151; }
 
-        /* ══════════════════════════════════════════════════
-           MICRO-ANIMACIONES DINÁMICAS — SENSACIÓN DE DEMO
-           ══════════════════════════════════════════════════ */
+        /* --------------------------------------------------
+           MICRO-ANIMACIONES DIN�MICAS � SENSACI�N DE DEMO
+           -------------------------------------------------- */
 
-        /* ── Card 1: Catálogo — productos vuelan y rebotan ── */
+        /* -- Card 1: Cat�logo � productos vuelan y rebotan -- */
         .rc1-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; animation:windowFloat 6s ease-in-out infinite; }
         @keyframes windowFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .rc1-search { display:flex; align-items:center; gap:6px; background:#f3f4f6; border-radius:8px; padding:8px 10px; margin-bottom:10px; font-size:0.75rem; }
@@ -276,7 +276,7 @@
         .rc1-line { height:7px; flex:1; background:#e5e7eb; border-radius:4px; }
         .rc1-price { font-size:0.75rem; font-weight:700; color:#111827; white-space:nowrap; }
 
-        /* ── Card 2: Pedidos — filas se iluminan + check animado ── */
+        /* -- Card 2: Pedidos � filas se iluminan + check animado -- */
         .rc2-window { background:#fff; border-radius:14px; padding:12px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:220px; animation:windowFloat 6s ease-in-out infinite 1s; }
         .rc2-header { display:flex; justify-content:space-between; padding:4px 6px; margin-bottom:6px; }
         .rc2-header span { font-size:0.6rem; font-weight:700; color:#9ca3af; }
@@ -302,7 +302,7 @@
         }
         .rc2-st.red { background:#fee2e2; color:#991b1b; }
 
-        /* ── Card 3: Branding — colores explotan y logo brilla ── */
+        /* -- Card 3: Branding � colores explotan y logo brilla -- */
         .rc3-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; animation:windowFloat 6s ease-in-out infinite 2s; }
         .rc3-logo-row { display:flex; align-items:center; gap:6px; margin-bottom:8px; }
         .rc3-logo { width:28px; height:28px; border-radius:7px; background:linear-gradient(135deg,#6366f1,#8b5cf6); animation:rc3LogoPulse 3s ease infinite; }
@@ -323,7 +323,7 @@
             100% { filter:hue-rotate(0deg); transform:scaleY(0.3); opacity:0.3; }
         }
 
-        /* ── Card 4: Ventas — barras crecen con rebote + número sube ── */
+        /* -- Card 4: Ventas � barras crecen con rebote + n�mero sube -- */
         .rc4-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; animation:windowFloat 6s ease-in-out infinite 0.5s; }
         .rc4-label { font-size:0.6rem; font-weight:700; color:#9ca3af; margin-bottom:6px; }
         .rc4-amount { font-size:1.3rem; font-weight:800; color:#111827; margin-bottom:10px; animation:rc4NumPulse 4s ease infinite; }
@@ -348,7 +348,7 @@
             div:has(> .reasons-track-wrap) { grid-template-columns:1fr !important; }
         }
 
-        /* ── Card 5: Equipo — avatares rebotan al entrar ── */
+        /* -- Card 5: Equipo � avatares rebotan al entrar -- */
         .rc5-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:190px; animation:windowFloat 6s ease-in-out infinite 1.5s; }
         .rc5-title { font-size:0.65rem; font-weight:700; color:#9ca3af; margin-bottom:10px; }
         .rc5-member { display:flex; align-items:center; gap:10px; padding:6px; border-radius:8px; margin-bottom:6px; opacity:0; animation:rc5Bounce 5s cubic-bezier(.34,1.56,.64,1) infinite; }
@@ -368,7 +368,7 @@
         .rc5-name { height:6px; width:60px; background:#e5e7eb; border-radius:3px; margin-bottom:4px; }
         .rc5-role { font-size:0.55rem; font-weight:600; color:#6b7280; }
 
-        /* ── Card 6: Pagos — métodos explotan desde el centro ── */
+        /* -- Card 6: Pagos � m�todos explotan desde el centro -- */
         .rc6-window { background:#fff; border-radius:14px; padding:14px; box-shadow:0 8px 24px rgba(0,0,0,0.1); width:200px; animation:windowFloat 6s ease-in-out infinite 2.5s; }
         .rc6-title { font-size:0.65rem; font-weight:700; color:#9ca3af; margin-bottom:10px; }
         .rc6-methods { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:10px; }
@@ -395,7 +395,7 @@
             85%,100% { opacity:0; transform:scale(0.8); }
         }
 
-        /* ── Hover: todo se acelera ── */
+        /* -- Hover: todo se acelera -- */
         .reason-card:hover .rc1-window,
         .reason-card:hover .rc2-window,
         .reason-card:hover .rc3-window,
@@ -403,7 +403,7 @@
         .reason-card:hover .rc5-window,
         .reason-card:hover .rc6-window { animation-duration:3s !important; }
 
-        /* ── Commerce grid ── */
+        /* -- Commerce grid -- */
         .commerce-grid {
             display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;
         }
@@ -422,7 +422,7 @@
         }
         .commerce-tag:hover .ct-emoji { transform:scale(1.3) rotate(-8deg); }
 
-        /* Descripción oculta que aparece en hover */
+        /* Descripci�n oculta que aparece en hover */
         .ct-desc {
             width:100%; font-size:0.75rem; font-weight:400; color:#6b7280; line-height:1.5;
             max-height:0; overflow:hidden; opacity:0;
@@ -439,7 +439,7 @@
         @media (max-width:768px) { .commerce-grid { grid-template-columns:repeat(2, 1fr); } }
         @media (max-width:480px) { .commerce-grid { grid-template-columns:1fr; } }
 
-        /* ── CTA final ── */
+        /* -- CTA final -- */
         .z-cta-section {
             background: linear-gradient(135deg, #6366f1, #4f46e5);
             padding: 80px 24px; text-align: center; max-width: 100%; border-radius: 0;
@@ -451,7 +451,7 @@
         .z-btn-ghost-white { color: rgba(255,255,255,0.9); border: 1.5px solid rgba(255,255,255,0.3); background: transparent; }
         .z-btn-ghost-white:hover { background: rgba(255,255,255,0.1); }
 
-        /* ── Footer ── */
+        /* -- Footer -- */
         .z-footer-pro { padding: 48px 24px; border-top: 1px solid #f3f4f6; background: #fafbfc; }
         .z-footer-inner { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
         .z-footer-brand-wrap { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
@@ -474,12 +474,12 @@
 </head>
 <body class="saas-page">
 
-<!-- ═══════════════════ TOP BAR ═══════════════════ -->
+<!-- ------------------- TOP BAR ------------------- -->
 <div style="background:#111827; color:#fff; padding:6px 24px; font-size:0.95rem; font-weight:400">
-    <!-- ═══════════════════ Medida Justa De la Barra Del ENCABEZADO  ═══════════════════ -->
+    <!-- ------------------- Medida Justa De la Barra Del ENCABEZADO  ------------------- -->
     <div style="max-width:1120px; margin:0 auto; display:flex; align-items:center; justify-content:space-between">
-        <span>¡TU POS y contabilidad en un solo lugar. Control total desde el día uno!</span>
-        <a href="register.html" class="topbar-cta">Agendar Demostración →</a>
+        <span>�TU POS y contabilidad en un solo lugar. Control total desde el d�a uno!</span>
+        <a href="register.html" class="topbar-cta">Agendar Demostraci�n ?</a>
     </div>
 </div>
 <!-- Boton -->
@@ -505,7 +505,7 @@
 }
 </style>
 
-<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<!-- ------------------- NAVBAR ------------------- -->
 <nav class="z-nav">
     <div class="z-nav-inner">
         <a href="index.html" class="z-logo-wrap">
@@ -521,46 +521,46 @@
     </div>
 </nav>
 
-<!-- ═══════════════════ HERO ═══════════════════ -->
+<!-- ------------------- HERO ------------------- -->
 <section class="z-hero-section">
     <div class="z-hero-inner">
         <div class="z-hero-badge">La plataforma que impulsa y organiza tu negocio en Colombia</div>
-        <h1>Tu negocio online empieza aquí.<br><span>Gestiona tu marca, productos y pedidos desde un solo lugar.</span></h1>
-        <p class="z-hero-sub">Zentrix reúne catálogo, pedidos, pagos y el control de tu negocio en una sola plataforma. Configura en minutos y empieza a vender desde el primer día.</p>
+        <h1>Tu negocio online empieza aqu�.<br><span>Gestiona tu marca, productos y pedidos desde un solo lugar.</span></h1>
+        <p class="z-hero-sub">Zentrix re�ne cat�logo, pedidos, pagos y el control de tu negocio en una sola plataforma. Configura en minutos y empieza a vender desde el primer d�a.</p>
         <div class="z-hero-actions">
-            <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Crear mi tienda →</a>
+            <a href="register.html" class="z-btn z-btn-primary z-btn-lg">Crear mi tienda ?</a>
             <a href="pricing.html" class="z-btn z-btn-outline z-btn-lg">Ver precios</a>
         </div>
-        <p class="z-hero-trust">Activación en menos de 24 horas · Sin tarjeta de crédito · Cancela cuando quieras</p>
+        <p class="z-hero-trust">Activaci�n en menos de 24 horas � Sin tarjeta de cr�dito � Cancela cuando quieras</p>
     </div>
 </section>
 
-<!-- ═══════════════════ FUNCIONALIDADES ═══════════════════ -->
+<!-- ------------------- FUNCIONALIDADES ------------------- -->
 <section class="z-section" id="beneficios">
     <div class="z-section-header">
         <h2>Todo tu negocio, en un solo sistema.</h2>
-        <p>Zentrix reúne las herramientas que necesitas para vender, gestionar y crecer sin complicaciones.</p>
+        <p>Zentrix re�ne las herramientas que necesitas para vender, gestionar y crecer sin complicaciones.</p>
     </div>
 
     <div class="feat-grid">
-        <!-- 1. Catálogo -->
+        <!-- 1. Cat�logo -->
         <div class="feat-card">
             <div class="feat-mockup">
                 <div class="fm-bar"><span></span><span></span><span></span></div>
                 <div class="fm-body">
-                    <div class="fm-search"><span>🔍</span><div class="fm-line w60"></div></div>
+                    <div class="fm-search"><span>??</span><div class="fm-line w60"></div></div>
                     <div class="fm-products">
-                        <div class="fm-prod"><div class="fm-img" style="background:#dbeafe">📦</div><div class="fm-line w70"></div><div class="fm-price">$8.500</div></div>
-                        <div class="fm-prod"><div class="fm-img" style="background:#fce7f3">🍓</div><div class="fm-line w70"></div><div class="fm-price">$7.200</div></div>
-                        <div class="fm-prod"><div class="fm-img" style="background:#d1fae5">🥭</div><div class="fm-line w70"></div><div class="fm-price">$9.100</div></div>
-                        <div class="fm-prod"><div class="fm-img" style="background:#fef3c7">🍋</div><div class="fm-line w70"></div><div class="fm-price">$6.800</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#dbeafe">??</div><div class="fm-line w70"></div><div class="fm-price">$8.500</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#fce7f3">??</div><div class="fm-line w70"></div><div class="fm-price">$7.200</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#d1fae5">??</div><div class="fm-line w70"></div><div class="fm-price">$9.100</div></div>
+                        <div class="fm-prod"><div class="fm-img" style="background:#fef3c7">??</div><div class="fm-line w70"></div><div class="fm-price">$6.800</div></div>
                     </div>
                 </div>
             </div>
             <div class="feat-info">
-                <div class="feat-badge" style="background:#eef2ff; color:#4f46e5">Catálogo</div>
-                <h3>Gestión de productos</h3>
-                <p>Fotos, precios, stock y categorías. Actualiza en tiempo real desde cualquier dispositivo.</p>
+                <div class="feat-badge" style="background:#eef2ff; color:#4f46e5">Cat�logo</div>
+                <h3>Gesti�n de productos</h3>
+                <p>Fotos, precios, stock y categor�as. Actualiza en tiempo real desde cualquier dispositivo.</p>
             </div>
         </div>
 
@@ -570,10 +570,10 @@
                 <div class="fm-bar"><span></span><span></span><span></span></div>
                 <div class="fm-body">
                     <div class="fm-table-head"><span>Pedido</span><span>Cliente</span><span>Estado</span></div>
-                    <div class="fm-table-row"><span>#1042</span><span>María L.</span><span class="fm-st green">✓ Aprobado</span></div>
-                    <div class="fm-table-row active"><span>#1043</span><span>Carlos R.</span><span class="fm-st yellow">⏳ Pendiente</span></div>
-                    <div class="fm-table-row"><span>#1044</span><span>Ana P.</span><span class="fm-st green">✓ Aprobado</span></div>
-                    <div class="fm-table-row"><span>#1045</span><span>Luis M.</span><span class="fm-st red">✕ Rechazado</span></div>
+                    <div class="fm-table-row"><span>#1042</span><span>Mar�a L.</span><span class="fm-st green">? Aprobado</span></div>
+                    <div class="fm-table-row active"><span>#1043</span><span>Carlos R.</span><span class="fm-st yellow">? Pendiente</span></div>
+                    <div class="fm-table-row"><span>#1044</span><span>Ana P.</span><span class="fm-st green">? Aprobado</span></div>
+                    <div class="fm-table-row"><span>#1045</span><span>Luis M.</span><span class="fm-st red">? Rechazado</span></div>
                 </div>
             </div>
             <div class="feat-info">
@@ -590,12 +590,12 @@
                 <div class="fm-body fm-tenant-body">
                     <div class="fm-tenant-row">
                         <div class="fm-tenant" style="border-color:#6366f1"><div class="fm-tenant-av" style="background:#eef2ff; color:#6366f1">A</div><div class="fm-tenant-name">Tienda A</div></div>
-                        <div class="fm-lock">🔒</div>
+                        <div class="fm-lock">??</div>
                         <div class="fm-tenant" style="border-color:#0ea5e9"><div class="fm-tenant-av" style="background:#e0f2fe; color:#0ea5e9">B</div><div class="fm-tenant-name">Tienda B</div></div>
-                        <div class="fm-lock">🔒</div>
+                        <div class="fm-lock">??</div>
                         <div class="fm-tenant" style="border-color:#22c55e"><div class="fm-tenant-av" style="background:#d1fae5; color:#16a34a">C</div><div class="fm-tenant-name">Tienda C</div></div>
                     </div>
-                    <div class="fm-shield">🛡️ Aislamiento activo</div>
+                    <div class="fm-shield">??? Aislamiento activo</div>
                 </div>
             </div>
             <div class="feat-info">
@@ -645,25 +645,25 @@
             <div class="feat-info">
                 <div class="feat-badge" style="background:#fef3c7; color:#92400e">Reportes</div>
                 <h3>Reportes operativos en tiempo real</h3>
-                <p>Pedidos, ventas y métricas de tu negocio actualizados al instante.</p>
+                <p>Pedidos, ventas y m�tricas de tu negocio actualizados al instante.</p>
             </div>
         </div>
 
     </div>
 </section>
 
-<!-- ═══════════════════ RAZONES / CARRUSEL ═══════════════════ -->
+<!-- ------------------- RAZONES / CARRUSEL ------------------- -->
 <section style="padding:80px 0; background:#fff">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
         <div style="display:flex; flex-direction:column; align-items:center">
 
-            <!-- Título + flechas centrados arriba -->
+            <!-- T�tulo + flechas centrados arriba -->
             <div style="text-align:center; margin-bottom:40px">
-                <h2 style="font-size:1.7rem; font-weight:800; color:#111827; line-height:1.25; letter-spacing:-0.02em; margin:0 0 10px">Razones por las que Zentrix es tu mejor opción</h2>
+                <h2 style="font-size:1.7rem; font-weight:800; color:#111827; line-height:1.25; letter-spacing:-0.02em; margin:0 0 10px">Razones por las que Zentrix es tu mejor opci�n</h2>
                 <p style="color:#6b7280; font-size:0.95rem; line-height:1.6; margin:0 0 24px">Todo lo que necesitas para hacer crecer tu negocio, en un solo lugar.</p>
                 <div style="display:flex; gap:10px; justify-content:center">
-                    <button onclick="scrollCards(-1)" class="carousel-arrow">←</button>
-                    <button onclick="scrollCards(1)" class="carousel-arrow">→</button>
+                    <button onclick="scrollCards(-1)" class="carousel-arrow">?</button>
+                    <button onclick="scrollCards(1)" class="carousel-arrow">?</button>
                 </div>
             </div>
 
@@ -676,17 +676,17 @@
                     <div class="reason-img" style="background:linear-gradient(135deg,#dbeafe,#ede9fe)">
                         <div class="reason-mockup rc-mock-1">
                             <div class="rc1-window">
-                                <div class="rc1-search"><span>🔍</span><div class="rc1-cursor"></div></div>
-                                <div class="rc1-product rc1-p1"><div class="rc1-thumb" style="background:#dbeafe">📦</div><div class="rc1-line"></div><div class="rc1-price">$8.500</div></div>
-                                <div class="rc1-product rc1-p2"><div class="rc1-thumb" style="background:#fce7f3">🍓</div><div class="rc1-line"></div><div class="rc1-price">$7.200</div></div>
-                                <div class="rc1-product rc1-p3"><div class="rc1-thumb" style="background:#d1fae5">🥭</div><div class="rc1-line"></div><div class="rc1-price">$9.100</div></div>
+                                <div class="rc1-search"><span>??</span><div class="rc1-cursor"></div></div>
+                                <div class="rc1-product rc1-p1"><div class="rc1-thumb" style="background:#dbeafe">??</div><div class="rc1-line"></div><div class="rc1-price">$8.500</div></div>
+                                <div class="rc1-product rc1-p2"><div class="rc1-thumb" style="background:#fce7f3">??</div><div class="rc1-line"></div><div class="rc1-price">$7.200</div></div>
+                                <div class="rc1-product rc1-p3"><div class="rc1-thumb" style="background:#d1fae5">??</div><div class="rc1-line"></div><div class="rc1-price">$9.100</div></div>
                             </div>
                         </div>
                     </div>
-                    <div class="reason-icons"><span style="background:#eef2ff; color:#6366f1">🚀</span><span style="background:#e0f2fe; color:#0ea5e9">⚡</span></div>
+                    <div class="reason-icons"><span style="background:#eef2ff; color:#6366f1">??</span><span style="background:#e0f2fe; color:#0ea5e9">?</span></div>
                     <h3>Empieza tu negocio desde cero</h3>
-                    <p>Crea tu tienda en minutos sin conocimientos técnicos y comienza a vender de inmediato.</p>
-                    <p class="reason-detail">Sin código, sin complicaciones. Solo regístrate, elige tu plan y tu tienda estará lista. <strong>Activación en menos de 24 horas.</strong></p>
+                    <p>Crea tu tienda en minutos sin conocimientos t�cnicos y comienza a vender de inmediato.</p>
+                    <p class="reason-detail">Sin c�digo, sin complicaciones. Solo reg�strate, elige tu plan y tu tienda estar� lista. <strong>Activaci�n en menos de 24 horas.</strong></p>
                 </div>
 
                 <!-- Card 2 -->
@@ -695,16 +695,16 @@
                         <div class="reason-mockup rc-mock-2">
                             <div class="rc2-window">
                                 <div class="rc2-header"><span>Pedido</span><span>Cliente</span><span>Estado</span></div>
-                                <div class="rc2-row rc2-r1"><span>#1042</span><span>María L.</span><span class="rc2-st green">✓</span></div>
-                                <div class="rc2-row rc2-r2"><span>#1043</span><span>Carlos R.</span><span class="rc2-st yellow">⏳</span></div>
-                                <div class="rc2-row rc2-r3"><span>#1044</span><span>Ana P.</span><span class="rc2-st green">✓</span></div>
-                                <div class="rc2-row rc2-r4"><span>#1045</span><span>Luis M.</span><span class="rc2-st red">✕</span></div>
+                                <div class="rc2-row rc2-r1"><span>#1042</span><span>Mar�a L.</span><span class="rc2-st green">?</span></div>
+                                <div class="rc2-row rc2-r2"><span>#1043</span><span>Carlos R.</span><span class="rc2-st yellow">?</span></div>
+                                <div class="rc2-row rc2-r3"><span>#1044</span><span>Ana P.</span><span class="rc2-st green">?</span></div>
+                                <div class="rc2-row rc2-r4"><span>#1045</span><span>Luis M.</span><span class="rc2-st red">?</span></div>
                             </div>
                         </div>
                     </div>
-                    <div class="reason-icons"><span style="background:#d1fae5; color:#16a34a">📋</span><span style="background:#fef3c7; color:#d97706">📊</span><span style="background:#e0f2fe; color:#0ea5e9">🔔</span></div>
-                    <h3>Gestiona productos y pedidos fácilmente</h3>
-                    <p>Administra tu catálogo, controla pedidos y gestiona todo desde un solo panel.</p>
+                    <div class="reason-icons"><span style="background:#d1fae5; color:#16a34a">??</span><span style="background:#fef3c7; color:#d97706">??</span><span style="background:#e0f2fe; color:#0ea5e9">??</span></div>
+                    <h3>Gestiona productos y pedidos f�cilmente</h3>
+                    <p>Administra tu cat�logo, controla pedidos y gestiona todo desde un solo panel.</p>
                     <p class="reason-detail">Aprueba pagos manualmente, da seguimiento a cada orden. <strong>Todo en tiempo real.</strong></p>
                 </div>
 
@@ -719,10 +719,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="reason-icons"><span style="background:#fae8ff; color:#a855f7">🎨</span><span style="background:#eef2ff; color:#6366f1">✨</span></div>
+                    <div class="reason-icons"><span style="background:#fae8ff; color:#a855f7">??</span><span style="background:#eef2ff; color:#6366f1">?</span></div>
                     <h3>Personaliza tu marca</h3>
                     <p>Configura tu logo, colores y estilo para que tu negocio tenga identidad propia.</p>
-                    <p class="reason-detail">Tu tienda refleja tu marca, no la nuestra. <strong>Branding profesional desde el día uno.</strong></p>
+                    <p class="reason-detail">Tu tienda refleja tu marca, no la nuestra. <strong>Branding profesional desde el d�a uno.</strong></p>
                 </div>
 
                 <!-- Card 4 -->
@@ -736,10 +736,10 @@
                             </div>
                         </div>
                     </div>
-                    <div class="reason-icons"><span style="background:#fef3c7; color:#d97706">📈</span><span style="background:#fee2e2; color:#dc2626">🎯</span></div>
+                    <div class="reason-icons"><span style="background:#fef3c7; color:#d97706">??</span><span style="background:#fee2e2; color:#dc2626">??</span></div>
                     <h3>Control total de tu negocio</h3>
                     <p>Supervisa ventas, clientes y rendimiento en tiempo real.</p>
-                    <p class="reason-detail">Reportes claros y métricas de crecimiento. <strong>Toma decisiones con datos reales.</strong></p>
+                    <p class="reason-detail">Reportes claros y m�tricas de crecimiento. <strong>Toma decisiones con datos reales.</strong></p>
                 </div>
 
                     <!-- Card 5: Equipo -->
@@ -754,8 +754,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="reason-icons"><span style="background:#e0f2fe; color:#0ea5e9">👥</span><span style="background:#d1fae5; color:#16a34a">🔑</span></div>
-                        <h3>Gestión de equipo y roles</h3>
+                        <div class="reason-icons"><span style="background:#e0f2fe; color:#0ea5e9">??</span><span style="background:#d1fae5; color:#16a34a">??</span></div>
+                        <h3>Gesti�n de equipo y roles</h3>
                         <p>Invita a tu equipo y asigna roles: Admin, Vendedor o Cliente.</p>
                         <p class="reason-detail">Cada miembro tiene acceso solo a lo que necesita. <strong>Control granular por tenant.</strong></p>
                     </div>
@@ -765,21 +765,21 @@
                         <div class="reason-img" style="background:linear-gradient(135deg,#d1fae5,#fef3c7)">
                             <div class="reason-mockup">
                                 <div class="rc6-window">
-                                    <div class="rc6-title">Métodos de pago</div>
+                                    <div class="rc6-title">M�todos de pago</div>
                                     <div class="rc6-methods">
-                                        <div class="rc6-method rc6-mt1"><span>📱</span><div>Nequi</div></div>
-                                        <div class="rc6-method rc6-mt2"><span>💳</span><div>Daviplata</div></div>
-                                        <div class="rc6-method rc6-mt3"><span>🏦</span><div>Transferencia</div></div>
-                                        <div class="rc6-method rc6-mt4"><span>📷</span><div>QR</div></div>
+                                        <div class="rc6-method rc6-mt1"><span>??</span><div>Nequi</div></div>
+                                        <div class="rc6-method rc6-mt2"><span>??</span><div>Daviplata</div></div>
+                                        <div class="rc6-method rc6-mt3"><span>??</span><div>Transferencia</div></div>
+                                        <div class="rc6-method rc6-mt4"><span>??</span><div>QR</div></div>
                                     </div>
-                                    <div class="rc6-status">✓ Comprobante recibido</div>
+                                    <div class="rc6-status">? Comprobante recibido</div>
                                 </div>
                             </div>
                         </div>
-                        <div class="reason-icons"><span style="background:#d1fae5; color:#16a34a">💰</span><span style="background:#fef3c7; color:#d97706">🧾</span></div>
+                        <div class="reason-icons"><span style="background:#d1fae5; color:#16a34a">??</span><span style="background:#fef3c7; color:#d97706">??</span></div>
                         <h3>Pagos manuales sin pasarela</h3>
                         <p>Acepta Nequi, Daviplata, transferencia o QR. Sin comisiones de terceros.</p>
-                        <p class="reason-detail">Tu cliente sube el comprobante y tú apruebas. <strong>Simple, directo y sin costos extra.</strong></p>
+                        <p class="reason-detail">Tu cliente sube el comprobante y t� apruebas. <strong>Simple, directo y sin costos extra.</strong></p>
                     </div>
 
             </div>
@@ -789,48 +789,48 @@
     </div>
 </section>
 
-<!-- ═══════════════════ TIPOS DE COMERCIO ═══════════════════ -->
+<!-- ------------------- TIPOS DE COMERCIO ------------------- -->
 <section style="padding:80px 0; background:#fff">
     <div style="max-width:1120px; margin:0 auto; padding:0 24px">
         <div style="text-align:center; margin-bottom:40px">
             <h2 style="font-size:1.8rem; font-weight:800; color:#111827; letter-spacing:-0.02em; margin:0 0 12px">Un software para diferentes tipos de comercio</h2>
-            <p style="color:#6b7280; font-size:0.95rem; margin:0; max-width:640px; margin-inline:auto; line-height:1.6">Zentrix se adapta a negocios como papelerías, tiendas de belleza, ferreterías, minimarkets, pet shops, droguerías y más.</p>
+            <p style="color:#6b7280; font-size:0.95rem; margin:0; max-width:640px; margin-inline:auto; line-height:1.6">Zentrix se adapta a negocios como papeler�as, tiendas de belleza, ferreter�as, minimarkets, pet shops, droguer�as y m�s.</p>
         </div>
 
         <div class="commerce-grid">
-            <div class="commerce-tag"><span class="ct-emoji">🐾</span> Pet Shop<div class="ct-desc">Gestiona inventario de alimentos, accesorios y medicinas. <strong>Todo para mascotas.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">💅</span> Belleza<div class="ct-desc">Agenda citas, vende productos de belleza y controla tu stock. <strong>Haz crecer tu salón.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">💻</span> Tecnología<div class="ct-desc">Vende equipos, accesorios y repuestos con control de garantías. <strong>Tech sin complicaciones.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🔧</span> Ferreterías<div class="ct-desc">Administra herramientas, materiales y pedidos al por mayor. <strong>Tu ferretería digital.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🍼</span> Pañalera<div class="ct-desc">Controla pañales, fórmulas y productos de bebé por tallas. <strong>Organiza tu pañalera.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🍰</span> Pastelería / Charcutería<div class="ct-desc">Gestiona pedidos de tortas, tablas y arreglos con fechas. <strong>Endulza tu negocio.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">📎</span> Papelería<div class="ct-desc">Vende útiles escolares, suministros de oficina y más. <strong>Todo en orden.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🏪</span> Tienda de variedades<div class="ct-desc">Cientos de productos de diferentes categorías en un solo lugar. <strong>Variedad sin caos.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🛒</span> Minimarkets<div class="ct-desc">Control de inventario, precios y proveedores para tu mercado. <strong>Tu mini, tu control.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">👕</span> Tiendas de ropa<div class="ct-desc">Gestiona tallas, colores, temporadas y catálogo visual. <strong>Moda organizada.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🚗</span> Autopartes<div class="ct-desc">Busca repuestos por referencia, marca y modelo. <strong>Encuentra todo rápido.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🐶</span> Veterinaria<div class="ct-desc">Agenda consultas, vende medicamentos y productos. <strong>Cuida a sus pacientes.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">📦</span> E-commerce<div class="ct-desc">Tu tienda online completa con catálogo, carrito y pagos. <strong>Vende 24/7.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🧴</span> Perfumería<div class="ct-desc">Gestiona fragancias, cosméticos y sets de regalo. <strong>Aroma de éxito.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">💆</span> Peluquería / Spa<div class="ct-desc">Agenda servicios, vende productos capilares y gestiona equipo. <strong>Relaja tu gestión.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">🌿</span> Tiendas Naturistas<div class="ct-desc">Vende productos naturales, suplementos y alimentos saludables. <strong>Bienestar natural.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">👟</span> Calzado<div class="ct-desc">Administra calzado por tallas, marcas y temporadas. <strong>Cada paso cuenta.</strong></div></div>
-            <div class="commerce-tag"><span class="ct-emoji">💊</span> Droguerías<div class="ct-desc">Control de medicamentos, vencimientos y pedidos. <strong>Salud bajo control.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Pet Shop<div class="ct-desc">Gestiona inventario de alimentos, accesorios y medicinas. <strong>Todo para mascotas.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Belleza<div class="ct-desc">Agenda citas, vende productos de belleza y controla tu stock. <strong>Haz crecer tu sal�n.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Tecnolog�a<div class="ct-desc">Vende equipos, accesorios y repuestos con control de garant�as. <strong>Tech sin complicaciones.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Ferreter�as<div class="ct-desc">Administra herramientas, materiales y pedidos al por mayor. <strong>Tu ferreter�a digital.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Pa�alera<div class="ct-desc">Controla pa�ales, f�rmulas y productos de beb� por tallas. <strong>Organiza tu pa�alera.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Pasteler�a / Charcuter�a<div class="ct-desc">Gestiona pedidos de tortas, tablas y arreglos con fechas. <strong>Endulza tu negocio.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Papeler�a<div class="ct-desc">Vende �tiles escolares, suministros de oficina y m�s. <strong>Todo en orden.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Tienda de variedades<div class="ct-desc">Cientos de productos de diferentes categor�as en un solo lugar. <strong>Variedad sin caos.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Minimarkets<div class="ct-desc">Control de inventario, precios y proveedores para tu mercado. <strong>Tu mini, tu control.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Tiendas de ropa<div class="ct-desc">Gestiona tallas, colores, temporadas y cat�logo visual. <strong>Moda organizada.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Autopartes<div class="ct-desc">Busca repuestos por referencia, marca y modelo. <strong>Encuentra todo r�pido.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Veterinaria<div class="ct-desc">Agenda consultas, vende medicamentos y productos. <strong>Cuida a sus pacientes.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> E-commerce<div class="ct-desc">Tu tienda online completa con cat�logo, carrito y pagos. <strong>Vende 24/7.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Perfumer�a<div class="ct-desc">Gestiona fragancias, cosm�ticos y sets de regalo. <strong>Aroma de �xito.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Peluquer�a / Spa<div class="ct-desc">Agenda servicios, vende productos capilares y gestiona equipo. <strong>Relaja tu gesti�n.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Tiendas Naturistas<div class="ct-desc">Vende productos naturales, suplementos y alimentos saludables. <strong>Bienestar natural.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Calzado<div class="ct-desc">Administra calzado por tallas, marcas y temporadas. <strong>Cada paso cuenta.</strong></div></div>
+            <div class="commerce-tag"><span class="ct-emoji">??</span> Droguer�as<div class="ct-desc">Control de medicamentos, vencimientos y pedidos. <strong>Salud bajo control.</strong></div></div>
         </div>
     </div>
 </section>
 
-<!-- ═══════════════════ CTA FINAL ═══════════════════ -->
+<!-- ------------------- CTA FINAL ------------------- -->
 <section class="z-cta-section">
-    <h2>Únete a las empresas que ya están creciendo con Zentrix.</h2>
+    <h2>�nete a las empresas que ya est�n creciendo con Zentrix.</h2>
     <p>Empieza hoy y lleva tu negocio al siguiente nivel.</p>
     <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap">
-        <a href="register.html" class="z-btn z-btn-lg z-btn-white">Crear mi tienda gratis →</a>
+        <a href="register.html" class="z-btn z-btn-lg z-btn-white">Crear mi tienda gratis ?</a>
         <a href="pricing.html" class="z-btn z-btn-lg z-btn-ghost-white">Comparar planes</a>
     </div>
 </section>
 
-<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<!-- ------------------- FOOTER ------------------- -->
 <footer class="z-footer-pro">
     <div class="z-footer-inner">
         <div>
@@ -838,7 +838,7 @@
                 <img src="img/logoZentrix-sinfondo.png" alt="Zentrix">
                 <span>Zentrix</span>
             </div>
-            <p class="z-footer-desc">Con Zentrix, tu negocio en Colombia escala con orden y control. Productos, pedidos, marca y administración, todo conectado.</p>
+            <p class="z-footer-desc">Con Zentrix, tu negocio en Colombia escala con orden y control. Productos, pedidos, marca y administraci�n, todo conectado.</p>
         </div>
         <div class="z-footer-col">
             <h4>Producto</h4>
@@ -848,24 +848,24 @@
         <div class="z-footer-col">
             <h4>Cuenta</h4>
             <a href="register.html">Crear cuenta</a>
-            <a href="login.html">Iniciar sesión</a>
+            <a href="login.html">Iniciar sesi�n</a>
             <a href="payment.html">Activar plan</a>
         </div>
         <div class="z-footer-col">
             <h4>Empresa</h4>
             <a href="#">Sobre nosotros</a>
             <a href="#">Contacto</a>
-            <a href="#">Términos</a>
+            <a href="#">T�rminos</a>
         </div>
     </div>
     <div class="z-footer-bottom" style="justify-content:center; text-align:center">
-        <span style="color:#111827">© 2026 Zentrix · Desarrolado Por  <strong>Red Matrix Solutions</strong></span>
+        <span style="color:#111827">� 2026 Zentrix � Desarrolado Por  <strong>Red Matrix Solutions</strong></span>
     </div>
 </footer>
 
 <script src="js/config.js"></script>
 <script>
-/* ── Confetti en CTA ── */
+/* -- Confetti en CTA -- */
 (function() {
     const btn = document.getElementById("ctaNavBtn");
     if (!btn) return;
@@ -873,7 +873,7 @@
         const rect = btn.getBoundingClientRect();
         const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
         const colors = ["#6366f1","#8b5cf6","#f59e0b","#22c55e","#ef4444","#0ea5e9","#f472b6"];
-        const emojis = ["🎉","🎊","✨","⭐","🥳","🎈"];
+        const emojis = ["??","??","?","?","??","??"];
         for (let i = 0; i < 18; i++) {
             const el = document.createElement("div");
             const isEmoji = Math.random() > 0.5;
@@ -894,7 +894,7 @@
     btn.addEventListener("mouseenter", burst);
 })();
 
-/* ── Carrusel de razones con auto-play ── */
+/* -- Carrusel de razones con auto-play -- */
 let cardIndex = 0;
 let autoPlayTimer = null;
 function scrollCards(dir) {
