@@ -3311,10 +3311,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (userRole === "ROLE_ADMIN" || jwtRole === "ROLE_ADMIN" || userEmail === "superadmin@zentrix.app") { window.location.href = "admin-dashboard.html"; return; }
 
     // =========================================================
-    // VERIFICAR SI EL TENANT ESTÁ SUSPENDIDO O PAUSADO
-    // Si el admin suspendió o pausó este tenant, bloquear acceso.
+    // VERIFICAR SI EL TENANT ESTÁ SUSPENDIDO
+    // Consulta el estado del tenant al cargar Y cada 30 segundos.
+    // Si está INACTIVE, bloquea inmediatamente.
     // =========================================================
-    if (user.tenantId) {
+    function checkTenantStatus() {
+        if (!user.tenantId) return;
         fetch(API + "/tenants/" + user.tenantId, { headers: authHeaders() })
             .then(function(res) { return res.ok ? res.json() : null; })
             .then(function(tenant) {
@@ -3323,6 +3325,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }).catch(function() {});
     }
+    checkTenantStatus();
+    setInterval(checkTenantStatus, 30000); // Verificar cada 30 segundos
 
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
     document.getElementById("userEmail").textContent = user.email || "";

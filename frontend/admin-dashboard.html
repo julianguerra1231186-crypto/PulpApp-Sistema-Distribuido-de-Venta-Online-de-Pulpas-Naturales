@@ -522,31 +522,21 @@ function isPlanPaused(tenantId) {
     return paused[tenantId] === true;
 }
 
-function togglePlanPause(tenantId, pause) {
+async function togglePlanPause(tenantId, pause) {
     const action = pause ? 'PAUSAR' : 'REACTIVAR';
     if (!confirm('¿' + action + ' el plan de este tenant?\n\n' + (pause ? 'El cliente recibirá una notificación de que su plan fue pausado y no podrá acceder al sistema.' : 'El cliente podrá acceder nuevamente al sistema.'))) return;
 
-    const paused = JSON.parse(localStorage.getItem('zentrix_paused_plans') || '{}');
-    paused[tenantId] = pause;
-    localStorage.setItem('zentrix_paused_plans', JSON.stringify(paused));
+    try {
+        // Cambiar estado del tenant via API
+        const status = pause ? 'INACTIVE' : 'ACTIVE';
+        await apiAction('/tenants/' + tenantId + '/status?status=' + status, 'PATCH');
 
-    // Guardar notificación para el cliente
-    const notifications = JSON.parse(localStorage.getItem('zentrix_tenant_notifications') || '{}');
-    if (!notifications[tenantId]) notifications[tenantId] = [];
-    const now = new Date().toLocaleString('es-CO');
-    if (pause) {
-        notifications[tenantId].push({ type: 'warning', message: '⚠️ Tu plan ha sido pausado por el administrador. Contacta soporte para más información.', date: now });
-        // También suspender el tenant via API
-        fetch(API + '/tenants/' + tenantId + '/status?status=INACTIVE', { method: 'PATCH', headers: headers() }).catch(e => {});
-    } else {
-        notifications[tenantId].push({ type: 'success', message: '✅ Tu plan ha sido reactivado. Ya puedes acceder al sistema normalmente.', date: now });
-        // Reactivar tenant
-        fetch(API + '/tenants/' + tenantId + '/status?status=ACTIVE', { method: 'PATCH', headers: headers() }).catch(e => {});
+        toast(pause ? '⏸ Tenant pausado correctamente' : '▶ Tenant reactivado correctamente');
+        loadTenants();
+        loadOverview();
+    } catch (e) {
+        toast('Error: ' + e.message, 'error');
     }
-    localStorage.setItem('zentrix_tenant_notifications', JSON.stringify(notifications));
-
-    toast(pause ? '⏸ Plan pausado — Cliente notificado' : '▶ Plan reactivado — Cliente notificado');
-    loadTenants();
 }
 
 // ── Payments ──
