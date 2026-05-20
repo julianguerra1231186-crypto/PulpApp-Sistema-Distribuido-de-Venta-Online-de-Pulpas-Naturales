@@ -347,9 +347,10 @@ async function loadOverview() {
             apiFetch("/users").catch(() => [])
         ]);
         document.getElementById("statTenants").textContent = tenants.length || 0;
-        document.getElementById("statPayments").textContent = payments.length || 0;
-        document.getElementById("statUsers").textContent = users.length || 0;
-        document.getElementById("statOrders").textContent = "—";
+        var elSuspended = document.getElementById("statSuspended");
+        if (elSuspended) elSuspended.textContent = tenants.filter(t => t.status === 'SUSPENDED').length || 0;
+        var elRevenue = document.getElementById("statRevenue");
+        if (elRevenue) elRevenue.textContent = "—";
 
         if (payments.length === 0) {
             document.getElementById("overviewPayments").innerHTML = '<div class="empty-msg">No hay pagos pendientes 🎉</div>';
