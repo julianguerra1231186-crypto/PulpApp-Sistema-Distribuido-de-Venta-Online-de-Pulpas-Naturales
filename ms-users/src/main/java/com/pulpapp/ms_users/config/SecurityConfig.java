@@ -57,7 +57,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/auth/create-admin").hasAuthority("ROLE_ADMIN")
                 .requestMatchers("/auth/**").permitAll()
 
-                // ── Tenants: solo ADMIN puede gestionar tenants ────────────
+                // ── Tenants: GET por ID accesible para usuarios autenticados ──
+                // (necesario para verificar si el tenant está suspendido)
+                .requestMatchers(HttpMethod.GET, "/tenants/{id}").authenticated()
+                // Gestión de tenants (crear, listar todos, cambiar estado): solo ADMIN
                 .requestMatchers("/tenants/**").hasAuthority("ROLE_ADMIN")
 
                 // ── Pagos onboarding SaaS (Fase 4) ────────────────────────
