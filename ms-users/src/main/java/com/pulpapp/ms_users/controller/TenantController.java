@@ -45,7 +45,8 @@ public class TenantController {
 
     @PatchMapping("/{id}/status")
     public TenantResponseDTO updateStatus(@PathVariable Long id,
-                                          @RequestParam TenantStatus status) {
-        return tenantService.updateStatus(id, status);
+                                          @RequestParam String status) {
+        TenantStatus tenantStatus = TenantStatus.valueOf(status);
+        return tenantService.updateStatus(id, tenantStatus);
     }
 }
