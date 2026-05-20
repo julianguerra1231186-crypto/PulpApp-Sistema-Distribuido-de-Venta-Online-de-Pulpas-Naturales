@@ -348,7 +348,7 @@ async function loadOverview() {
         ]);
         document.getElementById("statTenants").textContent = tenants.length || 0;
         var elSuspended = document.getElementById("statSuspended");
-        if (elSuspended) elSuspended.textContent = tenants.filter(t => t.status === 'SUSPENDED').length || 0;
+        if (elSuspended) elSuspended.textContent = tenants.filter(t => t.status === 'INACTIVE').length || 0;
         var elRevenue = document.getElementById("statRevenue");
         if (elRevenue) elRevenue.textContent = "—";
 
@@ -397,7 +397,7 @@ async function loadTenants() {
         if (!data.length) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">No hay tenants registrados</div>'; return; }
         let html = `<table class="admin-table"><thead><tr><th>ID</th><th>Nombre Empresa</th><th>Tipo Negocio</th><th>Plan</th><th>Días Restantes</th><th>Estado</th><th>Control Plan</th><th>Acciones</th></tr></thead><tbody>`;
         data.forEach(t => {
-            const statusBadge = t.status === 'ACTIVE' ? '<span class="badge badge-green">ACTIVO</span>' : t.status === 'PENDING' ? '<span class="badge badge-yellow">PENDIENTE</span>' : t.status === 'SUSPENDED' ? '<span class="badge badge-red">SUSPENDIDO</span>' : '<span class="badge badge-red">' + t.status + '</span>';
+            const statusBadge = t.status === 'ACTIVE' ? '<span class="badge badge-green">ACTIVO</span>' : t.status === 'PENDING' ? '<span class="badge badge-yellow">PENDIENTE</span>' : t.status === 'INACTIVE' ? '<span class="badge badge-red">SUSPENDIDO</span>' : '<span class="badge badge-red">' + t.status + '</span>';
             const planName = getTenantPlanName(t.id);
             const daysBadge = getDaysBadge(t.id);
             const planPaused = isPlanPaused(t.id);
@@ -429,7 +429,7 @@ async function loadTenants() {
         let expiring = 0;
         data.forEach(t => { const d = calcDaysRemaining(t.id); if (d !== null && d <= 7 && d > 0) expiring++; });
         document.getElementById("statExpiring").textContent = expiring;
-        document.getElementById("statSuspended").textContent = data.filter(t => t.status === 'SUSPENDED').length;
+        document.getElementById("statSuspended").textContent = data.filter(t => t.status === 'INACTIVE').length;
     } catch (e) { document.getElementById("tenantsTable").innerHTML = '<div class="empty-msg">Error al cargar tenants: ' + e.message + '</div>'; }
 }
 
@@ -446,7 +446,7 @@ async function activateTenant(id) {
 async function suspendTenant(id) {
     if (!confirm('¿Suspender este tenant? No podrá acceder al sistema.')) return;
     try {
-        await apiAction('/tenants/' + id + '/status?status=SUSPENDED', 'PATCH');
+        await apiAction('/tenants/' + id + '/status?status=INACTIVE', 'PATCH');
         toast('✓ Tenant suspendido');
         loadTenants();
         loadOverview();
@@ -459,7 +459,7 @@ async function deleteTenant(id) {
         const res = await fetch(API + '/tenants/' + id, { method: 'DELETE', headers: headers() });
         if (!res.ok) {
             // Fallback: suspend instead of delete
-            await apiAction('/tenants/' + id + '/status?status=SUSPENDED', 'PATCH');
+            await apiAction('/tenants/' + id + '/status?status=INACTIVE', 'PATCH');
             toast('Tenant suspendido (eliminación no disponible)');
         } else {
             toast('✓ Tenant eliminado');
@@ -469,7 +469,7 @@ async function deleteTenant(id) {
     } catch (e) {
         // Fallback to suspend
         try {
-            await apiAction('/tenants/' + id + '/status?status=SUSPENDED', 'PATCH');
+            await apiAction('/tenants/' + id + '/status?status=INACTIVE', 'PATCH');
             toast('Tenant suspendido (fallback)');
             loadTenants();
         } catch (e2) { toast('Error: ' + e2.message, 'error'); }
@@ -537,7 +537,7 @@ function togglePlanPause(tenantId, pause) {
     if (pause) {
         notifications[tenantId].push({ type: 'warning', message: '⚠️ Tu plan ha sido pausado por el administrador. Contacta soporte para más información.', date: now });
         // También suspender el tenant via API
-        fetch(API + '/tenants/' + tenantId + '/status?status=SUSPENDED', { method: 'PATCH', headers: headers() }).catch(e => {});
+        fetch(API + '/tenants/' + tenantId + '/status?status=INACTIVE', { method: 'PATCH', headers: headers() }).catch(e => {});
     } else {
         notifications[tenantId].push({ type: 'success', message: '✅ Tu plan ha sido reactivado. Ya puedes acceder al sistema normalmente.', date: now });
         // Reactivar tenant
