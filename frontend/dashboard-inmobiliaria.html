@@ -3307,6 +3307,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const sessionUser = window.PulpAuth.getSessionUser ? window.PulpAuth.getSessionUser() : null;
     const jwtRole = sessionUser?.role || "";
     if (userRole === "ROLE_ADMIN" || jwtRole === "ROLE_ADMIN" || userEmail === "superadmin@zentrix.app") { window.location.href = "admin-dashboard.html"; return; }
+
+    // Verificar si el tenant está suspendido (INACTIVE)
+    if (user.tenantId) {
+        fetch(API + "/tenants/" + user.tenantId, { headers: authHeaders() })
+            .then(function(res) { return res.ok ? res.json() : null; })
+            .then(function(tenant) {
+                if (tenant && tenant.status === 'INACTIVE') {
+                    document.body.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; min-height:100vh; background:#f8fafc; font-family:Inter,system-ui,sans-serif"><div style="text-align:center; max-width:500px; padding:40px; background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.08)"><div style="font-size:3rem; margin-bottom:16px">🚫</div><h1 style="margin:0 0 12px; font-size:1.5rem; color:#111827">Cuenta Suspendida</h1><p style="color:#6b7280; margin:0 0 24px; line-height:1.6">Tu cuenta ha sido suspendida por el administrador. Contacta soporte para más información.</p><button onclick="localStorage.clear(); window.location.href=\'login.html\'" style="padding:12px 24px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-size:0.9rem; font-weight:700; cursor:pointer">Cerrar sesión</button></div></div>';
+                }
+            }).catch(function() {});
+    }
+
     document.getElementById("userName").textContent = localStorage.getItem("zentrix_biz_name") || user.name || "Mi Inmobiliaria";
     document.getElementById("userEmail").textContent = user.email || "";
     document.getElementById("welcomeBizName").textContent = localStorage.getItem("zentrix_biz_name") || "Mi Inmobiliaria";
