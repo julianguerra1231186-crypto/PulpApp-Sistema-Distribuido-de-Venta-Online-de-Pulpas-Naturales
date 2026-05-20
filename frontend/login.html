@@ -170,6 +170,24 @@
                 }
             }
             localStorage.removeItem("pulpapp_redirect");
+
+            // Verificar si el tenant está suspendido antes de redirigir
+            if (fullData.tenantId && role !== "ROLE_ADMIN") {
+                try {
+                    const tRes = await fetch(window.ZENTRIX_API + "/tenants/" + fullData.tenantId, { headers: { "Authorization": "Bearer " + fullData.token } });
+                    if (tRes.ok) {
+                        const tenant = await tRes.json();
+                        if (tenant.status === "INACTIVE") {
+                            localStorage.removeItem("pulpapp_jwt");
+                            localStorage.removeItem("pulpapp_user");
+                            toast("Tu cuenta ha sido suspendida. Contacta al administrador.", "error");
+                            btn.disabled = false; btn.textContent = "Iniciar sesión";
+                            return;
+                        }
+                    }
+                } catch(e) {}
+            }
+
             setTimeout(() => { window.location.href = redirect; }, 800);
         } catch (err) {
             toast(err.message || "Credenciales incorrectas", "error");
