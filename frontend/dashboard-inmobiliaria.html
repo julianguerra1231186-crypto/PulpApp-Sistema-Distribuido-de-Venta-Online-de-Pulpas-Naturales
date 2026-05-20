@@ -3316,8 +3316,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // Si está INACTIVE, bloquea inmediatamente.
     // =========================================================
     function checkTenantStatus() {
-        if (!user.tenantId) return;
-        fetch(API + "/tenants/" + user.tenantId, { headers: authHeaders() })
+        var tenantId = user.tenantId;
+        // Si no hay tenantId en localStorage, intentar obtenerlo de la API
+        if (!tenantId) {
+            fetch(API + "/users/email?email=" + encodeURIComponent(user.email), { headers: authHeaders() })
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(u) {
+                    if (u && u.tenantId) {
+                        user.tenantId = u.tenantId;
+                        localStorage.setItem("pulpapp_user", JSON.stringify(user));
+                        verifyTenant(u.tenantId);
+                    }
+                }).catch(function() {});
+            return;
+        }
+        verifyTenant(tenantId);
+    }
+    function verifyTenant(tenantId) {
+        fetch(API + "/tenants/" + tenantId, { headers: authHeaders() })
             .then(function(res) { return res.ok ? res.json() : null; })
             .then(function(tenant) {
                 if (tenant && tenant.status === 'INACTIVE') {
