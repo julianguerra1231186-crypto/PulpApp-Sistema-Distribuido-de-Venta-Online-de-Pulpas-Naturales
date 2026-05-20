@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="es">
-<head>`n    <link rel="icon" type="image/png" href="img/logoZentrix-sinfondo.png">
+<head>`r`n    <meta charset="UTF-8">`r`n    <link rel="icon" type="image/png" href="img/logoZentrix-sinfondo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zentrix | Iniciar sesión</title>
+    <title>Zentrix | Iniciar sesiï¿½n</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/saas.css">
@@ -59,21 +59,21 @@
 
             <form id="loginForm" novalidate>
                 <div class="z-form-group">
-                    <label for="loginEmail">Correo electrónico</label>
+                    <label for="loginEmail">Correo electrï¿½nico</label>
                     <input type="email" id="loginEmail" class="z-input" placeholder="tu@email.com" required>
                 </div>
                 <div class="z-form-group">
-                    <label for="loginPassword">Contraseña</label>
+                    <label for="loginPassword">Contraseï¿½a</label>
                     <div style="position:relative">
-                        <input type="password" id="loginPassword" class="z-input" placeholder="Tu contraseña" required>
+                        <input type="password" id="loginPassword" class="z-input" placeholder="Tu contraseï¿½a" required>
                         <button type="button" onclick="togglePasswordVisibility()" style="position:absolute; right:12px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; font-size:1.1rem; color:#6b7280" id="togglePwdBtn">???</button>
                     </div>
                 </div>
-                <button type="submit" id="loginBtn" class="z-btn z-btn-primary z-btn-block z-btn-lg" style="margin-top:8px">Iniciar sesión</button>
+                <button type="submit" id="loginBtn" class="z-btn z-btn-primary z-btn-block z-btn-lg" style="margin-top:8px">Iniciar sesiï¿½n</button>
             </form>
 
             <p style="text-align:center; margin-top:24px; color:#6b7280; font-size:0.9rem">
-                ¿No tienes cuenta? <a href="register.html" class="auth-link">Regístrate gratis</a>
+                ï¿½No tienes cuenta? <a href="register.html" class="auth-link">Regï¿½strate gratis</a>
             </p>
         </div>
 
@@ -82,9 +82,9 @@
             <p>Accede a tu panel de control, revisa pedidos, actualiza productos y administra tu equipo.</p>
             <ul class="auth-side-features">
                 <li>Panel de control en tiempo real</li>
-                <li>Gestión de productos y pedidos</li>
+                <li>Gestiï¿½n de productos y pedidos</li>
                 <li>Reportes de ventas</li>
-                <li>Administración de equipo</li>
+                <li>Administraciï¿½n de equipo</li>
                 <li>Branding personalizado</li>
             </ul>
         </div>
@@ -136,7 +136,7 @@
         const email = document.getElementById("loginEmail").value.trim().toLowerCase();
         const password = document.getElementById("loginPassword").value.trim();
 
-        if (!email || !password) { toast("Completa email y contraseña", "error"); return; }
+        if (!email || !password) { toast("Completa email y contraseï¿½a", "error"); return; }
 
         btn.disabled = true; btn.textContent = "Ingresando...";
 
@@ -150,7 +150,7 @@
 
             localStorage.setItem("pulpapp_user", JSON.stringify(fullData));
             localStorage.setItem("user", JSON.stringify(fullData));
-            toast("Sesión iniciada ?");
+            toast("Sesiï¿½n iniciada ?");
 
             const role = fullData.role?.name || fullData.role || fullData.tenantRole || "";
             const userEmail = (fullData.email || "").toLowerCase();
@@ -172,7 +172,7 @@
             setTimeout(() => { window.location.href = redirect; }, 800);
         } catch (err) {
             toast(err.message || "Credenciales incorrectas", "error");
-            btn.disabled = false; btn.textContent = "Iniciar sesión";
+            btn.disabled = false; btn.textContent = "Iniciar sesiï¿½n";
         }
     });
 })();

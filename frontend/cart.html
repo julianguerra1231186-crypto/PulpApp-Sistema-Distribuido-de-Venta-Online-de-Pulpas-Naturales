@@ -1,6 +1,6 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="es">
-<head>`n    <link rel="icon" type="image/png" href="img/logoZentrix-sinfondo.png">
+<head>`r`n    <meta charset="UTF-8">`r`n    <link rel="icon" type="image/png" href="img/logoZentrix-sinfondo.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zentrix | Carrito</title>
@@ -63,8 +63,8 @@
             <div id="cartList" class="cart-list"></div>
         </article>
         <!--
-            Bloque de datos del cliente — flujo basado en JWT.
-            Detecta sesión automáticamente y renderiza según estado.
+            Bloque de datos del cliente ï¿½ flujo basado en JWT.
+            Detecta sesiï¿½n automï¿½ticamente y renderiza segï¿½n estado.
         -->
         <article class="glass-card checkout-card" id="clienteCard">
             <div class="card-heading">
@@ -74,29 +74,29 @@
                 </div>
             </div>
 
-            <!-- Estado: sin sesión -->
+            <!-- Estado: sin sesiï¿½n -->
             <div id="checkoutGuest" class="checkout-access-centered hidden">
                 <p class="helper-text" style="margin-bottom:20px">
-                    Inicia sesión para autocompletar tus datos y finalizar la compra.
+                    Inicia sesiï¿½n para autocompletar tus datos y finalizar la compra.
                 </p>
                 <div class="inline-actions inline-actions--center">
                     <button id="checkoutLoginBtn" class="btn btn-primary" type="button">
-                        Iniciar sesión
+                        Iniciar sesiï¿½n
                     </button>
                 </div>
                 <p style="text-align:center; margin-top:14px; font-size:0.88rem; color:var(--text-muted)">
-                    ¿No tienes cuenta?
-                    <a href="register.html" style="color:var(--brand); font-weight:600">Regístrate aquí</a>
+                    ï¿½No tienes cuenta?
+                    <a href="register.html" style="color:var(--brand); font-weight:600">Regï¿½strate aquï¿½</a>
                 </p>
             </div>
 
-            <!-- Estado: autenticado — datos autocargados -->
+            <!-- Estado: autenticado ï¿½ datos autocargados -->
             <div id="checkoutUserData" class="hidden">
                 <div class="checkout-user-info">
                     <div class="checkout-user-avatar" id="checkoutAvatar">U</div>
                     <div>
-                        <strong id="checkoutUserName">—</strong>
-                        <span id="checkoutUserEmail" style="display:block; color:var(--text-muted); font-size:0.88rem">—</span>
+                        <strong id="checkoutUserName">ï¿½</strong>
+                        <span id="checkoutUserEmail" style="display:block; color:var(--text-muted); font-size:0.88rem">ï¿½</span>
                     </div>
                 </div>
 
@@ -106,20 +106,20 @@
                         <input type="text" id="checkoutNombre" placeholder="Nombre" readonly>
                     </label>
                     <label>
-                        <span>Teléfono</span>
-                        <input type="tel" id="checkoutTelefono" placeholder="Teléfono" readonly>
+                        <span>Telï¿½fono</span>
+                        <input type="tel" id="checkoutTelefono" placeholder="Telï¿½fono" readonly>
                     </label>
                     <label>
-                        <span>Correo electrónico</span>
+                        <span>Correo electrï¿½nico</span>
                         <input type="email" id="checkoutCorreo" placeholder="correo@ejemplo.com" readonly>
                     </label>
                     <label>
-                        <span>Cédula</span>
-                        <input type="text" id="checkoutCedula" placeholder="Cédula" readonly>
+                        <span>Cï¿½dula</span>
+                        <input type="text" id="checkoutCedula" placeholder="Cï¿½dula" readonly>
                     </label>
                     <label class="full-width">
-                        <span>Dirección de entrega</span>
-                        <input type="text" id="checkoutDireccion" placeholder="Dirección" readonly>
+                        <span>Direcciï¿½n de entrega</span>
+                        <input type="text" id="checkoutDireccion" placeholder="Direcciï¿½n" readonly>
                     </label>
                 </div>
 
@@ -132,7 +132,7 @@
                     </button>
                     <button id="checkoutLogoutBtn" class="btn btn-secondary" type="button"
                             style="font-size:0.88rem; color:var(--danger)">
-                        Cerrar sesión
+                        Cerrar sesiï¿½n
                     </button>
                 </div>
             </div>
@@ -177,7 +177,7 @@
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
     </svg>
-    <span>¿Necesitas ayuda?</span>
+    <span>ï¿½Necesitas ayuda?</span>
 </a>
 
 <link rel="stylesheet" href="css/dashboard.css">
@@ -187,8 +187,8 @@
 <script src="app.js"></script>
 <script>
 /* -------------------------------------------------------------
-   checkout.js (inline) — Sección CLIENTE del carrito
-   Detecta sesión JWT y renderiza el estado correcto.
+   checkout.js (inline) ï¿½ Secciï¿½n CLIENTE del carrito
+   Detecta sesiï¿½n JWT y renderiza el estado correcto.
 ------------------------------------------------------------- */
 (function initCheckout() {
 
@@ -207,17 +207,17 @@
                 localStorage.getItem("user") || "null"
             ) || {};
 
-            // Elimina campos null/undefined para que no sobreescriban valores válidos del JWT
+            // Elimina campos null/undefined para que no sobreescriban valores vï¿½lidos del JWT
             const fromStore = Object.fromEntries(
                 Object.entries(raw).filter(([, v]) => v !== null && v !== undefined && v !== "")
             );
 
-            // Del JWT solo tomamos lo que no esté ya en fromStore
+            // Del JWT solo tomamos lo que no estï¿½ ya en fromStore
             const fromJwt = window.PulpAuth?.getSessionUser() || {};
 
             const merged = { ...fromJwt, ...fromStore };
 
-            // Si el store tiene datos útiles, lo usamos directamente
+            // Si el store tiene datos ï¿½tiles, lo usamos directamente
             if (merged.email || merged.name) return merged;
             return null;
         } catch {
@@ -242,7 +242,7 @@
     }
 
     function redirectToLogin() {
-        // Guarda la URL actual para volver después del login
+        // Guarda la URL actual para volver despuï¿½s del login
         localStorage.setItem("pulpapp_redirect", "cart.html");
         window.location.href = "login.html";
     }
@@ -258,8 +258,8 @@
     // -- Render -----------------------------------------------
 
     function renderUserData(user) {
-        document.getElementById("checkoutUserName").textContent  = user.name  || "—";
-        document.getElementById("checkoutUserEmail").textContent = user.email || "—";
+        document.getElementById("checkoutUserName").textContent  = user.name  || "ï¿½";
+        document.getElementById("checkoutUserEmail").textContent = user.email || "ï¿½";
         document.getElementById("checkoutAvatar").textContent    = getInitials(user.name || user.email);
         document.getElementById("checkoutNombre").value    = user.name      || "";
         document.getElementById("checkoutTelefono").value  = user.telefono  || "";
@@ -286,8 +286,8 @@
         if (checkAuth()) {
             let user = loadUserFromStorage();
 
-            // -- DIAGNÓSTICO (quitar en producción) ---------------
-            console.group("?? PulpApp Checkout — diagnóstico");
+            // -- DIAGNï¿½STICO (quitar en producciï¿½n) ---------------
+            console.group("?? PulpApp Checkout ï¿½ diagnï¿½stico");
             console.log("pulpapp_user raw:", localStorage.getItem("pulpapp_user"));
             console.log("user raw:", localStorage.getItem("user"));
             console.log("pulpapp_jwt:", localStorage.getItem("pulpapp_jwt") ? "presente" : "ausente");
@@ -306,7 +306,7 @@
             if (user) {
                 showAuthState(user);
 
-                // Si aún faltan campos tras el fetch, activa modo edición automáticamente
+                // Si aï¿½n faltan campos tras el fetch, activa modo ediciï¿½n automï¿½ticamente
                 const stillMissing = !user.cedula || !user.telefono || !user.direccion;
                 if (stillMissing) {
                     const editBtn = document.getElementById("checkoutEditBtn");
@@ -334,13 +334,13 @@
             showGuestState();
         }
 
-        // Botón "Iniciar sesión" ? redirige guardando return URL
+        // Botï¿½n "Iniciar sesiï¿½n" ? redirige guardando return URL
         const loginBtn = document.getElementById("checkoutLoginBtn");
         if (loginBtn) {
             loginBtn.addEventListener("click", redirectToLogin);
         }
 
-        // Botón "Cerrar sesión" dentro del checkout
+        // Botï¿½n "Cerrar sesiï¿½n" dentro del checkout
         const logoutBtn = document.getElementById("checkoutLogoutBtn");
         if (logoutBtn) {
             logoutBtn.addEventListener("click", () => {
@@ -348,7 +348,7 @@
             });
         }
 
-        // Botón "Finalizar compra" — solo funciona si está autenticado
+        // Botï¿½n "Finalizar compra" ï¿½ solo funciona si estï¿½ autenticado
         const checkoutBtn = document.getElementById("checkoutButton");
         if (checkoutBtn) {
             checkoutBtn.addEventListener("click", (e) => {
@@ -356,7 +356,7 @@
                     e.preventDefault();
                     const toast = document.getElementById("appToast");
                     if (toast) {
-                        toast.textContent = "Debes iniciar sesión para finalizar la compra";
+                        toast.textContent = "Debes iniciar sesiï¿½n para finalizar la compra";
                         toast.className = "toast show error";
                         clearTimeout(window.__cartToast);
                         window.__cartToast = setTimeout(() => {
@@ -370,7 +370,7 @@
             });
         }
 
-        // -- Botón Editar / Guardar datos -------------------------
+        // -- Botï¿½n Editar / Guardar datos -------------------------
         const editBtn = document.getElementById("checkoutEditBtn");
         const saveBtn = document.getElementById("checkoutSaveBtn");
         const editableFields = ["checkoutNombre","checkoutTelefono","checkoutCedula","checkoutDireccion"];
@@ -400,12 +400,12 @@
                             stored = { ...stored, ...profile };
                             localStorage.setItem("pulpapp_user", JSON.stringify(stored));
                         }
-                    } catch(e) { /* continúa */ }
+                    } catch(e) { /* continï¿½a */ }
                 }
 
                 if (!stored?.id) {
                     const t = document.getElementById("appToast");
-                    if (t) { t.textContent = "? No se pudo identificar el usuario. Vuelve a iniciar sesión."; t.className = "toast show error"; setTimeout(() => t.className = "toast", 3000); }
+                    if (t) { t.textContent = "? No se pudo identificar el usuario. Vuelve a iniciar sesiï¿½n."; t.className = "toast show error"; setTimeout(() => t.className = "toast", 3000); }
                     return;
                 }
 
@@ -470,7 +470,7 @@
         }
     });
 
-    // Retorno automático tras login si había redirect guardado
+    // Retorno automï¿½tico tras login si habï¿½a redirect guardado
     document.addEventListener("DOMContentLoaded", () => {
         const redirect = localStorage.getItem("pulpapp_redirect");
         if (redirect && window.location.pathname.includes("cart")) {
