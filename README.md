@@ -3,6 +3,17 @@
 > Desarrollado por **Red Matrix Solutions**
 
 Zentrix es una plataforma SaaS multi-tenant basada en microservicios, diseñada para la gestión integral de negocios inmobiliarios, restaurantes y comercios. Permite a múltiples empresas (tenants) operar de forma aislada sobre una misma infraestructura.
+### URL PAGINA WEB: https://zentrix-frontend-1010425986453.us-central1.run.app/
+
+### Usuario Super Administrador :
+- Id:superadmin@zentrix.app
+- Pw:Admin2026*
+  
+### Usuarios:
+- Id:Valeria@gmail.com
+- Pw:123456
+- Id:julianguerra1231186@gmail.com
+- Pw:Julian2026*
 
 ---
 
